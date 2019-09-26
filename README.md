@@ -1,4 +1,4 @@
-**The document is under development.**
+**The document is under development. Design discussions are taking place in the [github wiki](https://github.com/HL7/fhir-shorthand/wiki).**
 
 ## Overview
 
@@ -6,9 +6,6 @@ FHIR Shorthand (FSH) is a specially-designed language for defining the content o
 
 SUSHI ("SUSHI Unshortens Short Hand Inputs") is a command-line interpreter/compiler for [FHIR Shorthand (FSH)](fhir-shorthand-reference).
 
-## Design
-
-Design discussions are taking place in the [github wiki](https://github.com/HL7/fhir-shorthand/wiki).
 
 ## Benefits of FHIR Shorthand
 
