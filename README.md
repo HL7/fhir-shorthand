@@ -1,4 +1,4 @@
-**The document is under development. Design discussions are taking place in the [github wiki](https://github.com/HL7/fhir-shorthand/wiki).**
+**The document is under development. [Design discussions are taking place in the github wiki](https://github.com/HL7/fhir-shorthand/wiki).**
 
 ## Overview
 
@@ -21,4 +21,4 @@ SUSHI ("SUSHI Unshortens Short Hand Inputs") is a command-line interpreter/compi
 
 ## Contributors
 
-Mark Kramer (MITRE), Chris Moesel (MITRE), Grahame Grieve, (your name here)
+Mark Kramer (MITRE), Chris Moesel (MITRE), Grahame Grieve, (add your name here)
