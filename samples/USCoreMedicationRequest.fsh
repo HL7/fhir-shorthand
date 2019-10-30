@@ -11,7 +11,11 @@ Description:    """
 * status MS
 * intent MS
 * reported[x] MS
-* reported[x] only boolean or Reference(USCorePatient | USCorePractitioner | PractitionerRole | USCoreOrganization | RelatedPerson)
+* reported[x] only boolean or Reference(USCorePatient 
+    | USCorePractitioner 
+    | PractitionerRole 
+    | USCoreOrganization 
+    | RelatedPerson)
 * medication[x] MS
 * medication[x] only CodeableConcept or Reference(USCoreMedication)
 * medicationCodeableConcept from USCoreMedicationCodes (extensible)
