@@ -5,17 +5,19 @@ Instance:       PatientExample
 Title:          "Patient Example"
 InstanceOf:     USCorePatient
 * id = "example"
-* extension[us-core-race].extension[ombCategory][0].valueCoding = RACE#2160-3 "White"
-* extension[us-core-race].extension[ombCategory][1].valueCoding = RACE#1002-5 "American Indian or Alaska Native"
-* extension[us-core-race].extension[ombCategory][2].valueCoding = RACE#2028-9 "Asian"
-* extension[us-core-race].extension[detailed][0].valueCoding = RACE#1586-7 "Shoshone"
-* extension[us-core-race].extension[detailed][1].valueCoding = RACE#2036-2 "Filipino"
-* extension[us-core-race].extension[text].valueString = "Mixed"
-* extension[us-core-ethnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"
-* extension[us-core-ethnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"
-* extension[us-core-ethnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
-* extension[us-core-ethnicity].extension[text].valueString = "Hispanic or Latino"
-* extension[us-core-birthsex].valueCode = #F
+// * extension[us-core-race].extension[ombCategory][0].valueCoding = RACE#2160-3 "White"
+// NOTE: The line below is a shortcut syntax for the explicit syntax of the line above
+* us-core-race.ombCategory[0].valueCoding = RACE#2160-3 "White"
+* us-core-race.ombCategory[1].valueCoding = RACE#1002-5 "American Indian or Alaska Native"
+* us-core-race.ombCategory[2].valueCoding = RACE#2028-9 "Asian"
+* us-core-race.detailed[0].valueCoding = RACE#1586-7 "Shoshone"
+* us-core-race.detailed[1].valueCoding = RACE#2036-2 "Filipino"
+* us-core-race.text.valueString = "Mixed"
+* us-core-ethnicity.ombCategory.valueCoding = RACE#2135-2 "Hispanic or Latino"
+* us-core-ethnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"
+* us-core-ethnicity.detailed[1].valueCoding = RACE#2148-5 "Mexican"
+* us-core-ethnicity.text.valueString = "Hispanic or Latino"
+* us-core-birthsex.valueCode = #F
 * identifier.use = #usual
 * identifier.type.coding = MR#MR "Medical Record Number"
 * identifier.type.text = "Medical Record Number"

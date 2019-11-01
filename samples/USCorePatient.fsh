@@ -21,36 +21,32 @@ Description:    """
 * ^contact.telecom.value = "http://www.healthit.gov"
 * ^jurisdiction.coding = COUNTRY#US "United States of America"
 * ^fhirVersion = "4.0.0"
+// NOTE: MS can also be done in multiple lines:
+// * identifier MS
+// * identifier.system MS
+// ...
+* identifier, identifier.system, identifier.value, name, name.family, name.given
+  telecom, telecom.system, telecom.value, telecom.use, gender, birthDate, address,
+  address.line, address.city, address.state, address.postalCode, communication,
+  communication.language MS
 * extension contains 
     USCoreRaceExtension 0..1 MS and 
     USCoreEthnicityExtension 0..1 MS and 
     USCoreBirthsexExtension 0..1 MS
-* identifier 1..* MS 
-* identifier.system 1..1 MS
-* identifier.value 1..1 MS
+* identifier 1..*
+* identifier.system 1..1
+* identifier.value 1..1
 * identifier.value ^short = "The value that is unique within the system"
-* name 1..* MS
+* name 1..*
 * name obeys us-core-8
-* name.family MS
-* name.given MS
-* telecom MS
-* telecom.system 1..1 MS
+* telecom.system 1..1
 * telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)
-* telecom.value 1..1 MS
-* telecom.use MS
+* telecom.value 1..1
 * telecom.use from http://hl7.org/fhir/ValueSet/contact-point-use (required)
-* gender 1..1 MS
+* gender 1..1
 * gender from http://hl7.org/fhir/ValueSet/administrative-gender // (required)
-* birthDate MS
-* address MS
-* address.line MS
-* address.city MS
-* address.state MS 
 * address.state from USPSTwoLetterAlphabeticCodes (extensible)
-* address.postalCode MS
 * address.postalCode ^short = "US Zip Codes"
-* communication MS
-* communication.language MS
 * communication.language from LanguageCodesWithLanguageAndOptionallyARegionModifier (extensible)
 
 Extension:      USCoreRaceExtension
@@ -67,17 +63,19 @@ Description:    """
     or Other Pacific Islander - White."""
 // publisher, contact, jurisdiction, other metadata here
 * extension contains ombCategory 0..5 MS and detailed 0..* and text 1..1 MS
-* extension[ombCategory] ^short = """
+// * extension[ombCategory] ^short = ...
+// NOTE: The line below is a shortcut syntax for the explicit syntax of the line above
+* ombCategory ^short = """
     American Indian or Alaska Native|Asian|Black or 
     African American|Native Hawaiian or Other Pacific Islander|White"""
 // * extension[ombCategory].url = "ombCategory" - Can be inferred from slice names above
-* extension[ombCategory].value[x] only Coding
-* extension[ombCategory].valueCoding from OmbRaceCategories // (required)
-* extension[detailed] ^short = "Extended race codes"
-* extension[detailed].value[x] only Coding
-* extension[detailed].valueCoding from DetailedRace // (required)
-* extension[text] ^short = "Race Text"
-* extension[text].value[x] only string
+* ombCategory.value[x] only Coding
+* ombCategory.valueCoding from OmbRaceCategories // (required)
+* detailed ^short = "Extended race codes"
+* detailed.value[x] only Coding
+* detailed.valueCoding from DetailedRace // (required)
+* text ^short = "Race Text"
+* text.value[x] only string
 
 Extension:      USCoreEthnicityExtension
 Id:             us-core-ethnicity
@@ -92,14 +90,14 @@ Description:    """
     to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."""
 // publisher, contact, jurisdiction, other metadata here
 * extension contains ombCategory 0..1 MS and detailed 0..* and text 1..1 MS
-* extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
-* extension[ombCategory].value[x] only Coding
-* extension[ombCategory].valueCoding from OmbEthnicityCategories (required)
-* extension[detailed] ^short = "Extended ethnicity codes"
-* extension[detailed].value[x] only Coding
-* extension[detailed].valueCoding from DetailedEthnicity (required)
-* extension[text] ^short = "ethnicity Text"
-* extension[text].value[x] only string
+* ombCategory ^short = "Hispanic or Latino|Not Hispanic or Latino"
+* ombCategory.value[x] only Coding
+* ombCategory.valueCoding from OmbEthnicityCategories (required)
+* detailed ^short = "Extended ethnicity codes"
+* detailed.value[x] only Coding
+* detailed.valueCoding from DetailedEthnicity (required)
+* text ^short = "ethnicity Text"
+* text.value[x] only string
 
 Extension:      USCoreBirthSexExtension 
 Id:             us-core-birthsex

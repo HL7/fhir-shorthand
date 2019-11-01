@@ -8,30 +8,28 @@ Description:    """
     Defines constraints and extensions on the MedicationRequest resource 
     for the minimal set of data to query and retrieve prescription information."""
 // publisher, contact, jurisdiction, other metadata here
-* status MS
-* intent MS
-* reported[x] MS
+// NOTE: MS can also be done in multiple lines:
+// * status MS
+// * intent MS
+// ...
+* status, intent, reported[x], medication[x], subject, encounter, authoredOn,
+  requester, dosageInstruction, dosageInstruction.text MS
 * reported[x] only boolean or Reference(USCorePatient 
     | USCorePractitioner 
     | PractitionerRole 
     | USCoreOrganization 
     | RelatedPerson)
-* medication[x] MS
 * medication[x] only CodeableConcept or Reference(USCoreMedication)
 * medicationCodeableConcept from USCoreMedicationCodes (extensible)
-* subject MS
 * subject only Reference(USCorePatient)
-* encounter MS
-* authoredOn 1..1 MS
-* requester 1..1 MS
+* authoredOn 1..1
+* requester 1..1
 * requester only Reference(USCorePractitioner
     | PractitionerRole
     | USCoreOrganization
     | USCorePatient
     | USCoreImplantableDevice
     | RelatedPerson)
-* dosageInstruction MS
-* dosageInstruction.text MS
 
 ValueSet:       USCoreMedicationCodes
 Id:             us-core-medication-codes
