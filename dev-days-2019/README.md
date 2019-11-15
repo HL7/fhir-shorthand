@@ -83,6 +83,7 @@ Description:     """
 ```
 #### Rules
 In a rule, an element is accessed via its path, and then some constraint is applied to that element. The supported rules are listed below.
+
 | Rule Type | Rule Syntax | Example |
 | --- | --- |---|
 | Fixed Value |`* path = value`  | `* experimental = true` <br/> `* status = #active` <br/> `* valueString = "foo"` <br/> `* valueQuantity.value = 1.23` |
