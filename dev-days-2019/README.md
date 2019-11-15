@@ -14,11 +14,11 @@ For each command, you should see a version number. If this works correctly, you 
 $ npm install -g fsh-sushi
 ``` 
 ### Step 3: Download Sample FSH Files
-To start with some working examples of FSH files, visit the this repository's [home page](https://github.com/HL7/fhir-shorthand). If you are comfortable using `git`, you can clone this repository by doing
+To start with some working examples of FSH files, visit the this repository's [home page](https://github.com/HL7/fhir-shorthand). If you are comfortable using Git, you can clone this repository by doing
 ```
-$ git clone https://github.com/standardhealth/sushi.git
+$ git clone https://github.com/HL7/fhir-shorthand.git
 ```
-If you do not use `git`, click the "Clone or Download" button, the click "Download Zip". When the zip file is downloaded, unzip it to the folder of your choosing. The folder `dev-days-2019/working-samples` contains a set of FSH files that use only syntax that is currently supported by SUSHI. Note that the `samples` folder contains syntax that is **not** yet supported. Do not try to run SUSHI using that folder.
+If you do not use Git, click the "Clone or Download" button, the click "Download Zip". When the zip file is downloaded, unzip it to the folder of your choosing. The folder `dev-days-2019/working-samples` contains a set of FSH files that use only syntax that is currently supported by SUSHI. Note that the `samples` folder contains syntax that is **not** yet supported. Do not try to run SUSHI using that folder.
 ### Step 4: Run SUSHI
 Now that you have SUSHI installed and a folder containing FSH files, you can run SUSHI on those FSH files by executing
 ```
