@@ -31,47 +31,54 @@ This guide assumes you have:
 
 | Style | Explanation | Example |
 |:----------|:---------|:---------|
-| `Code` | A CIMPL term, phrase, example, or command | `CodeSystem: LNC = http://loinc.org` |
-| <code><i>Italics</i> appearing in a code block | Indicates an item that should be substituted | <code>Value only <i>datatype</i></code> |
-| _Italics_ | A file name, or general emphasis in text | _obf-action.txt_ |
-| _Italics with **bold** highlight_ | Indicates a substring in the file name that should be substituted | _ig-**myigname**-config.json_ |
-| Leading Capitalization | CIMPL keywords or references that are capitalized; specific instances of FHIR artifacts | The `Grammar` keyword |
-| **Note:** | Something to keep in mind about the current topic | **Note:** Value Set names must begin with an uppercase letter. |
+| `Code` | Code fragments, such as commands and Shorthand statements  | `* status = #open` |
+| _Italics_ | File names | _example-1.fsh_ |
+| Curly braces | An item to be substituted | `* status = {coded type}` |
+| **bold** | General emphasis |  Do **not** delete. |
+
+We use `$` to represent the command prompt, although that may differ on your operating system.
 
 ## Installation
+Installing SUSHI is easy!
 
+1) Install Node.js (download from https://nodejs.org)
+1) Check the installation by opening a command window and typing the following two commands. Each command should return a version number. 
+
+    `$ node --version`
+
+    `$ npm --version`
+
+1) Next, issue this command at the prompt:
+
+    `$ npm install -g fsh-sushi`
+
+1) Check the installation by typing the following command:
+
+    `$ sushi -h`
+
+If you see instructions on using SUSHI command line interface (CLI), you're ready to run SUSHI.
 
 ## Configuration File
 
 ## Executing SUSHI from Command Line
 
-The general form of the SUSHI execution command is as follows (where $ stands for the command prompt, which could be different on your system):
+The general form of the SUSHI execution command is as follows:
 
-$ <code>node <i>tooling-directory  <specification-directory [options]</i></code>
+`$ sushi {specification-directory} [options]`
 
 where options include:
 
 ```
--c, --config <config>    the name of the Configuration file (default: _config.json_)
--l, --log-level <level>  the console log level <fatal, error, warn, info, debug, trace> (default: info)
 -o, --out <out>          the path to the output folder (default: _out_)
--m, --log-mode <mode>    the console log mode <short,long,json,off> (default: short)
--d, --duplicate          show duplicate error messages (default: false)
--n, --clean              Save archive of old output directory and perform clean build (default: false)
 -h, --help               output usage information
 ```
 
-The options are not order-sensitive. Here is an example of a SUSHI command and an explanation of its parts:
+The options are not order-sensitive.
 
-$ `node . ../shr-spec/spec -c ig-mcode/ig-mcode-r4-config.json -l error`
+If you run SUSHI from the same folder where your .fsh files are located, the command can be shortened to:
 
-* `node` is the command that starts the SUSHI application.
-* The dot `.` represents the current directory in Windows and macOS. In this example, the tooling directory is the current working directory.
-* `../shr-spec/spec` represents the location of the _specification_ directory. The double dot `..` represents the directory above the current _working directory_ in Windows and macOS. In this case, `/shr-spec` is parallel to the _tooling directory_, and `/spec` is one level below that.
-* `-c ig-mcode/ig-mcode-r4-config.json` directs the execution engine to the Configuration file. Note that the Configuration file location is relative to the _specification_ directory, implying the full path to the configuration is `../shr-spec/spec/ig-mcode/ig-mcode-r4-config.json`
-* `-l error` is an option that sets tells the system to suppress any messages that don't rise to the level of an `error`. This reduces the amount of output to the console window.
+`$ sushi . [options]`
 
->**Note:** SUSHI will abort if the `--clean`(`-n`) option is selected and the output folder is locked by another application (e.g., the folder is open in File Explorer).
 
 ## Error Messages
 
