@@ -334,7 +334,23 @@ Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/con
 
 #### Data Type Restriction Rules
 
+Certain elements in FHIR offer a choice of data types using the [x] syntax. An example is Condition.onset[x], a choice of dateTime, Age, Period, Range or string.
 
+>**NOTE:** The `[x]` is not included in paths in FSH.
+
+The syntax for narrowing the choices in a profile uses the `only` reserved word:
+
+ `* {path} only {type1} or {type2} or {type3}...`
+
+These choices can be restricted in two ways: reducing the number or choices, or substituting a profile of one of the choices. For example, if one of the choices is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself). 
+
+**Examples:**
+
+`* onset only dateTime`
+
+`* onset only Period or Range`
+
+`* onset only Age or AgeRange  // where AgeRange is a profile on Range`
 
 #### Reference Type Restriction Rules
 
