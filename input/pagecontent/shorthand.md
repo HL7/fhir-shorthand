@@ -265,7 +265,7 @@ Here is a summary of the rules supported in FSH:
 | Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` | `* subject only Reference(Patient)` <br/> `* basedOn only Reference(MedicationRequest | ServiceRequest)` |
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` | `* communication MS ?!` <br> `* identifier, identifier.system, identifier.value, name, name.family MS`
 | Slicing and extensions | `* {array} contains {sliceName1} {card1} and {sliceName2} {card2} ...` | `* component contains SystolicBP 1..1 and DiastolicBP 1..1` |
-| Invariants | `* {path} obeys {invariant}` | `* name obeys USCoreNameInvariant` |
+| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` | `* name obeys USCoreNameInvariant` |
 
 #### Fixed Value Rules
 
@@ -291,14 +291,54 @@ Assignment of coded types can use the [shorthand for coded data types](#coded-da
 
 #### Value Set Binding Rules
 
+Binding is the process of associating a coded element with a set of possible values. The syntax to bind a value set, or alter an inherited binding, uses the reserved word `from`:
+
+`* {path} from {valueSet} ({strength})`
+
+The value set can be the name of a value set defined in the same FSH tank, or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared a dependency in the package.json file.
+
+The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/valueset-binding-strength.html), namely: `example`, `preferred`, `extensible`, and `required`. If the strength is omitted, the binding is assume to be `required`, by default.
+
+The following rules apply to binding in FSH:
+
+* If no binding strength is specified, the binding is assumed to be `required`.
+* When further constraining an existing binding, the binding strength can stay the same or be made tighter (e.g., replacing a `preferred` binding with an `extensible` or `required` binding), but never loosened.
+* Constraining may leave the binding strength the same and change the value set instead. However, certain changes permitted in FSH may violate [FHIR profiling principles](http://hl7.org/fhir/R4/profiling.html#binding-strength). In particular, FHIR will permit a `required` value set to be replaced by another `required` value set only if the codes in the new value set are a subset of the codes in the original value set. For `extensible` bindings, the new value set can contain codes not in the existing value set, but additional codes _should not_ have the same meaning as existing codes in the base value set. These constraints are difficult to check, and are not currently enforced by SUSHI.
 
 
+**Examples**:
+
+`* telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)`
+
+`* gender from http://hl7.org/fhir/ValueSet/administrative-gender`
+
+`* address.state from USPSTwoLetterAlphabeticCodes (extensible)`
 
 #### Cardinality Rules
 
+Cardinality rules constrain the number of repetitions of an element. Every element has a cardinality inherited from its parent resource or profile. If the inheriting profile does not alter the cardinality, no cardinality rule is required.
+
+To change the cardinality, the grammar is:
+
+`* {path} {min}..{max}`
+
+As in FHIR, min and max are integers, and max can be *, representing unbounded.
+
+Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
+
+**Examples:**
+
+`* subject 1..1`
+
+`* component.referenceRange 0..0`
+
 #### Data Type Restriction Rules
 
+
+
 #### Reference Type Restriction Rules
+
+
 
 #### Flag Assignment Rules
 
@@ -324,10 +364,28 @@ The following syntax can be used to assigning flags:
 
 `* identifier, identifier.system, identifier.value, name, name.family MS`
 
-
 #### Slicing and Extension Rules
 
+
+
 #### Invariant Rules
+
+[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole, a single element, or multiple elements. The FSH grammars for applying invariants in profiles are as follows:
+
+`* obeys {invariant}`
+
+`* {path} obeys {invariant}`
+
+`* {path1}, {path2}, ... obeys {invariant}`
+
+The first case is where the invariant applies to the profile as a whole. The second is where the invariant applies to a single element, and the third is where the invariant applies to multiple elements.
+
+The referenced invariant and its properties must be declared somewhere within the same FSH tank, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
+
+Examples:
+
+`* name obeys USCoreNameInvariant`
+
 
 
 ## Paths
