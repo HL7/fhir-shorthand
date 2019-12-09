@@ -587,7 +587,7 @@ One way to specify these parameters is to use [structure definition escape (cara
 * component[0] ^description = "Slice based on the component.code pattern"
 ```
 
-The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no action by the user. SUSHI will attempt to infer slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For example:
+The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no action by the user. SUSHI infers slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For example:
 
 1. If all slices have unique `fixed[x]` values at the same path(s), use discriminator type `'value'` and the associated paths; or if
 2. If all slices have unique `pattern[x]` values at the same path(s), use discriminator type `'pattern'` and the associated paths.
@@ -631,18 +631,20 @@ Mapping rules use the symbol `->` with the following grammar:
 
 This section shows how to define various items in FSH:
 
-* Profiles
-* Slices
-* Extensions
-* Mappings
-* Invariants
-* Instances
-* Code Systems
-* Value Sets
+* [Aliases](#defining-aliases)
+* [Profiles](#defining-profiles)
+* [Slices](#defining-slices)
+* [Extensions](#defining-extensions)
+* [Mappings](#defining-mappings)
+* [Mixins](#defining-mixins)
+* [Invariants](#defining-invariants)
+* [Instances](#defining-instances)
+* [Code Systems](#defining-code-systems)
+* [Value Sets](#defining-value-sets)
 
 ### Keywords
 
-Keywords are used to make declarations that introduce new items, such as profiles and instances. For each such item defined in FSH, the keyword section comes first, and rules follow. The keyword statements themselves follow this simple syntax:
+Keywords are used to make declarations that introduce new items, such as profiles and instances. For each item defined in FSH, a keyword section is first followed by a number of rules. The keyword statements themselves follow the syntax:
 
 `{Keyword}: {value}`
 
@@ -650,7 +652,7 @@ For example:
 
 `Profile: SecondaryCancerCondition`
 
-`Description: "The intent of the treatment"`
+`Description: "The intent of the treatment."`
 
 The use of individual keywords is explained in greater detail in the following sections. Here is a summary of keywords in FSH:
 
@@ -667,8 +669,8 @@ The use of individual keywords is explained in greater detail in the following s
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Invariant` | Declares a new invariant | name |
 | `Mapping` | Introduces a new mapping | name |
-| `Mixin` | Introduces a class only to be used as a mixin (no profile generated) | name |
-| `Mixins` | Declares mix-in constraints in a profile | name |
+| `Mixin` | Introduces a class to be used as a mixin | name |
+| `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
 | `Language` | Declares the language of texts in a localization file | language ISO code |
 | `Parent` | Specifies the base class for a profile or extension | name |
 | `Profile` | Introduces a new profile | name |
@@ -697,7 +699,7 @@ Defining an alias is a one-line declaration, as follows:
 
 ### Defining Profiles
 
-To define a profile, the keywords `Profile`, `Parent`, `Id`, `Title`, and `Description`, in that order, must be used.
+To define a profile, the keywords `Profile`, `Parent`, `Id`, `Title`, and `Description`, must be used. The keyword `Mixins` is optional.
 
 **Example**
 
@@ -710,7 +712,26 @@ Description:    "Defines constraints and extensions on the patient resource for 
 ```
 Any rules defined for the profiles would follow immediately after the keyword section.
 
-> 
+#### Mixins
+Mixins have the ability to take rules defined in one class and apply them to a compatible class. The rules are copied from the source class at compile time. Although there can only be one `Parent` class, there can be multiple `Mixins`.
+
+Each mixin class must be compatible parent class, in the sense that all the extensions and constraints defined in the mixin class apply to elements actually present in the Parent class. The legality of a mixin is checked at compile time, with an error signaled if the mixin class is not compatible with the parent class. For example, an error would signalled if there was an attempt to mix a Condition into an Observation.
+
+At present, mixin classes must be defined in FSH. The capability for mixing in externally-defined classes is under development.
+
+**Example** Defining two national IGs, both based on the same BreastRadiologyProfile:
+
+```
+Profile: USCoreBreastRadiologyProfile
+Parent: BreastRadiologyProfile
+Mixins:  USCoreObservation
+
+Profile: FranceBreastRadiologyProfile
+Parent: BreastRadiologyProfile
+Mixins: FranceCoreObservation
+```
+
+> **IMPORTANT**: To be a valid mixin, the mixin cannot inherit from a different resource.
 
 ### Defining Slices
 
@@ -784,7 +805,7 @@ Description:    "Concepts classifying the person into a named category of humans
 * extension[text].value[x] only string
 ```
 
-**Example**: Extension with explicit parent
+**Example**  Extension with explicit parent:
 
 ```
 Extension:      BinaryBirthSexExtension
@@ -818,9 +839,27 @@ Id:       argonaut-dq-dstu2
 * identifier.value -> "identifier.value"
 ```
 
+### Defining Mixins
+
+Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
+
+**Example** Defining a mixin for metadata shared in all US Core profiles:
+
+```
+Mixin: USCoreMetadata
+Parent: DomainResource
+* ^version = "3.1.0"
+* ^status = #active
+* ^experimental = false
+* ^publisher = "HL7 US Realm Steering Committee"
+* ^contact.telecom.system = #url
+* ^contact.telecom.value = "http://www.healthit.gov"
+* ^jurisdiction.coding = COUNTRY#US "United States of America"
+```
+
 ### Defining Invariants
 
-Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, and `XPath`. An invariant definition does not have any rules.
+Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
 **Example**
 ```
@@ -828,6 +867,7 @@ Invariant:  USCoreNameInvariant
 Id:         us-core-8
 Definition: "Patient.name.given  or Patient.name.family or both SHALL be present"
 Expression: "family.exists() or given.exists()"
+Severity:   "error"
 XPath:      "f:given or f:family"
 ```
 
