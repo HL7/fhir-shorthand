@@ -1,33 +1,25 @@
-# SUSHI Reference Manual
-
-## Table of Contents
-
-[TOC]
-
-***
-
-## Introduction
+### Introduction
 
 SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
 
 > **NOTE**: HL7® and FHIR® are registered trademarks owned by Health Level Seven International, and are registered with the United States Patent and Trademark Office.
 
-### Purpose
+#### Purpose
 
 This reference manual is a comprehensive guide to the command line interface, auxiliary files, and configurations needed to create an HL7 FHIR IG using SUSHI.
 
-### Intended Audience
+#### Intended Audience
 
 The reference manual is targeted to people doing IG development using FSH. Familiarity with FHIR is helpful as the manual references various FHIR concepts (profiles, extensions, value sets, etc.)
 
-### Prerequisite
+#### Prerequisite
 
 This guide assumes you have:
 
 * Created FSH files representing your profiles and other IG artifacts (see [FHIR Shorthand Reference Manual](shorthand.md) for details).
 * Reviewed the [FHIR Shorthand Tutorial](tutorial.md).
 
-### Document Conventions
+#### Document Conventions
 
 | Style | Explanation | Example |
 |:----------|:------|:---------|
@@ -38,7 +30,7 @@ This guide assumes you have:
 
 We use `$` to represent the command prompt, although that may differ on your operating system.
 
-## Installation
+### Installation
 Install SUSHI in two easy steps:
 
 1) Install Node.js
@@ -65,7 +57,7 @@ Install SUSHI in two easy steps:
 
 If the command outputs instructions on using SUSHI command line interface (CLI), you're ready to run SUSHI.
 
-## SUSHI Version
+### SUSHI Version
 
 SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
 
@@ -81,7 +73,7 @@ _Is this correct?_
 
 _end_
 
-## Configuration File
+### Configuration File
 
 Shorthand uses the FHIR packaging approach:
 
@@ -95,7 +87,7 @@ Shorthand uses the FHIR packaging approach:
 See: [FHIR NPM Package Spec](https://wiki.hl7.org/index.php?title=FHIR_NPM_Package_Spec#Format)
 
 
-## Executing SUSHI from Command Line
+### Executing SUSHI from Command Line
 
 The general form of the SUSHI execution command is as follows:
 
@@ -115,7 +107,7 @@ If you run SUSHI from the same folder where your .fsh files are located, the com
 `$ sushi . {options}`
 
 
-## Error Messages
+### Error Messages
 
 In the process of building profiles, you will inevitably encounter SUSHI error messages. Debugging the model is an iterative process, and it could take some time to arrive at a clean compile. SUSHI will only produce IG artifacts if it runs to completion without errors.
 
@@ -126,5 +118,3 @@ Here are some general tips on approaching debugging your model:
 * Don't be discouraged by the number of errors, since a single correction can silence multiple logged errors.
 * Read the error messages carefully.
 * SUSHI should always exit gracefully, but there is a possibility for the SUSHI process to crash if there is an unanticipated error. Usually this is not a cause for concern, and fixing errors reported prior to the abnormal exit might result in a successful run. If not, please report the issue using the SUSHI issue tracker.
-
-
