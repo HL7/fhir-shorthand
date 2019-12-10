@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ImplementationGuide xmlns="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hl7.org/fhir ../input-cache/schemas-r5/fhir-single.xsd">
+  <id value="hl7.fhir.uv.shorthand"/>
+  <url value="http://hl7.org/fhir/uv/howto/ImplementationGuide/hl7.fhir.uv.shorthand"/>
+  <name value="FHIRShorthand"/>
+  <title value="FHIR Shorthand Reference Manual"/>
+  <status value="draft"/>
+  <experimental value="false"/>
+  <publisher value="HL7 International - FHIR Infrastructure Group"/>
+  <contact>
+    <telecom>
+      <system value="other"/>
+      <value value="http://hl7.org/Special/committees/fiwg"/>
+    </telecom>
+  </contact>
+  <description value="Describes FHIR Shorthand (FSH), a domain-specific language (DSL) for defining the content of FHIR Implementation Guides (IG)."/>
+  <jurisdiction>
+    <coding>
+      <system value="http://unstats.un.org/unsd/methods/m49/m49.htm"/>
+      <code value="001"/>
+    </coding>
+  </jurisdiction>
+  <packageId value="hl7.fhir.uv.shorthand"/>
+  <fhirVersion value="4.0.1"/>
+  <definition>
+    <page>
+      <nameUrl value="toc.html"/>
+      <title value="Table of Contents"/>
+      <generation value="html"/>
+      <page>
+        <nameUrl value="index.html"/>
+        <title value="IG Home Page"/>
+        <generation value="markdown"/>
+      </page>
+      <page>
+        <nameUrl value="tutorial.html"/>
+        <title value="FHIR Shorthand Tutorial"/>
+        <generation value="markdown"/>
+      </page>
+      <page>
+        <nameUrl value="shorthand.html"/>
+        <title value="FHIR Shorthand"/>
+        <generation value="markdown"/>
+      </page>
+      <page>
+        <nameUrl value="sushi.html"/>
+        <title value="SUSHI: FHIR Shorthand Reference Implementation"/>
+        <generation value="markdown"/>
+      </page>
+    </page>
+  </definition>
+</ImplementationGuide>
