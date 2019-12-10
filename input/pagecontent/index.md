@@ -8,9 +8,9 @@ FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the conten
 
 This implementation guide includes the following sections:
 
-* [FHIR Shorthand Tutorial](#tutorial.hmtl) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand
-* [FHIR Shorthand Language Reference](#shorthand.html) -- Describes the syntax and usage of the FHIR Shorthand language
-* [SUSHI - The Reference Implementation](#sushi.html) -- How to produce an IG from FSH files using SUSHI compiler and IG Publisher.
+* [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand
+* [FHIR Shorthand Language Reference](shorthand.html) -- Describes the syntax and usage of the FHIR Shorthand language
+* [SUSHI - The Reference Implementation](sushi.html) -- How to produce an IG from FSH files using SUSHI compiler and IG Publisher.
 
 
 ## Motivations for FHIR Shorthand
