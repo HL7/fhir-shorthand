@@ -17,7 +17,7 @@ This implementation guide includes the following sections:
 
 1. The FHIR community needs scalable, fast, and user-friendly tools for IG creation and maintenance. Profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent.
 1. Editing StructureDefinitions (SDs) by hand is complex and unwieldy.
-1. Available tools such as Forge, Trifolia-on-FHIR, and Excel spreadsheets, improve this situation, but still have drawbacks:
+1. Available tools such as Forge, Trifolia-on-FHIR, and Excel spreadsheets improve this situation, but still have drawbacks:
     1. Although the tools provide a friendlier interface, the user must still understand many SD details.
     1. The tools are not particularly agile when it comes to [refactoring](https://resources.collab.net/agile-101/code-refactoring).
     1. Source code control (SCC) features such as version-to-version differences and merging changes are not well supported.

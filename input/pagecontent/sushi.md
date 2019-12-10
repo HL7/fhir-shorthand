@@ -85,8 +85,8 @@ _end_
 
 Shorthand uses the FHIR packaging approach:
 
-* packages are defined using a package.json
-* dependencies are defined in the package.json
+* packages are defined using a _package.json_ file
+* dependencies are defined in the _package.json_
 * package managers handle the resolution of dependency packages
 * dependency resolution follows the same rules as FHIR dependency resolution
 
