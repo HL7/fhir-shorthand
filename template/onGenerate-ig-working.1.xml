@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><ImplementationGuide xmlns="http://hl7.org/fhir"><id value="hl7.fhir.uv.shorthand"/><text><status value="generated"/><div xmlns="http://www.w3.org/1999/xhtml"><h2>FHIRShorthand</h2><p>The official URL for this implementation guide is: </p><pre>http://hl7.org/fhir/uv/shorthand/ImplementationGuide/hl7.fhir.uv.shorthand</pre><div><p>Describes FHIR Shorthand (FSH), a domain-specific language (DSL) for defining the content of FHIR Implementation Guides (IG).</p>
+</div></div></text><url value="http://hl7.org/fhir/uv/shorthand/ImplementationGuide/hl7.fhir.uv.shorthand"/><name value="FHIRShorthand"/><title value="FHIR Shorthand Reference Manual"/><status value="draft"/><experimental value="false"/><date value="2019-12-11T19:32:05-05:00"/><publisher value="HL7 International - FHIR Infrastructure Group"/><contact><telecom><system value="other"/><value value="http://hl7.org/Special/committees/fiwg"/></telecom></contact><description value="Describes FHIR Shorthand (FSH), a domain-specific language (DSL) for defining the content of FHIR Implementation Guides (IG)."/><jurisdiction><coding><system value="http://unstats.un.org/unsd/methods/m49/m49.htm"/><code value="001"/></coding></jurisdiction><packageId value="hl7.fhir.uv.shorthand"/><license value="CC0-1.0"/><fhirVersion value="4.0.1"/><definition><grouping xmlns="http://hl7.org/fhir" id="_dyn_capabilitystatement">
+  <name value="Behavior: Capability Statements"/>
+  <description value="The following artifacts define the specwhenic capabilities that dwhenferent types of systems complying with this implementation guide are expected to have.  Systems complying with the implementation guide are expected to declare conformance to one or more of the following capability statements."/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_dyn_operationdefinition">
+  <name value="Behavior: Operation Definitions"/>
+  <description value="These are custom operations that can be supported by and/or invoked by systems complying with this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_dyn_messagedefinition">
+  <name value="Behavior: Message Definitions"/>
+  <description value="These define the types of messages that can be sent and/or received by systems complying with this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_str_graphdefinition">
+  <name value="Structures: Graph Definitions"/>
+  <description value="These define collections of interrelated resources that are useful to pass around as a group"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_str_logicalmodel">
+  <name value="Structures: Logical Models"/>
+  <description value="These define data models that represent the domain covered by this implementation guide in more business-friendly terms than the underlying FHIR resources."/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_str_questionnaire">
+  <name value="Structures: Questionnaires"/>
+  <description value="These define forms used by systems conforming with this implementation guide to capture or expose data to end users"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_str_abstractprofile">
+  <name value="Structures: Abstract Profiles"/>
+  <description value="These are profiles on resources or data types that describe patterns used by other profiles, but can't be instantiated directly.  I.e. instances can conform to profiles *based* on these abstract profiles, but don't declare conformance to the abstract profiles themselves."/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_str_profile">
+  <name value="Structures: Resource Profiles"/>
+  <description value="These define constraints on FHIR resources that need to be complied with by conformant implementations"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_str_datatype">
+  <name value="Structures: Data Type Profiles"/>
+  <description value="These define constraints on FHIR data types that need to be complied with by conformant implementations"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_str_extension">
+  <name value="Structures: Extension Definitions"/>
+  <description value="These define constraints on FHIR data types that need to be complied with by conformant implementations"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_term_valueset">
+  <name value="Terminology: Value Sets"/>
+  <description value="These define sets of codes used by systems conforming with this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_term_codesystem">
+  <name value="Terminology: Code Systems"/>
+  <description value="These define new code systems used by systems conforming with this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_term_namingsystem">
+  <name value="Terminology: Naming Systems"/>
+  <description value="These define identwhenier and/or code system identities used by systems conforming with this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_map_structuremap">
+  <name value="Terminology: Structure Maps"/>
+  <description value="These define transformations to convert between data structures used by systems conforming with this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_map_conceptmap">
+  <name value="Terminology: Concept Maps"/>
+  <description value="These define transformations to convert between codes by systems conforming with this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_ex_examplescenario">
+  <name value="Example: Example Scenarios"/>
+  <description value="These define groups of interrelated examples that demonstrate one or more of the workflows supported by this implementation guide"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_ex_example">
+  <name value="Example: Example Instances"/>
+  <description value="These are example instances that show what data produced and consumed by systems conforming with this implementation guide might look like"/>
+</grouping>
+<grouping xmlns="http://hl7.org/fhir" id="_other">
+  <name value="Other"/>
+  <description value="These are resources that are used within this implementation guide that don't fit into one of the other categories"/>
+</grouping><page><nameUrl value="toc.html"/><title value="Table of Contents"/><generation value="html"/><page><nameUrl value="index.html"/><title value="FHIR Shorthand"/><generation value="markdown"/></page><page><nameUrl value="tutorial.html"/><title value="Tutorial"/><generation value="markdown"/></page><page><nameUrl value="sushi.html"/><title value="SUSHI Reference Implementation"/><generation value="markdown"/></page></page><parameter><code value="autoload-resources"/><value value="true"/></parameter><parameter><code value="path-resource"/><value value="input/capabilities"/></parameter><parameter><code value="path-resource"/><value value="input/examples"/></parameter><parameter><code value="path-resource"/><value value="input/extensions"/></parameter><parameter><code value="path-resource"/><value value="input/models"/></parameter><parameter><code value="path-resource"/><value value="input/operations"/></parameter><parameter><code value="path-resource"/><value value="input/profiles"/></parameter><parameter><code value="path-resource"/><value value="input/resources"/></parameter><parameter><code value="path-resource"/><value value="input/vocabulary"/></parameter><parameter><code value="path-pages"/><value value="input/pagecontent"/></parameter><parameter><code value="path-pages"/><value value="input/images"/></parameter><parameter><code value="path-qa"/><value value="temp/qa"/></parameter><parameter><code value="path-temp"/><value value="temp/pages"/></parameter><parameter><code value="path-output"/><value value="output"/></parameter><parameter><code value="path-tx-cache"/><value value="input-cache/txcache"/></parameter><parameter><code value="path-suppressed-warnings"/><value value="input/ignoreWarnings.txt"/></parameter><parameter><code value="template-html"/><value value="template-page.html"/></parameter><parameter><code value="template-md"/><value value="template-page-md.html"/></parameter><parameter><code value="apply-contact"/><value value="true"/></parameter><parameter><code value="apply-context"/><value value="true"/></parameter><parameter><code value="apply-copyright"/><value value="true"/></parameter><parameter><code value="apply-jurisdiction"/><value value="true"/></parameter><parameter><code value="apply-license"/><value value="true"/></parameter><parameter><code value="apply-publisher"/><value value="true"/></parameter><parameter><code value="apply-version"/><value value="true"/></parameter></definition></ImplementationGuide>

@@ -1,0 +1,20 @@
+{
+    "package-id" : "hl7.fhir.uv.shorthand",
+    "title" : "FHIR Shorthand", 
+    "canonical" : "http://hl7.org/fhir/uv/shorthand", 
+    "introduction" : "FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the content of FHIR Implementation Guides (IG).",
+    "list" : [{
+     "version" : "current",
+     "desc" : "Continuous Integration Build (latest in version control)",
+     "path" : "http://hl7.org/fhir/ig/HL7/shorthand",
+     "status" : "ci-build",
+     "current" : true
+    },{
+     "version" : "0.1.0",  
+     "date" : "2019-12-10", 
+     "desc" : "Continuous Integration Build",   
+     "path" : "http://hl7.org/fhir/201912/shorthand.html",   
+     "status" : "draft",   
+     "sequence" : "DSTU 1"
+    }]
+   }
