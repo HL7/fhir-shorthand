@@ -16,8 +16,8 @@ The reference manual is targeted to people doing IG development using FSH. Famil
 
 This guide assumes you have:
 
-* Created FSH files representing your profiles and other IG artifacts (see [FHIR Shorthand Reference Manual](shorthand.md) for details).
-* Reviewed the [FHIR Shorthand Tutorial](tutorial.md).
+* Created FSH files representing your profiles and other IG artifacts (see [FHIR Shorthand Reference Manual](index.html) for details).
+* Reviewed the [FHIR Shorthand Tutorial](tutorial.html).
 
 #### Document Conventions
 
@@ -27,6 +27,7 @@ This guide assumes you have:
 | _italics_ | File names | _example-1.fsh_ |
 | {curly braces} | An item to be substituted | `* status = {code}` |
 | **bold** | General emphasis |  Do **not** fold, spindle or mutilate. |
+{: .grid }
 
 We use `$` to represent the command prompt, although that may differ on your operating system.
 
