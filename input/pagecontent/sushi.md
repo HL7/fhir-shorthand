@@ -16,8 +16,8 @@ The reference manual is targeted to people doing IG development using FSH. Famil
 
 This guide assumes you have:
 
-* Created FSH files representing your profiles and other IG artifacts (see [FHIR Shorthand Reference Manual](shorthand.md) for details).
-* Reviewed the [FHIR Shorthand Tutorial](tutorial.md).
+* Created FSH files representing your profiles and other IG artifacts (see [FHIR Shorthand Reference Manual](index.html) for details).
+* Reviewed the [FHIR Shorthand Tutorial](tutorial.html).
 
 #### Document Conventions
 
