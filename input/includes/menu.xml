@@ -2,7 +2,6 @@
   <li><a href="toc.html">Table of Contents</a></li>
   <li><a href="index.html">FHIR Shorthand</a></li>
   <li><a href="tutorial.html">Tutorial</a></li>
-  <li><a href="shorthand.html">Language Reference</a></li>
   <li><a href="sushi.html">SUSHI Reference Implementation</a></li>
   <!--li><a href="samples.html">Examples</a></li-->
 </ul>

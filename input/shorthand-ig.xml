@@ -38,11 +38,6 @@
         <generation value="markdown"/>
       </page>
       <page>
-        <nameUrl value="shorthand.html"/>
-        <title value="Language Reference"/>
-        <generation value="markdown"/>
-      </page>
-      <page>
         <nameUrl value="sushi.html"/>
         <title value="SUSHI Reference Implementation"/>
         <generation value="markdown"/>
