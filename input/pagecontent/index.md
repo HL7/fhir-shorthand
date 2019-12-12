@@ -44,6 +44,7 @@ This implementation guide includes the following sections:
 | _italics_ | File names | _example-1.fsh_ |
 | {curly braces} | An item to be substituted | `{codesystem}#{code}` |
 | **bold** | Emphasis |  Do **not** ignore this. |
+{: .grid }
 
 #### Versioning
 
@@ -340,7 +341,7 @@ Here is a summary of the rules supported in FSH:
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` | `* component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS` |
 | Extensions | `* {extension element path} contains {extensionName1} {card1} and {extensionName2} {card2} ...` | `* extension contains TreatmentIntent 0..1 and RadiationDose 0..1` |
 | Mapping | `* {path} -> {string}` | `* identifier.value -> "identifier.value"` |
-
+{: .grid }
 
 #### Fixed Value Rules
 
@@ -458,6 +459,7 @@ Flags are a set of information about the element that impacts how implementers h
 | S | MS  | Must Support |
 | &#931;  | SU  | Include in summary |
 | ?! | ?! | Modifier |
+{: .grid }
 
 The flags I, NE, TU, N, and D are currently not supported by FSH.
 
@@ -651,6 +653,7 @@ The use of individual keywords is explained in greater detail in the following s
 | `Title` | Short human-readable name | string |
 | `ValueSet` | Declares a new value set | name |
 | `XPath` | the xpath in invariant | string |
+{: .grid }
 
 
 #### Defining Aliases
