@@ -891,7 +891,92 @@ Title:      "Primary Cancer Diagnosis"
 * code = SCT#93864006 "Primary malignant neoplasm of lower lobe of left lung"
 ```
 
-#### Defining Code Systems
-
 #### Defining Value Sets
 
+A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept. 
+
+Value sets are defined using the keywords `ValueSet`, `Title` and `Description`. 
+
+Codes must be taken from one or more terminology systems (also called code systems or vocabularies), and cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
+
+The contents of a value set are defined by a set of rules. There are four types of rules to populate a value set:
+
+| To include... | Syntax | Example |
+|-------|---------|----------|
+| A single code | `* {Coding}` | `* SCT#961000205106 "Wearing street clothes, no shoes"` |
+| All codes from a value set | `* codes from valueset {Id}` | `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
+| All codes from a code system | `* codes from system {Id}` | `* codes from system http://snomed.info/sct` |
+| Selected codes from a code system | `* codes from system {Id} where {filter}` | `* codes from system SCT where code descendent-of SCT#254837009` |
+{: .grid }
+
+See [below](#filters) for discussion of filters. 
+
+> **NOTE:** `Id` can be a FSH name, alias or URL.
+
+Analogous rules can be used to leave out certain codes, with the addition of the word `exclude`:
+
+| To exclude... | Syntax | Example |
+|-------|---------|----------|
+| A single code | `* exclude {Coding}` | `* exclude SCT#961000205106 "Wearing street clothes, no shoes"` |
+| All codes from a value set | `* exclude codes from valueset {Id}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
+| All codes from a code system | `* exclude codes from system {Id}` | `* exclude codes from system http://snomed.info/sct` |
+| Selected codes from a code system | `* exclude codes from system {Id} where {filter}` | `* codes from system SCT where code descendent-of SCT#254837009` |
+{: .grid }
+
+##### Filters
+
+A filter is a logical statement in the form {property} {operator} {value}, where operator is chosen from [a value set](http://hl7.org/fhir/ValueSet/filter-operator) containing the values:
+
+`is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | exists`
+
+Not all operators are valid for any code system. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
+
+
+**Example** Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
+```
+ValueSet:    BodyWeightPreconditionVS
+Title: "Body weight preconditions."
+Description:  "Circumstances for body weight measurement."
+* SCT#971000205103 "Wearing street clothes with shoes"
+* SCT#961000205106 "Wearing street clothes, no shoes"
+* SCT#951000205108 "Wearing underwear or less"
+```
+
+
+**Example** Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set
+
+```
+ValueSet:       PrimaryCancerDisorderVS
+Title: "Primary Cancer Disorder Value Set"
+Description:    "Types of primary malignant neoplastic disease."
+SCT#363346000  "Malignant neoplastic disease (disorder)"
+* codes from system SCT where code descendent-of SCT#363346000 "Malignant neoplastic disease (disorder)"
+* exclude codes from system SCT where code descendent-of SCT#128462008 "Secondary malignant neoplastic disease"
+```
+
+
+#### Defining Code Systems
+
+It is usually unnecessary to define code systems (also called terminologies or vocabularies) in FSH. However, FSH does allow definition of local codes inside an IG that are not drawn from an external code system. Defining codes inside an IG is not recommended, since those codes will not be part of any recognized terminology system. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- and when defining new local codes, you must define them in the context of a code system.
+
+Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are added, one per rule, using the almost same syntax as in value sets, except that the code system is not included before the hash sign `#`. Additional properties of a code can be added using the escape (caret) syntax.
+
+**Example**:
+
+```
+CodeSystem:  YogaCodeSystem
+Title: "Yoga Code System."
+Description:  "A vocabulary of yoga-related terms."
+* #Sirsasana "Headstand"
+* #Sarvangasana "Shoulder stand"
+* #Halasana "Plough Pose"
+* #Matsyasana "Fish Pose"
+* #Pachimotanasa "Sitting Forward Bend"
+* #Bhujangasana "Cobra Pose"
+* #Salabhasana "Locust Pose"
+* #Dhanurasana "Bow Pose"
+
+* concept[Sirsasana] ^definition "An inverted asana, also called mudra in classical hatha yoga."
+
+```
+> **NOTE**: FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
