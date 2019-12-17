@@ -556,8 +556,8 @@ One way to specify these parameters is to use [structure definition escape (care
 
 **Example**
 ```
-* component[0] ^discriminator[0].type = #pattern
-* component[0] ^discriminator[0].path = "code"
+* component[0] ^slicing.discriminator.type = #pattern
+* component[0] ^slicing.discriminator.path = "code"
 * component[0] ^ordered = false
 * component[0] ^rules = #open
 * component[0] ^description = "Slice based on the component.code pattern"
@@ -567,7 +567,7 @@ The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife 
 
 #### Extension Rules
 
-Extensions are created by slicing the extension array that is present at the root level of every resource, in each element, and recursively in each extension. Since extensions are essentially a special case of slicing, the slicing syntax can be reused. However, it is **not** necessary to specify the discriminator, since the discriminator is always the identifying URL of the extension.
+Extensions are created by slicing the extension array that is present at the root level of every resource, in each element, and recursively in each extension. Since extensions are essentially a special case of slicing, the slicing syntax can be reused. However, it is **not** necessary to specify the discriminator, since the discriminator is always the `url` (identifying URL of the extension), and the type is always `value`.
 
 Extensions can be created by slicing the `extension` (or `modifierExtension`) array, for example:
 
