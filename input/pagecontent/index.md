@@ -2,7 +2,7 @@
 
 FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the content of FHIR Implementation Guides (IG). It is simple and compact, with tools to produce [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/overview.html) profiles, extensions and implementation guides (IG). Because it is written in text statements, FHIR Shorthand encourages distributed, team-based development using conventional source code control tools such as Github.
 
-> **NOTE**: HL7® and FHIR® are registered trademarks owned by Health Level Seven International.
+> **Note:** HL7® and FHIR® are registered trademarks owned by Health Level Seven International.
 
 #### Motivations for FHIR Shorthand
 
@@ -123,9 +123,9 @@ Codes are denoted with `#` sign. The shorthand is:
 
 `#{code}`
 
->**NOTE**: In this document, curly brackets are used to indicate a term that should be substituted.
+>**Note:** In this document, curly brackets are used to indicate a term that should be substituted.
 
-**Example**
+**Example.**
 
   `#confirmed`
 
@@ -188,17 +188,13 @@ A FHIR Quantity can be fixed like a CodeableConcept or bound to a value set. The
 
 `* {Quantity type} units = {system}#{code} "{display text}"`
 
-`* {Quantity type} units = '{Any UCUM unit}'`
-
->**NOTE:** Unified Code for Units of Measure (UCUM) is implicit when single quotes are used
+>**Note:** The word `units` is suggested for clarity, but is optional.
 
 **Examples**
 
 `* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
 
 `* valueQuantity units = http://unitsofmeasure.org#mm "millimeters"`
-
-`* valueQuantity units = 'mm'`  
 
 #### Paths
 
@@ -222,7 +218,7 @@ For example, Observation has a method property, and method (a CodeableConcept) h
 
 In this example, the root Observation is inferred from the context and not a formal part of the path. In this way, it differs from the path element in StructureDefinitions.
 
-> **NOTE:** It is not possible to cross reference boundaries when profiling (except for slice discriminators, which may `resolve()` references). This means that when a path gets to a Reference, that path cannot be nested any further.  For example, if Procedure has a subject, and subject is Reference(Patient) which has a gender property, then `Procedure.subject` is a valid path, but `Procedure.subject.gender` is not, because it crosses into the Patient reference.
+> **Note:** It is not possible to cross reference boundaries when profiling (except for slice discriminators, which may `resolve()` references). This means that when a path gets to a Reference, that path cannot be nested any further.  For example, if Procedure has a subject, and subject is Reference(Patient) which has a gender property, then `Procedure.subject` is a valid path, but `Procedure.subject.gender` is not, because it crosses into the Patient reference.
 
 ##### Array Property Paths
 
@@ -230,7 +226,7 @@ If a property allows more than one value (e.g., `0..*`), then it must be possibl
 
 If the index is omitted, the first element of the array (`[0]`) is assumed. 
 
-**Example** Set a Patient's first name's second given name to "Marie":
+**Example.** Set a Patient's first name's second given name to "Marie":
 
 `* name[0].given[1] = "Marie"`
 
@@ -242,7 +238,7 @@ or, since the zero index is assumed when omitted:
 
 Frequently in FHIR, an element has a Reference that has multiple targets. To address a specific target, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
 
-**Example** Restrict a performer element (type Reference(Organization | Pracititioner) to PrimaryCareProvider in a profile, assuming PrimaryCareProvider is a profile on Practitioner:
+**Example.** Restrict a performer element (type Reference(Organization | Pracititioner) to PrimaryCareProvider in a profile, assuming PrimaryCareProvider is a profile on Practitioner:
 
 `* performer[Practitioner] only PrimaryCareProvider`
 
@@ -250,7 +246,7 @@ Frequently in FHIR, an element has a Reference that has multiple targets. To add
 
 Addressing a type from a choice of types replaces the `[x]` in the property name with the type name (while also capitalizing the first letter). This follows the approach used in FHIR JSON and XML serialization.
 
-**Example** Fix value[x] string property to "Hello World":
+**Example.** Fix value[x] string property to "Hello World":
 
 `* valueString = "Hello World"`
 
@@ -258,21 +254,21 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
 In some cases, a type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[` `]`) containing the profile's `name`, `id`, or `url`.
 
-**Example** In an instance, set the address.state property to the code for Massachusetts (assumes the address type indicates several profiles, one being USAddress):
+**Example.** In an instance, set the address.state property to the code for Massachusetts (assumes the address type indicates several profiles, one being USAddress):
 
 `* address[USAddress].state = UspsTwoLetterAlphabeticCodes#MA`
 
-> **NOTE:** The example above assumes the context of an instance.  If we were trying to constrain the state only in the USAddress profile (and other profiles of Address were possible), then this would actually be slicing, and slicing syntax should be used.
+> **Note:** The example above assumes the context of an instance.  If we were trying to constrain the state only in the USAddress profile (and other profiles of Address were possible), then this would actually be slicing, and slicing syntax should be used.
 
 ##### Sliced Array Paths
 
 FHIR allows lists to be compartmentalized into sublists called "slices".  For example, the Observation.component list in a profile for Apgar score might have a RespiratoryScore component slice and a Appearance component slice, among others.  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name.  To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
 
-**Example** Fix the code in an existing slice on Observation.component called `RespiratoryScore`:
+**Example.** Fix the code in an existing slice on Observation.component called `RespiratoryScore`:
 
 `* component[RespiratoryScore].code = SCT#24388001 "Apgar score 5 (finding)"`
 
-**Example** If the Apgar RespiratoryScore has been resliced to represent the 1, 5 and 10 minute scores:
+**Example.** If the Apgar RespiratoryScore has been resliced to represent the 1, 5 and 10 minute scores:
 
 `* component[RespiratoryScore][FiveMinute].code = SCT#13323003 "Apgar score 7 (finding)"`
 
@@ -280,7 +276,7 @@ FHIR allows lists to be compartmentalized into sublists called "slices".  For ex
 
 Extensions are arrays populated by slicing. They may be addressed using the slice path syntax presented above. However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.
 
-**Example** Explicit path syntax for extensions within US Core Patient:
+**Example.** Explicit path syntax for extensions within US Core Patient:
 
 ```
 * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"
@@ -290,7 +286,7 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
 * extension[us-core-birthsex].valueCode = #F
 ```
 
-**Example** (Preferred) Abbreviated grammar addressing extensions in US Core Patient:
+**Example.** (Preferred) Abbreviated grammar addressing extensions in US Core Patient:
 ```
 * us-core-ethnicity.ombCategory.valueCoding = RACE#2135-2 "Hispanic or Latino"
 * us-core-ethnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"
@@ -303,7 +299,7 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
 
 FSH uses the caret (^) syntax to provide direct access to any element in StructureDefinition. The caret syntax is the method for setting metadata attributes in SD (attributes not associated with any element). The caret syntax can be combined with non-caret (element) paths to set values in the SD associated with a particular element (see example below).
 
-**Example** Setting metadata attributes in a profile:
+**Example.** Setting metadata attributes in a profile:
 
 ```
 Profile:       USCorePatient
@@ -314,7 +310,7 @@ Id: "us-core-patient"
 * ^experimental = false
 ```
 
-**Example** Addressing SD attributes in an individual element definition:
+**Example.** Addressing SD attributes in an individual element definition:
 ```
 Profile:        USCorePatient
 Parent:         Patient
@@ -367,7 +363,7 @@ Assignment of coded types can use the [shorthand for coded data types](#coded-da
 
 In instances, there may be fixed value rules that represent references to other instances. In this case, the fact that the value is a reference is known from the SD, and only the name of the referenced instance is given.
 
-**Example** Fixing a references appearing in an instance:
+**Example.** Fixing a references appearing in an instance:
 
 `* subject = EveAnyperson  // not Reference(EveAnyperson)`
 
@@ -438,7 +434,7 @@ Elements that refer to other resources often offer a choice of target resource t
 
 * `{path} only Reference({type1} | {type2} | {type3} ...)`
 
-> **NOTE:** The vertical bar within references represents logical 'or'.
+> **Note:** The vertical bar within references represents logical 'or'.
 
 **Examples** Alternative ways to restrict the type of Condition.recorder, assuming `PrimaryCarePhysician` and `EmergencyRoomPhysician` are profiles on `Practitioner`:
 
@@ -448,7 +444,7 @@ Elements that refer to other resources often offer a choice of target resource t
 
 `* recorder only Reference(PrimaryCarePhysician | EmergencyRoomPhysician | PractitionerRole)`
 
-> **NOTE**: A reference can only be restricted to a compatible type. For example, the subject of [US Core Condition](http://hl7.org/fhir/us/core/StructureDefinition-us-core-condition.html), with type Reference(US Core Patient), cannot be restricted to Reference(Patient), because Patient is not a profile of US Core Patient.
+> **Note:** A reference can only be restricted to a compatible type. For example, the subject of [US Core Condition](http://hl7.org/fhir/us/core/StructureDefinition-us-core-condition.html), with type Reference(US Core Patient), cannot be restricted to Reference(Patient), because Patient is not a profile of US Core Patient.
 
 #### Flag Assignment Rules
 
@@ -506,7 +502,7 @@ Slices are specified using the `contains` keyword. The following syntax is used 
 ```
 In this pattern, the `{array element path}` is a path to an element with multiple cardinality that is to be sliced, `{card}` is required, and `{flags}` are optional.
 
-**Example** Slice Observation.component:
+**Example.** Slice Observation.component:
 ```
 * component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS
 ```
@@ -537,7 +533,7 @@ The syntax for inline definition of slices is the same as constraining any other
 * {path to slice}.{subpath} {constraint}
 ```
 
-**Example** Defining SystolicBP and DiastolicBP slices inline:
+**Example.** Defining SystolicBP and DiastolicBP slices inline:
 ```
 * component contains SystolicBP 1..1 and DiastolicBP 1..1
 * component[SystolicBP].code = LNC#8480-6 "Systolic blood pressure"
@@ -554,7 +550,7 @@ Slicing in FHIR requires the user to specify a [discriminator path and discrimin
 
 One way to specify these parameters is to use [structure definition escape (caret) syntax](#structure-definition-escape-paths). The author identifies the sliced element, and then traverses the structure definition at that point.
 
-**Example**
+**Example.**
 ```
 * component[0] ^slicing.discriminator.type = #pattern
 * component[0] ^slicing.discriminator.path = "code"
@@ -587,14 +583,14 @@ Mapping rules use the symbol `->` with the following grammar:
 
 `* {path} -> {string}`
 
-**Example**
+**Example.**
 
 `$this -> Patient`
 
 `* identifier.value -> "identifier.value"`
 
 
->**NOTE:** Unlike setting the mapping directly in the SD, mapping rules do not include the name of the resource, given in the `$this` context.
+>**Note:** Unlike setting the mapping directly in the SD, mapping rules do not include the name of the resource, given in the `$this` context.
 
 ***
 
@@ -674,7 +670,7 @@ Defining an alias is a one-line declaration, as follows:
 
 To define a profile, the keywords `Profile`, `Parent` are required, and `Id`, `Title`, and `Description` should be used. The keyword `Mixins` is optional.
 
-**Example**
+**Example.**
 
 ```
 Profile:        USCorePatient
@@ -692,7 +688,7 @@ Each mixin class must be compatible parent class, in the sense that all the exte
 
 At present, mixin classes must be defined in FSH. The capability for mixing in externally-defined classes is under development.
 
-**Example** Defining two national IGs, both based on the same BreastRadiologyProfile:
+**Example.** Defining two national IGs, both based on the same BreastRadiologyProfile:
 
 ```
 Profile: USCoreBreastRadiologyProfile
@@ -712,7 +708,7 @@ We saw earlier how to use `contains` rules and constraints to [define inline sli
 
 The syntax for defining a slice is the same as for FSH profiles, except that the initial keyword is `Slice` and the SD escape (^) cannot be used, since slices do not have separate SDs.
 
-**Example** Slices declared in the BloodPressure profile:
+**Example.** Slices declared in the BloodPressure profile:
 
 ```
 Slice:     SystolicBP
@@ -743,9 +739,9 @@ Description: "The U.S. National Provider Identifier (NPI)"
 
 Defining extensions is similar to defining a profile, except that the parent of extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/extensibility.html#extension). 
 
-> **NOTE:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
+> **Note:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
 
-**Example** Define simple extension:
+**Example.** Define simple extension:
 
 ```
 Extension:      USCoreBirthSexExtension 
@@ -757,7 +753,7 @@ Description:     "A code classifying the person's sex assigned at birth"
 * valueCode from BirthSex (required)
 ```
 
-**Example** Define complex extension:
+**Example.** Define complex extension:
 ```
 Extension:      USCoreEthnicityExtension
 Id:             us-core-ethnicity
@@ -778,7 +774,7 @@ Description:    "Concepts classifying the person into a named category of humans
 * extension[text].value[x] only string
 ```
 
-**Example**  Extension with explicit parent:
+**Example.**  Extension with explicit parent:
 
 ```
 Extension:      BinaryBirthSexExtension
@@ -793,11 +789,11 @@ Description:     "As of 2019, certain US states only allow M or F on birth certi
 
 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
 
-> **NOTE:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
+> **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
 To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are used. Any number of [mapping rules](#mapping-rules) then follow.
 
-**Example**  // MK -- NOTE -- I made some changes -- to be checked
+**Example.**  // MK -- NOTE -- I made some changes -- to be checked
 ```
 Mapping:  USCorePatientToArgonaut
 Source:   USCorePatient
@@ -816,7 +812,7 @@ Id:       argonaut-dq-dstu2
 
 Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
 
-**Example** Defining a mixin for metadata shared in all US Core profiles:
+**Example.** Defining a mixin for metadata shared in all US Core profiles:
 
 ```
 Mixin: USCoreMetadata
@@ -834,7 +830,7 @@ Parent: DomainResource
 
 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
-**Example**
+**Example.**
 ```
 Invariant:  USCoreNameInvariant
 Id:         us-core-8
@@ -844,7 +840,7 @@ Severity:   "error"
 XPath:      "f:given or f:family"
 ```
 
-> **NOTE:** The Invariant is incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
+> **Note:** The Invariant is incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
 
 #### Defining Instances
 
@@ -906,12 +902,12 @@ The contents of a value set are defined by a set of rules. There are four types 
 | A single code | `* {Coding}` | `* SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from a value set | `* codes from valueset {Id}` | `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | `* codes from system {Id}` | `* codes from system http://snomed.info/sct` |
-| Selected codes from a code system | `* codes from system {Id} where {filter}` | `* codes from system SCT where code descendent-of SCT#254837009` |
+| Selected codes from a code system | `* codes from system {Id} where {filter} and {filter} and ...` | `* codes from system SCT where code descendent-of SCT#254837009` |
 {: .grid }
 
 See [below](#filters) for discussion of filters. 
 
-> **NOTE:** `Id` can be a FSH name, alias or URL.
+> **Note:** `Id` can be a FSH name, alias or URL.
 
 Analogous rules can be used to leave out certain codes, with the addition of the word `exclude`:
 
@@ -932,7 +928,7 @@ A filter is a logical statement in the form {property} {operator} {value}, where
 Not all operators are valid for any code system. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
 
 
-**Example** Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
+**Example.** Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
 ```
 ValueSet:    BodyWeightPreconditionVS
 Title: "Body weight preconditions."
@@ -943,7 +939,7 @@ Description:  "Circumstances for body weight measurement."
 ```
 
 
-**Example** Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set
+**Example.** Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set
 
 ```
 ValueSet:       PrimaryCancerDisorderVS
@@ -961,7 +957,7 @@ It is usually unnecessary to define code systems (also called terminologies or v
 
 Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are added, one per rule, using the almost same syntax as in value sets, except that the code system is not included before the hash sign `#`. Additional properties of a code can be added using the escape (caret) syntax.
 
-**Example**:
+**Example.**:
 
 ```
 CodeSystem:  YogaCodeSystem
@@ -979,4 +975,4 @@ Description:  "A vocabulary of yoga-related terms."
 * concept[Sirsasana] ^definition "An inverted asana, also called mudra in classical hatha yoga."
 
 ```
-> **NOTE**: FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
+> **Note:** FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
