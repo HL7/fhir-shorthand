@@ -2,7 +2,7 @@
 
 SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
 
-> **NOTE**: HL7® and FHIR® are registered trademarks owned by Health Level Seven International, and are registered with the United States Patent and Trademark Office.
+> **Note:** HL7® and FHIR® are registered trademarks owned by Health Level Seven International, and are registered with the United States Patent and Trademark Office.
 
 #### Purpose
 
@@ -70,7 +70,7 @@ _Is this correct?_
 
 > The config file must declare the minimum version of SUSHI compiler it requires. For example, if the config declares SUSHI 1.2, it requires major version 1, any minor version >= 2.
 
->**NOTE:** There is no guarantee that a FSH file declaring major version X will compile correctly on major version Y, if X /= Y.
+>**Note:** There is no guarantee that a FSH file declaring major version X will compile correctly on major version Y, if X /= Y.
 
 _end_
 
@@ -83,7 +83,7 @@ Shorthand uses the FHIR packaging approach:
 * package managers handle the resolution of dependency packages
 * dependency resolution follows the same rules as FHIR dependency resolution
 
-> **NOTE**: In addition, however, we may want to support dependencies for which there is not a _built_ package yet, but there is an accessible GitHub repository or even a local folder representing a package (NPM supports this).
+> **Note:** In addition, however, we may want to support dependencies for which there is not a _built_ package yet, but there is an accessible GitHub repository or even a local folder representing a package (NPM supports this).
 
 See: [FHIR NPM Package Spec](https://wiki.hl7.org/index.php?title=FHIR_NPM_Package_Spec#Format)
 
