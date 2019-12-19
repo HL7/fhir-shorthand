@@ -6,8 +6,16 @@
     "list" : [{
      "version" : "current",
      "desc" : "Continuous Integration Build (latest in version control)",
-     "path" : "http://hl7.org/fhir/ig/HL7/shorthand",
+     "path" : "https://build.fhir.org/ig/HL7/fhir-shorthand",
      "status" : "ci-build",
      "current" : true
+    }, {
+      "version": "0.1.0",
+      "fhirversion": "4.0.1",
+      "date": "2020-12-19",
+      "desc": "Initial FHIR Shorthand documentation",
+      "path": "http://hl7.org/fhir/uv/shorthand/stu1",
+      "status": "draft",
+      "sequence": "STU 1"
     }]
    }

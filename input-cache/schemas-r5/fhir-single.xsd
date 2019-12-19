@@ -47,7 +47,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   
 
-  Generated on Wed, Dec 11, 2019 23:42+0000 for FHIR v4.1.0 
+  Generated on Thu, Dec 19, 2019 10:54+0000 for FHIR v4.1.0 
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="4.1.0">
   <!-- Note: When using this schema with some tools, it may also be necessary to declare xmlns:xml="http://www.w3.org/XML/1998/namespace", however this causes performance issues with other tools and thus is not in the base schemas. -->
@@ -4141,6 +4141,15 @@ The type is the Canonical URL of Resource Definition that is the type this refer
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="MetadataResource">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Common Ancestor declaration for conformance and knowledge artifact resources.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="CanonicalResource">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="DomainResource">
     <xs:annotation>
       <xs:documentation xml:lang="en">A resource that includes narrative, extensions, and contained resources.</xs:documentation>
@@ -4202,6 +4211,15 @@ Modifier extensions SHALL NOT change the meaning of any elements on Resource or 
             </xs:annotation>
           </xs:element>
         </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="CanonicalResource">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Common Ancestor declaration for conformance and knowledge artifact resources.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="DomainResource">
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -4733,7 +4751,7 @@ A coverage may only be responsible for specific types of charges, and the sequen
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -7593,7 +7611,7 @@ into another (possibly the same) biological entity.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -8498,7 +8516,7 @@ into another (possibly the same) biological entity.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -10035,7 +10053,7 @@ into another (possibly the same) biological entity.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="1" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -12207,7 +12225,7 @@ into another (possibly the same) biological entity.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -12995,7 +13013,7 @@ into another (possibly the same) biological entity.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="1" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -13556,7 +13574,7 @@ into another (possibly the same) biological entity.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -14031,7 +14049,7 @@ into another (possibly the same) biological entity.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -19233,7 +19251,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -19392,7 +19410,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -19653,7 +19671,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -19951,7 +19969,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -23352,7 +23370,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -25042,7 +25060,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="1" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -27996,7 +28014,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -28684,7 +28702,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -29413,10 +29431,11 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
           </xs:element>
           <xs:choice minOccurs="0" maxOccurs="1" >
             <xs:annotation>
-              <xs:documentation xml:lang="en">Specifies how many (or how much) of the items there are in this Medication.  For example, 250 mg per tablet.  This is expressed as a ratio where the numerator is 250mg and the denominator is 1 tablet.</xs:documentation>
+              <xs:documentation xml:lang="en">Specifies how many (or how much) of the items there are in this Medication.  For example, 250 mg per tablet.  This is expressed as a ratio where the numerator is 250mg and the denominator is 1 tablet but can also be expressed a quantity when the denominator is assumed to be 1 tablet.</xs:documentation>
             </xs:annotation>
             <xs:element name="strengthRatio" type="Ratio"/>
             <xs:element name="strengthCodeableConcept" type="CodeableConcept"/>
+            <xs:element name="strengthQuantity" type="Quantity"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -29545,7 +29564,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
           </xs:element>
           <xs:element name="supportingInformation" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
-              <xs:documentation xml:lang="en">Additional information (for example, patient height and weight) that supports the administration of the medication.</xs:documentation>
+              <xs:documentation xml:lang="en">Additional information (for example, patient height and weight) that supports the administration of the medication.  This attribute can be used to provide documentation of specific characteristics of the patient present at the time of administration.  For example, if the dose says &quot;give &quot;x&quot; if the heartrate exceeds &quot;y&quot;&quot;, then the heart rate can be included using this attribute.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:choice minOccurs="1" maxOccurs="1" >
@@ -29732,7 +29751,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
           </xs:element>
           <xs:element name="supportingInformation" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
-              <xs:documentation xml:lang="en">Additional information that supports the medication being dispensed.</xs:documentation>
+              <xs:documentation xml:lang="en">Additional information that supports the medication being dispensed.  For example, there may be requirements that a specific lab test has been completed prior to dispensing or the patient's weight at the time of dispensing is documented.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="performer" type="MedicationDispense.Performer" minOccurs="0" maxOccurs="unbounded">
@@ -29788,6 +29807,11 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
           <xs:element name="note" minOccurs="0" maxOccurs="unbounded" type="Annotation">
             <xs:annotation>
               <xs:documentation xml:lang="en">Extra information about the dispense that could not be conveyed in the other attributes.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="renderedDosageInstruction" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The full representation of the dose of the medication included in all dosage instructions.  To be used when multiple dosage instructions are included to represent complex dosing such as increasing or tapering doses.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="dosageInstruction" minOccurs="0" maxOccurs="unbounded" type="Dosage">
@@ -30064,11 +30088,14 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
               <xs:documentation xml:lang="en">Indication of whether this ingredient affects the therapeutic action of the drug.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="strength" minOccurs="0" maxOccurs="1" type="Ratio">
+          <xs:choice minOccurs="0" maxOccurs="1" >
             <xs:annotation>
-              <xs:documentation xml:lang="en">Specifies how many (or how much) of the items there are in this Medication.  For example, 250 mg per tablet.  This is expressed as a ratio where the numerator is 250mg and the denominator is 1 tablet.</xs:documentation>
-           </xs:annotation>
-          </xs:element>
+              <xs:documentation xml:lang="en">Specifies how many (or how much) of the items there are in this Medication.  For example, 250 mg per tablet.  This is expressed as a ratio where the numerator is 250mg and the denominator is 1 tablet but can also be expressed a quantity when the denominator is assumed to be 1 tablet.</xs:documentation>
+            </xs:annotation>
+            <xs:element name="strengthRatio" type="Ratio"/>
+            <xs:element name="strengthCodeableConcept" type="CodeableConcept"/>
+            <xs:element name="strengthQuantity" type="Quantity"/>
+          </xs:choice>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -30516,6 +30543,11 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
               <xs:documentation xml:lang="en">Extra information about the prescription that could not be conveyed by the other attributes.</xs:documentation>
            </xs:annotation>
           </xs:element>
+          <xs:element name="renderedDosageInstruction" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The full representation of the dose of the medication included in all dosage instructions.  To be used when multiple dosage instructions are included to represent complex dosing such as increasing or tapering doses.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
           <xs:element name="dosageInstruction" minOccurs="0" maxOccurs="unbounded" type="Dosage">
             <xs:annotation>
               <xs:documentation xml:lang="en">Indicates how the medication is to be used by the patient.</xs:documentation>
@@ -30587,9 +30619,9 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
               <xs:documentation xml:lang="en">Identifies the period time over which the supplied product is expected to be used, or the length of time the dispense is expected to last.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="performer" minOccurs="0" maxOccurs="1" type="Reference">
+          <xs:element name="dispenser" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
-              <xs:documentation xml:lang="en">Indicates the intended dispensing Organization specified by the prescriber.</xs:documentation>
+              <xs:documentation xml:lang="en">Indicates the intended performing Organization that will dispense the medication as specified by the prescriber.</xs:documentation>
            </xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -30851,6 +30883,11 @@ The primary difference between a medicationusage and a medicationadministration 
               <xs:documentation xml:lang="en">Provides extra information about the Medication Usage that is not conveyed by the other attributes.</xs:documentation>
            </xs:annotation>
           </xs:element>
+          <xs:element name="renderedDosageInstruction" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The full representation of the dose of the medication included in all dosage instructions.  To be used when multiple dosage instructions are included to represent complex dosing such as increasing or tapering doses.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
           <xs:element name="dosage" minOccurs="0" maxOccurs="unbounded" type="Dosage">
             <xs:annotation>
               <xs:documentation xml:lang="en">Indicates how the medication is/was or should be taken by the patient.</xs:documentation>
@@ -30946,6 +30983,16 @@ The primary difference between a medicationusage and a medicationadministration 
           <xs:element name="domain" minOccurs="0" maxOccurs="1" type="Coding">
             <xs:annotation>
               <xs:documentation xml:lang="en">If this medicine applies to human or veterinary uses.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="version" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">A business level identifier of the product.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="status" minOccurs="0" maxOccurs="1" type="Coding">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The status within the lifecycle of this product. A high level status, this is not intended to duplicate details carried elswhere such as legal status, or authorization status.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="description" minOccurs="0" maxOccurs="1" type="markdown">
@@ -31218,7 +31265,7 @@ The primary difference between a medicationusage and a medicationadministration 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -32266,8 +32313,18 @@ The primary difference between a medicationusage and a medicationadministration 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
+          <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">An absolute URI that is used to identify this naming system when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this naming system is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the naming system is stored on different servers.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="version" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The identifier that is used to identify this version of the naming system when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the naming system author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
           <xs:element name="name" minOccurs="1" maxOccurs="1" type="string">
             <xs:annotation>
               <xs:documentation xml:lang="en">A natural language name identifying the naming system. This name should be usable as an identifier for the module by machine processing applications such as code generation.</xs:documentation>
@@ -33644,7 +33701,7 @@ The primary difference between a medicationusage and a medicationadministration 
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -35325,7 +35382,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -36686,7 +36743,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="MetadataResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -38506,7 +38563,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="1" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -39726,7 +39783,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="1" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -40052,7 +40109,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="1" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -41199,6 +41256,11 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
           <xs:element name="identifier" minOccurs="0" maxOccurs="1" type="Identifier">
             <xs:annotation>
               <xs:documentation xml:lang="en">Identifier by which this substance is known.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="version" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">A business level identifier of the substance.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="status" minOccurs="0" maxOccurs="1" type="CodeableConcept">
@@ -43418,7 +43480,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -44226,7 +44288,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="1" maxOccurs="1" type="uri">
             <xs:annotation>
@@ -45424,7 +45486,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="DomainResource">
+      <xs:extension base="CanonicalResource">
         <xs:sequence>
           <xs:element name="url" minOccurs="0" maxOccurs="1" type="uri">
             <xs:annotation>
