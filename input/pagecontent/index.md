@@ -554,9 +554,9 @@ One way to specify these parameters is to use [structure definition escape (care
 ```
 * component[0] ^slicing.discriminator.type = #pattern
 * component[0] ^slicing.discriminator.path = "code"
-* component[0] ^ordered = false
-* component[0] ^rules = #open
-* component[0] ^description = "Slice based on the component.code pattern"
+* component[0] ^slicing.ordered = false
+* component[0] ^slicing.rules = #open
+* component[0] ^slicing.description = "Slice based on the component.code pattern"
 ```
 
 The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no action by the user. SUSHI infers slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For more information, see the[SUSHI documentation](sushi.html).
