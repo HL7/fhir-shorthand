@@ -1,0 +1,15 @@
+{
+  "package-id": "fhir.us.fsh",
+  "title": "FSH Example IG",
+  "canonical": "http://hl7.org/fhir/us/fsh",
+  "introduction": "Gives an example of how FSH can be used to create a very simple IG",
+  "list": [
+    {
+      "version": "current",
+      "desc": "Continuous Integration Build (latest in version control)",
+      "path": "http://hl7.org/fhir/us/fsh/draft",
+      "status": "ci-build",
+      "current": true
+    }
+  ]
+}

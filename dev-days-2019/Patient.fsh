@@ -23,3 +23,4 @@ Description:    """
 * telecom.use from http://hl7.org/fhir/ValueSet/contact-point-use (required)
 * gender 1..1
 * gender from http://hl7.org/fhir/ValueSet/administrative-gender  (required)
+* extension contains FSHBirthSex 0..1 MS

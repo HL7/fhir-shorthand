@@ -24,11 +24,11 @@ Now that you have SUSHI installed and a folder containing FSH files, you can run
 ```
 $ sushi <path>
 ```
-where `<path>` is the path to the folder containing the FSH files. So if your FSH files were in `~/fhir-shorthand/dev-days-2019/working-samples`, the command would be
+where `<path>` is the path to the folder containing the FSH files. So if your FSH files were in `~/fhir-shorthand/dev-days-2019`, the command would be
 ```
-$ sushi ~/fhir-shorthand/dev-days-2019/working-samples
+$ sushi ~/fhir-shorthand/dev-days-2019
 ```
-This will send the resulting FHIR output to an `out` directory in your current working directory. Optionally, you can specify your output directory name using the `-o` option.
+This will send the resulting FHIR output to an `build` directory in your current working directory. Optionally, you can specify your output directory name using the `-o` option.
 ```
 $ sushi <path> -o <output-directory>
 ```
@@ -38,6 +38,7 @@ info: Exported 4 profile(s) and 1 extension(s).
 ```
 ### Step 5: Experiment
 SUSHI is still a work in progress, so not every feature described on the [wiki](https://github.com/HL7/fhir-shorthand/wiki) is currently supported. Below is a list of all of the features that are supported. Modify the given examples to see how things change, or try to create some profiles of your own.
+
 #### Defining a Profile
 This functionality allows you to constrain the elements of a FHIR resource. In the example below, we are defining a `Profile` called `FSHPatient` that is based on the FHIR Patient resource, as indicated by the `Parent` keyword. Then the `Id`, `Title`, and `Description` keywords are used to set metadata on this profile. Below that, we begin constraining the original FHIR resource using rules.
 ```

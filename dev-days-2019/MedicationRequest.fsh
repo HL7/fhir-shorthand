@@ -6,10 +6,6 @@ Description:    """
     Defines constraints and extensions on the
     MedicationRequest resource for the minimal set of data to query and retrieve
     prescription information."""
-// NOTE: MS can also be done in multiple lines:
-// * status MS
-// * intent MS
-// ...
 * status, intent, reported[x], medication[x], subject, encounter, authoredOn,
   requester, dosageInstruction, dosageInstruction.text MS
 * reported[x] only boolean or Reference(Practitioner
