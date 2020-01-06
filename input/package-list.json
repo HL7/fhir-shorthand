@@ -10,9 +10,9 @@
      "status" : "ci-build",
      "current" : true
     }, {
-      "version": "0.1.0",
+      "version": "0.5.0",
       "fhirversion": "4.0.1",
-      "date": "2020-12-19",
+      "date": "2029-12-19",
       "desc": "Initial FHIR Shorthand documentation",
       "path": "http://hl7.org/fhir/uv/shorthand/stu1",
       "status": "draft",
