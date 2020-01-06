@@ -24,9 +24,9 @@ Now that you have SUSHI installed and a folder containing FSH files, you can run
 ```
 $ sushi <path>
 ```
-where `<path>` is the path to the folder containing the FSH files. So if your FSH files were in `~/fhir-shorthand/dev-days-2019`, the command would be
+where `<path>` is the path to the folder containing the FSH files. So if change the working directory to `/dev-days-2019`, the command would be
 ```
-$ sushi ~/fhir-shorthand/dev-days-2019
+$ sushi .
 ```
 This will send the resulting FHIR output to an `build` directory in your current working directory. Optionally, you can specify your output directory name using the `-o` option.
 ```
@@ -36,7 +36,18 @@ When running SUSHI successfully, you should see output similar to the following
 ```
 info: Exported 4 profile(s) and 1 extension(s).
 ```
-### Step 5: Experiment
+### Step 5: Generate an IG
+
+Check to see if the /build directory (or the directory you specified) is present. 
+
+Now change directory of the command window to the output directory, `/dev-days-2019/build`. At the command prompt, enter:
+
+```
+$ _genonce
+```
+This will run the HL7 IG generator, which will take several minutes to complete. After the publisher is finished, open the file `dev-days-2019//build/output/index.html` to see the resulting IG.
+
+### Step 6: Experiment
 SUSHI is still a work in progress, so not every feature described on the [wiki](https://github.com/HL7/fhir-shorthand/wiki) is currently supported. Below is a list of all of the features that are supported. Modify the given examples to see how things change, or try to create some profiles of your own.
 
 #### Defining a Profile
