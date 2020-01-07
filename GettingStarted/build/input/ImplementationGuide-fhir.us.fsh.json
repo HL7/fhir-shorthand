@@ -1,0 +1,83 @@
+{
+  "resourceType": "ImplementationGuide",
+  "id": "fhir.us.fsh",
+  "url": "http://hl7.org/fhir/us/fsh/ImplementationGuide/fhir.us.fsh",
+  "version": "0.1.0",
+  "name": "FSHprojectIG",
+  "title": "FSH project IG",
+  "status": "draft",
+  "publisher": "James Tuna",
+  "contact": [
+    {
+      "name": "Bill Cod",
+      "telecom": [
+        {
+          "system": "email",
+          "value": "cod@reef.gov"
+        }
+      ]
+    }
+  ],
+  "description": "Gives an example of how FSH can be used to create an IG",
+  "packageId": "fhir.us.fsh",
+  "license": "CC0-1.0",
+  "fhirVersion": [
+    "4.0.1"
+  ],
+  "definition": {
+    "resource": [
+      {
+        "reference": {
+          "reference": "StructureDefinition/fsh-birthsex"
+        },
+        "name": "FSH Birth Sex Extension",
+        "description": "\n   A code classifying the person's sex assigned at birth as specified\r\n   by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc).\r\n   This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9).",
+        "exampleBoolean": false
+      },
+      {
+        "reference": {
+          "reference": "StructureDefinition/fsh-medicationrequest"
+        },
+        "name": "FSH Medication Request",
+        "description": "\n   Defines constraints and extensions on the\r\n   MedicationRequest resource for the minimal set of data to query and retrieve\r\n   prescription information.",
+        "exampleBoolean": false
+      },
+      {
+        "reference": {
+          "reference": "StructureDefinition/fsh-patient"
+        },
+        "name": "FSH Patient",
+        "description": "\n  Defines constraints and extensions on the patient resource for \r\n  the minimal set of data to query and retrieve patient demographic information.",
+        "exampleBoolean": false
+      },
+      {
+        "reference": {
+          "reference": "StructureDefinition/fsh-practitioner"
+        },
+        "name": "FSH Practitioner",
+        "description": "A profile on the Practitioner resource",
+        "exampleBoolean": false
+      },
+      {
+        "reference": {
+          "reference": "StructureDefinition/fsh-resprate"
+        },
+        "name": "FSH Respiratory Rate",
+        "description": "Respiratory Rate Profile",
+        "exampleBoolean": false
+      }
+    ],
+    "page": {
+      "nameUrl": "toc.html",
+      "title": "Table of Contents",
+      "generation": "html",
+      "page": [
+        {
+          "nameUrl": "index.html",
+          "title": "FSH project IG",
+          "generation": "markdown"
+        }
+      ]
+    }
+  }
+}

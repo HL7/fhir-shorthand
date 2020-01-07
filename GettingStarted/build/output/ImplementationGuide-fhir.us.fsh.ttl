@@ -1,0 +1,257 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# - resource -------------------------------------------------------------------
+
+<http://hl7.org/fhir/us/fsh/ImplementationGuide/fhir.us.fsh> a fhir:ImplementationGuide;
+  fhir:nodeRole fhir:treeRoot;
+  fhir:Resource.id [ fhir:value "fhir.us.fsh"];
+  fhir:DomainResource.text [
+     fhir:Narrative.status [ fhir:value "generated" ];
+     fhir:Narrative.div "<div xmlns=\"http://www.w3.org/1999/xhtml\"><h2>FSHprojectIG</h2><p>The official URL for this implementation guide is: </p><pre>http://hl7.org/fhir/us/fsh/ImplementationGuide/fhir.us.fsh</pre><div><p>Gives an example of how FSH can be used to create an IG</p>\n</div></div>"
+  ];
+  fhir:ImplementationGuide.url [ fhir:value "http://hl7.org/fhir/us/fsh/ImplementationGuide/fhir.us.fsh"];
+  fhir:ImplementationGuide.version [ fhir:value "0.1.0"];
+  fhir:ImplementationGuide.name [ fhir:value "FSHprojectIG"];
+  fhir:ImplementationGuide.title [ fhir:value "FSH project IG"];
+  fhir:ImplementationGuide.status [ fhir:value "draft"];
+  fhir:ImplementationGuide.date [ fhir:value "2020-01-06T17:50:12-05:00"^^xsd:dateTime];
+  fhir:ImplementationGuide.publisher [ fhir:value "James Tuna"];
+  fhir:ImplementationGuide.contact [
+     fhir:index 0;
+     fhir:ContactDetail.name [ fhir:value "Bill Cod" ];
+     fhir:ContactDetail.telecom [
+       fhir:index 0;
+       fhir:ContactPoint.system [ fhir:value "email" ];
+       fhir:ContactPoint.value [ fhir:value "cod@reef.gov" ]
+     ]
+  ];
+  fhir:ImplementationGuide.description [ fhir:value "Gives an example of how FSH can be used to create an IG"];
+  fhir:ImplementationGuide.packageId [ fhir:value "fhir.us.fsh"];
+  fhir:ImplementationGuide.license [ fhir:value "CC0-1.0"];
+  fhir:ImplementationGuide.fhirVersion [
+     fhir:value "4.0.1";
+     fhir:index 0
+  ];
+  fhir:ImplementationGuide.definition [
+     fhir:ImplementationGuide.definition.resource [
+       fhir:index 0;
+       fhir:Element.extension [
+         fhir:index 0;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/tools/StructureDefinition/resource-information" ];
+         fhir:Extension.valueString [ fhir:value "StructureDefinition:extension" ]
+       ], [
+         fhir:index 1;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/StructureDefinition/implementationguide-page" ];
+         fhir:Extension.valueUri [ fhir:value "StructureDefinition-fsh-birthsex.html" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.reference [
+         fhir:link <http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-birthsex>;
+         fhir:Reference.reference [ fhir:value "StructureDefinition/fsh-birthsex" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.name [ fhir:value "FSH Birth Sex Extension" ];
+       fhir:ImplementationGuide.definition.resource.description [ fhir:value "\n   A code classifying the person's sex assigned at birth as specified\r\n   by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc).\r\n   This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)." ];
+       fhir:ImplementationGuide.definition.resource.exampleBoolean [ fhir:value "false"^^xsd:boolean ]
+     ], [
+       fhir:index 1;
+       fhir:Element.extension [
+         fhir:index 0;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/tools/StructureDefinition/resource-information" ];
+         fhir:Extension.valueString [ fhir:value "StructureDefinition:resource" ]
+       ], [
+         fhir:index 1;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/StructureDefinition/implementationguide-page" ];
+         fhir:Extension.valueUri [ fhir:value "StructureDefinition-fsh-medicationrequest.html" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.reference [
+         fhir:link <http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-medicationrequest>;
+         fhir:Reference.reference [ fhir:value "StructureDefinition/fsh-medicationrequest" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.name [ fhir:value "FSH Medication Request" ];
+       fhir:ImplementationGuide.definition.resource.description [ fhir:value "\n   Defines constraints and extensions on the\r\n   MedicationRequest resource for the minimal set of data to query and retrieve\r\n   prescription information." ];
+       fhir:ImplementationGuide.definition.resource.exampleBoolean [ fhir:value "false"^^xsd:boolean ]
+     ], [
+       fhir:index 2;
+       fhir:Element.extension [
+         fhir:index 0;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/tools/StructureDefinition/resource-information" ];
+         fhir:Extension.valueString [ fhir:value "StructureDefinition:resource" ]
+       ], [
+         fhir:index 1;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/StructureDefinition/implementationguide-page" ];
+         fhir:Extension.valueUri [ fhir:value "StructureDefinition-fsh-patient.html" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.reference [
+         fhir:link <http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-patient>;
+         fhir:Reference.reference [ fhir:value "StructureDefinition/fsh-patient" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.name [ fhir:value "FSH Patient" ];
+       fhir:ImplementationGuide.definition.resource.description [ fhir:value "\n  Defines constraints and extensions on the patient resource for \r\n  the minimal set of data to query and retrieve patient demographic information." ];
+       fhir:ImplementationGuide.definition.resource.exampleBoolean [ fhir:value "false"^^xsd:boolean ]
+     ], [
+       fhir:index 3;
+       fhir:Element.extension [
+         fhir:index 0;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/tools/StructureDefinition/resource-information" ];
+         fhir:Extension.valueString [ fhir:value "StructureDefinition:resource" ]
+       ], [
+         fhir:index 1;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/StructureDefinition/implementationguide-page" ];
+         fhir:Extension.valueUri [ fhir:value "StructureDefinition-fsh-practitioner.html" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.reference [
+         fhir:link <http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-practitioner>;
+         fhir:Reference.reference [ fhir:value "StructureDefinition/fsh-practitioner" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.name [ fhir:value "FSH Practitioner" ];
+       fhir:ImplementationGuide.definition.resource.description [ fhir:value "A profile on the Practitioner resource" ];
+       fhir:ImplementationGuide.definition.resource.exampleBoolean [ fhir:value "false"^^xsd:boolean ]
+     ], [
+       fhir:index 4;
+       fhir:Element.extension [
+         fhir:index 0;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/tools/StructureDefinition/resource-information" ];
+         fhir:Extension.valueString [ fhir:value "StructureDefinition:resource" ]
+       ], [
+         fhir:index 1;
+         fhir:Extension.url [ fhir:value "http://hl7.org/fhir/StructureDefinition/implementationguide-page" ];
+         fhir:Extension.valueUri [ fhir:value "StructureDefinition-fsh-resprate.html" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.reference [
+         fhir:link <http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-resprate>;
+         fhir:Reference.reference [ fhir:value "StructureDefinition/fsh-resprate" ]
+       ];
+       fhir:ImplementationGuide.definition.resource.name [ fhir:value "FSH Respiratory Rate" ];
+       fhir:ImplementationGuide.definition.resource.description [ fhir:value "Respiratory Rate Profile" ];
+       fhir:ImplementationGuide.definition.resource.exampleBoolean [ fhir:value "false"^^xsd:boolean ]
+     ];
+     fhir:ImplementationGuide.definition.page [
+       fhir:ImplementationGuide.definition.page.nameUrl [ fhir:value "toc.html" ];
+       fhir:ImplementationGuide.definition.page.title [ fhir:value "Table of Contents" ];
+       fhir:ImplementationGuide.definition.page.generation [ fhir:value "html" ];
+       fhir:ImplementationGuide.definition.page.page [
+         fhir:index 0;
+         fhir:ImplementationGuide.definition.page.nameUrl [ fhir:value "index.html" ];
+         fhir:ImplementationGuide.definition.page.title [ fhir:value "FSH project IG" ];
+         fhir:ImplementationGuide.definition.page.generation [ fhir:value "markdown" ]
+       ]
+     ];
+     fhir:ImplementationGuide.definition.parameter [
+       fhir:index 0;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/capabilities" ]
+     ], [
+       fhir:index 1;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/examples" ]
+     ], [
+       fhir:index 2;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/extensions" ]
+     ], [
+       fhir:index 3;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/models" ]
+     ], [
+       fhir:index 4;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/operations" ]
+     ], [
+       fhir:index 5;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/profiles" ]
+     ], [
+       fhir:index 6;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/resources" ]
+     ], [
+       fhir:index 7;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-resource" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/vocabulary" ]
+     ], [
+       fhir:index 8;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-pages" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/pagecontent" ]
+     ], [
+       fhir:index 9;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-pages" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/images" ]
+     ], [
+       fhir:index 10;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-qa" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "temp/qa" ]
+     ], [
+       fhir:index 11;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-temp" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "temp/pages" ]
+     ], [
+       fhir:index 12;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-output" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "output" ]
+     ], [
+       fhir:index 13;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-tx-cache" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input-cache/txcache" ]
+     ], [
+       fhir:index 14;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "path-suppressed-warnings" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "input/ignoreWarnings.txt" ]
+     ], [
+       fhir:index 15;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "template-html" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "template-page.html" ]
+     ], [
+       fhir:index 16;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "template-md" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "template-page-md.html" ]
+     ], [
+       fhir:index 17;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "apply-contact" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "true" ]
+     ], [
+       fhir:index 18;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "apply-context" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "true" ]
+     ], [
+       fhir:index 19;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "apply-copyright" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "true" ]
+     ], [
+       fhir:index 20;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "apply-jurisdiction" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "true" ]
+     ], [
+       fhir:index 21;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "apply-license" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "true" ]
+     ], [
+       fhir:index 22;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "apply-publisher" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "true" ]
+     ], [
+       fhir:index 23;
+       fhir:ImplementationGuide.definition.parameter.code [ fhir:value "apply-version" ];
+       fhir:ImplementationGuide.definition.parameter.value [ fhir:value "true" ]
+     ]
+  ] .
+
+<http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-birthsex> a fhir:us .
+
+<http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-medicationrequest> a fhir:us .
+
+<http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-patient> a fhir:us .
+
+<http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-practitioner> a fhir:us .
+
+<http://hl7.org/fhir/us/fsh/StructureDefinition/fsh-resprate> a fhir:us .
+
+# - ontology header ------------------------------------------------------------
+
+<http://hl7.org/fhir/us/fsh/ImplementationGuide/fhir.us.fsh.ttl> a owl:Ontology;
+  owl:imports fhir:fhir.ttl;
+  owl:versionIRI <http://build.fhir.org/us/fsh/ImplementationGuide/fhir.us.fsh.ttl> .
+
+# -------------------------------------------------------------------------------------
+

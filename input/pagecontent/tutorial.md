@@ -30,7 +30,7 @@ To start with some working examples of FSH files, visit the this repository's [h
 ```
 $ git clone https://github.com/HL7/fhir-shorthand.git
 ```
-If you do not use Git, click the "Clone or Download" button, then click "Download Zip". When the zip file is downloaded, unzip it to the folder of your choosing. The folder `dev-days-2019/working-samples` contains a set of FSH files that use only syntax that is currently supported by SUSHI. Note that the `samples` folder contains syntax that is **not** yet supported. Do not try to run SUSHI using that folder.
+If you do not use Git, click the "Clone or Download" button, then click "Download Zip". When the zip file is downloaded, unzip it to the folder of your choosing. The folder `GettingStarted` contains a set of FSH files that use only syntax that is currently supported by SUSHI. Note that the `samples` folder contains syntax that is **not** yet supported. Do not try to run SUSHI using that folder.
 
 ### Step 4: Run SUSHI
 
@@ -38,9 +38,9 @@ Now that you have SUSHI installed and a folder containing FSH files, you can run
 ```
 $ sushi <path>
 ```
-where `<path>` is the path to the folder containing the FSH files. So if your FSH files were in `~/fhir-shorthand/dev-days-2019/working-samples`, the command would be
+where `<path>` is the path to the folder containing the FSH files. So if your FSH files were in `~/fhir-shorthand/GettingStarted`, the command would be
 ```
-$ sushi ~/fhir-shorthand/dev-days-2019/working-samples
+$ sushi ~/fhir-shorthand/GettingStarted
 ```
 This will send the resulting FHIR output to an `out` directory in your current working directory. Optionally, you can specify your output directory name using the `-o` option.
 ```

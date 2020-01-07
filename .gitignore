@@ -4,3 +4,4 @@ output/**
 temp/**
 template/**
 .vscode/**
+GettingStarted/build/**

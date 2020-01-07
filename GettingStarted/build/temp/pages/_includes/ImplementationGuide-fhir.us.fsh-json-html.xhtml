@@ -1,0 +1,238 @@
+{% raw %}<pre class="json">
+{
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide">resourceType</a>" : "ImplementationGuide",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.id">id</a>" : "fhir.us.fsh",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.text">text</a>" : {
+    "<a href="http://hl7.org/fhir/R4/datatypes.html#Narrative#Narrative.status">status</a>" : "generated",
+    "<a href="http://hl7.org/fhir/R4/datatypes.html#Narrative#Narrative.div">div</a>" : "&lt;div xmlns=\&quot;http://www.w3.org/1999/xhtml\&quot;&gt;&lt;h2&gt;FSHprojectIG&lt;/h2&gt;&lt;p&gt;The official URL for this implementation guide is: &lt;/p&gt;&lt;pre&gt;http://hl7.org/fhir/us/fsh/ImplementationGuide/fhir.us.fsh&lt;/pre&gt;&lt;div&gt;&lt;p&gt;Gives an example of how FSH can be used to create an IG&lt;/p&gt;\n&lt;/div&gt;&lt;/div&gt;"<a name="end-xhtml"></a>
+  },
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.url">url</a>" : "http://hl7.org/fhir/us/fsh/ImplementationGuide/fhir.us.fsh",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.version">version</a>" : "0.1.0",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.name">name</a>" : "FSHprojectIG",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.title">title</a>" : "FSH project IG",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.status">status</a>" : "draft",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.date">date</a>" : "2020-01-06T17:50:12-05:00",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.publisher">publisher</a>" : "James Tuna",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.contact">contact</a>" : [
+    {
+      "<a href="http://hl7.org/fhir/R4/metadatatypes.html#ContactDetail#ContactDetail.name">name</a>" : "Bill Cod",
+      "<a href="http://hl7.org/fhir/R4/metadatatypes.html#ContactDetail#ContactDetail.telecom">telecom</a>" : [
+        {
+          "<a href="http://hl7.org/fhir/R4/datatypes.html#ContactPoint#ContactPoint.system">system</a>" : "email",
+          "<a href="http://hl7.org/fhir/R4/datatypes.html#ContactPoint#ContactPoint.value">value</a>" : "cod@reef.gov"
+        }
+      ]
+    }
+  ],
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.description">description</a>" : "Gives an example of how FSH can be used to create an IG",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.packageId">packageId</a>" : "fhir.us.fsh",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.license">license</a>" : "CC0-1.0",
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.fhirVersion">fhirVersion</a>" : [
+    "4.0.1"
+  ],
+  "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition">definition</a>" : {
+    "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource">resource</a>" : [
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.extension">extension</a>" : [
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/tools/StructureDefinition/resource-information",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueString</a>" : "StructureDefinition:extension"
+          },
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/StructureDefinition/implementationguide-page",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueUri</a>" : "StructureDefinition-fsh-birthsex.html"
+          }
+        ],
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.reference">reference</a>" : {
+          "<a href="http://hl7.org/fhir/R4/references.html#Reference#Reference.reference">reference</a>" : "StructureDefinition/fsh-birthsex"
+        },
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.name">name</a>" : "FSH Birth Sex Extension",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.description">description</a>" : "\n   A code classifying the person's sex assigned at birth as specified\r\n   by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc).\r\n   This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9).",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.example[x]">exampleBoolean</a>" : false
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.extension">extension</a>" : [
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/tools/StructureDefinition/resource-information",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueString</a>" : "StructureDefinition:resource"
+          },
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/StructureDefinition/implementationguide-page",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueUri</a>" : "StructureDefinition-fsh-medicationrequest.html"
+          }
+        ],
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.reference">reference</a>" : {
+          "<a href="http://hl7.org/fhir/R4/references.html#Reference#Reference.reference">reference</a>" : "StructureDefinition/fsh-medicationrequest"
+        },
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.name">name</a>" : "FSH Medication Request",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.description">description</a>" : "\n   Defines constraints and extensions on the\r\n   MedicationRequest resource for the minimal set of data to query and retrieve\r\n   prescription information.",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.example[x]">exampleBoolean</a>" : false
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.extension">extension</a>" : [
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/tools/StructureDefinition/resource-information",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueString</a>" : "StructureDefinition:resource"
+          },
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/StructureDefinition/implementationguide-page",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueUri</a>" : "StructureDefinition-fsh-patient.html"
+          }
+        ],
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.reference">reference</a>" : {
+          "<a href="http://hl7.org/fhir/R4/references.html#Reference#Reference.reference">reference</a>" : "StructureDefinition/fsh-patient"
+        },
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.name">name</a>" : "FSH Patient",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.description">description</a>" : "\n  Defines constraints and extensions on the patient resource for \r\n  the minimal set of data to query and retrieve patient demographic information.",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.example[x]">exampleBoolean</a>" : false
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.extension">extension</a>" : [
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/tools/StructureDefinition/resource-information",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueString</a>" : "StructureDefinition:resource"
+          },
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/StructureDefinition/implementationguide-page",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueUri</a>" : "StructureDefinition-fsh-practitioner.html"
+          }
+        ],
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.reference">reference</a>" : {
+          "<a href="http://hl7.org/fhir/R4/references.html#Reference#Reference.reference">reference</a>" : "StructureDefinition/fsh-practitioner"
+        },
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.name">name</a>" : "FSH Practitioner",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.description">description</a>" : "A profile on the Practitioner resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.example[x]">exampleBoolean</a>" : false
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.extension">extension</a>" : [
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/tools/StructureDefinition/resource-information",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueString</a>" : "StructureDefinition:resource"
+          },
+          {
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.url">url</a>" : "http://hl7.org/fhir/StructureDefinition/implementationguide-page",
+            "<a href="http://hl7.org/fhir/R4/extensibility.html#Extension#Extension.value[x]">valueUri</a>" : "StructureDefinition-fsh-resprate.html"
+          }
+        ],
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.reference">reference</a>" : {
+          "<a href="http://hl7.org/fhir/R4/references.html#Reference#Reference.reference">reference</a>" : "StructureDefinition/fsh-resprate"
+        },
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.name">name</a>" : "FSH Respiratory Rate",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.description">description</a>" : "Respiratory Rate Profile",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.resource.example[x]">exampleBoolean</a>" : false
+      }
+    ],
+    "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page">page</a>" : {
+      "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page.name[x]">nameUrl</a>" : "toc.html",
+      "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page.title">title</a>" : "Table of Contents",
+      "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page.generation">generation</a>" : "html",
+      "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page.page">page</a>" : [
+        {
+          "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page.name[x]">nameUrl</a>" : "index.html",
+          "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page.title">title</a>" : "FSH project IG",
+          "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.page.generation">generation</a>" : "markdown"
+        }
+      ]
+    },
+    "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter">parameter</a>" : [
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/capabilities"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/examples"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/extensions"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/models"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/operations"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/profiles"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/resources"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-resource",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/vocabulary"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-pages",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/pagecontent"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-pages",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/images"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-qa",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "temp/qa"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-temp",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "temp/pages"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-output",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "output"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-tx-cache",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input-cache/txcache"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "path-suppressed-warnings",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "input/ignoreWarnings.txt"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "template-html",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "template-page.html"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "template-md",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "template-page-md.html"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "apply-contact",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "true"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "apply-context",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "true"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "apply-copyright",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "true"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "apply-jurisdiction",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "true"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "apply-license",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "true"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "apply-publisher",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "true"
+      },
+      {
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.code">code</a>" : "apply-version",
+        "<a href="http://hl7.org/fhir/R4/implementationguide.html#ImplementationGuide.definition.parameter.value">value</a>" : "true"
+      }
+    ]
+  }
+}</pre>
+{% endraw %}
