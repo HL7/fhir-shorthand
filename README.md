@@ -3,7 +3,7 @@
 FHIR Shorthand (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IG). It is simple and compact, with tools to produce [Fast Healthcare Interoperability Resources (FHIR)](https://www.hl7.org/fhir/overview.html) profiles, extensions and implementation guides (IG). Because it is a _language_, written in text statements, FHIR Shorthand encourages distributed, team-based development using conventional source code control tools such as Github. FHIR Shorthand provides tooling that enables you to define a model once, and publish that model to multiple versions of FHIR.
 
 SUSHI (aka "SUSHI Unshortens Short Hand Inputs") is the proposed name for the command-line interpreter/compiler for FHIR Shorthand (FSH).
-
+ 
 ## Contents of the Repository
 
 This repository contains the source files to generate the FHIR Shorthand Implementation Guide. At this point in time, the IG consists of documentation only. The markdown source files for the documentation are found here: https://github.com/HL7/fhir-shorthand/tree/master/input/pagecontent. The built documentation is currently located at: http://build.fhir.org/ig/HL7/fhir-shorthand/. 
