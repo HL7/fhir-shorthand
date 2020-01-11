@@ -1,8 +1,10 @@
 
 # Getting Started with FHIR Shorthand
 [FHIR Shorthand](https://github.com/HL7/fhir-shorthand) (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IGs). It is simple and compact, with tools to produce Fast Healthcare Interoperability Resources (FHIR) profiles, extensions and IGs. FSH is compiled from text files to FHIR artifacts using [SUSHI](https://github.com/standardhealth/sushi). To get started using FSH, you need to install and run SUSHI using the steps below.
+
 ### Step 1: Install Node.js
 SUSHI requires Node.js. To install Node.js, go to [https://nodejs.org/](https://nodejs.org/) and you should see links to download an installer for your operating system. Download the installer for the LTS version. If you do not see a download appropriate for your operating system, click the "other downloads" link and look there. Once the installer is downloaded, run the installer. It is fine to select default options during installation.
+
 ### Step 2: Install SUSHI
 To install SUSHI, open up a command prompt. Ensure that Node.js is correctly installed by running the following two commands
 ```
@@ -13,10 +15,9 @@ For each command, you should see a version number. If this works correctly, you 
 ```
 $ npm install -g fsh-sushi
 ``` 
+
 ### Step 3: Download Sample FSH Tank
 To start with some working examples of FSH files and a skeleton FSH tank, [download the tutorial.zip file](tutorial.zip) and unzip it into a directory of your choice.
-
-
 
 
 ### Step 4: Run SUSHI
@@ -24,7 +25,7 @@ Now that you have SUSHI installed and a FSH tank, you can run SUSHI on those FSH
 ```
 $ sushi <path>
 ```
-where `<path>` is the path to the folder containing the FSH files. So if change the working directory to `/GettingStarted`, the command would be
+where `<path>` is the path to the folder containing the FSH files. So if change the working directory to `~/tutorial`, the command would be
 ```
 $ sushi .
 ```
@@ -36,11 +37,11 @@ When running SUSHI successfully, you should see output similar to the following
 ```
 info: Exported 4 profile(s) and 1 extension(s).
 ```
-### Step 5: Generate an IG
+### Step 5: Generate the Sample IG
 
 Check to see if the /build directory (or the directory you specified) is present.
 
-Now change directory of the command window to the output directory, `/GettingStarted/build`. At the command prompt, enter:
+Now change directory of the command window to the output directory, `~/tutorial/build`. At the command prompt, enter:
 
 ```
 $ ./updatePublisher.sh

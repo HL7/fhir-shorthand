@@ -8,11 +8,11 @@ FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the conten
 
 1. The FHIR community needs scalable, fast, and user-friendly tools for IG creation and maintenance. Profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent.
 1. Editing StructureDefinitions (SDs) by hand is complex and unwieldy.
-1. Available tools such as Forge, Trifolia-on-FHIR, and Excel spreadsheets improve this situation, but still have drawbacks:
-    1. Although the tools provide a friendlier interface, the user must still understand many SD details.
-    1. The tools are not particularly agile when it comes to [refactoring](https://resources.collab.net/agile-101/code-refactoring).
-    1. Source code control (SCC) features such as version-to-version differences and merging changes are not well supported.
-1. It can be difficult make sense of the Profile pages in IGs ([see this example from the September 2019 ballot](http://hl7.org/fhir/us/breast-radiology/2019Sep/StructureDefinition-breastrad-BreastRadiologyDocument.html)). FSH compiles to SD, but FSH itself is clearer and more compact and could represent the snapshot and differential.
+1. Available tools such as [Simplifier/Forge](https://fire.ly/products/simplifier-net/), [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com), and [Excel spreadsheet authoring](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) improve this situation, but still have drawbacks:
+   * Although the tools provide a friendlier interface, the user must still understand many SD details.
+   * The tools are not particularly agile when it comes to [refactoring](https://resources.collab.net/agile-101/code-refactoring).
+   * Source code control (SCC) features are not well supported.
+1. Especially for non-FHIR experts, it can be difficult to make sense of the contents of an IG. Some users might find that the FSH representation is more understandable.
 1. Experience has shown that complex software projects are best approached with textual languages. As a DSL designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions.
 1. FSH is ideal for SCC, with meaningful version-to-version differentials, support for merging and conflict resolution, and refactoring through global search/replace operations. These features allow FSH to scale in ways that other approaches cannot.
 
@@ -22,19 +22,19 @@ FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the conten
 * Readable and easy to understand
 * Makes the author’s intent clear
 * Reduces implementation errors
-* Enforces consistency by compiling FSH into FHIR artifacts using consistent patterns
+* Increases consistency by compiling FSH into StructureDefinitions using consistent patterns
 * Provides meaningful differentials in SCC
 * Enables merging at the statement/line-level in SCC
 * Supports distributed development under SCC
-* Any text editor can be used to modify an FSH file, but editing environments such as VS Code and Notepad++ can provide text colorization, look-ahead syntax, go-to-definition, etc.
+* Any text editor can be used to modify an FSH file
 
 ### About this IG
 
 This implementation guide includes the following sections:
 
-* FHIR Shorthand Language Reference (this document) -- Describes the syntax and usage of the FHIR Shorthand language.
+* FHIR Shorthand Language Reference (this page) -- Describes the syntax and usage of the FHIR Shorthand language.
 * [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand.
-* [SUSHI Compiler](sushi.html) -- How to produce an IG from FSH files using SUSHI compiler and IG Publisher.
+* [SUSHI User Guide](sushi.html) -- How to produce an IG from FSH files using SUSHI compiler and the IG Publisher.
 
 #### Document Conventions
 
@@ -54,31 +54,34 @@ The FSH specification, like other IGs, follows the [semantic versioning](https:/
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
 * PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
 
-For a full change log, see the [FHIR Shorthand Release Notes](_#missing link_).
+There are some language elements documented here that are not yet implemented in SUSHI. See the [SUSHI Release Notes](https://github.com/FHIR/sushi/releases) for futher details.
 
 ### Language Elements
 
 This section describes various parts of the FSH language.
 
-#### File Types and FSH Tanks
+#### FSH Tanks and FSH Files
 
-Information in FSH is stored in plain text files with _.fsh_ extension. How information is divided between files is up to the user. One approach is to put profiles in one file, value sets another, extensions in another, etc. Another approach is to put all items related to a single topic in a single file, grouping related profiles, extensions, invariants, and examples. Both approaches, or something entirely different, will work.
+A **FSH Tank** is a folder that contains FSH files. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts included in the IG (profiles, extensions, value sets, examples, etc.) are defined in the FSH Tank. Anything else is "external" and must be declared in dependencies.
 
-A **FSH Tank** is a folder that contains FSH files. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The contents of the IG (profiles, extensions, value sets, examples, narrative content, etc.) are determined by the contents of the directory/folder that contains the Configuration file. Anything else is "external" and must be declared in dependencies.
+Information in FSH is stored in plain text files with _.fsh_ extension. How information is divided between files is up to the user. Here are a couple of suggestions:
+
+* For a small IG, consider putting all profiles in one file, value sets another, extensions in another, and examples in another.
+* Split the contents into logically-related groups (e.g., a profile together with its extensions and examples).
 
 #### Formal Grammar
 
-[FSH has a formal grammar](_#missing link_) defined in an [ANTLR4 grammar](https://www.antlr.org/).
+[FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
 
 #### Reserved Words
 
-FSH has a number of reserved words (e.g., `boolean`, `or`, `from`, `contains`, `obeys`). For a complete list of reserved words, refer to [FSH's formal ANTLR4 grammar](_#missing link_).
+FSH has a number of Keywords and reserved words (e.g., `Alias`, `Profile`, `Extension`, `and`, `or`, `from`, `contains`, `obeys`). For a complete list of reserved words, refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr).
 
 #### Primitives
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 
-For editing purposes, FSH also supports multi-line strings, using triple quotation marks `"""` instead of single quotation marks. The line breaks are for visual convenience only; the definition of the string is not affected.
+For convenience, FSH also supports multi-line strings, demarcated with triple quotation marks `"""`. The line breaks are for visual convenience only, and multi-line strings are translated to conventional FHIR strings.
 
 #### Whitespace
 
@@ -91,10 +94,9 @@ Parent:   CancerCondition
 ```
 
 is equivalent to:
-
 ```
-              Profile:  
-SecondaryCancerCondition   Parent: CancerCondition
+             Profile:  
+SecondaryCancerCondition            Parent: CancerCondition
 
          * focus only    
 PrimaryCancerCondition
@@ -115,7 +117,7 @@ These comments can take up multiple lines.
 
 #### Coded Data Types
 
-FSH provides special grammar for expressing coded types. Coded types include code, Coding, CodeableConcept, and Quantity.
+The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. These types that can be bound to a value set or assigned a fixed coded value.  FSH provides special grammar for expressing codes and setting fixed coded values.
 
 ##### code
 
@@ -123,15 +125,21 @@ Codes are denoted with `#` sign. The shorthand is:
 
 `#{code}`
 
->**Note:** In this document, curly brackets are used to indicate a term that should be substituted.
+>**Note:** In this document, curly braces are used to indicate a term that should be substituted.
 
-**Example.**
+**Examples:**
+
+* The code 'confirmed' (a value in [Condition Clinical Status Codes](http://hl7.org/fhir/R4/valueset-condition-clinical.html)):
 
   `#confirmed`
 
+* Assign a value to the verificationStatus of a Condition (a code type):
+
+  `* verificationStatus = #confirmed`
+
 ##### Coding
 
-The shorthand for Coding is:
+The shorthand for a Coding is:
 
 `{system}#{code} "{display text}"`
 
@@ -139,19 +147,31 @@ A less-common form is:
 
 `{system}|{version}#{code} "{display text}"`
 
-While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}`, which represents the controlled terminology that the code is taken from, can be a URL, OID, or alias. Aliases must be declared in the file header using the [`Alias`](#defining-aliases) keyword. The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR.
+While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR.
 
-**Examples**
+**Examples:**
 
-  `SCT#363346000 "Malignant neoplastic disease (disorder)"  // SCT is an alias`
+* The code 363346000 from SNOMED-CT:
 
   `http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"`
 
-  `ICD10CM#C004  "Malignant neoplasm of lower lip, inner aspect" // ICD10CM is an alias`
+* The same code, assuming SCT has been set up as an alias for http://snomed.info/sct:
+
+  `SCT#363346000 "Malignant neoplastic disease (disorder)"`
+
+* A code from ICD10-CM (using an alias for the system):
+
+  `ICD10CM#C004  "Malignant neoplasm of lower lip, inner aspect"`
+
+* A code defined in FHIR, with an explicit version:
 
   `http://hl7.org/fhir/CodeSystem/example-supplement|201801103#chol-mmol`
 
-To set the less-common properties of a Coding, use a [fixed value rule](#fixed-value-rules), for example::
+* Setting the 'type' element in Signature (a Coding type):
+
+  `* type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"`
+
+To set the less-common properties of a Coding, use a [fixed value rule](#fixed-value-rules), for example:
 
   `* myCoding.userSelected = true`
 
@@ -159,42 +179,75 @@ For code systems that encode the version separately from the URL, the version ca
 
 `* myCoding.version = "1.0.2"`
 
-
 ##### CodeableConcept
 
-The shorthand for a CodeableConcept is similar to that for Coding. For example, to set Condition.code:
+A CodeableConcept consists of an array of Codings, plus a text. Codings are expressed using the shorthand explained [directly above](#coding). The shorthand for setting the first Coding in a CodeableConcept is:
 
-`* code = SCT#363346000 "Malignant neoplastic disease (disorder)"`
+`* {CodeableConcept type} = {system}#{code} "{display text}"`
 
-which is interpreted as the first Coding in the CodeableConcept.Coding array,equivalent to:
+To set additional values, array indices are used. Indices are denoted by bracketed integers. The shorthand is:
 
-`* code.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"`
-
-To fix the top-level text of a CodeableConcept, use a fixed-value rule:
-
-`* code.text = "Diagnosis of malignant neoplasm left breast."`
-
-To specify alternative Codings in Condition.code, specify the array index:
-
-`* code.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"`
+`* {CodeableConcept type}.coding[{i}] = {system}#{code} "{display text}"`
 
 > **Note:** FSH arrays are zero-based.
 
+> **Note:** If no array index is given, the index [0] is assumed.
+
+To set the text of a CodeableConcept, the shorthand expression is:
+
+`* {CodeableConcept type}.text = {string}
+
+**Examples:**
+
+* To set the first Coding in Condition.code (a CodeableConcept):
+
+  `* code = SCT#363346000 "Malignant neoplastic disease (disorder)"`
+
+* The same example, using explicit array index on the coding array:
+
+  `* code.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"`
+
+* The same example again, using the shorthand that allows dropping the [0] index:
+
+  `* code.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"`
+
+* Adding a second value to the array of Codings:
+
+  `* code.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"`
+
+* Set the top-level text of Condition.code:
+
+`* code.text = "Diagnosis of malignant neoplasm left breast."`
+
 ##### Quantity
 
-A FHIR Quantity can be fixed like a CodeableConcept or bound to a value set. The binding or coded value is interpreted as the units of measure of that Quantity. To make this more intuitive, FSH uses the reserved word `units`, as follows:
+In addition to having a quantitative value, a FHIR Quantity has a coded value that is interpreted as the units of measure of that Quantity. An element that is a Quantity can be bound to a value set or assigned a coded value. The shorthand is:
 
-`* {Quantity type} units from {value set}`
+`* {Quantity type} = {system}#{code} "{display text}"`
+
+Although this appears the quantity is being set to a coded value, it is legal. To make this a bit more intuitive, FSH allows you to use the word `units`, as follows:
 
 `* {Quantity type} units = {system}#{code} "{display text}"`
 
->**Note:** The word `units` is suggested for clarity, but is optional.
+and for [binding](#value-set-binding-rules):
 
-**Examples**
+`* {Quantity type} units from {value set} ({strength})`
 
-`* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
+>**Note:** Use of the word `units` is suggested for clarity, but is optional.
 
-`* valueQuantity units = http://unitsofmeasure.org#mm "millimeters"`
+**Examples:**
+
+* Set the units of the valueQuantity of an Observation to millimeters (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
+
+  `* valueQuantity = UCUM#mm "millimeters"`
+
+* Alternative syntax for the same operation:
+
+  `* valueQuantity units = UCUM#mm "millimeters"`
+
+* Bind a value set to the units of a Quantity (using the optional word 'units'):
+
+  `* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
 
 #### Paths
 
