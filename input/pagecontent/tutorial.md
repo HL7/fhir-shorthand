@@ -1,57 +1,55 @@
-### Getting Started with FHIR Shorthand
-[FHIR Shorthand](shorthand.html) (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IGs). It is simple and compact, with tools to produce Fast Healthcare Interoperability Resources (FHIR) profiles, extensions and IGs. FSH is compiled from text files to FHIR artifacts using [SUSHI](sushi.html). To get started using FSH, you need to install and run SUSHI using the steps below.
 
+# Getting Started with FHIR Shorthand
+[FHIR Shorthand](https://github.com/HL7/fhir-shorthand) (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IGs). It is simple and compact, with tools to produce Fast Healthcare Interoperability Resources (FHIR) profiles, extensions and IGs. FSH is compiled from text files to FHIR artifacts using [SUSHI](https://github.com/standardhealth/sushi). To get started using FSH, you need to install and run SUSHI using the steps below.
 ### Step 1: Install Node.js
-
-SUSHI requires Node.js. To install Node.js, go to [https://nodejs.org/](https://nodejs.org/) and you should see links to download an installer for your operating system. Download the installer for the LTS version. If you do not see a download appropriate for your operating system, click the "other downloads" link and look there. 
-    
-Once the installer is downloaded, run the installer. It is fine to select default options during installation.
-
-Check the installation by opening a command window and typing the following commands. Each command should return a version number (`$` is the command prompt, which might be different on your operating system): 
+SUSHI requires Node.js. To install Node.js, go to [https://nodejs.org/](https://nodejs.org/) and you should see links to download an installer for your operating system. Download the installer for the LTS version. If you do not see a download appropriate for your operating system, click the "other downloads" link and look there. Once the installer is downloaded, run the installer. It is fine to select default options during installation.
+### Step 2: Install SUSHI
+To install SUSHI, open up a command prompt. Ensure that Node.js is correctly installed by running the following two commands
 ```
 $ node --version
 $ npm --version
 ```
-### Step 2: Install SUSHI
-
-Issue this command at the prompt:
+For each command, you should see a version number. If this works correctly, you can install SUSHI by doing
 ```
 $ npm install -g fsh-sushi
-```
-Check the installation by typing the following command:
-```
-$ sushi -h
-```
-If the command outputs instructions on using SUSHI command line interface (CLI), you're ready to run SUSHI.
+``` 
+### Step 3: Download Sample FSH Tank
+To start with some working examples of FSH files and a skeleton FSH tank, [download the tutorial.zip file](tutorial.zip) and unzip it into a directory of your choice.
 
-### Step 3: Download Sample FSH Files
 
-To start with some working examples of FSH files, visit the this repository's [home page](https://github.com/HL7/fhir-shorthand). If you are comfortable using Git, you can clone this repository by doing
-```
-$ git clone https://github.com/HL7/fhir-shorthand.git
-```
-If you do not use Git, click the "Clone or Download" button, then click "Download Zip". When the zip file is downloaded, unzip it to the folder of your choosing. The folder `GettingStarted` contains a set of FSH files that use only syntax that is currently supported by SUSHI. Note that the `samples` folder contains syntax that is **not** yet supported. Do not try to run SUSHI using that folder.
+
 
 ### Step 4: Run SUSHI
-
-Now that you have SUSHI installed and a folder containing FSH files, you can run SUSHI on those FSH files by executing
+Now that you have SUSHI installed and a FSH tank, you can run SUSHI on those FSH files by executing
 ```
 $ sushi <path>
 ```
-where `<path>` is the path to the folder containing the FSH files. So if your FSH files were in `~/fhir-shorthand/GettingStarted`, the command would be
+where `<path>` is the path to the folder containing the FSH files. So if change the working directory to `/GettingStarted`, the command would be
 ```
-$ sushi ~/fhir-shorthand/GettingStarted
+$ sushi .
 ```
-This will send the resulting FHIR output to an `out` directory in your current working directory. Optionally, you can specify your output directory name using the `-o` option.
+This will send the resulting FHIR output to an `build` directory in your current working directory. Optionally, you can specify your output directory name using the `-o` option.
 ```
-$ sushi {path} -o {output-directory}
+$ sushi <path> -o <output-directory>
 ```
 When running SUSHI successfully, you should see output similar to the following
 ```
 info: Exported 4 profile(s) and 1 extension(s).
 ```
+### Step 5: Generate an IG
 
-### Step 5: Experiment
+Check to see if the /build directory (or the directory you specified) is present.
+
+Now change directory of the command window to the output directory, `/GettingStarted/build`. At the command prompt, enter:
+
+```
+$ ./updatePublisher.sh
+
+$ ./_genonce.sh
+```
+This will run the HL7 IG generator, which will take several minutes to complete. After the publisher is finished, open the file `GettingStarted//build/output/index.html` to see the resulting IG.
+
+### Step 6: Experiment
 SUSHI is still a work in progress, so not every feature described on the [wiki](https://github.com/HL7/fhir-shorthand/wiki) is currently supported. Below is a list of all of the features that are supported. Modify the given examples to see how things change, or try to create some profiles of your own.
 
 #### Defining a Profile
@@ -74,11 +72,8 @@ Description:    """
 * name 1..*
 // More rules
 ```
-
 #### Defining an Extension
-
 To add information to a FHIR resource, we create extensions and add them to profiles. Creating an extension is a supported feature, but adding that extension to a profile is not yet supported. In this example, we create an `Extension` called `FSHBirthSex`, and then set metadata using the same keywords as in a profile. Note that an `Extension` does not need a `Parent`, because it is not based on any specific FHIR resource.
-
 ```
 Extension:      FSHBirthSex 
 Id:             fsh-birthsex
@@ -105,4 +100,12 @@ Description:     """
 * valueCode from BSEX (required)
 ```
 #### Rules
-In a rule, an element is accessed via its path, and then some constraint is applied to that element. The supported rules are listed [here](index.html/#rules).
+In a rule, an element is accessed via its path, and then some constraint is applied to that element. The supported rules are listed below.
+
+| Rule Type | Rule Syntax | Example |
+| --- | --- |---|
+| Fixed Value |`* path = value`  | `* experimental = true` <br/> `* status = #active` <br/> `* valueString = "foo"` <br/> `* valueQuantity.value = 1.23` |
+| Binding to a Value Set |`* path from valueSet (strength)`| `* telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)` |
+| Narrowing a choice | `* path only type1 or type2 or type3` | `* value[x] only code` <br> `* value[x] only code or string` |
+| Narrowing cardinality | `* path min..max` | `* identifier 1..*` <br> `* identifier.system 1..1`
+| Assigning Flags (MS, SU, ?!) | `* path flag1 flag2` <br> `* path1, path2, path3 flag` | `* communication MS ?!` <br> `* identifier, identifier.system, identifier.value, name, name.family MS`
