@@ -117,7 +117,7 @@ These comments can take up multiple lines.
 
 #### Coded Data Types
 
-The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. These types that can be bound to a value set or assigned a fixed coded value.  FSH provides special grammar for expressing codes and setting fixed coded values.
+The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. These data types can be bound to a value set or assigned a fixed code.  FSH provides special grammar for expressing codes and setting fixed coded values.
 
 ##### code
 
@@ -133,21 +133,25 @@ Codes are denoted with `#` sign. The shorthand is:
 
   `#confirmed`
 
-* Assign a value to the verificationStatus of a Condition (a code type):
+* Assign the code 'confirmed' to the verificationStatus of a Condition (a code type):
 
   `* verificationStatus = #confirmed`
 
 ##### Coding
 
-The shorthand for a Coding is:
+The shorthand for a Coding value is:
 
 `{system}#{code} "{display text}"`
 
-A less-common form is:
+For code systems that encode the version separately from the URL, the version can be specified as follows:
 
 `{system}|{version}#{code} "{display text}"`
 
+An alternative is to set the `version` element of Coding (see examples).
+
 While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR.
+
+To set the less-common properties of a Coding, use a [fixed value rule](#fixed-value-rules) on that element.
 
 **Examples:**
 
@@ -155,7 +159,7 @@ While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` 
 
   `http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"`
 
-* The same code, assuming SCT has been set up as an alias for http://snomed.info/sct:
+* The same code, assuming SCT has been defined as an alias for http://snomed.info/sct:
 
   `SCT#363346000 "Malignant neoplastic disease (disorder)"`
 
@@ -163,21 +167,21 @@ While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` 
 
   `ICD10CM#C004  "Malignant neoplasm of lower lip, inner aspect"`
 
-* A code defined in FHIR, with an explicit version:
+* A code with an explicit version set specified with bar syntax:
 
   `http://hl7.org/fhir/CodeSystem/example-supplement|201801103#chol-mmol`
 
-* Setting the 'type' element in Signature (a Coding type):
+* As an alternative to the bar syntax, set the version of a Coding directly:
+
+  `* myCoding.version = "201801103"`
+
+* Set the 'type' element in a Signature:
 
   `* type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"`
 
-To set the less-common properties of a Coding, use a [fixed value rule](#fixed-value-rules), for example:
+* Set one of the lesser-used attributes of a Coding:
 
   `* myCoding.userSelected = true`
-
-For code systems that encode the version separately from the URL, the version can be specified either using the bar syntax, as above, or by setting the `version` element of Coding in a fixed value rule:
-
-`* myCoding.version = "1.0.2"`
 
 ##### CodeableConcept
 
@@ -189,13 +193,11 @@ To set additional values, array indices are used. Indices are denoted by bracket
 
 `* {CodeableConcept type}.coding[{i}] = {system}#{code} "{display text}"`
 
-> **Note:** FSH arrays are zero-based.
-
-> **Note:** If no array index is given, the index [0] is assumed.
+FSH arrays are zero-based. If no array index is given, the index [0] is assumed (see [Array Property Paths](#array-property-paths) for more information).
 
 To set the text of a CodeableConcept, the shorthand expression is:
 
-`* {CodeableConcept type}.text = {string}
+`* {CodeableConcept type}.text = {string}`
 
 **Examples:**
 
@@ -203,11 +205,11 @@ To set the text of a CodeableConcept, the shorthand expression is:
 
   `* code = SCT#363346000 "Malignant neoplastic disease (disorder)"`
 
-* The same example, using explicit array index on the coding array:
+* An equivalent representation, using explicit array index on the coding array:
 
   `* code.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"`
 
-* The same example again, using the shorthand that allows dropping the [0] index:
+* Another equivalent representation, using the shorthand that allows dropping the [0] index:
 
   `* code.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"`
 
@@ -217,7 +219,7 @@ To set the text of a CodeableConcept, the shorthand expression is:
 
 * Set the top-level text of Condition.code:
 
-`* code.text = "Diagnosis of malignant neoplasm left breast."`
+  `* code.text = "Diagnosis of malignant neoplasm left breast."`
 
 ##### Quantity
 
@@ -269,23 +271,25 @@ For example, Observation has a method property, and method (a CodeableConcept) h
 
 `* method.text = "Laparoscopy"`
 
-In this example, the root Observation is inferred from the context and not a formal part of the path. In this way, it differs from the path element in StructureDefinitions.
+In this example, the root Observation is inferred from the context and not a formal part of the path. 
 
-> **Note:** It is not possible to cross reference boundaries when profiling (except for slice discriminators, which may `resolve()` references). This means that when a path gets to a Reference, that path cannot be nested any further.  For example, if Procedure has a subject, and subject is Reference(Patient) which has a gender property, then `Procedure.subject` is a valid path, but `Procedure.subject.gender` is not, because it crosses into the Patient reference.
+> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject, Reference(Patient), and Patient has a gender, then `Procedure.subject` is a valid path, but `Procedure.subject.gender` is not, because it crosses into the Patient reference.
 
 ##### Array Property Paths
 
-If a property allows more than one value (e.g., `0..*`), then it must be possible to address each individual value. This is mainly necessary when creating instances, but may be needed in other contexts as well. FSH denotes this with square brackets (`[` `]`) containing the **0-based** index of the item (e.g., first item is `[0]`, second item is `[1]`, etc.).
+If an element allows more than one value (e.g., `0..*`), then it must be possible to address each individual value. FSH denotes this with square brackets (`[` `]`) containing the **0-based** index of the item (e.g., first item is `[0]`, second item is `[1]`, etc.).
 
 If the index is omitted, the first element of the array (`[0]`) is assumed. 
 
-**Example.** Set a Patient's first name's second given name to "Marie":
+**Examples** 
 
-`* name[0].given[1] = "Marie"`
+* Set a Patient's first name's second given name to "Marie":
 
-or, since the zero index is assumed when omitted:
+  `* name[0].given[1] = "Marie"`
 
-`* name.given[1] = "Marie"`
+* Equivalent expression, since the zero index is assumed when omitted:
+
+  `* name.given[1] = "Marie"`
 
 ##### Reference Paths
 
@@ -295,80 +299,104 @@ Frequently in FHIR, an element has a Reference that has multiple targets. To add
 
 `* performer[Practitioner] only PrimaryCareProvider`
 
-##### Data Type Choice ([x]) Paths
+##### Data Type Choice [x] Paths
 
 Addressing a type from a choice of types replaces the `[x]` in the property name with the type name (while also capitalizing the first letter). This follows the approach used in FHIR JSON and XML serialization.
 
-**Example.** Fix value[x] string property to "Hello World":
+**Example:** 
 
-`* valueString = "Hello World"`
+* Fix value[x] string value to "Hello World":
+
+  `* valueString = "Hello World"`
+
+* Fix the value[x] Reference value (permitted in extensions) to a instance of Patient resource:
+
+  `* valueReference = Reference(MyPatient01)`
 
 ##### Profiled Type Choice Paths
 
 In some cases, a type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[` `]`) containing the profile's `name`, `id`, or `url`.
 
-**Example.** In an instance, set the address.state property to the code for Massachusetts (assumes the address type indicates several profiles, one being USAddress):
+**Example:**
 
-`* address[USAddress].state = UspsTwoLetterAlphabeticCodes#MA`
+* After constraining an address element to either a USAddress or a CanadianAddress, bind the address.state properties to a US state value set or Canadian provence value set:
 
-> **Note:** The example above assumes the context of an instance.  If we were trying to constrain the state only in the USAddress profile (and other profiles of Address were possible), then this would actually be slicing, and slicing syntax should be used.
+  ```
+  * address only USAddress or CanadianAddress
+  * address[USAddress].state from USStateValueSet
+  * address[CanadianAddress].state from CanadianProvenceValueSet
+  ```
 
 ##### Sliced Array Paths
 
-FHIR allows lists to be compartmentalized into sublists called "slices".  For example, the Observation.component list in a profile for Apgar score might have a RespiratoryScore component slice and a Appearance component slice, among others.  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name.  To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
+FHIR allows lists to be compartmentalized into sublists called "slices".  For example, the Observation.component list in a profile for Apgar score might have a RespiratoryScore component slice and a Appearance component slice (and others).  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name.  To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
 
-**Example.** Fix the code in an existing slice on Observation.component called `RespiratoryScore`:
+**Examples:** 
 
-`* component[RespiratoryScore].code = SCT#24388001 "Apgar score 5 (finding)"`
+* In an Observation representing Apgar score, fix the code in the RespirationScore slice of Observation.component:
 
-**Example.** If the Apgar RespiratoryScore has been resliced to represent the 1, 5 and 10 minute scores:
+  `* component[RespiratoryScore].code = SCT#24388001 "Apgar score 5 (finding)"`
 
-`* component[RespiratoryScore][FiveMinute].code = SCT#13323003 "Apgar score 7 (finding)"`
+* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores:
+
+  `* component[RespiratoryScore][OneMinute].code = SCT#24388001 "Apgar score 5 (finding)"`
+
+  `* component[RespiratoryScore][FiveMinute].code = SCT#13323003 "Apgar score 7 (finding)"`
 
 ##### Extension Paths
 
 Extensions are arrays populated by slicing. They may be addressed using the slice path syntax presented above. However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.
 
-**Example.** Explicit path syntax for extensions within US Core Patient:
+**Examples:** 
+
+* Set the value of the birthsex extension in US Core Patient (assumes USCoreBirthsex has been defined as an alias) using explicit syntax:
+
+  `* extension[USCoreBirthsex].valueCode = #F`
+
+* Equivalent, abbreviated syntax:
+
+  `*USCoreBirthsex.valueCode = #F`
+
+* Set the nested ombCategory extension, under the ethnicity extension in US Core using explicit syntax:
+
+  `* extension[USCoreEthnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"`
+
+* Equivalent, abbreviated syntax:
+
+  `* USCoreEthnicity.ombCategory.valueCoding = RACE#2135-2 "Hispanic or Latino"`
+
+* Set two values in the multiply-valued nested extension, detailed, under USCoreEthnicity extension, using explicit syntax:
 
 ```
-* extension[us-core-ethnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"
-* extension[us-core-ethnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"
-* extension[us-core-ethnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
-* extension[us-core-ethnicity].extension[text].valueString = "Hispanic or Latino"
-* extension[us-core-birthsex].valueCode = #F
+  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"`
+  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"`
 ```
 
-**Example.** (Preferred) Abbreviated grammar addressing extensions in US Core Patient:
+* Equivalent, abbreviated syntax:
+
 ```
-* us-core-ethnicity.ombCategory.valueCoding = RACE#2135-2 "Hispanic or Latino"
-* us-core-ethnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"
-* us-core-ethnicity.detailed[1].valueCoding = RACE#2148-5 "Mexican"
-* us-core-ethnicity.text.valueString = "Hispanic or Latino"
-* us-core-birthsex.valueCode = #F
+  * USCoreEthnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"`
+  * USCoreEthnicity.detailed[1].valueCoding = RACE#2148-5 "Mexican"
 ```
 
 ##### Structure Definition Escape Paths
 
 FSH uses the caret (^) syntax to provide direct access to any element in StructureDefinition. The caret syntax is the method for setting metadata attributes in SD (attributes not associated with any element). The caret syntax can be combined with non-caret (element) paths to set values in the SD associated with a particular element (see example below).
 
-**Example.** Setting metadata attributes in a profile:
+**Examples:**
+
+* Set the status and experimental attributes in a profile:
 
 ```
-Profile:       USCorePatient
-Parent:        Patient
-Description:   "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
-Id: "us-core-patient"
-* ^status = #active
-* ^experimental = false
+  * ^status = #active
+  * ^experimental = false
 ```
 
-**Example.** Addressing SD attributes in an individual element definition:
-```
-Profile:        USCorePatient
-Parent:         Patient
-* communication.language ^binding.extension[0].url = "http://hl7.org/fhir/StructureDefinition/elementdefinition-maxValueSet"
-```
+* For element communication.language, set the description attribute of the binding:
+
+  `* communication.language ^binding.description = "This binding is dictated by FDA regulations."`
+
+
 ***
 ### Rules
 
