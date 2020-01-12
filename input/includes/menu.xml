@@ -3,5 +3,14 @@
   <li><a href="index.html">FHIR Shorthand</a></li>
   <li><a href="tutorial.html">Tutorial</a></li>
   <li><a href="sushi.html">SUSHI</a></li>
+
+  <li class="dropdown">
+    <a data-toggle="dropdown" href="#" class="dropdown-toggle">Downloads<b class="caret"> </b></a>
+    <ul class="dropdown-menu">
+      <li><a href="tutorial.zip">tutorial.zip</a></li>
+    </ul>
+  </li>
+
+
   <!--li><a href="samples.html">Examples</a></li-->
 </ul>
