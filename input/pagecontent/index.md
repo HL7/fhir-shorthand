@@ -64,10 +64,11 @@ This section describes various parts of the FSH language.
 
 A **FSH Tank** is a folder that contains FSH files. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts included in the IG (profiles, extensions, value sets, examples, etc.) are defined in the FSH Tank. Anything else is "external" and must be declared in dependencies.
 
-Information in FSH is stored in plain text files with _.fsh_ extension. How information is divided between files is up to the user. Here are a couple of suggestions:
+Information in FSH is stored in plain text files with _.fsh_ extension. How information is divided between files is up to the user. Here are some possibilities:
 
-* For a small IG, consider putting all profiles in one file, value sets another, extensions in another, and examples in another.
-* Split the contents into logically-related groups (e.g., a profile together with its extensions and examples).
+* Divide up different type of items: profiles in one file, value sets in another, extensions in another, etc.
+* Group things logically, for example, a profile together with its value sets, extensions, and examples.
+* Create one file for each item.
 
 #### Formal Grammar
 
@@ -163,7 +164,7 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
 
   `SCT#363346000 "Malignant neoplastic disease (disorder)"`
 
-* A code from ICD10-CM (using an alias for the system):
+* A code from ICD10-CM (assuming a code system alias has been defined):
 
   `ICD10CM#C004  "Malignant neoplasm of lower lip, inner aspect"`
 
@@ -175,7 +176,7 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
 
   `* myCoding.version = "201801103"`
 
-* Set the 'type' element in a Signature:
+* Set the 'type' element of a Signature:
 
   `* type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"`
 
@@ -195,7 +196,7 @@ To set additional values, array indices are used. Indices are denoted by bracket
 
 FSH arrays are zero-based. If no array index is given, the index [0] is assumed (see [Array Property Paths](#array-property-paths) for more information).
 
-To set the text of a CodeableConcept, the shorthand expression is:
+To set the top-level text of a CodeableConcept, the shorthand expression is:
 
 `* {CodeableConcept type}.text = {string}`
 
@@ -263,17 +264,17 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * To set metadata elements in SD, like StructureDefinition.active
 * To address elements of ElementDefinitions associated with a SD, such as maxLength property of string elements
 
-##### Nested Property Paths
+##### Nested Element Paths
 
-To refer to simple or nested properties, the path lists the properties in order, separated by a dot (.) 
-
-For example, Observation has a method property, and method (a CodeableConcept) has a text property, then the path is `method.text`, e.g.:
-
-`* method.text = "Laparoscopy"`
-
-In this example, the root Observation is inferred from the context and not a formal part of the path. 
+To refer to nested elements, the path lists the properties in order, separated by a dot (.)
 
 > **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject, Reference(Patient), and Patient has a gender, then `Procedure.subject` is a valid path, but `Procedure.subject.gender` is not, because it crosses into the Patient reference.
+
+**Example:**
+
+* Observation has an element named method, and method has a text property (note that inside a FSH definition, the resource is inferred from the context and not a formal part of the path):
+
+  `* method.text = "Laparoscopy"`
 
 ##### Array Property Paths
 
@@ -281,7 +282,7 @@ If an element allows more than one value (e.g., `0..*`), then it must be possibl
 
 If the index is omitted, the first element of the array (`[0]`) is assumed. 
 
-**Examples** 
+**Examples:** 
 
 * Set a Patient's first name's second given name to "Marie":
 
@@ -295,9 +296,11 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
 Frequently in FHIR, an element has a Reference that has multiple targets. To address a specific target, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
 
-**Example.** Restrict a performer element (type Reference(Organization | Pracititioner) to PrimaryCareProvider in a profile, assuming PrimaryCareProvider is a profile on Practitioner:
+**Example:** 
 
-`* performer[Practitioner] only PrimaryCareProvider`
+* Restrict a performer element (type Reference(Organization | Pracititioner) to PrimaryCareProvider in a profile, assuming PrimaryCareProvider is a profile on Practitioner:
+
+  `* performer[Practitioner] only PrimaryCareProvider`
 
 ##### Data Type Choice [x] Paths
 
@@ -309,9 +312,9 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
   `* valueString = "Hello World"`
 
-* Fix the value[x] Reference value (permitted in extensions) to a instance of Patient resource:
+* Fix the value[x] Reference (permitted in extensions) to a instance of Patient resource:
 
-  `* valueReference = Reference(MyPatient01)`
+  `* valueReference = Reference(EveAnyperson)`
 
 ##### Profiled Type Choice Paths
 
@@ -319,29 +322,31 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
 
 **Example:**
 
-* After constraining an address element to either a USAddress or a CanadianAddress, bind the address.state properties to a US state value set or Canadian provence value set:
+* After constraining an address element to either a USAddress or a CanadianAddress, bind the address.state properties to a value set of US states and Canadian provences:
 
   ```
   * address only USAddress or CanadianAddress
-  * address[USAddress].state from USStateValueSet
-  * address[CanadianAddress].state from CanadianProvenceValueSet
+  * address[USAddress].state from USStateValueSet (required)
+  * address[CanadianAddress].state from CanadianProvenceValueSet (required)
   ```
 
 ##### Sliced Array Paths
 
-FHIR allows lists to be compartmentalized into sublists called "slices".  For example, the Observation.component list in a profile for Apgar score might have a RespiratoryScore component slice and a Appearance component slice (and others).  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name.  To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
+FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
 
-**Examples:** 
+To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
 
-* In an Observation representing Apgar score, fix the code in the RespirationScore slice of Observation.component:
+**Examples:**
+
+* In an Observation profile representing Apgar score, with slices for RespiratoryScore, AppearanceScore, and others, fix the RespirationScore:
 
   `* component[RespiratoryScore].code = SCT#24388001 "Apgar score 5 (finding)"`
 
-* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores:
+* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores, set the OneMinuteScore and FiveMinuteScore sub-slices:
 
-  `* component[RespiratoryScore][OneMinute].code = SCT#24388001 "Apgar score 5 (finding)"`
+  `* component[RespiratoryScore][OneMinuteScore].code = SCT#24388001 "Apgar score 5 (finding)"`
 
-  `* component[RespiratoryScore][FiveMinute].code = SCT#13323003 "Apgar score 7 (finding)"`
+  `* component[RespiratoryScore][FiveMinuteScore].code = SCT#13323003 "Apgar score 7 (finding)"`
 
 ##### Extension Paths
 
@@ -349,52 +354,56 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
 
 **Examples:** 
 
-* Set the value of the birthsex extension in US Core Patient (assumes USCoreBirthsex has been defined as an alias) using explicit syntax:
+* Set the value of the birthsex extension in US Core Patient (assume USCoreBirthsex has been defined as an alias for the birthsex extension):
+
+   Full syntax:
 
   `* extension[USCoreBirthsex].valueCode = #F`
 
-* Equivalent, abbreviated syntax:
+  Abbreviated syntax:
 
-  `*USCoreBirthsex.valueCode = #F`
+  `* USCoreBirthsex.valueCode = #F`
 
-* Set the nested ombCategory extension, under the ethnicity extension in US Core using explicit syntax:
+* Set the nested ombCategory extension, under the ethnicity extension in US Core:
+
+  Full syntax:
 
   `* extension[USCoreEthnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"`
 
-* Equivalent, abbreviated syntax:
+  Abbreviated syntax:
 
   `* USCoreEthnicity.ombCategory.valueCoding = RACE#2135-2 "Hispanic or Latino"`
 
-* Set two values in the multiply-valued nested extension, detailed, under USCoreEthnicity extension, using explicit syntax:
+* Set two values in the multiply-valued nested extension, detailed, under USCoreEthnicity extension:
+
+  Full syntax:
+```
+  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"
+  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abbreviated syntax:
 
 ```
-  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"`
-  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"`
-```
-
-* Equivalent, abbreviated syntax:
-
-```
-  * USCoreEthnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"`
+  * USCoreEthnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"
   * USCoreEthnicity.detailed[1].valueCoding = RACE#2148-5 "Mexican"
 ```
 
 ##### Structure Definition Escape Paths
 
-FSH uses the caret (^) syntax to provide direct access to any element in StructureDefinition. The caret syntax is the method for setting metadata attributes in SD (attributes not associated with any element). The caret syntax can be combined with non-caret (element) paths to set values in the SD associated with a particular element (see example below).
+FSH uses the caret (^) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax is used to set the metadata attributes in SD, other than those set through [FSH Keywords](#keywords) (name, id, title, and description) or specified in the [package-list.json file](sushi.md#configuration-file) used to create the IG. Examples of metadata elements in SDs can be set with caret syntax include experimental, useContext, and abstract.
+
+The caret syntax can also be combined with element paths to set values in the ElementDefinitions that populate the SD.
 
 **Examples:**
 
-* Set the status and experimental attributes in a profile:
+* Set the status 'experimental' attribute of a StructureDefinition from inside a profile:
 
-```
-  * ^status = #active
-  * ^experimental = false
-```
+  `* ^experimental = false`
 
-* For element communication.language, set the description attribute of the binding:
+* For element communication.language, set the description attribute of the binding in the ElementDefinition:
 
-  `* communication.language ^binding.description = "This binding is dictated by FDA regulations."`
+  `* communication.language ^binding.description = "This binding is dictated by US FDA regulations."`
 
 
 ***
@@ -404,20 +413,22 @@ Rules are the mechanism for constraining a profile, defining an extension, creat
 
 `* {rule statement}`
 
+We have already sneakily introduced a few types of rules: the fixed value rule (assignment using `=`), the binding rule (using `from`), and the data type restriction rule (using `only`).
+
 Here is a summary of the rules supported in FSH:
 
-| Rule Type | Rule Syntax | Examples |
-| --- | --- |---|
-| Fixed value |`* {path} = {value}`  | `* experimental = true` <br/> `* status = #active` <br/> `* valueString = "foo"` <br/> `* valueQuantity.value = 1.23` |
-| Value set binding |`* {path} from {valueSet} ({strength})`| `* telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)`
-| Narrowing cardinality | `* {path} {min}..{max}` | `* identifier 1..*` <br/> `* identifier.system 1..1`
-| Data type restriction | `* {path} only {type1} or {type2} or {type3}` | `* value[x] only code` <br/> `* value[x] only code or Quantity` |
-| Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` | `* subject only Reference(Patient)` <br/> `* basedOn only Reference(MedicationRequest | ServiceRequest)` |
-| Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` | `* communication MS ?!` <br> `* identifier, identifier.system, identifier.value, name, name.family MS`
-| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` | `* name obeys USCoreNameInvariant` |
-| Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` | `* component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS` |
-| Extensions | `* {extension element path} contains {extensionName1} {card1} and {extensionName2} {card2} ...` | `* extension contains TreatmentIntent 0..1 and RadiationDose 0..1` |
-| Mapping | `* {path} -> {string}` | `* identifier.value -> "identifier.value"` |
+| Rule Type | Syntax |
+| --- | --- |
+| Fixed value |`* {path} = {value}`  | 
+| Value set binding |`* {path} from {valueSet} ({strength})`| 
+| Narrowing cardinality | `* {path} {min}..{max}` |
+| Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
+| Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
+| Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
+| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
+| Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
+| Extensions | `* {extension element path} contains {extensionName1} {card1} and {extensionName2} {card2} ...` |
+| Mapping | `* {path} -> {string}` |
 {: .grid }
 
 #### Fixed Value Rules
@@ -428,7 +439,7 @@ Fixed value assignments follow this syntax:
 
 To assign a reference to another resource, use:
 
-` *{path} = Reference({resource})`
+`* {path} = Reference({resource instance})`
 
 The left side of the expression follows the [FSH path grammar](#paths). The right side's data type must aligned with the data type of the final element in the path.
 
@@ -497,7 +508,7 @@ To change the cardinality, the grammar is:
 
 `* {path} {min}..{max}`
 
-As in FHIR, min and max are integers, and max can be *, representing unbounded.
+As in FHIR, min and max are non-negative integers, and max can also be *, representing unbounded.
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
@@ -513,25 +524,31 @@ Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/con
 
 #### Data Type Restriction Rules
 
-Certain elements in FHIR offer a choice of data types using the [x] syntax. For example, Condition.onset[x] is a choice of dateTime, Age, Period, Range or string.
+FSH rules can be used to restrict the data type of an element. The shorthand syntax to restrict the type is:
 
-The syntax for narrowing the choices in a profile uses the `only` reserved word:
+ `* {path} only {type}`
 
  `* {path} only {type1} or {type2} or {type3}...`
 
-These choices can be restricted in two ways: reducing the number or choices, or substituting a profile of one of the choices. For example, if one of the choices is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself). 
+where the latter offers a choice of data type. The data type choices must always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced in an `only` rule by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself).
+
+Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices can be restricted in two ways: reducing the number or choices, or substituting a more restrictive data type or profile for one of the original choices.  
 
 **Examples:**
 
-* Restrict onset[x] to dateTime:
+* Restrict a Quantity type to SimpleQuantity:
+
+  `* valueQuantity only SimpleQuantity`
+
+* Condition.onset[x] is a choice of dateTime, Age, Period, Range or string. To restrict onset[x] to dateTime:
 
   `* onset[x] only dateTime`
 
-* Restrict onset[x] to either Period or Range data types:
+* Restrict onset[x] to either Period or Range:
 
   `* onset[x] only Period or Range`
 
-* Restrict onset[x] to Age or AgeRange or DateRange, where AgeRange and DateRange are profiles derived from FHIR's Range datatype (thus permissible restrictions on Range):
+* Restrict onset[x] to Age, AgeRange, or DateRange, assuming AgeRange and DateRange are profiles of FHIR's Range datatype (thus permissible restrictions on Range):
 
   `* onset[x] only Age or AgeRange or DateRange`
 
@@ -539,7 +556,7 @@ These choices can be restricted in two ways: reducing the number or choices, or 
 
 Elements that refer to other resources often offer a choice of target resource types. For example, Condition.recorder has reference type choice Reference(Practitioner | PractitionerRole | Patient | RelatedPerson). A reference type restriction rule can narrow these choices, using the following grammar:
 
-* `{path} only Reference({type1} | {type2} | {type3} ...)`
+`{path} only Reference({type1} | {type2} | {type3} ...)`
 
 > **Note:** The vertical bar within references represents logical 'or'.
 
@@ -578,11 +595,15 @@ The following syntax can be used to assigning flags:
 
 `* {path1}, {path2}, {path3}... {flag}`
 
-**Examples**
+**Examples:**
 
-`* communication MS ?!`
+* Declare communication to be MustSupport and Modifier:
 
-`* identifier, identifier.system, identifier.value, name, name.family MS`
+  `* communication MS ?!`
+
+* Declare a list of elements and nested elements to MustSupport:
+
+  `* identifier, identifier.system, identifier.value, name, name.family MS`
 
 #### Invariant Rules
 
@@ -598,9 +619,16 @@ The first case is where the invariant applies to the profile as a whole. The sec
 
 The referenced invariant and its properties must be declared somewhere within the same FSH tank, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
-**Examples**
+**Examples:**:
 
-`* name obeys USCoreNameInvariant`
+* Assign invariant to US Core Implantable Device (invariant applies to profile as a whole):
+
+  `* obeys us-core-9`
+
+* Assign invariant to Patient.name in US Core:
+
+  `* name obeys us-core-8`
+
 
 #### Slicing Rules
 
@@ -611,26 +639,40 @@ The subject of slicing is addressed three steps: (1) specifying the slices, (2) 
 Slices are specified using the `contains` keyword. The following syntax is used to create new slices:
 
 ```
-* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2} and ...
+* {array element path} contains
+       {sliceName1} {card1} {flags1} and
+       {sliceName2} {card2} {flags2} and
+       {sliceName3} {card3} {flags2} ...
 ```
 In this pattern, the `{array element path}` is a path to an element with multiple cardinality that is to be sliced, `{card}` is required, and `{flags}` are optional.
 
-**Example.** Slice Observation.component:
-```
-* component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS
-```
+**Examples:** 
 
-Because FSH is white-space invariant, this can be written so the slices appear one-per-line for readability:
+* Slice the Observation.component array for blood pressure:
+
+  `* component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS`
+
+* Because FSH is white-space invariant, the previous example can be written so the slices appear one-per-line for readability:
 ```
-* component contains
-    SystolicBP 1..1 and
-    DiastolicBP 1..1
+   * component contains
+       SystolicBP 1..1 and
+       DiastolicBP 1..1
 ```
 ###### Reslicing
 
 Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
 ```
 * {array element path}[{sliceName}] contains {resliceName1} {card1} and {resliceName2} {card2} and ...
+```
+
+**Example:**
+
+* Reslice the Apgar Respiration score for one-minute and five-minute scores:
+
+```
+   * component[RespiratoryScore] contains 
+         OneMinuteScore 0..1 and 
+         FiveMinuteScore 0..1
 ```
 
 ##### Step 2. Defining Slice Contents
@@ -646,9 +688,13 @@ The syntax for inline definition of slices is the same as constraining any other
 * {path to slice}.{subpath} {constraint}
 ```
 
-**Example.** Defining SystolicBP and DiastolicBP slices inline:
+**Example:** 
+
+* Defining SystolicBP and DiastolicBP slices inline:
 ```
-* component contains SystolicBP 1..1 and DiastolicBP 1..1
+* component contains 
+     SystolicBP 1..1 and 
+     DiastolicBP 1..1
 * component[SystolicBP].code = LNC#8480-6 "Systolic blood pressure"
 * component[SystolicBP].value[x] only Quantity
 * component[SystolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
@@ -663,11 +709,11 @@ Slicing in FHIR requires the user to specify a [discriminator path and discrimin
 
 One way to specify these parameters is to use [structure definition escape (caret) syntax](#structure-definition-escape-paths). The author identifies the sliced element, and then traverses the structure definition at that point.
 
-**Example.**
+**Example:**
 ```
 * component[0] ^slicing.discriminator.type = #pattern
 * component[0] ^slicing.discriminator.path = "code"
-* component[0] ^slicing.ordered = false
+* component[0] ^slicing.ordered = false   // can be omitted, since false is the default
 * component[0] ^slicing.rules = #open
 * component[0] ^slicing.description = "Slice based on the component.code pattern"
 ```
@@ -678,15 +724,23 @@ The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife 
 
 Extensions are created by slicing the extension array that is present at the root level of every resource, in each element, and recursively in each extension. Since extensions are essentially a special case of slicing, the slicing syntax can be reused. However, it is **not** necessary to specify the discriminator, since the discriminator is always the `url` (identifying URL of the extension), and the type is always `value`.
 
-Extensions can be created by slicing the `extension` (or `modifierExtension`) array, for example:
+Extensions are created by slicing the `extension` (or `modifierExtension`) array. Slicing an extension element below the root level is achieved by giving the full path to the extension array to be sliced.
 
+**Examples:**
+
+* Create extensions in US Core Patient at the top level:
 ```
-* extension contains
-    USCoreRaceExtension 0..1 MS and
-    USCoreEthnicityExtension 0..1 MS and
-    USCoreBirthsexExtension 0..1 MS
+  * extension contains
+      USCoreRaceExtension 0..1 MS and
+      USCoreEthnicityExtension 0..1 MS and
+      USCoreBirthsexExtension 0..1 MS
 ```
-Slicing an extension element below the root level is achieved by giving the full path to the extension array to be sliced.
+
+* Add laterality extension to bodySite attribute (second level extension):
+
+  `* bodySite.extension contains Laterality 0..1`
+
+
 
 #### Mapping Rules
 
@@ -696,14 +750,18 @@ Mapping rules use the symbol `->` with the following grammar:
 
 `* {path} -> {string}`
 
-**Example.**
+**Examples:**
 
-`$this -> Patient`
+* Map the entire profile to another item:
 
-`* identifier.value -> "identifier.value"`
+  `* -> Patient`
+
+* Map the identifier.value element:
+
+  `* identifier.value -> "identifier.value"`
 
 
->**Note:** Unlike setting the mapping directly in the SD, mapping rules do not include the name of the resource, given in the `$this` context.
+>**Note:** Unlike setting the mapping directly in the SD, mapping rules within a Mapping do not include the name of the resource.
 
 ***
 
@@ -773,7 +831,7 @@ Defining an alias is a one-line declaration, as follows:
 
 `Alias: {NAME} = {url or oid}`
 
-**Examples**
+**Examples:**
 
 `Alias: SCT = http://snomed.info/sct`
 
@@ -783,14 +841,16 @@ Defining an alias is a one-line declaration, as follows:
 
 To define a profile, the keywords `Profile`, `Parent` are required, and `Id`, `Title`, and `Description` should be used. The keyword `Mixins` is optional.
 
-**Example.**
+**Example:**
+
+* Define a profile for USCorePatient:
 
 ```
-Profile:        USCorePatient
-Parent:         Patient
-Id:             us-core-patient
-Title:          "US Core Patient Profile"
-Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
+  Profile:        USCorePatient
+  Parent:         Patient
+  Id:             us-core-patient
+  Title:          "US Core Patient Profile"
+  Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
 ```
 Any rules defined for the profiles would follow immediately after the keyword section.
 
@@ -801,16 +861,18 @@ Each mixin class must be compatible parent class, in the sense that all the exte
 
 At present, mixin classes must be defined in FSH. The capability for mixing in externally-defined classes is under development.
 
-**Example.** Defining two national IGs, both based on the same BreastRadiologyProfile:
+**Example:** 
+
+* Defining two national IGs, both based on the same BreastRadiologyProfile:
 
 ```
-Profile: USCoreBreastRadiologyProfile
-Parent: BreastRadiologyProfile
-Mixins:  USCoreObservation
+  Profile: USCoreBreastRadiologyProfile
+  Parent: BreastRadiologyProfile
+  Mixins:  USCoreObservation
 
-Profile: FranceBreastRadiologyProfile
-Parent: BreastRadiologyProfile
-Mixins: FranceCoreObservation
+  Profile: FranceBreastRadiologyProfile
+  Parent: BreastRadiologyProfile
+  Mixins: FranceCoreObservation
 ```
 
 > **IMPORTANT**: To be a valid mixin, the mixin cannot inherit from a different resource.
@@ -821,22 +883,24 @@ We saw earlier how to use `contains` rules and constraints to [define inline sli
 
 The syntax for defining a slice is the same as for FSH profiles, except that the initial keyword is `Slice` and the SD escape (^) cannot be used, since slices do not have separate SDs.
 
-**Example.** Slices declared in the BloodPressure profile:
+**Example** 
+
+* Define the slices for a BloodPressure profile:
 
 ```
-Slice:     SystolicBP
-Parent:    Observation.component
-Description: "The blood pressure during left ventricle contraction"
-* code = LNC#8480-6 "Systolic blood pressure"
-* value[x] only Quantity
-* valueQuantity units = UCUM#mm[Hg] "mmHg"
+  Slice:     SystolicBP
+  Parent:    Observation.component
+  Description: "The blood pressure during left ventricle contraction"
+  * code = LNC#8480-6 "Systolic blood pressure"
+  * value[x] only Quantity
+  * valueQuantity units = UCUM#mm[Hg] "mmHg"
 
-Slice:    DiastolicBP
-Parent:   Observation.component
-Description: "The blood pressure when the heart rests between beats"
-* code = LNC#8462-4 "Diastolic blood pressure"
-* value[x] only Quantity
-* valueQuantity units = UCUM#mm[Hg] "mmHg"
+  Slice:    DiastolicBP
+  Parent:   Observation.component
+  Description: "The blood pressure when the heart rests between beats"
+  * code = LNC#8462-4 "Diastolic blood pressure"
+  * value[x] only Quantity
+  * valueQuantity units = UCUM#mm[Hg] "mmHg"
 ```
 
 Note that since Observation.component is a BackboneElement, the example above must use the path `Observation.component` for the `Parent` value. It is also possible to specify a FHIR complex data type as the value for `Parent`.  This would allow the slice to be used wherever there is an array of that type.  For example:
@@ -854,48 +918,50 @@ Defining extensions is similar to defining a profile, except that the parent of 
 
 > **Note:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
 
-**Example.** Define simple extension:
+**Example:** 
+
+* Define a simple (non-nested) extension for BirthSex, whose data type is `code`:
 
 ```
-Extension:      USCoreBirthSexExtension 
-Id:             us-core-birthsex
-Title:          "US Core Birth Sex Extension"
-Description:     "A code classifying the person's sex assigned at birth"
+Extension: USCoreBirthSexExtension 
+Id:   us-core-birthsex
+Title:  "US Core Birth Sex Extension"
+Description: "A code classifying the person's sex assigned at birth"
 // publisher, contact, and other metadata here using caret (^) syntax (omitted)
 * value[x] only code
-* valueCode from BirthSex (required)
+* valueCode from BirthSexValueSet (required)
 ```
 
-**Example.** Define complex extension:
+* Define a complex extension (extension with nested extensions) for US Core Ethnicity:
 ```
-Extension:      USCoreEthnicityExtension
-Id:             us-core-ethnicity
-Title:          "US Core Ethnicity Extension"
-Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. "
-* extension contains 
-    ombCategory 0..1 MS and 
-    detailed 0..* and 
-    text 1..1 MS
-// inline definition of sub-extensions
-* extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
-* extension[ombCategory].value[x] only Coding
-* extension[ombCategory].valueCoding from OmbEthnicityCategories (required)
-* extension[detailed] ^short = "Extended ethnicity codes"
-* extension[detailed].value[x] only Coding
-* extension[detailed].valueCoding from DetailedEthnicity (required)
-* extension[text] ^short = "Ethnicity text"
-* extension[text].value[x] only string
+  Extension:      USCoreEthnicityExtension
+  Id:             us-core-ethnicity
+  Title:          "US Core Ethnicity Extension"
+  Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. "
+  * extension contains
+      ombCategory 0..1 MS and
+      detailed 0..* and
+      text 1..1 MS
+  // inline definition of sub-extensions
+  * extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
+  * extension[ombCategory].value[x] only Coding
+  * extension[ombCategory].valueCoding from OmbEthnicityCategories (required)
+  * extension[detailed] ^short = "Extended ethnicity codes"
+  * extension[detailed].value[x] only Coding
+  * extension[detailed].valueCoding from DetailedEthnicity (required)
+  * extension[text] ^short = "Ethnicity text"
+  * extension[text].value[x] only string
 ```
 
-**Example.**  Extension with explicit parent:
+* Define an extension with an explicit parent, specializing the US Core Birth Sex extension:
 
 ```
-Extension:      BinaryBirthSexExtension
-Parent:         USCoreBirthSexExtension
-Id:             binary-birthsex
-Title:          "Binary Birth Sex Extension"
-Description:     "As of 2019, certain US states only allow M or F on birth certificates."
-* valueCode from BinaryBirthSex (required)
+  Extension:      BinaryBirthSexExtension
+  Parent:         USCoreBirthSexExtension
+  Id:             binary-birthsex
+  Title:          "Binary Birth Sex Extension"
+  Description:     "As of 2019, certain US states only allow M or F on birth certificates."
+  * valueCode from BinaryBirthSex (required)
 ```
 
 #### Defining Mappings
@@ -906,44 +972,46 @@ Description:     "As of 2019, certain US states only allow M or F on birth certi
 
 To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are used. Any number of [mapping rules](#mapping-rules) then follow.
 
-**Example.**  // MK -- NOTE -- I made some changes -- to be checked
+**Example:** 
 ```
-Mapping:  USCorePatientToArgonaut
-Source:   USCorePatient
-Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
-Id:       argonaut-dq-dstu2
-* $this -> Patient
-* extension[USCoreRaceExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
-* extension[USCoreEthnicityExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
-* extension[USCoreBirthSexExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
-* identifier -> "identifier"
-* identifier.system -> "identifier.system"
-* identifier.value -> "identifier.value"
+  Mapping:  USCorePatientToArgonaut
+  Source:   USCorePatient
+  Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
+  Id:       argonaut-dq-dstu2
+  * -> Patient
+  * extension[USCoreRaceExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
+  * extension[USCoreEthnicityExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
+  * extension[USCoreBirthSexExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
+  * identifier -> "identifier"
+  * identifier.system -> "identifier.system"
+  * identifier.value -> "identifier.value"
 ```
 
 #### Defining Mixins
 
 Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
 
-**Example.** Defining a mixin for metadata shared in all US Core profiles:
+**Example:** 
+
+* Defining a mixin for metadata shared in all US Core profiles:
 
 ```
-Mixin: USCoreMetadata
-Parent: DomainResource
-* ^version = "3.1.0"
-* ^status = #active
-* ^experimental = false
-* ^publisher = "HL7 US Realm Steering Committee"
-* ^contact.telecom.system = #url
-* ^contact.telecom.value = "http://www.healthit.gov"
-* ^jurisdiction.coding = COUNTRY#US "United States of America"
+  Mixin: USCoreMetadata
+  Parent: DomainResource
+  * ^version = "3.1.0"
+  * ^status = #active
+  * ^experimental = false
+  * ^publisher = "HL7 US Realm Steering Committee"
+  * ^contact.telecom.system = #url
+  * ^contact.telecom.value = "http://www.healthit.gov"
+  * ^jurisdiction.coding = COUNTRY#US "United States of America"
 ```
 
 #### Defining Invariants
 
 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
-**Example.**
+**Example:**
 ```
 Invariant:  USCoreNameInvariant
 Id:         us-core-8
@@ -961,7 +1029,7 @@ Instances are defined using the keywords `Instance`, `InstanceOf`, `Description`
 
 Instances inherit structures and values from their StructureDefinition (i.e. fixed codes, extensions). Fixed value rules are used to set additional values.
 
-**Examples** 
+**Examples:** 
 ```
 Instance:   EveAnyperson
 InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
@@ -1041,26 +1109,28 @@ A filter is a logical statement in the form {property} {operator} {value}, where
 Not all operators are valid for any code system. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
 
 
-**Example.** Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
-```
-ValueSet:    BodyWeightPreconditionVS
-Title: "Body weight preconditions."
-Description:  "Circumstances for body weight measurement."
-* SCT#971000205103 "Wearing street clothes with shoes"
-* SCT#961000205106 "Wearing street clothes, no shoes"
-* SCT#951000205108 "Wearing underwear or less"
-```
+**Examples** 
 
-
-**Example.** Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set
+* Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
 
 ```
-ValueSet:       PrimaryCancerDisorderVS
-Title: "Primary Cancer Disorder Value Set"
-Description:    "Types of primary malignant neoplastic disease."
-SCT#363346000  "Malignant neoplastic disease (disorder)"
-* codes from system SCT where code descendent-of SCT#363346000 "Malignant neoplastic disease (disorder)"
-* exclude codes from system SCT where code descendent-of SCT#128462008 "Secondary malignant neoplastic disease"
+  ValueSet:    BodyWeightPreconditionVS
+  Title: "Body weight preconditions."
+  Description:  "Circumstances for body weight measurement."
+  * SCT#971000205103 "Wearing street clothes with shoes"
+  * SCT#961000205106 "Wearing street clothes, no shoes"
+  * SCT#951000205108 "Wearing underwear or less"
+```
+
+* Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set
+
+```
+  ValueSet:       PrimaryCancerDisorderVS
+  Title: "Primary Cancer Disorder Value Set"
+  Description:    "Types of primary malignant neoplastic disease."
+  SCT#363346000  "Malignant neoplastic disease (disorder)"
+  * codes from system SCT where code descendent-of SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * exclude codes from system SCT where code descendent-of SCT#128462008 "Secondary malignant neoplastic disease"
 ```
 
 
@@ -1070,7 +1140,7 @@ It is usually unnecessary to define code systems (also called terminologies or v
 
 Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are added, one per rule, using the almost same syntax as in value sets, except that the code system is not included before the hash sign `#`. Additional properties of a code can be added using the escape (caret) syntax.
 
-**Example.**:
+**Example:**:
 
 ```
 CodeSystem:  YogaCodeSystem
