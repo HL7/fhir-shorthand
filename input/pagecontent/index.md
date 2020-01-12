@@ -241,11 +241,11 @@ and for [binding](#value-set-binding-rules):
 
   `* valueQuantity = UCUM#mm "millimeters"`
 
-* Alternative syntax for the same operation:
+* Alternate syntax for the same operation (addition of 'units'):
 
   `* valueQuantity units = UCUM#mm "millimeters"`
 
-* Bind a value set to the units of a Quantity (using the optional word 'units'):
+* Bind a value set to the units of a Quantity (using alternate syntax):
 
   `* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
 
@@ -398,27 +398,37 @@ Fixed value assignments follow this syntax:
 
 `* {path} = {value}`
 
-The left side of the expression follows the [FSH path grammar](#paths). The value have a data type aligned with the last element in the path.
+To assign a reference to another resource, use:
 
-Assignment of coded types can use the [shorthand for coded data types](#coded-data-types). 
+` *{path} = Reference({resource})`
 
-**Examples**
+The left side of the expression follows the [FSH path grammar](#paths). The right side's data type must aligned with the data type of the final element in the path.
 
-`* status = #arrived`
+**Examples:**
 
-`* code = SCT#363346000 "Malignant neoplastic disease (disorder)"`
+* Assignment of a code data type:
 
-`* active = true`
+  `* status = #arrived`
 
-`* onsetDateTime = "2019-04-02"`
+* Assignment of a Coding or the first Coding element in a CodeableConcept:
 
-`* valueQuantity = 36.5 'C'`
+  `* code = SCT#363346000 "Malignant neoplastic disease (disorder)"`
 
-In instances, there may be fixed value rules that represent references to other instances. In this case, the fact that the value is a reference is known from the SD, and only the name of the referenced instance is given.
+* Assignment of a boolean:
 
-**Example.** Fixing a references appearing in an instance:
+  `* active = true`
 
-`* subject = EveAnyperson  // not Reference(EveAnyperson)`
+* Assignment of a date:
+
+  `* onsetDateTime = "2019-04-02"`
+
+* Assignment of a quantity with UCUM Celsius units:
+
+  `* valueQuantity = 36.5 'C'`
+
+* Assignment of a reference type to another resource:
+
+  `* subject = Reference(EveAnyperson)`
 
 
 #### Value Set Binding Rules
@@ -437,13 +447,19 @@ The following rules apply to binding in FSH:
 * When further constraining an existing binding, the binding strength can stay the same or be made tighter (e.g., replacing a preferred binding with extensible or required), but never loosened.
 * Constraining may leave the binding strength the same and change the value set instead. However, certain changes permitted in FSH may violate [FHIR profiling principles](http://hl7.org/fhir/R4/profiling.html#binding-strength). In particular, FHIR will permit a required value set to be replaced by another required value set only if the codes in the new value set are a subset of the codes in the original value set. For extensible bindings, the new value set can contain codes not in the existing value set, but additional codes **should not** have the same meaning as existing codes in the base value set.
 
-**Examples**
+**Examples:**
 
-`* telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)`
+* Bind to an externally-defined value set using its canonical URL:
 
-`* gender from http://hl7.org/fhir/ValueSet/administrative-gender`
+  `* telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)`
 
-`* address.state from USPSTwoLetterAlphabeticCodes (extensible)`
+* Bind to an externally-defined value set with required binding by default:
+
+  `* gender from http://hl7.org/fhir/ValueSet/administrative-gender`
+
+* Bind to a value set using an alias name:
+
+  `* address.state from USPSTwoLetterAlphabeticCodes (extensible)`
 
 #### Narrowing Cardinality Rules
 
@@ -457,11 +473,15 @@ As in FHIR, min and max are integers, and max can be *, representing unbounded.
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
-**Examples**
+**Examples:**
 
-`* subject 1..1`
+* Set the cardinality of the subject element to 1..1 (required, non-repeating):
 
-`* component.referenceRange 0..0`
+  `* subject 1..1`
+
+* Set the cardinality of a sub-element to 0..0 (not permitted):
+
+  `* component.referenceRange 0..0`
 
 #### Data Type Restriction Rules
 
@@ -473,13 +493,19 @@ The syntax for narrowing the choices in a profile uses the `only` reserved word:
 
 These choices can be restricted in two ways: reducing the number or choices, or substituting a profile of one of the choices. For example, if one of the choices is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself). 
 
-**Examples**
+**Examples:**
 
-`* onset[x] only dateTime`
+* Restrict onset[x] to dateTime:
 
-`* onset[x] only Period or Range`
+  `* onset[x] only dateTime`
 
-`* onset[x] only Age or AgeRange  // where AgeRange is a profile on Range`
+* Restrict onset[x] to either Period or Range data types:
+
+  `* onset[x] only Period or Range`
+
+* Restrict onset[x] to Age or AgeRange or DateRange, where AgeRange and DateRange are profiles derived from FHIR's Range datatype (thus permissible restrictions on Range):
+
+  `* onset[x] only Age or AgeRange or DateRange`
 
 #### Reference Type Restriction Rules
 
@@ -489,15 +515,21 @@ Elements that refer to other resources often offer a choice of target resource t
 
 > **Note:** The vertical bar within references represents logical 'or'.
 
-**Examples** Alternative ways to restrict the type of Condition.recorder, assuming `PrimaryCarePhysician` and `EmergencyRoomPhysician` are profiles on `Practitioner`:
+It is important to note that a reference can only be restricted to a compatible type. For example, the subject of [US Core Condition](http://hl7.org/fhir/us/core/StructureDefinition-us-core-condition.html), with type Reference(US Core Patient), cannot be restricted to Reference(Patient), because Patient is not a profile of US Core Patient.
 
-`* recorder only Reference(Practitioner)`
+**Examples:**
 
-`* recorder only Reference(Practitioner | PractitionerRole)`
+* Restrict recorder to a reference to any Practitioner:
 
-`* recorder only Reference(PrimaryCarePhysician | EmergencyRoomPhysician | PractitionerRole)`
+  `* recorder only Reference(Practitioner)`
 
-> **Note:** A reference can only be restricted to a compatible type. For example, the subject of [US Core Condition](http://hl7.org/fhir/us/core/StructureDefinition-us-core-condition.html), with type Reference(US Core Patient), cannot be restricted to Reference(Patient), because Patient is not a profile of US Core Patient.
+* Restrict recorder to either a Practitioner or a PractitionerRole:
+
+  `* recorder only Reference(Practitioner | PractitionerRole)`
+
+* Restrict recorder to `PrimaryCarePhysician` or `EmergencyRoomPhysician`, assuming these are both profiles on `Practitioner`:
+
+  `* recorder only Reference(PrimaryCarePhysician | EmergencyRoomPhysician)`
 
 #### Flag Assignment Rules
 
