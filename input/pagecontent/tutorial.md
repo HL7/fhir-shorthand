@@ -6,107 +6,139 @@
 SUSHI requires Node.js. To install Node.js, go to [https://nodejs.org/](https://nodejs.org/) and you should see links to download an installer for your operating system. Download the installer for the LTS version. If you do not see a download appropriate for your operating system, click the "other downloads" link and look there. Once the installer is downloaded, run the installer. It is fine to select default options during installation.
 
 ### Step 2: Install SUSHI
-To install SUSHI, open up a command prompt. Ensure that Node.js is correctly installed by running the following two commands
+To install SUSHI, open up a command prompt. Ensure that Node.js is correctly installed by running the following two commands:
 ```
 $ node --version
 $ npm --version
 ```
-For each command, you should see a version number. If this works correctly, you can install SUSHI by doing
+For each command, you should see a version number. If this works correctly, you can install SUSHI by doing:
 ```
 $ npm install -g fsh-sushi
 ``` 
 
 ### Step 3: Download Sample FSH Tank
-To start with some working examples of FSH files and a skeleton FSH tank, [download the tutorial.zip file](tutorial.zip) and unzip it into a directory of your choice.
+To start with some working examples of FSH files and a skeleton FSH tank, [download the fsh-tutorial-master.zip file](fsh-tutorial-master.zip) and unzip it into a directory of your choice. 
 
+You should see three subdirectories:
+
+* FishExample
+* FishExampleComplete
+* USCoreExample
+
+Change the working directory to FishExample. You should see two FSH files:
+
+* FishPatient.fsh
+* Veterinarian.fsh
+
+In addition, there is an ig-data folder containing some inputs for building the IG.
 
 ### Step 4: Run SUSHI
-Now that you have SUSHI installed and a FSH tank, you can run SUSHI on those FSH files by executing
-```
-$ sushi <path>
-```
-where `<path>` is the path to the folder containing the FSH files. So if change the working directory to `~/tutorial`, the command would be
-```
-$ sushi .
-```
+Now that you have SUSHI installed and a FSH tank, you can run SUSHI on those FSH files by executing:
+
+`$ sushi <path>`
+
+where `<path>` is the path to the folder containing the FSH files. Since the working directory is already FishExample, type:
+
+`$ sushi .`
+
 This will send the resulting FHIR output to an `build` directory in your current working directory. Optionally, you can specify your output directory name using the `-o` option.
+
+`$ sushi <path> -o <output-directory>`
+
+When running SUSHI successfully, you should see output similar to the following:
+
 ```
-$ sushi <path> -o <output-directory>
+info: 
+   Profiles:   2
+   Extensions: 0
+   Instances:  0
+   Errors:     0
+   Warnings:   0
 ```
-When running SUSHI successfully, you should see output similar to the following
-```
-info: Exported 4 profile(s) and 1 extension(s).
-```
+
 ### Step 5: Generate the Sample IG
 
 Check to see if the /build directory (or the directory you specified) is present.
 
-Now change directory of the command window to the output directory, `~/tutorial/build`. At the command prompt, enter:
+Now change directory of the command window to the output directory, `~/FishExample/build`. At the command prompt, enter:
+
+`$ ./updatePublisher.sh`
+
+This will download the latest version of the HL7 FHIR IG Publisher tool. Now run:
+
+`$ ./_genonce.sh`
+
+This will run the HL7 IG generator, which will take several minutes to complete. After the publisher is finished, open the file `/FishExample/build/output/index.html` to see the resulting IG.
+
+Under artifacts menu, the IG contains two profiles, FishPatient and Veterinarian. However, if you look more closely, they don't yet have any differentials.
+
+### Step 6: Disallow Married and Talking Animals
+
+FHIR is intended to be used for both human and animal medicine. For any non-human patient, we need to record the species. Our example is going to have a patient that is - appropriately -  a fish. 
+
+Since (as far as we know) fish don't get married or communicate in a human language, the first thing we'll do is eliminate these elements from Patient. To do this, and add the following rules after `Description` line:
+
+* maritalStatus 0..0
+* communication 0..0
+
+Note that rules start with `*`. The way that cardinality is expressed should be familiar to FHIR users.
+
+### Step 7: Create a Species Extension for FishPatient
+
+To specify the species of our fish patient, we'll need an extension.
+
+Extensions are created using the `contains` keyword. To add a species extension, open the file FishPatient.fsh, and add the following rule after the cardinality rules:
+
+`* extension contains FishSpecies 0..1`
+
+This rule states that the existing `extension` array built into Patient will now contain an [Extension](https://www.hl7.org/fhir/extensibility.html#extension) element named `FishSpecies`.
+
+Now change the command prompt back to the FishExample directory, and run SUSHI again. You should now get an error message from SUSHI indicating _"The slice FishSpecies on extension must reference an existing extension"_, indicating that you have to define the FishSpecies extension.
+
+To do this, add the following lines to the end of the FishPatient.fsh file:
 
 ```
-$ ./updatePublisher.sh
+Extension:  FishSpecies
+Id: fish-species
+Title: "Fish Species"
+Description: "The species name of a piscine (fish) patient."
+```
 
-$ ./_genonce.sh
-```
-This will run the HL7 IG generator, which will take several minutes to complete. After the publisher is finished, open the file `GettingStarted//build/output/index.html` to see the resulting IG.
+Run SUSHI again. The previous error message should disappear, and the count of Extensions should go up by 1.
 
-### Step 6: Experiment
-SUSHI is still a work in progress, so not every feature described on the [wiki](https://github.com/HL7/fhir-shorthand/wiki) is currently supported. Below is a list of all of the features that are supported. Modify the given examples to see how things change, or try to create some profiles of your own.
+### Step 8: Define a Value Set for Fish Species
 
-#### Defining a Profile
-This functionality allows you to constrain the elements of a FHIR resource. In the example below, we are defining a `Profile` called `FSHPatient` that is based on the FHIR Patient resource, as indicated by the `Parent` keyword. Then the `Id`, `Title`, and `Description` keywords are used to set metadata on this profile. Below that, we begin constraining the original FHIR resource using rules.
-```
-Profile:        FSHPatient
-Parent:         Patient
-Id:             fsh-patient
-Title:          "FSH Patient"
-Description:    """ 
-    Defines constraints and extensions on the patient resource for 
-    the minimal set of data to query and retrieve patient demographic information."""
-* identifier, identifier.system, identifier.value, name, name.family, name.given
-  telecom, telecom.system, telecom.value, telecom.use, gender, birthDate, address,
-  address.line, address.city, address.state, address.postalCode, communication,
-  communication.language MS
-* identifier 1..*
-* identifier.system 1..1
-* identifier.value 1..1
-* name 1..*
-// More rules
-```
-#### Defining an Extension
-To add information to a FHIR resource, we create extensions and add them to profiles. Creating an extension is a supported feature, but adding that extension to a profile is not yet supported. In this example, we create an `Extension` called `FSHBirthSex`, and then set metadata using the same keywords as in a profile. Note that an `Extension` does not need a `Parent`, because it is not based on any specific FHIR resource.
-```
-Extension:      FSHBirthSex 
-Id:             fsh-birthsex
-Title:          "FSH Birth Sex Extension"
-Description:     """
-    A code classifying the person's sex assigned at birth as specified 
-    by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). 
-    This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."""
-* value[x] only code
-* valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
-```
-#### Defining an Alias
-An `Alias` is a way to define an shorthand for a URL or OID. For example, in the extension definition above, we could have defined an `Alias` to make referencing the `http://hl7.org/fhir/us/core/ValueSet/birthsex` URL easier, as shown below.
-```
-Alias:      BSEX = http://hl7.org/fhir/us/core/ValueSet/birthsex
-Extension:      FSHBirthSex 
-Id:             fsh-birthsex
-Title:          "FSH Birth Sex Extension"
-Description:     """
-    A code classifying the person's sex assigned at birth as specified 
-    by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). 
-    This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."""
-* value[x] only code
-* valueCode from BSEX (required)
-```
-#### Rules
-In a rule, an element is accessed via its path, and then some constraint is applied to that element. The supported rules are listed below.
+The FishSpecies extension doesn't quite do its job yet, because we haven't specified what type of values it might accept. To add this information, enter these lines following the description of FishSpecies:
 
-| Rule Type | Rule Syntax | Example |
-| --- | --- |---|
-| Fixed Value |`* path = value`  | `* experimental = true` <br/> `* status = #active` <br/> `* valueString = "foo"` <br/> `* valueQuantity.value = 1.23` |
-| Binding to a Value Set |`* path from valueSet (strength)`| `* telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)` |
-| Narrowing a choice | `* path only type1 or type2 or type3` | `* value[x] only code` <br> `* value[x] only code or string` |
-| Narrowing cardinality | `* path min..max` | `* identifier 1..*` <br> `* identifier.system 1..1`
-| Assigning Flags (MS, SU, ?!) | `* path flag1 flag2` <br> `* path1, path2, path3 flag` | `* communication MS ?!` <br> `* identifier, identifier.system, identifier.value, name, name.family MS`
+```
+* value[x] only CodeableConcept
+* valueCodeableConcept from FishSpeciesValueSet (extensible)
+```
+
+The first rule restricts the value[x] (an element of every extension) to a CodeableConcept using the `only` keyword. The second extensibly binds it to a value set containing codes for fish species (yet to be defined) using the `from` keyword.
+
+If we compile at this point, SUSHI will note that FishSpeciesValueSet doesn't exist. To define it, add the following lines to the same file:
+
+```
+ValueSet:  FishSpeciesValueSet
+Title: "Fish Species Value Set"
+Description:  "Codes describing various species of fish from SNOMED-CT."
+* codes from system http://snomed.info/sct where code is-a SCT#90580008  "Fish (organism)"
+```
+
+The rule that selects all the codes from SNOMED-CT that are children of the concept "Fish (organism)".
+
+Run SUSHI again, and if are no errors, try generating the IG by running `_genonce` again in the build subdirectory. Open the file `/FishExample/build/output/index.html` to see the resulting IG.
+
+* Does the differential reflect your changes?
+* How does FHIR render the value set?
+
+### Step 9: Define an Alias
+
+An `Alias` is a way to define an shorthand for a URL or OID. For example, in the extension definition above, we could have defined an `Alias` to make referencing the `http://snomed.info/sct` URL easier, as shown below. Aliases are conventionally defined at the top of the file.
+
+`Alias:   SCT = http://snomed.info/sct`
+
+Then replace the last line with
+
+`* codes from system SCT where code is-a SCT#90580008  "Fish (organism)"`
