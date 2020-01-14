@@ -44,6 +44,9 @@ This implementation guide includes the following sections:
 | _italics_ | File names | _example-1.fsh_ |
 | {curly braces} | An item to be substituted | `{codesystem}#{code}` |
 | **bold** | Emphasis |  Do **not** ignore this. |
+| 🚫 | Indicates a planned feature, not yet implemented in FSH or SUSHI | |
+| 🚧 | Indicates a feature implemented in FSH but not yet implemented in SUSHI | |
+| 👶 | Indicates a feature supported in FSH in SUSHI, but not fully tested | |
 {: .grid }
 
 #### Versioning
@@ -228,15 +231,19 @@ In addition to having a quantitative value, a FHIR Quantity has a coded value th
 
 `* {Quantity type} = {system}#{code} "{display text}"`
 
-Although this appears the quantity is being set to a coded value, it is legal. To make this a bit more intuitive, FSH allows you to use the word `units`, as follows:
+Although this appears the quantity is being set to a coded value, it is legal. 
+
+🚧 To make this a bit more intuitive, FSH allows you to use the word `units`, as follows:
 
 `* {Quantity type} units = {system}#{code} "{display text}"`
 
-and for [binding](#value-set-binding-rules):
+🚧 and for [binding](#value-set-binding-rules):
 
 `* {Quantity type} units from {value set} ({strength})`
 
 >**Note:** Use of the word `units` is suggested for clarity, but is optional.
+
+
 
 **Examples:**
 
@@ -244,11 +251,11 @@ and for [binding](#value-set-binding-rules):
 
   `* valueQuantity = UCUM#mm "millimeters"`
 
-* Alternate syntax for the same operation (addition of 'units'):
+* 🚧 Alternate syntax for the same operation (addition of 'units'):
 
   `* valueQuantity units = UCUM#mm "millimeters"`
 
-* Bind a value set to the units of a Quantity (using alternate syntax):
+* 🚧 Bind a value set to the units of a Quantity (using alternate syntax):
 
   `* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
 
@@ -330,7 +337,7 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
   * address[CanadianAddress].state from CanadianProvenceValueSet (required)
   ```
 
-##### Sliced Array Paths
+##### 👶 Sliced Array Paths
 
 FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
 
@@ -360,7 +367,7 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
 
   `* extension[USCoreBirthsex].valueCode = #F`
 
-  Abbreviated syntax:
+  🚧 Abbreviated syntax:
 
   `* USCoreBirthsex.valueCode = #F`
 
@@ -370,7 +377,7 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
 
   `* extension[USCoreEthnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"`
 
-  Abbreviated syntax:
+  🚧 Abbreviated syntax:
 
   `* USCoreEthnicity.ombCategory.valueCoding = RACE#2135-2 "Hispanic or Latino"`
 
@@ -382,7 +389,7 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
   * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
 ```
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abbreviated syntax:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🚧 Abbreviated syntax:
 
 ```
   * USCoreEthnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"
@@ -425,10 +432,10 @@ Here is a summary of the rules supported in FSH:
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
 | Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
-| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
+| 🚫 Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
 | Extensions | `* {extension element path} contains {extensionName1} {card1} and {extensionName2} {card2} ...` |
-| Mapping | `* {path} -> {string}` |
+| 🚫 Mapping | `* {path} -> {string}` |
 {: .grid }
 
 #### Fixed Value Rules
@@ -461,11 +468,11 @@ The left side of the expression follows the [FSH path grammar](#paths). The righ
 
   `* onsetDateTime = "2019-04-02"`
 
-* Assignment of a quantity with UCUM Celsius units:
+* 🚧 Assignment of a quantity with single quotes indicating UCUM units:
 
   `* valueQuantity = 36.5 'C'`
 
-* Assignment of a reference type to another resource:
+* 👶 Assignment of a reference type to another resource:
 
   `* subject = Reference(EveAnyperson)`
 
@@ -605,7 +612,7 @@ The following syntax can be used to assigning flags:
 
   `* identifier, identifier.system, identifier.value, name, name.family MS`
 
-#### Invariant Rules
+#### 🚧 Invariant Rules
 
 [Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole, a single element, or multiple elements. The FSH grammars for applying invariants in profiles are as follows:
 
@@ -619,7 +626,7 @@ The first case is where the invariant applies to the profile as a whole. The sec
 
 The referenced invariant and its properties must be declared somewhere within the same FSH tank, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
-**Examples:**:
+**Examples:**
 
 * Assign invariant to US Core Implantable Device (invariant applies to profile as a whole):
 
@@ -646,19 +653,20 @@ Slices are specified using the `contains` keyword. The following syntax is used 
 ```
 In this pattern, the `{array element path}` is a path to an element with multiple cardinality that is to be sliced, `{card}` is required, and `{flags}` are optional.
 
-**Examples:** 
+**Examples:**
 
 * Slice the Observation.component array for blood pressure:
 
   `* component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS`
 
-* Because FSH is white-space invariant, the previous example can be written so the slices appear one-per-line for readability:
+* Because FSH is white-space invariant, the previous example can be rewritten so the slices appear one-per-line for readability:
+
 ```
    * component contains
        SystolicBP 1..1 and
        DiastolicBP 1..1
 ```
-###### Reslicing
+###### 👶 Reslicing
 
 Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
 ```
@@ -670,8 +678,8 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 * Reslice the Apgar Respiration score for one-minute and five-minute scores:
 
 ```
-   * component[RespiratoryScore] contains 
-         OneMinuteScore 0..1 and 
+   * component[RespiratoryScore] contains
+         OneMinuteScore 0..1 and
          FiveMinuteScore 0..1
 ```
 
@@ -679,8 +687,8 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 There are two approaches to defining the slices themselves:
 
-1. Define the slice details inline in the profile. This approach is applicable when the structure of the slice already exists, in particular, when slicing a backbone element such as Observation.component.
-2. Define the slice as a separate item. This approach is required when the structure of the slice needs to be defined, and when slicing an array that involves a reference, such as Observation.hasMember.
+1. 👶 Define the slice details inline in the profile. This approach is applicable when the structure of the slice already exists, in particular, when slicing a backbone element such as Observation.component.
+2.  🚧 Define the slice as a separate item. This approach is required when the structure of the slice needs to be defined, and when slicing an array that involves a reference, such as Observation.hasMember.
 
 The syntax for inline definition of slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
 
@@ -690,7 +698,8 @@ The syntax for inline definition of slices is the same as constraining any other
 
 **Example:** 
 
-* Defining SystolicBP and DiastolicBP slices inline:
+* 👶 Defining SystolicBP and DiastolicBP slices inline:
+
 ```
 * component contains 
      SystolicBP 1..1 and 
@@ -705,7 +714,7 @@ The syntax for inline definition of slices is the same as constraining any other
 
 ##### Step 3. Providing the Slicing Logic
 
-Slicing in FHIR requires the user to specify a [discriminator path and discriminator type](http://www.hl7.org/fhiR/profiling.html#discriminator). Optionally, you can also declare the slice open or closed, ordered or unordered.
+Slicing in FHIR requires the user to specify a [discriminator path, type, and rules](http://www.hl7.org/fhiR/profiling.html#discriminator). Optionally, you can also declare the slice ordered (unordered is the default).
 
 One way to specify these parameters is to use [structure definition escape (caret) syntax](#structure-definition-escape-paths). The author identifies the sliced element, and then traverses the structure definition at that point.
 
@@ -713,12 +722,12 @@ One way to specify these parameters is to use [structure definition escape (care
 ```
 * component[0] ^slicing.discriminator.type = #pattern
 * component[0] ^slicing.discriminator.path = "code"
-* component[0] ^slicing.ordered = false   // can be omitted, since false is the default
 * component[0] ^slicing.rules = #open
+* component[0] ^slicing.ordered = false   // can be omitted, since false is the default
 * component[0] ^slicing.description = "Slice based on the component.code pattern"
 ```
 
-The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no action by the user. SUSHI infers slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For more information, see the[SUSHI documentation](sushi.html).
+ 🚧 The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no action by the user. SUSHI infers slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For more information, see the[SUSHI documentation](sushi.html).
 
 #### Extension Rules
 
@@ -729,6 +738,7 @@ Extensions are created by slicing the `extension` (or `modifierExtension`) array
 **Examples:**
 
 * Create extensions in US Core Patient at the top level:
+
 ```
   * extension contains
       USCoreRaceExtension 0..1 MS and
@@ -741,8 +751,7 @@ Extensions are created by slicing the `extension` (or `modifierExtension`) array
   `* bodySite.extension contains Laterality 0..1`
 
 
-
-#### Mapping Rules
+#### 🚫 Mapping Rules
 
 [Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
@@ -771,14 +780,14 @@ This section shows how to define various items in FSH:
 
 * [Aliases](#defining-aliases)
 * [Profiles](#defining-profiles)
-* [Slices](#defining-slices)
+* 🚧 [Slices](#defining-slices)
 * [Extensions](#defining-extensions)
-* [Mappings](#defining-mappings)
-* [Mixins](#defining-mixins)
-* [Invariants](#defining-invariants)
-* [Instances](#defining-instances)
-* [Code Systems](#defining-code-systems)
-* [Value Sets](#defining-value-sets)
+* 🚫 [Mappings](#defining-mappings)
+* 🚫 [Mixins](#defining-mixins)
+* 🚫 [Invariants](#defining-invariants)
+* 👶 [Instances](#defining-instances)
+* 🚧 [Code Systems](#defining-code-systems)
+* 🚧 [Value Sets](#defining-value-sets)
 
 #### Keywords
 
@@ -799,27 +808,27 @@ The use of individual keywords is explained in greater detail in the following s
 | Keyword | Purpose | Data Type |
 |----------|---------|---------|
 | `Alias`| Defines an alias for a URL or OID | uri, url, or oid  |
-| `CodeSystem` | Declares a new code system | name |
+| 🚧 `CodeSystem` | Declares a new code system | name |
 | `Description` | Provides a human-readable description | string, markdown |
-| `Expression` | The FHIR path expression in an invariant | string |
+| 🚧 `Expression` | The FHIR path expression in an invariant | string |
 | `Extension` | Declares a new extension | name |
 | `Id` | Set a unique identifier of an item | name |
-| `Instance` | Declare a new instance | name |
-| `InstanceOf` | The profile or resource an instance instantiates | name |
-| `Invariant` | Declares a new invariant | name |
-| `Mapping` | Introduces a new mapping | name |
-| `Mixin` | Introduces a class to be used as a mixin | name |
-| `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
-| `Language` | Declares the language of texts in a localization file | language ISO code |
+| 👶 `Instance` | Declare a new instance | name |
+| 👶 `InstanceOf` | The profile or resource an instance instantiates | name |
+| 🚧 `Invariant` | Declares a new invariant | name |
+| 🚧 `Mapping` | Introduces a new mapping | name |
+| 🚫 `Mixin` | Introduces a class to be used as a mixin | name |
+| 🚫 `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
+| 🚫 `Language` | Declares the language of texts in a localization file | language ISO code |
 | `Parent` | Specifies the base class for a profile or extension | name |
 | `Profile` | Introduces a new profile | name |
-| `Severity` | error, warning, or guideline in invariant | code |
-| `Slice` | Introduces a new slice | name, string |
-| `Source` | Profile or path a mapping applies to | path |
-| `Target` | The standard that the mapping maps to | string |
+| 🚧 `Severity` | error, warning, or guideline in invariant | code |
+| 🚧 `Slice` | Introduces a new slice | name, string |
+| 🚫 `Source` | Profile or path a mapping applies to | path |
+| 🚫 `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
-| `ValueSet` | Declares a new value set | name |
-| `XPath` | the xpath in invariant | string |
+| 🚧 `ValueSet` | Declares a new value set | name |
+| 🚫 `XPath` | the xpath in invariant | string |
 {: .grid }
 
 
@@ -854,7 +863,7 @@ To define a profile, the keywords `Profile`, `Parent` are required, and `Id`, `T
 ```
 Any rules defined for the profiles would follow immediately after the keyword section.
 
-##### Mixins
+##### 🚫 Mixins
 Mixins have the ability to take rules defined in one class and apply them to a compatible class. The rules are copied from the source class at compile time. Although there can only be one `Parent` class, there can be multiple `Mixins`.
 
 Each mixin class must be compatible parent class, in the sense that all the extensions and constraints defined in the mixin class apply to elements actually present in the Parent class. The legality of a mixin is checked at compile time, with an error signaled if the mixin class is not compatible with the parent class. For example, an error would signalled if there was an attempt to mix a Condition into an Observation.
@@ -877,7 +886,7 @@ At present, mixin classes must be defined in FSH. The capability for mixing in e
 
 > **IMPORTANT**: To be a valid mixin, the mixin cannot inherit from a different resource.
 
-#### Defining Slices
+#### 🚧 Defining Slices
 
 We saw earlier how to use `contains` rules and constraints to [define inline slices](#step-2-defining-slice-contents). Alternatively, it might be clearer to define each slice as an independent, modular entity. Defining slices outside a particular profile also allows the slices to be reused in multiple contexts.
 
@@ -923,7 +932,7 @@ Defining extensions is similar to defining a profile, except that the parent of 
 * Define a simple (non-nested) extension for BirthSex, whose data type is `code`:
 
 ```
-Extension: USCoreBirthSexExtension 
+Extension: USCoreBirthSexExtension
 Id:   us-core-birthsex
 Title:  "US Core Birth Sex Extension"
 Description: "A code classifying the person's sex assigned at birth"
@@ -933,6 +942,7 @@ Description: "A code classifying the person's sex assigned at birth"
 ```
 
 * Define a complex extension (extension with nested extensions) for US Core Ethnicity:
+
 ```
   Extension:      USCoreEthnicityExtension
   Id:             us-core-ethnicity
@@ -964,7 +974,7 @@ Description: "A code classifying the person's sex assigned at birth"
   * valueCode from BinaryBirthSex (required)
 ```
 
-#### Defining Mappings
+#### 🚫 Defining Mappings
 
 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
 
@@ -987,7 +997,7 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are use
   * identifier.value -> "identifier.value"
 ```
 
-#### Defining Mixins
+#### 🚫 Defining Mixins
 
 Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
 
@@ -1007,7 +1017,7 @@ Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
   * ^jurisdiction.coding = COUNTRY#US "United States of America"
 ```
 
-#### Defining Invariants
+#### 🚧 Defining Invariants
 
 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
@@ -1023,7 +1033,7 @@ XPath:      "f:given or f:family"
 
 > **Note:** The Invariant is incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
 
-#### Defining Instances
+#### 👶 Defining Instances
 
 Instances are defined using the keywords `Instance`, `InstanceOf`, `Description`, and `Title`. The `InstanceOf` is required, and plays a role analogous to the `Parent` in profiles. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL if defined externally.
 
@@ -1068,11 +1078,11 @@ Title:      "Primary Cancer Diagnosis"
 * code = SCT#93864006 "Primary malignant neoplasm of lower lobe of left lung"
 ```
 
-#### Defining Value Sets
+#### 👶 Defining Value Sets
 
-A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept. 
+A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
 
-Value sets are defined using the keywords `ValueSet`, `Title` and `Description`. 
+Value sets are defined using the keywords `ValueSet`, `Title` and `Description`.
 
 Codes must be taken from one or more terminology systems (also called code systems or vocabularies), and cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
@@ -1134,7 +1144,7 @@ Not all operators are valid for any code system. The `property` and `value` are 
 ```
 
 
-#### Defining Code Systems
+#### 👶 Defining Code Systems
 
 It is usually unnecessary to define code systems (also called terminologies or vocabularies) in FSH. However, FSH does allow definition of local codes inside an IG that are not drawn from an external code system. Defining codes inside an IG is not recommended, since those codes will not be part of any recognized terminology system. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- and when defining new local codes, you must define them in the context of a code system.
 
