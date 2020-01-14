@@ -41,7 +41,8 @@ This implementation guide includes the following sections:
 | Style | Explanation | Example |
 |:----------|:------|:---------|
 | `Code` | Code fragments, such as commands and FSH statements  | `* status = #open` |
-| _italics_ | File names | _example-1.fsh_ |
+| _italics_ | Used to introduce named items, such as data types, resource names, file names, etc. | _example-1.fsh_ |
+| ' ' (single quotes) | Used to highlight a literal value | the code 'confirmed'|
 | {curly braces} | An item to be substituted | `{codesystem}#{code}` |
 | **bold** | Emphasis |  Do **not** ignore this. |
 | 🚫 | Indicates a planned feature, not yet implemented in FSH or SUSHI | |
@@ -121,7 +122,7 @@ These comments can take up multiple lines.
 
 #### Coded Data Types
 
-The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. These data types can be bound to a value set or assigned a fixed code.  FSH provides special grammar for expressing codes and setting fixed coded values.
+The four "coded" types in FHIR are _code_, _Coding_, _CodeableConcept_, and _Quantity_. These data types can be bound to a value set or assigned a fixed code.  FSH provides special grammar for expressing codes and setting fixed coded values.
 
 ##### code
 
@@ -133,7 +134,7 @@ Codes are denoted with `#` sign. The shorthand is:
 
 **Examples:**
 
-* The code 'confirmed' (a value in [Condition Clinical Status Codes](http://hl7.org/fhir/R4/valueset-condition-clinical.html)):
+* The code 'confirmed' (a value in the [Condition Clinical Status value set](http://hl7.org/fhir/R4/valueset-condition-clinical.html)):
 
   `#confirmed`
 
@@ -159,7 +160,7 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
 
 **Examples:**
 
-* The code 363346000 from SNOMED-CT:
+* The code '363346000' from SNOMED-CT:
 
   `http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"`
 
@@ -183,7 +184,7 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
 
   `* type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"`
 
-* Set one of the lesser-used attributes of a Coding:
+* Set `userSelected`, one of the lesser-used attributes of a Coding:
 
   `* myCoding.userSelected = true`
 
@@ -205,7 +206,7 @@ To set the top-level text of a CodeableConcept, the shorthand expression is:
 
 **Examples:**
 
-* To set the first Coding in Condition.code (a CodeableConcept):
+* To set the first Coding in Condition.code (a CodeableConcept type):
 
   `* code = SCT#363346000 "Malignant neoplastic disease (disorder)"`
 
@@ -227,7 +228,7 @@ To set the top-level text of a CodeableConcept, the shorthand expression is:
 
 ##### Quantity
 
-In addition to having a quantitative value, a FHIR Quantity has a coded value that is interpreted as the units of measure of that Quantity. An element that is a Quantity can be bound to a value set or assigned a coded value. The shorthand is:
+In addition to having a quantitative value, a FHIR Quantity has a coded value that is interpreted as the units of measure. As such, a Quantity can be bound to a value set or assigned a coded value. The shorthand is:
 
 `* {Quantity type} = {system}#{code} "{display text}"`
 
@@ -432,7 +433,7 @@ Here is a summary of the rules supported in FSH:
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
 | Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
-| 🚫 Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
+| 🚧 Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
 | Extensions | `* {extension element path} contains {extensionName1} {card1} and {extensionName2} {card2} ...` |
 | 🚫 Mapping | `* {path} -> {string}` |
@@ -784,7 +785,7 @@ This section shows how to define various items in FSH:
 * [Extensions](#defining-extensions)
 * 🚫 [Mappings](#defining-mappings)
 * 🚫 [Mixins](#defining-mixins)
-* 🚫 [Invariants](#defining-invariants)
+* 🚧 [Invariants](#defining-invariants)
 * 👶 [Instances](#defining-instances)
 * 🚧 [Code Systems](#defining-code-systems)
 * 🚧 [Value Sets](#defining-value-sets)
@@ -828,7 +829,7 @@ The use of individual keywords is explained in greater detail in the following s
 | 🚫 `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
 | 🚧 `ValueSet` | Declares a new value set | name |
-| 🚫 `XPath` | the xpath in invariant | string |
+| 🚧 `XPath` | the xpath in invariant | string |
 {: .grid }
 
 
@@ -884,7 +885,7 @@ At present, mixin classes must be defined in FSH. The capability for mixing in e
   Mixins: FranceCoreObservation
 ```
 
-> **IMPORTANT**: To be a valid mixin, the mixin cannot inherit from a different resource.
+> **IMPORTANT:** To be a valid mixin, the mixin cannot inherit from a different resource.
 
 #### 🚧 Defining Slices
 
@@ -1035,7 +1036,7 @@ XPath:      "f:given or f:family"
 
 #### 👶 Defining Instances
 
-Instances are defined using the keywords `Instance`, `InstanceOf`, `Description`, and `Title`. The `InstanceOf` is required, and plays a role analogous to the `Parent` in profiles. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL if defined externally.
+Instances are defined using the keywords `Instance`, `InstanceOf`, and `Title`. The `InstanceOf` is required, and plays a role analogous to the `Parent` in profiles. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL if defined externally.
 
 Instances inherit structures and values from their StructureDefinition (i.e. fixed codes, extensions). Fixed value rules are used to set additional values.
 
@@ -1044,7 +1045,6 @@ Instances inherit structures and values from their StructureDefinition (i.e. fix
 Instance:   EveAnyperson
 InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
 Title:      "Eve Anyperson"
-Description: "Example of US Core Patient"
 * name.given = "Eve"
 * name.given[1] = "Steve"
 * name.family = "Anyperson"
@@ -1057,7 +1057,6 @@ Description: "Example of US Core Patient"
 Instance:   DrDavidAnydoc
 InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
 Title:      "Dr. David Anydoc"
-Description: "Example of US Core Practitioner"
 * name[0].family = Anydoc
 * name[0].given[0] = David
 * name[0].suffix[0] = MD
@@ -1144,28 +1143,27 @@ Not all operators are valid for any code system. The `property` and `value` are 
 ```
 
 
-#### 👶 Defining Code Systems
+#### 🚧 Defining Code Systems
 
 It is usually unnecessary to define code systems (also called terminologies or vocabularies) in FSH. However, FSH does allow definition of local codes inside an IG that are not drawn from an external code system. Defining codes inside an IG is not recommended, since those codes will not be part of any recognized terminology system. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- and when defining new local codes, you must define them in the context of a code system.
 
 Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are added, one per rule, using the almost same syntax as in value sets, except that the code system is not included before the hash sign `#`. Additional properties of a code can be added using the escape (caret) syntax.
 
-**Example:**:
+**Example:**
 
 ```
-CodeSystem:  YogaCodeSystem
+CodeSystem:  YogaCS
 Title: "Yoga Code System."
-Description:  "A vocabulary of yoga-related terms."
+Description:  "A brief vocabulary of yoga-related terms."
 * #Sirsasana "Headstand"
-* #Sarvangasana "Shoulder stand"
 * #Halasana "Plough Pose"
 * #Matsyasana "Fish Pose"
-* #Pachimotanasa "Sitting Forward Bend"
 * #Bhujangasana "Cobra Pose"
-* #Salabhasana "Locust Pose"
-* #Dhanurasana "Bow Pose"
 
-* concept[Sirsasana] ^definition "An inverted asana, also called mudra in classical hatha yoga."
+* concept[Sirsasana] ^definition "An inverted asana, also called mudra in classical hatha yoga, involves standing on one's head."
+* concept[Halasana] ^definition "Halasana or Plough pose is an inverted asana in hatha yoga and modern yoga as exercise. Its variations include Karnapidasana with the knees by the ears, and Supta Konasana with the feet wide apart."
+* concept[Matsyasana] ^definition "Matsyasana is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly considered a counterasana to Sarvangasana, or shoulder stand, specifically within the context of the Ashtanga Vinyasa Yoga Primary Series."
+* concept[Bhujangasana] ^definition "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
 
 ```
 > **Note:** FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
