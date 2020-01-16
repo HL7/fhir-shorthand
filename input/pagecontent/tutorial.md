@@ -1,15 +1,24 @@
 
-# Getting Started with FHIR Shorthand
 [FHIR Shorthand](https://github.com/HL7/fhir-shorthand) (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IGs). It is simple and compact, with tools to produce Fast Healthcare Interoperability Resources (FHIR) profiles, extensions and IGs. FSH is compiled from text files to FHIR artifacts using [SUSHI](https://github.com/standardhealth/sushi). To get started using FSH, you need to install and run SUSHI using the steps below.
+
+**Platform notes:**
+
+| Symbol | Explanation |
+|:----------|:------|
+| 🍎 | Indicates information or command specific to OS X. The instructions assume the shell script is **bash**. As of the Mac Catalina release, the default is **zsh** and will need to be reconfigured as a default or at runtime to call bash shell. You can find out the default shell in a Mac terminal by running `echo $SHELL`.|
+| 💻 | Indicates information or command specific to Windows. A command window can be launched by typing `cmd` at the _Search Windows_ tool. |
+| $ | Represents command prompt (may vary depending on platform) |
 
 ### Step 1: Install Node.js
 SUSHI requires Node.js. To install Node.js, go to [https://nodejs.org/](https://nodejs.org/) and you should see links to download an installer for your operating system. Download the installer for the LTS version. If you do not see a download appropriate for your operating system, click the "other downloads" link and look there. Once the installer is downloaded, run the installer. It is fine to select default options during installation.
 
-### Step 2: Install SUSHI
-To install SUSHI, open up a command prompt. Ensure that Node.js is correctly installed by running the following two commands:
+Ensure that Node.js is correctly installed by opening a command window and typing the following two commands. Each command should return a version number.
 ```
 $ node --version
 $ npm --version
+
+### Step 2: Install SUSHI
+To install SUSHI, open up a command prompt. 
 ```
 For each command, you should see a version number. If this works correctly, you can install SUSHI by doing:
 ```
@@ -60,18 +69,22 @@ info:
 
 Check to see if the _FishExample/build_ directory (or the directory you specified) is present, and change working directory of the command window to the _build_ directory. At the command prompt, enter:
 
-`$ _updatePublisher`
+💻   `$ _updatePublisher`
+
+🍎   `$ sh _updatePublisher.sh`
 
 This will download the latest version of the HL7 FHIR IG Publisher tool. **This step can be skipped if you already have the latest version of the IG Publisher tool.**
 
 > **Note:** If you are blocked by a firewall, or if for any reason __updatePublisher_ fails to execute, download the current IG Publisher jar file [here](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory _/FishExample/build/input-cache_ (create the directory if necessary.)
 
-🚧
-**Extra step to take because SUSHI is still under construction:** Manually copy the _Shorty.png_ file from _FishExample/ig-data/input/pagecontent_ to _FishExample/build/input/pagecontent_
+**Step 5.5  Extra step to take because SUSHI is still under construction:** Manually copy the _Shorty.png_ file from _FishExample/ig-data/input/pagecontent_ to _FishExample/build/input/pagecontent_
 
 Now run:
 
-`$ _genonce`
+💻   `$ _genonce`
+
+🍎   `$ sh _genonce.sh`
+
 
 This will run the HL7 IG generator, which will take several minutes to complete. After the publisher is finished, open the file _/FishExample/build/output/index.html_ to see the resulting IG.
 
