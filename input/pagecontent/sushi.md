@@ -150,5 +150,6 @@ Take the following steps to further customize your IG. Make sure you have run SU
     * **Additional pages, images, other content:** Add files to _/build/input/resources_ directory, and link to menus or other pages.
     * **Version history:** _/build/package-list.json_
 
-When you run SUSHI again, when it does not find the /ig-data directory, it will only populate the /build/input/resources directory, leaving your customizations intact. **Do not delete the _/build_ directory, or include a _/ig-data_ directory in the FSH tank, or you will lose whatever customizations you have introduced in _/build/input_.**
+When you run SUSHI again, and it does not find the _/ig-data_ directory, it will only populate the _/build/input/resources_ directory, leaving your customizations intact. 
 
+> **Note:** After you introduce customizations, do **not** re-create the _/ig-data_ directory in the FSH tank, or SUSHI may overwrite the customizations you have introduced in _/build/input_.
