@@ -18,9 +18,11 @@ $ node --version
 $ npm --version
 
 ### Step 2: Install SUSHI
-To install SUSHI, open up a command prompt. 
+To install SUSHI, open up a command prompt.
 ```
+
 For each command, you should see a version number. If this works correctly, you can install SUSHI by doing:
+
 ```
 $ npm install -g fsh-sushi
 ``` 
