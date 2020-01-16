@@ -47,7 +47,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   
 
-  Generated on Sat, Jan 4, 2020 07:45+0000 for FHIR v4.2.0 
+  Generated on Wed, Jan 15, 2020 14:50+0000 for FHIR v4.2.0 
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="4.2.0">
   <!-- Note: When using this schema with some tools, it may also be necessary to declare xmlns:xml="http://www.w3.org/XML/1998/namespace", however this causes performance issues with other tools and thus is not in the base schemas. -->
@@ -3758,7 +3758,7 @@ The type is the Canonical URL of Resource Definition that is the type this refer
           </xs:element>
           <xs:element name="durationUnit" type="UnitsOfTime" minOccurs="0" maxOccurs="1">
             <xs:annotation>
-              <xs:documentation xml:lang="en">The units of time for the duration, in http://unitsofmeasure.org units.</xs:documentation>
+              <xs:documentation xml:lang="en">The units of time for the duration, in UCUM units.</xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="positiveInt" minOccurs="0" maxOccurs="1">
@@ -3783,7 +3783,7 @@ The type is the Canonical URL of Resource Definition that is the type this refer
           </xs:element>
           <xs:element name="periodUnit" type="UnitsOfTime" minOccurs="0" maxOccurs="1">
             <xs:annotation>
-              <xs:documentation xml:lang="en">The units of time for the period in http://unitsofmeasure.org units.</xs:documentation>
+              <xs:documentation xml:lang="en">The units of time for the period in UCUM units.</xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dayOfWeek" type="code" minOccurs="0" maxOccurs="unbounded">
@@ -3851,7 +3851,7 @@ The type is the Canonical URL of Resource Definition that is the type this refer
   </xs:simpleType>
   <xs:complexType name="UnitsOfTime">
     <xs:annotation>
-      <xs:documentation xml:lang="en">A unit of time (units from http://unitsofmeasure.org).</xs:documentation>
+      <xs:documentation xml:lang="en">A unit of time (units from UCUM).</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
@@ -14593,12 +14593,12 @@ into another (possibly the same) biological entity.</xs:documentation>
     <xs:restriction base="code-primitive">
       <xs:enumeration value="deny">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Opt Out</xs:documentation>
+          <xs:documentation xml:lang="en">Deny</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="permit">
         <xs:annotation>
-          <xs:documentation xml:lang="en">Opt In</xs:documentation>
+          <xs:documentation xml:lang="en">Permit</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
     </xs:restriction>
@@ -29573,9 +29573,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
         <xs:sequence>
           <xs:element name="text" minOccurs="0" maxOccurs="1" type="string">
             <xs:annotation>
-              <xs:documentation xml:lang="en">Free text dosage can be used for cases where the dosage administered is too complex to code. When coded dosage is present, the free text dosage may still be present for display to humans.
-
-The dosage instructions should reflect the dosage of the medication that was administered.</xs:documentation>
+              <xs:documentation xml:lang="en">Free text dosage can be used for cases where the dosage administered is too complex to code. When coded dosage is present, the free text dosage may still be present for display to humans.The dosage instructions should reflect the dosage of the medication that was administered.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="site" minOccurs="0" maxOccurs="1" type="CodeableConcept">
@@ -34478,7 +34476,7 @@ For resource issues, this will be a simple XPath limited to element names, repet
               <xs:documentation xml:lang="en">The physical type of the container of the medicine.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="quantity" minOccurs="0" maxOccurs="1" type="Quantity">
+          <xs:element name="quantity" minOccurs="0" maxOccurs="1" type="integer">
             <xs:annotation>
               <xs:documentation xml:lang="en">The quantity of this package in the medicinal product, at the current level of packaging. If specified, the outermost level is always 1.</xs:documentation>
            </xs:annotation>
@@ -36059,8 +36057,7 @@ Deceased patients may also be marked as inactive for the same reasons, but may b
           </xs:element>
           <xs:element name="address" minOccurs="0" maxOccurs="unbounded" type="Address">
             <xs:annotation>
-              <xs:documentation xml:lang="en">Address(es) of the practitioner that are not role specific (typically home address). 
-Work addresses are not typically entered in this property as they are usually role dependent.</xs:documentation>
+              <xs:documentation xml:lang="en">Address(es) of the practitioner that are not role specific (typically home address). Work addresses are not typically entered in this property as they are usually role dependent.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="gender" minOccurs="0" maxOccurs="1" type="AdministrativeGender">
@@ -37305,12 +37302,12 @@ Work addresses are not typically entered in this property as they are usually ro
   </xs:complexType>
   <xs:element name="RegulatedAuthorization" type="RegulatedAuthorization">
     <xs:annotation>
-      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product.</xs:documentation>
+      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product, device or process.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="RegulatedAuthorization">
     <xs:annotation>
-      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product.</xs:documentation>
+      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product, device or process.</xs:documentation>
       <xs:documentation xml:lang="en">If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
@@ -37318,17 +37315,17 @@ Work addresses are not typically entered in this property as they are usually ro
         <xs:sequence>
           <xs:element name="identifier" minOccurs="0" maxOccurs="unbounded" type="Identifier">
             <xs:annotation>
-              <xs:documentation xml:lang="en">Business identifier for the marketing authorization, as assigned by a regulator.</xs:documentation>
+              <xs:documentation xml:lang="en">Business identifier for the authorization, typically assigned by the authorizing body.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="subject" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
-              <xs:documentation xml:lang="en">The product that is being authorized.</xs:documentation>
+              <xs:documentation xml:lang="en">The type of product or service that is being authorized.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="type" minOccurs="0" maxOccurs="1" type="CodeableConcept">
             <xs:annotation>
-              <xs:documentation xml:lang="en">Type of this authorization, for example drug marketing approval, orphan drug designation.</xs:documentation>
+              <xs:documentation xml:lang="en">Overall type of this authorization, for example drug marketing approval, orphan drug designation.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="description" minOccurs="0" maxOccurs="1" type="markdown">
@@ -37343,12 +37340,12 @@ Work addresses are not typically entered in this property as they are usually ro
           </xs:element>
           <xs:element name="status" minOccurs="0" maxOccurs="1" type="CodeableConcept">
             <xs:annotation>
-              <xs:documentation xml:lang="en">The status of the marketing authorization.</xs:documentation>
+              <xs:documentation xml:lang="en">The status that is authorised e.g. approved. Intermediate states can be tracked with cases and applications.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="statusDate" minOccurs="0" maxOccurs="1" type="dateTime">
             <xs:annotation>
-              <xs:documentation xml:lang="en">The date at which the given status has become applicable.</xs:documentation>
+              <xs:documentation xml:lang="en">The date at which the given status became applicable.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="validityPeriod" minOccurs="0" maxOccurs="1" type="Period">
@@ -37356,9 +37353,21 @@ Work addresses are not typically entered in this property as they are usually ro
               <xs:documentation xml:lang="en">The beginning of the time period in which the marketing authorization is in the specific status shall be specified A complete date consisting of day, month and year shall be specified using the ISO 8601 date format.</xs:documentation>
            </xs:annotation>
           </xs:element>
+          <xs:choice minOccurs="0" maxOccurs="1" >
+            <xs:annotation>
+              <xs:documentation xml:lang="en">Condition for which the medicinal use applies.</xs:documentation>
+            </xs:annotation>
+            <xs:element name="indicationCodeableConcept" type="CodeableConcept"/>
+            <xs:element name="indicationReference" type="Reference"/>
+          </xs:choice>
+          <xs:element name="intendedUse" minOccurs="0" maxOccurs="1" type="CodeableConcept">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The intended use of the product, e.g. prevention, treatment.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
           <xs:element name="basis" minOccurs="0" maxOccurs="unbounded" type="CodeableConcept">
             <xs:annotation>
-              <xs:documentation xml:lang="en">The legal framework against which this authorization is granted, or other reasons for it.</xs:documentation>
+              <xs:documentation xml:lang="en">The legal or regulatory framework against which this authorization is granted, or other reasons for it.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="relatedDate" type="RegulatedAuthorization.RelatedDate" minOccurs="0" maxOccurs="unbounded">
@@ -37392,7 +37401,7 @@ Work addresses are not typically entered in this property as they are usually ro
   </xs:complexType>
   <xs:complexType name="RegulatedAuthorization.RelatedDate">
     <xs:annotation>
-      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product.</xs:documentation>
+      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product, device or process.</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BackboneElement">
@@ -37415,7 +37424,7 @@ Work addresses are not typically entered in this property as they are usually ro
   </xs:complexType>
   <xs:complexType name="RegulatedAuthorization.Case">
     <xs:annotation>
-      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product.</xs:documentation>
+      <xs:documentation xml:lang="en">The regulatory authorization of a medicinal product, device or process.</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BackboneElement">

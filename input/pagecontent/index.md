@@ -86,7 +86,7 @@ FSH has a number of Keywords and reserved words (e.g., `Alias`, `Profile`, `Exte
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 
-For convenience, FSH also supports multi-line strings, demarcated with triple quotation marks `"""`. The line breaks are for visual convenience only, and multi-line strings are translated to conventional FHIR strings.
+For convenience, FSH also supports multi-line strings, demarcated with triple double quotation marks `"""`. The line breaks are for visual convenience only, and multi-line strings are translated to conventional FHIR strings.
 
 #### Whitespace
 
@@ -103,7 +103,7 @@ is equivalent to:
              Profile:  
 SecondaryCancerCondition            Parent: CancerCondition
 
-         * focus only    
+         * focus only
 PrimaryCancerCondition
 ```
 
@@ -340,9 +340,9 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
   * address[CanadianAddress].state from CanadianProvenceValueSet (required)
   ```
 
-##### 👶 Sliced Array Paths
+##### Sliced Array Paths
 
-FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
+👶 FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
 
 To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
 
@@ -401,7 +401,7 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
 
 ##### Structure Definition Escape Paths
 
-FSH uses the caret (^) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax is used to set the metadata attributes in SD, other than those set through [FSH Keywords](#keywords) (name, id, title, and description) or specified in the [package-list.json file](sushi.md#configuration-file) used to create the IG. Examples of metadata elements in SDs can be set with caret syntax include experimental, useContext, and abstract.
+FSH uses the caret (^) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax is used to set the metadata attributes in SD, other than those set through [FSH Keywords](#keywords) (name, id, title, and description) or specified in the one of the configuration files used to create the IG. Examples of metadata elements in SDs can be set with caret syntax include experimental, useContext, and abstract.
 
 The caret syntax can also be combined with element paths to set values in the ElementDefinitions that populate the SD.
 
@@ -683,9 +683,9 @@ A slice must match the data type of the array it slices. In particular:
        DiastolicBP 1..1
 ```
 
-###### 👶 Reslicing
+###### Reslicing
 
-Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
+👶 Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
 
 ```
 * {array element path}[{sliceName}] contains {resliceName1} {card1} and {resliceName2} {card2} and ...
@@ -754,9 +754,9 @@ One way to specify the slicing logic parameters is to use [structure definition 
 ```
 
 
-#### 🚧 Invariant Rules
+#### Invariant Rules
 
-[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole, a single element, or multiple elements. The FSH grammars for applying invariants in profiles are as follows:
+🚧 [Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole, a single element, or multiple elements. The FSH grammars for applying invariants in profiles are as follows:
 
 `* obeys {invariant}`
 
@@ -778,9 +778,9 @@ The referenced invariant and its properties must be declared somewhere within th
 
   `* name obeys us-core-8`
 
-#### 🚫 Mapping Rules
+#### Mapping Rules
 
-[Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
+🚫 [Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
 Mapping rules use the symbol `->` with the following grammar:
 
@@ -828,7 +828,7 @@ For example:
 
 `Description: "The intent of the treatment."`
 
-For some keywords, values are **FSH names**. A name is any sequence of non-whitespace characters, used to refer to the item within the same [FSH tank](#file-types-and-fsh-tanks). By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
+For some keywords, values are **FSH names**. A name is any sequence of non-whitespace characters, used to refer to the item within the same [FSH tank](#fsh-tanks-and-fsh-files). By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
 The use of individual keywords is explained in greater detail in the following sections. Here is a summary of keywords in FSH:
 
@@ -890,14 +890,15 @@ To define a profile, the keywords `Profile`, `Parent` are required, and `Id`, `T
 ```
 Any rules defined for the profiles would follow immediately after the keyword section.
 
-##### 🚫 Mixins
-Mixins have the ability to take rules defined in one class and apply them to a compatible class. The rules are copied from the source class at compile time. Although there can only be one `Parent` class, there can be multiple `Mixins`.
+##### Mixins
+
+🚫 Mixins have the ability to take rules defined in one class and apply them to a compatible class. The rules are copied from the source class at compile time. Although there can only be one `Parent` class, there can be multiple `Mixins`.
 
 Each mixin class must be compatible parent class, in the sense that all the extensions and constraints defined in the mixin class apply to elements actually present in the Parent class. The legality of a mixin is checked at compile time, with an error signaled if the mixin class is not compatible with the parent class. For example, an error would signalled if there was an attempt to mix a Condition into an Observation.
 
 At present, mixin classes must be defined in FSH. The capability for mixing in externally-defined classes is under development.
 
-**Example:** 
+**Example:**
 
 * Defining two national IGs, both based on the same BreastRadiologyProfile:
 
@@ -919,7 +920,7 @@ Defining extensions is similar to defining a profile, except that the parent of 
 
 > **Note:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
 
-**Example:** 
+**Example:**
 
 * Define a simple (non-nested) extension for BirthSex, whose data type is `code`:
 
@@ -967,9 +968,9 @@ Description: "A code classifying the person's sex assigned at birth"
 ```
 
 
-#### 🚧 Defining Slices
+#### Defining Slices
 
-We saw earlier how to use `contains` rules and constraints to [define inline slices](#step-2-defining-slice-contents). Alternatively, it might be clearer to define each slice as an independent, modular entity. Defining slices outside a particular profile also allows the slices to be reused in multiple contexts.
+🚧 We saw earlier how to use `contains` rules and constraints to [define inline slices](#step-2-defining-slice-contents). Alternatively, it might be clearer to define each slice as an independent, modular entity. Defining slices outside a particular profile also allows the slices to be reused in multiple contexts.
 
 The syntax for defining a slice is the same as for FSH profiles, except that the initial keyword is `Slice` and the SD escape (^) cannot be used, since slices do not have separate SDs.
 
@@ -1002,9 +1003,9 @@ Description: "The U.S. National Provider Identifier (NPI)"
 * system = http://hl7.org/fhir/sid/us-npi
 ```
 
-#### 🚫 Defining Mappings
+#### Defining Mappings
 
-[Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
+🚫 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
 
 > **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
@@ -1025,9 +1026,9 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are use
   * identifier.value -> "identifier.value"
 ```
 
-#### 🚫 Defining Mixins
+#### Defining Mixins
 
-Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
+🚫 Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
 
 **Example:** 
 
@@ -1045,9 +1046,9 @@ Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
   * ^jurisdiction.coding = COUNTRY#US "United States of America"
 ```
 
-#### 🚧 Defining Invariants
+#### Defining Invariants
 
-Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
+🚧 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
 **Example:**
 ```
@@ -1061,9 +1062,9 @@ XPath:      "f:given or f:family"
 
 > **Note:** The Invariant is incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
 
-#### 👶 Defining Instances
+#### Defining Instances
 
-Instances are defined using the keywords `Instance`, `InstanceOf`, and `Title`. The `InstanceOf` is required, and plays a role analogous to the `Parent` in profiles. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL if defined externally.
+👶 Instances are defined using the keywords `Instance`, `InstanceOf`, and `Title`. The `InstanceOf` is required, and plays a role analogous to the `Parent` in profiles. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL if defined externally.
 
 Instances inherit structures and values from their StructureDefinition (i.e. fixed codes, extensions). Fixed value rules are used to set additional values.
 
@@ -1104,9 +1105,9 @@ Title:      "Primary Cancer Diagnosis"
 * code = SCT#93864006 "Primary malignant neoplasm of lower lobe of left lung"
 ```
 
-#### 👶 Defining Value Sets
+#### Defining Value Sets
 
-A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
+👶 A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
 
 Value sets are defined using the keywords `ValueSet`, `Title` and `Description`.
 
@@ -1169,10 +1170,9 @@ Not all operators are valid for any code system. The `property` and `value` are 
   * exclude codes from system SCT where code descendent-of SCT#128462008 "Secondary malignant neoplastic disease"
 ```
 
+#### Defining Code Systems
 
-#### 🚧 Defining Code Systems
-
-It is usually unnecessary to define code systems (also called terminologies or vocabularies) in FSH. However, FSH does allow definition of local codes inside an IG that are not drawn from an external code system. Defining codes inside an IG is not recommended, since those codes will not be part of any recognized terminology system. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- and when defining new local codes, you must define them in the context of a code system.
+🚧 It is usually unnecessary to define code systems (also called terminologies or vocabularies) in FSH. However, FSH does allow definition of local codes inside an IG that are not drawn from an external code system. Defining codes inside an IG is not recommended, since those codes will not be part of any recognized terminology system. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- and when defining new local codes, you must define them in the context of a code system.
 
 Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are added, one per rule, using the almost same syntax as in value sets, except that the code system is not included before the hash sign `#`. Additional properties of a code can be added using the escape (caret) syntax.
 
