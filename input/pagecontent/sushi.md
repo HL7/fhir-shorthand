@@ -106,7 +106,7 @@ Here are some general tips on approaching debugging your model:
 
 When SUSHI runs, in addition to creating the StructureDefintions, examples, and other artifacts, it has the capability to create additional files necessary to run the HL7 IG Publisher. This functionality will be executed only if SUSHI finds a directory named _/ig-data_ in the FSH tank.
 
-🚧 The support provided by SUSHI for customizing the IG is limited. More features will be added in the future. To customize your IG, see [Providing Customizations to your IG](#providing-customizations-to-your-ig).
+🚧 The support provided by SUSHI for customizing the IG is limited. More features will be added in the future. To customize your IG, see [Customizing your IG](#customizing-your-ig).
 
 To begin, follow these steps:
 
@@ -138,11 +138,14 @@ Now run:
 
 This will run the HL7 IG Publisher, which will take several minutes to complete. After the publisher is finished, open the file _/build/output/index.html_ to see the resulting IG.
 
-#### Providing Customizations to your IG
+#### Customizing your IG
 
-Take the following steps to further customize your IG. Make sure you have run SUSHI at least once with the _ig-data_ directory, so the _/build_ directory and the minimum set of the files and directory structure needed to run the IG Publisher are already present.
+🚧 The procedures here are a temporary workarounds, until SUSHI provides support for customizations.
 
-1. First, make sure all the files in _/ig-data/pagecontent_ have been copied to _/build/input/pagecontent_. If not, manually copy them over.
+Take the following steps to further customize your IG: 
+
+1. Make sure you have run SUSHI at least once and successfully produced the IG at least once, so you are sure the _/build_ directory exists, and contains the directories and files needed to run the IG Publisher. 
+1. Make sure all the files in _/ig-data/pagecontent_ have been copied to _/build/input/pagecontent_. If not, manually copy them over.
 1. Remove the _/ig-data_ directory from the FSH Tank (you may delete it, but it is safer to preserve it at another location.)
 1. Introduce any desired customizations into the following files:
     * **Menus:** Edit _/build/input/include/menu.xml_
