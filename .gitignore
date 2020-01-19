@@ -2,7 +2,6 @@ input-cache/**
 output/**
 temp/**
 template/**
-
 input-cache/schemas-r5/fhir-single.xsd
 input-cache/schemas-r5/fhir-xhtml.xsd
 input-cache/schemas-r5/xml.xsd
