@@ -292,7 +292,7 @@ If an element allows more than one value (e.g., `0..*`), then it must be possibl
 
 If the index is omitted, the first element of the array (`[0]`) is assumed. 
 
-**Examples:** 
+**Examples:**
 
 * Set a Patient's first name's second given name to "Marie":
 
@@ -306,7 +306,7 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
 Frequently in FHIR, an element has a Reference that has multiple targets. To address a specific target, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
 
-**Example:** 
+**Example:**
 
 * Restrict a performer element (type Reference(Organization | Pracititioner) to PrimaryCareProvider in a profile, assuming PrimaryCareProvider is a profile on Practitioner:
 
@@ -339,24 +339,6 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
   * address[USAddress].state from USStateValueSet (required)
   * address[CanadianAddress].state from CanadianProvenceValueSet (required)
   ```
-
-##### Sliced Array Paths
-
-👶 FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
-
-To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
-
-**Examples:**
-
-* In an Observation profile representing Apgar score, with slices for RespiratoryScore, AppearanceScore, and others, fix the RespirationScore:
-
-  `* component[RespiratoryScore].code = SCT#24388001 "Apgar score 5 (finding)"`
-
-* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores, set the OneMinuteScore and FiveMinuteScore sub-slices:
-
-  `* component[RespiratoryScore][OneMinuteScore].code = SCT#24388001 "Apgar score 5 (finding)"`
-
-  `* component[RespiratoryScore][FiveMinuteScore].code = SCT#13323003 "Apgar score 7 (finding)"`
 
 ##### Extension Paths
 
@@ -398,6 +380,24 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
   * USCoreEthnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"
   * USCoreEthnicity.detailed[1].valueCoding = RACE#2148-5 "Mexican"
 ```
+
+##### Sliced Array Paths
+
+FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
+
+👶 To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
+
+**Examples:**
+
+* In an Observation profile representing Apgar score, with slices for RespiratoryScore, AppearanceScore, and others, fix the RespirationScore:
+
+  `* component[RespiratoryScore].code = SCT#24388001 "Apgar score 5 (finding)"`
+
+* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores, set the OneMinuteScore and FiveMinuteScore sub-slices:
+
+  `* component[RespiratoryScore][OneMinuteScore].code = SCT#24388001 "Apgar score 5 (finding)"`
+
+  `* component[RespiratoryScore][FiveMinuteScore].code = SCT#13323003 "Apgar score 7 (finding)"`
 
 ##### Structure Definition Escape Paths
 
@@ -809,12 +809,12 @@ This section shows how to define various items in FSH:
 * [Profiles](#defining-profiles)
 * [Extensions](#defining-extensions)
 * 🚧 [Slices](#defining-slices)
+* [Instances](#defining-instances)
+* [Value Sets](#defining-value-sets)
+* [Code Systems](#defining-code-systems)
 * 🚫 [Mappings](#defining-mappings)
 * 🚫 [Mixins](#defining-mixins)
 * 🚧 [Invariants](#defining-invariants)
-* 👶 [Instances](#defining-instances)
-* 🚧 [Code Systems](#defining-code-systems)
-* 🚧 [Value Sets](#defining-value-sets)
 
 #### Keywords
 
@@ -835,13 +835,13 @@ The use of individual keywords is explained in greater detail in the following s
 | Keyword | Purpose | Data Type |
 |----------|---------|---------|
 | `Alias`| Defines an alias for a URL or OID | uri, url, or oid  |
-| 🚧 `CodeSystem` | Declares a new code system | name |
+| `CodeSystem` | Declares a new code system | name |
 | `Description` | Provides a human-readable description | string, markdown |
 | 🚧 `Expression` | The FHIR path expression in an invariant | string |
 | `Extension` | Declares a new extension | name |
 | `Id` | Set a unique identifier of an item | name |
-| 👶 `Instance` | Declare a new instance | name |
-| 👶 `InstanceOf` | The profile or resource an instance instantiates | name |
+| `Instance` | Declare a new instance | name |
+| `InstanceOf` | The profile or resource an instance instantiates | name |
 | 🚧 `Invariant` | Declares a new invariant | name |
 | 🚧 `Mapping` | Introduces a new mapping | name |
 | 🚫 `Mixin` | Introduces a class to be used as a mixin | name |
@@ -854,10 +854,9 @@ The use of individual keywords is explained in greater detail in the following s
 | 🚫 `Source` | Profile or path a mapping applies to | path |
 | 🚫 `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
-| 🚧 `ValueSet` | Declares a new value set | name |
+| `ValueSet` | Declares a new value set | name |
 | 🚧 `XPath` | the xpath in invariant | string |
 {: .grid }
-
 
 #### Defining Aliases
 
@@ -889,30 +888,6 @@ To define a profile, the keywords `Profile`, `Parent` are required, and `Id`, `T
   Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
 ```
 Any rules defined for the profiles would follow immediately after the keyword section.
-
-##### Mixins
-
-🚫 Mixins have the ability to take rules defined in one class and apply them to a compatible class. The rules are copied from the source class at compile time. Although there can only be one `Parent` class, there can be multiple `Mixins`.
-
-Each mixin class must be compatible parent class, in the sense that all the extensions and constraints defined in the mixin class apply to elements actually present in the Parent class. The legality of a mixin is checked at compile time, with an error signaled if the mixin class is not compatible with the parent class. For example, an error would signalled if there was an attempt to mix a Condition into an Observation.
-
-At present, mixin classes must be defined in FSH. The capability for mixing in externally-defined classes is under development.
-
-**Example:**
-
-* Defining two national IGs, both based on the same BreastRadiologyProfile:
-
-```
-  Profile: USCoreBreastRadiologyProfile
-  Parent: BreastRadiologyProfile
-  Mixins:  USCoreObservation
-
-  Profile: FranceBreastRadiologyProfile
-  Parent: BreastRadiologyProfile
-  Mixins: FranceCoreObservation
-```
-
-> **IMPORTANT:** To be a valid mixin, the mixin cannot inherit from a different resource.
 
 #### Defining Extensions
 
@@ -967,12 +942,13 @@ Description: "A code classifying the person's sex assigned at birth"
   * valueCode from BinaryBirthSex (required)
 ```
 
-
 #### Defining Slices
 
-🚧 We saw earlier how to use `contains` rules and constraints to [define inline slices](#step-2-defining-slice-contents). Alternatively, it might be clearer to define each slice as an independent, modular entity. Defining slices outside a particular profile also allows the slices to be reused in multiple contexts.
+🚧 As [discussed earlier](#slicing-rules), slices are incorporated into profiles using `contains` rules. Slices can be defined through  [define inline slice definitions](#step-2-defining-slice-contents).
 
-The syntax for defining a slice is the same as for FSH profiles, except that the initial keyword is `Slice` and the SD escape (^) cannot be used, since slices do not have separate SDs.
+Alternatively, slices can be defined as independent, modular entities. Defining slices outside a particular profile also allows the slices to be reused in multiple contexts.
+
+The syntax for defining a slice is the same as for FSH profiles, except that the initial keyword is `Slice`. The parent of a slice must be declared, and must be a data type or backbone element. Note that the SD escape character (^) cannot be used in a slice definition, since slices do not have separate SDs.
 
 **Example** 
 
@@ -1002,65 +978,6 @@ Parent:   Identifier
 Description: "The U.S. National Provider Identifier (NPI)"
 * system = http://hl7.org/fhir/sid/us-npi
 ```
-
-#### Defining Mappings
-
-🚫 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
-
-> **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
-
-To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are used. Any number of [mapping rules](#mapping-rules) then follow.
-
-**Example:** 
-```
-  Mapping:  USCorePatientToArgonaut
-  Source:   USCorePatient
-  Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
-  Id:       argonaut-dq-dstu2
-  * -> Patient
-  * extension[USCoreRaceExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
-  * extension[USCoreEthnicityExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
-  * extension[USCoreBirthSexExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
-  * identifier -> "identifier"
-  * identifier.system -> "identifier.system"
-  * identifier.value -> "identifier.value"
-```
-
-#### Defining Mixins
-
-🚫 Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
-
-**Example:** 
-
-* Defining a mixin for metadata shared in all US Core profiles:
-
-```
-  Mixin: USCoreMetadata
-  Parent: DomainResource
-  * ^version = "3.1.0"
-  * ^status = #active
-  * ^experimental = false
-  * ^publisher = "HL7 US Realm Steering Committee"
-  * ^contact.telecom.system = #url
-  * ^contact.telecom.value = "http://www.healthit.gov"
-  * ^jurisdiction.coding = COUNTRY#US "United States of America"
-```
-
-#### Defining Invariants
-
-🚧 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
-
-**Example:**
-```
-Invariant:  USCoreNameInvariant
-Id:         us-core-8
-Definition: "Patient.name.given  or Patient.name.family or both SHALL be present"
-Expression: "family.exists() or given.exists()"
-Severity:   "error"
-XPath:      "f:given or f:family"
-```
-
-> **Note:** The Invariant is incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
 
 #### Defining Instances
 
@@ -1123,7 +1040,7 @@ The contents of a value set are defined by a set of rules. There are four types 
 | Selected codes from a code system | `* codes from system {Id} where {filter} and {filter} and ...` | `* codes from system SCT where code descendent-of SCT#254837009` |
 {: .grid }
 
-See [below](#filters) for discussion of filters. 
+See [below](#filters) for discussion of filters.
 
 > **Note:** `Id` can be a FSH name, alias or URL.
 
@@ -1162,12 +1079,14 @@ Not all operators are valid for any code system. The `property` and `value` are 
 * Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set
 
 ```
-  ValueSet:       PrimaryCancerDisorderVS
-  Title: "Primary Cancer Disorder Value Set"
-  Description:    "Types of primary malignant neoplastic disease."
-  SCT#363346000  "Malignant neoplastic disease (disorder)"
-  * codes from system SCT where code descendent-of SCT#363346000 "Malignant neoplastic disease (disorder)"
-  * exclude codes from system SCT where code descendent-of SCT#128462008 "Secondary malignant neoplastic disease"
+* codes from system SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
+* codes from system SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
+* codes from system SCT where
+    concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)" and
+    concept is-not-a #399983006 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)" and
+    concept is-not-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)" and
+    concept is-not-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)" and
+    concept is-not-a #703548001 "Endometrioid intraepithelial neoplasia (morphologic abnormality)"
 ```
 
 #### Defining Code Systems
@@ -1194,3 +1113,85 @@ Description:  "A brief vocabulary of yoga-related terms."
 
 ```
 > **Note:** FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
+
+
+#### Defining Mappings
+
+🚫 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
+
+> **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
+
+To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are used. Any number of [mapping rules](#mapping-rules) then follow.
+
+**Example:**
+
+```
+  Mapping:  USCorePatientToArgonaut
+  Source:   USCorePatient
+  Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
+  Id:       argonaut-dq-dstu2
+  * -> Patient
+  * extension[USCoreRaceExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
+  * extension[USCoreEthnicityExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
+  * extension[USCoreBirthSexExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
+  * identifier -> "identifier"
+  * identifier.system -> "identifier.system"
+  * identifier.value -> "identifier.value"
+```
+
+#### Defining Mixins
+
+🚫  Mixins have the ability to take rules defined in one class and apply them to a compatible class. The rules are copied from the source class at compile time. Although there can only be one `Parent` class, there can be multiple `Mixins`.
+
+Each mixin class must be compatible parent class, in the sense that all the extensions and constraints defined in the mixin class apply to elements actually present in the Parent class. The legality of a mixin is checked at compile time, with an error signaled if the mixin class is not compatible with the parent class. For example, an error would signalled if there was an attempt to mix a Condition into an Observation.
+
+At present, mixin classes must be defined in FSH. The capability for mixing in externally-defined classes is under development. Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
+
+**Example:** 
+
+* Defining a mixin for metadata shared in all US Core profiles:
+
+```
+  Mixin: USCoreMetadata
+  Parent: DomainResource
+  * ^version = "3.1.0"
+  * ^status = #active
+  * ^experimental = false
+  * ^publisher = "HL7 US Realm Steering Committee"
+  * ^contact.telecom.system = #url
+  * ^contact.telecom.value = "http://www.healthit.gov"
+  * ^jurisdiction.coding = COUNTRY#US "United States of America"
+```
+
+**Example:**
+
+* Defining two national IGs, both based on the same BreastRadiologyProfile:
+
+```
+  Profile: USCoreBreastRadiologyProfile
+  Parent: BreastRadiologyProfile
+  Mixins:  USCoreObservation
+
+  Profile: FranceBreastRadiologyProfile
+  Parent: BreastRadiologyProfile
+  Mixins: FranceCoreObservation
+```
+
+> **IMPORTANT:** To be a valid mixin, the mixin cannot inherit from a different resource.
+
+
+#### Defining Invariants
+
+🚧 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
+
+**Example:**
+```
+Invariant:  USCoreNameInvariant
+Id:         us-core-8
+Definition: "Patient.name.given  or Patient.name.family or both SHALL be present"
+Expression: "family.exists() or given.exists()"
+Severity:   "error"
+XPath:      "f:given or f:family"
+```
+
+> **Note:** The Invariant is incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
