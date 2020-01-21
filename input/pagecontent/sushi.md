@@ -25,7 +25,7 @@ This guide assumes you have:
 | _italics_ | File names | _example-1.fsh_ |
 | {curly braces} | An item to be substituted | `* status = {code}` |
 | **bold** | General emphasis |  Do **not** fold, spindle or mutilate. |
-
+{: .grid }
 
 
 | Symbol | Explanation |
