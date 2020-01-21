@@ -88,7 +88,6 @@ If you run SUSHI from the same folder where your .fsh files are located, the com
 
 `$ sushi . {options}`
 
-
 #### Error Messages
 
 In the process of developing your IG using FSH, you will inevitably encounter SUSHI error messages. Debugging the model is an iterative process, and it could take some time to arrive at a clean compile. If possible, SUSHI will produce StructureDefinitions even if there are compile errors, but those SDs will omit any problematic rules.
@@ -106,7 +105,7 @@ Here are some general tips on approaching debugging your model:
 
 When SUSHI runs, in addition to creating the StructureDefintions, examples, and other artifacts, it has the capability to create additional files necessary to run the HL7 IG Publisher. This functionality will be executed only if SUSHI finds a directory named _/ig-data_ in the FSH tank.
 
-🚧 The support provided by SUSHI for customizing the IG is limited. More features will be added in the future. To customize your IG, see [Customizing your IG](#customizing-your-ig).
+🚧 Currently, SUSHI provides limited support for customizing your IG. Additional features are planned. To customize your IG, see [Customizing your IG](#customizing-your-ig).
 
 To begin, follow these steps:
 
@@ -142,7 +141,7 @@ This will run the HL7 IG Publisher, which will take several minutes to complete.
 
 🚧 The procedures here are a temporary workarounds, until SUSHI provides support for customizations.
 
-Take the following steps to further customize your IG: 
+Take the following steps to further customize your IG:
 
 1. Make sure you have run SUSHI at least once and successfully produced the IG at least once, so you are sure the _/build_ directory exists, and contains the directories and files needed to run the IG Publisher. 
 1. Make sure all the files in _/ig-data/pagecontent_ have been copied to _/build/input/pagecontent_. If not, manually copy them over.
@@ -150,9 +149,13 @@ Take the following steps to further customize your IG:
 1. Introduce any desired customizations into the following files:
     * **Menus:** Edit _/build/input/include/menu.xml_
     * **List of pages and artifacts to be included in the IG:** Edit _/build/input/ImplementationGuide-{name}.json_. See [ImplementationGuide resource](https://www.hl7.org/fhir/implementationguide.html) for details.
-    * **Additional pages, images, other content:** Add files to _/build/input/resources_ directory, and link to menus or other pages.
-    * **Version history:** _/build/package-list.json_
+    * **Additional pages, images, other content:** Add your files to _/build/input/pagecontent_ directory, and link them to menus or other pages.
+    * **Version history:** Edit _/build/package-list.json_
 
-When you run SUSHI again, and it does not find the _/ig-data_ directory, it will only populate the _/build/input/resources_ directory, leaving your customizations intact. 
+When you run SUSHI again, specify that the output should go to the  _/build/input/resources_ directory:
+
+`$ sushi . -o ./build/input/resources`
+
+When SUSHI does not find the _/ig-data_ directory, it will only populate the _/build/input/resources_ directory, leaving your customizations intact.
 
 > **Note:** After you introduce customizations, do **not** re-create the _/ig-data_ directory in the FSH tank, or SUSHI may overwrite the customizations you have introduced in _/build/input_.

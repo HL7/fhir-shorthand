@@ -46,15 +46,13 @@ In addition, there is a _package.json_ file and an _ig-data_ folder containing s
 ### Step 4: Run SUSHI
 Now that you have SUSHI installed and a minimal FSH tank, open up a command window, and navigate to the _FishExample_ directory. Run SUSHI on those FSH files by executing:
 
-`$ sushi <path>`
+`$ sushi {path} -o {output-directory}`
 
-where `<path>` is the path to the folder containing the FSH files. Since the working directory is already FishExample, type:
+where `{path}` is the path to the folder containing the FSH files, and `{output-directory}` is where the generated artifacts (StructureDefinitions, examples, etc.) should go. Since the working directory is already FishExample, type:
 
 `$ sushi .`
 
-This will create a _FishExample/build_ directory, and populate it with the files needed to create the IG using the HL7 FHIR IG Publisher tool. Optionally, you can specify your output directory name using the `-o` option.
-
-`$ sushi <path> -o <output-directory>`
+This will create a _FishExample/build/input/resources_ directory, and populate it with the files needed to create the IG using the HL7 FHIR IG Publisher tool.
 
 When running SUSHI successfully, you should see output similar to the following:
 
@@ -66,6 +64,16 @@ info:
    Errors:     0
    Warnings:   0
 ```
+
+> 🚧 Due to a known limitation of SUSHI, you may see the following error message:
+
+```
+  error: SUSHI does not yet support custom pagecontent other than index.md.
+  File: {your directory}\fsh-tutorial-master\FishExample\ig-data\input\pagecontent
+```
+
+> If you encounter this message, manually copy the file _Shorty.png_ from the directory _FishExample/ig-data/input/pagecontent_ to the directory _FishExample/build/input/pagecontent_.
+
 
 ### Step 5: Generate the Sample IG
 
@@ -79,16 +87,17 @@ This will download the latest version of the HL7 FHIR IG Publisher tool. **This 
 
 > **Note:** If you are blocked by a firewall, or if for any reason __updatePublisher_ fails to execute, download the current IG Publisher jar file [here](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory _/FishExample/build/input-cache_ (create the directory if necessary.)
 
-**Step 5.5  Extra step to take because SUSHI is still under construction:** Manually copy the _Shorty.png_ file from _FishExample/ig-data/input/pagecontent_ to _FishExample/build/input/pagecontent_
-
 Now run:
 
 💻   `$ _genonce`
 
 🍎   `$ sh _genonce.sh`
 
+This will run the HL7 IG generator, which will take several minutes to complete. 
 
-This will run the HL7 IG generator, which will take several minutes to complete. After the publisher is finished, open the file _/FishExample/build/output/index.html_ to see the resulting IG.
+> **Note:** The IG Publisher may report errors, which you can ignore as long as the IG Publisher completes its build process.
+
+After the publisher is finished, open the file _/FishExample/build/output/index.html_ to see the resulting IG.
 
 Under artifacts menu, the IG contains two profiles, FishPatient and Veterinarian. However, if you look more closely, they don't yet have any differentials.
 
