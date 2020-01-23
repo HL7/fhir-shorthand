@@ -60,13 +60,17 @@ Check the installation by typing the following command:
 
 If the command outputs instructions on using SUSHI command line interface (CLI), you're ready to run SUSHI.
 
-🚧 Use `$ sushi -v` to display version of SUSHI
+Use `$ sushi -v` to display version of SUSHI
 
 SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
 
 * MAJOR: A major release has significant new functionality and potentially, grammar changes or other non-backward-compatible changes.
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
 * PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
+
+> **Note:** For the most up-to-date information and latest releases of SUSHI, check the [release history and release notes](https://github.com/FHIR/sushi/releases). To update SUSHI to the latest version, re-run:
+
+> `$ npm install -g fsh-sushi`
 
 
 ### Executing SUSHI from Command Line
@@ -96,8 +100,7 @@ Here are some general tips on approaching debugging your model:
 
 * Eliminate parsing (syntax) errors first.
 * Most error messages include a file name and line number. This should pinpoint the source of the error.
-* Don't be discouraged by the number of errors, since a single correction can silence multiple errors.
-* SUSHI should always exit gracefully, but there is a possibility for the SUSHI process to crash if there is an unanticipated error. Usually this is not a cause for concern, and fixing errors reported prior to the abnormal exit might result in a successful run. If not, please report the issue using the SUSHI issue tracker.
+* SUSHI should always exit gracefully. If SUSHI crashes, please report the issue using the [SUSHI issue tracker](https://github.com/FHIR/sushi/issues).
 
 ### Creating the IG
 
@@ -159,3 +162,17 @@ When you run SUSHI again, specify that the output should go to the  _/build/inpu
 When SUSHI does not find the _/ig-data_ directory, it will only populate the _/build/input/resources_ directory, leaving your customizations intact.
 
 > **Note:** After you introduce customizations, do **not** re-create the _/ig-data_ directory in the FSH tank, or SUSHI may overwrite the customizations you have introduced in _/build/input_.
+
+### Get Involved!
+
+#### Reporting Issues
+
+If you have issues with SUSHI, please report them on the [SUSHI issue tracker](https://github.com/FHIR/sushi/issues).
+
+#### SUSHI Releases
+
+For the most up-to-date information and latest releases of SUSHI, check the [release history and release notes](https://github.com/FHIR/sushi/releases).
+
+#### Contributing to SUSHI
+
+SUSHI is an open source project [hosted on Github](https://github.com/FHIR/sushi). Contributions are welcome.
