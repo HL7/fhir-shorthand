@@ -82,15 +82,17 @@ The general form of the SUSHI execution command is as follows:
 where options include:
 
 ```
--o, --out <out>          the path to the output folder (default: /out)
+-o, --out <out>          the path to the output folder (default: /build)
 -h, --help               output usage information
 ```
 
 The options are not order-sensitive.
 
-If you run SUSHI from the same folder where your .fsh files are located, the command can be shortened to:
+If you run SUSHI from the same folder where your .fsh files are located, and you use the default output location, the command can be shortened to:
 
-`$ sushi . {options}`
+`$ sushi .`
+
+The resulting resources are found in in _/build/input/resources_. The subdirectory _/input/resources_ is used because that is the location that the FHIR publisher expects to find the artifacts when the publishing the IG, if the IG publisher is run from the _/build_ directory.
 
 #### Error Messages
 

@@ -78,7 +78,9 @@ info:
 
 ### Step 5: Generate the Sample IG
 
-Check to see if the _FishExample/build_ directory (or the directory you specified) is present, and change working directory of the command window to the _build_ directory. At the command prompt, enter:
+Check to see if the _FishExample/build_ directory (or the directory you specified) is present. Check to see if the _/input/resources_ subdirectory contains the generated structure definitions. 
+
+Now change working directory of the command window to the _build_ directory. At the command prompt, enter:
 
 💻   `$ _updatePublisher`
 

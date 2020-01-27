@@ -134,13 +134,17 @@ Codes are denoted with `#` sign. The shorthand is:
 
 **Examples:**
 
-* The code 'confirmed' (a value in the [Condition Clinical Status value set](http://hl7.org/fhir/R4/valueset-condition-clinical.html)):
+* The code `postal` used in Address.type:
 
-  `#confirmed`
+  `#postal`
 
-* Assign the code 'confirmed' to the verificationStatus of a Condition (a code type):
+* The code '<=' from the [Quantity Comparator value set](http://hl7.org/fhir/R4/valueset-quantity-comparator.html):
 
-  `* verificationStatus = #confirmed`
+  `#<=`
+
+* Assign the code `female` to the gender of a Patient:
+
+  `* gender = #female`
 
 ##### Coding
 
@@ -1037,7 +1041,7 @@ The contents of a value set are defined by a set of rules. There are four types 
 | A single code | `* {Coding}` | `* SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from a value set | `* codes from valueset {Id}` | `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | `* codes from system {Id}` | `* codes from system http://snomed.info/sct` |
-| Selected codes from a code system | `* codes from system {Id} where {filter} and {filter} and ...` | `* codes from system SCT where code descendent-of SCT#254837009` |
+| Selected codes from a code system (filters are code system dependent) | `* codes from system {Id} where {filter} and {filter} and ...` | `* codes from system SCT where concept is-a #254837009` |
 {: .grid }
 
 See [below](#filters) for discussion of filters.
@@ -1051,7 +1055,7 @@ Analogous rules can be used to leave out certain codes, with the addition of the
 | A single code | `* exclude {Coding}` | `* exclude SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from a value set | `* exclude codes from valueset {Id}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | `* exclude codes from system {Id}` | `* exclude codes from system http://snomed.info/sct` |
-| Selected codes from a code system | `* exclude codes from system {Id} where {filter}` | `* codes from system SCT where code descendent-of SCT#254837009` |
+| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {Id} where {filter}` | `* exclude codes from system SCT where concept is-a #254837009` |
 {: .grid }
 
 ##### Filters
@@ -1061,7 +1065,6 @@ A filter is a logical statement in the form {property} {operator} {value}, where
 `is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | exists`
 
 Not all operators are valid for any code system. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
-
 
 **Examples** 
 
@@ -1081,13 +1084,13 @@ Not all operators are valid for any code system. The `property` and `value` are 
 ```
 * codes from system SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
 * codes from system SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
-* codes from system SCT where
-    concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)" and
-    concept is-not-a #399983006 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)" and
-    concept is-not-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)" and
-    concept is-not-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)" and
-    concept is-not-a #703548001 "Endometrioid intraepithelial neoplasia (morphologic abnormality)"
+* codes from system SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
+* exclude codes from system SCT where concept is-a #450893003 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)"
+* exclude codes from system SCT where concept is-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)"
+* exclude codes from system SCT where concept is-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)"
+* exclude codes from system SCT where concept is-a #703548001 "Endometrioid intraepithelial neoplasia (morphologic abnormality)"
 ```
+> **Note:** Intensional and extensional forms can be used together in a single value set definition.
 
 #### Defining Code Systems
 
