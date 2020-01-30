@@ -54,6 +54,10 @@
       <value value="CI Build"/>
     </parameter>
     <parameter>
+      <code value="copyrightyear"/>
+      <value value="2020+"/>
+    </parameter>
+    <parameter>
       <code value="path-resource"/>
       <value value="input/capabilities"/>
     </parameter>
