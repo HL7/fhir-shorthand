@@ -72,6 +72,12 @@ SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MI
 
 > `$ npm install -g fsh-sushi`
 
+> To revert to a previous version of SUSHI, run:
+
+>  `npm install -g fsh-sushi@{version}`
+
+> where the version is in the form MAJOR.MINOR.PATCH.
+
 
 ### Executing SUSHI from Command Line
 
@@ -154,7 +160,8 @@ Take the following steps to further customize your IG:
 1. Introduce any desired customizations into the following files:
     * **Menus:** Edit _/build/input/include/menu.xml_
     * **List of pages and artifacts to be included in the IG:** Edit _/build/input/ImplementationGuide-{name}.json_. See [ImplementationGuide resource](https://www.hl7.org/fhir/implementationguide.html) for details.
-    * **Additional pages, images, other content:** Add your files to _/build/input/pagecontent_ directory, and link them to menus or other pages.
+    * **Additional pages:** Add your files to _/build/input/pagecontent_ directory, and link them to menus or other pages.
+    * **Images and other files:** Anything that is not a page in the IG, such as images, spreadsheets or zip files, put in _/build/input/images_.
     * **Version history:** Edit _/build/package-list.json_
 
 When you run SUSHI again, specify that the output should go to the  _/build/input/resources_ directory:

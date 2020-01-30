@@ -3,7 +3,7 @@
   <li><a href="index.html">FHIR Shorthand</a></li>
   <li><a href="tutorial.html">Tutorial</a></li>
   <li><a href="sushi.html">SUSHI</a></li>
-
+  <li><a href="FSHQuickReference.pdf">Cheat Sheet (download)</a></li>
   <li class="dropdown">
     <a data-toggle="dropdown" href="#" class="dropdown-toggle">Downloads<b class="caret"> </b></a>
     <ul class="dropdown-menu">
