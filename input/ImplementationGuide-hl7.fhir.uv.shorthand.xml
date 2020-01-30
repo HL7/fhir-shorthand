@@ -50,6 +50,10 @@
       </page-->
     </page>
     <parameter>
+      <code value="releaselabel"/>
+      <value value="CI Build"/>
+    </parameter>
+    <parameter>
       <code value="path-resource"/>
       <value value="input/capabilities"/>
     </parameter>
