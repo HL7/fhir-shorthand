@@ -66,14 +66,14 @@ info:
    Warnings:   0
 ```
 
-> 🚧 Due to a known limitation of SUSHI, you may see the following error message:
+> 🚧 Because SUSHI is still under development, you may see the following error message:
 
 ```
   error: SUSHI does not yet support custom pagecontent other than index.md.
   File: {your directory}\fsh-tutorial-master\FishExample\ig-data\input\pagecontent
 ```
 
-> If you encounter this message, manually copy the file _Shorty.png_ from the directory _FishExample/ig-data/input/pagecontent_ to the directory _FishExample/build/input/pagecontent_.
+> If you encounter this message, manually copy the file _Shorty.png_ from the directory _FishExample/ig-data/input/images_ to the directory _FishExample/build/input/images_.
 
 
 ### Step 5: Generate the Sample IG
@@ -84,7 +84,7 @@ Now change working directory of the command window to the _build_ directory. At 
 
 💻   `$ _updatePublisher`
 
-🍎   `$ sh _updatePublisher.sh`
+🍎   `$ ./_updatePublisher.sh`
 
 This will download the latest version of the HL7 FHIR IG Publisher tool. **This step can be skipped if you already have the latest version of the IG Publisher tool.**
 
@@ -94,7 +94,7 @@ Now run:
 
 💻   `$ _genonce`
 
-🍎   `$ sh _genonce.sh`
+🍎   `$ ./_genonce.sh`
 
 This will run the HL7 IG generator, which will take several minutes to complete. 
 
@@ -125,7 +125,7 @@ Extensions are created using the `contains` keyword. To add a species extension,
 
 `* extension contains FishSpecies 0..1`
 
-This rule states that the `extension` array (built into the Patient resource) will now contain an [Extension element](https://www.hl7.org/fhir/extensibility.html#extension) by the name of 'FishSpecies'.
+This rule states that the `extension` array of the Patient resource will now contain an [Extension element](https://www.hl7.org/fhir/extensibility.html#extension) by the name of 'FishSpecies'.
 
 Now save your file, change the command window back to the _FishExample_ directory, and run SUSHI again (remember `$ sushi .`?). You should now get an error message from SUSHI indicating _"The slice FishSpecies on extension must reference an existing extension"_, indicating that you haven't defined the 'FishSpecies' extension.
 
@@ -181,3 +181,7 @@ and then replace the last line with:
 `* codes from system SCT where code is-a SCT#90580008  "Fish (organism)"`
 
 Using aliases has no effect on the IG; it simply makes the FSH code a bit neater.
+
+### Step 10: Create a Veterinarian Profile
+
+Now, you are on your own to add constraints and/or extensions to the Veterinarian profile. Consider adding qualifications that would be consistent with a Veterinary practice.
