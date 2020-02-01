@@ -14,15 +14,14 @@
 SUSHI requires Node.js. To install Node.js, go to [https://nodejs.org/](https://nodejs.org/) and you should see links to download an installer for your operating system. Download the installer for the LTS version. If you do not see a download appropriate for your operating system, click the "other downloads" link and look there. Once the installer is downloaded, run the installer. It is fine to select default options during installation.
 
 Ensure that Node.js is correctly installed by opening a command window and typing the following two commands. Each command should return a version number.
+
 ```
 $ node --version
 $ npm --version
-
-### Step 2: Install SUSHI
-To install SUSHI, open up a command prompt.
 ```
 
-For each command, you should see a version number. If this works correctly, you can install SUSHI by doing:
+### Step 2: Install SUSHI
+If this works correctly, you can install SUSHI by doing:
 
 ```
 $ npm install -g fsh-sushi
