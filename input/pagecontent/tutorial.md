@@ -88,6 +88,8 @@ Now change working directory of the command window to the _build_ directory. At 
 
 This will download the latest version of the HL7 FHIR IG Publisher tool. **This step can be skipped if you already have the latest version of the IG Publisher tool.**
 
+> **Note:** If you have never run the IG Publisher, you may need to install Jekyll first. See [Installing the IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) for details.
+
 > **Note:** If you are blocked by a firewall, or if for any reason __updatePublisher_ fails to execute, download the current IG Publisher jar file [here](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory _/FishExample/build/input-cache_ (create the directory if necessary.)
 
 Now run:
@@ -151,7 +153,7 @@ The FishSpecies extension doesn't quite do its job yet, because we haven't speci
 
 The first rule restricts the value[x] (an element of every extension) to a CodeableConcept using the `only` keyword. The second extensibly binds it to a value set containing codes for fish species (yet to be defined) using the `from` keyword.
 
-If we compile at this point, SUSHI will note that FishSpeciesValueSet doesn't exist. To define it, add the following lines to the same file:
+To define FishSpeciesValueSet, add the following lines to the same file:
 
 ```
 ValueSet:  FishSpeciesValueSet

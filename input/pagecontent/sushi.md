@@ -98,7 +98,7 @@ If you run SUSHI from the same folder where your .fsh files are located, and you
 
 `$ sushi .`
 
-The resulting resources are found in in _/build/input/resources_. The subdirectory _/input/resources_ is used because that is the location that the FHIR publisher expects to find the artifacts when the publishing the IG, if the IG publisher is run from the _/build_ directory.
+The resulting resources are found in in _/build/input/resources_. The subdirectory _/input/resources_ is automatically created because that is the location that the FHIR publisher expects to find the artifacts when the publishing the IG, if the IG publisher is run from the _/build_ directory.
 
 #### Error Messages
 
@@ -163,10 +163,6 @@ Take the following steps to further customize your IG:
     * **Additional pages:** Add your files to _/build/input/pagecontent_ directory, and link them to menus or other pages.
     * **Images and other files:** Anything that is not a page in the IG, such as images, spreadsheets or zip files, put in _/build/input/images_.
     * **Version history:** Edit _/build/package-list.json_
-
-When you run SUSHI again, specify that the output should go to the  _/build/input/resources_ directory:
-
-`$ sushi . -o ./build/input/resources`
 
 When SUSHI does not find the _/ig-data_ directory, it will only populate the _/build/input/resources_ directory, leaving your customizations intact.
 
