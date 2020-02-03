@@ -184,6 +184,17 @@ and then replace the last line with:
 
 Using aliases has no effect on the IG; it simply makes the FSH code a bit neater.
 
-### Step 10: Create a Veterinarian Profile
+### Step 10: Create Shorty, an Example of FishPatient
+
+Every IG should provide examples of its profiles. Since we have defined a new profile, FishPatient, we should provide an example instance of this profile. 
+
+Enter the following lines in a .fsh file:
+
+Instance: Shorty
+InstanceOf: FishPatient
+
+
+
+### Step 11: Create a Veterinarian Profile
 
 Now, you are on your own to add constraints and/or extensions to the Veterinarian profile. Consider adding qualifications that would be consistent with a Veterinary practice.
