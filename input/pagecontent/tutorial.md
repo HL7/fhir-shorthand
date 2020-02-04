@@ -17,25 +17,24 @@ Ensure that Node.js is correctly installed by opening a command window and typin
 ```
 $ node --version
 $ npm --version
-
-### Step 2: Install SUSHI
-To install SUSHI, open up a command prompt.
 ```
 
-For each command, you should see a version number. If this works correctly, you can install SUSHI by doing:
+### Step 2: Install SUSHI
+To install SUSHI, return to the command prompt, and issue this command:
 
 ```
 $ npm install -g fsh-sushi
-``` 
+```
 
 ### Step 3: Download Sample FSH Tank
-To start with some working examples of FSH files and a skeleton FSH tank, [download the fsh-tutorial-master.zip file](fsh-tutorial-master.zip) and unzip it into a directory of your choice. 
+To start with some working examples of FSH files and a skeleton FSH tank, [download the fsh-tutorial-master.zip file](fsh-tutorial-master.zip) and unzip it into a directory of your choice.
+
+The same zip file is available from the current menus, directly above. 
 
 You should see three subdirectories:
 
 * _FishExample_
 * _FishExampleComplete_
-* _USCoreExample_ (this is a work in progress, so ignore it)
 
 Change the working directory to FishExample. You should see two FSH files:
 
