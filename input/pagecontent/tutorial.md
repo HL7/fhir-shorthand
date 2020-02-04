@@ -184,17 +184,17 @@ and then replace the last line with:
 
 Using aliases has no effect on the IG; it simply makes the FSH code a bit neater.
 
-### Step 10: Create Shorty, an Example of FishPatient
+### Step 10: Create Shorty, an Instance of FishPatient
 
-Every IG should provide examples of its profiles. Since we have defined a new profile, FishPatient, we should provide an example instance of this profile. 
+Every IG should provide examples of its profiles. We should provide an example instance of FishPatient. Our patient example is Shorty. You will use the `Instance` keywords, with `InstanceOf` set to `FishPatient`. Here some other information about Shorty:
 
-Enter the following lines in a .fsh file:
-
-Instance: Shorty
-InstanceOf: FishPatient
-
+* Shorty is a Koi fish (Cyprinus rubrofuscus), represented as SNOMED-CT code 47978005 "Carpiodes cyprinus (organism)".
 
 
 ### Step 11: Create a Veterinarian Profile
 
-Now, you are on your own to add constraints and/or extensions to the Veterinarian profile. Consider adding qualifications that would be consistent with a Veterinary practice.
+Now, add constraints and/or extensions to the Veterinarian profile:
+
+* Add qualifications consistent with a Veterinary practice. Qualifications are taken from code system http://hl7.org/fhir/sid/ca-hc-npn, and the code is 174MM1900N	"Other Service Providers; Veterinarian; Medical Research".
+
+* In addition, slice the `identifier` array, making a license number required. The code system is http://terminology.hl7.org/CodeSystem/v2-0203 and the code is LN, for "License number".
