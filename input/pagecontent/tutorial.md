@@ -186,10 +186,12 @@ Using aliases has no effect on the IG; it simply makes the FSH code a bit neater
 
 ### Step 10: Create Shorty, an Instance of FishPatient
 
-Every IG should provide examples of its profiles. We should provide an example instance of FishPatient. Our patient example is Shorty. You will use the `Instance` keywords, with `InstanceOf` set to `FishPatient`. Here some other information about Shorty:
+Every IG should provide examples of its profiles. We should provide an example instance of FishPatient. Our patient example is Shorty. You will use the `Instance` keywords, with `InstanceOf` set to `FishPatient`. 
 
+Here some information about Shorty to include in the instance:
+
+* His given name is "Shorty" and his family name is "Kramer". (When you go to the vet with your pet, your last name is used as the pet's last name)
 * Shorty is a Koi fish (Cyprinus rubrofuscus), represented as SNOMED-CT code 47978005 "Carpiodes cyprinus (organism)".
-
 
 ### Step 11: Create a Veterinarian Profile
 
