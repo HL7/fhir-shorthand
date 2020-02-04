@@ -180,7 +180,7 @@ Add this line at the top of the _FishPatient.fsh_ file:
 
 and then replace the last line with:
 
-`* codes from system SCT where code is-a SCT#90580008  "Fish (organism)"`
+`* codes from system SCT where concept is-a #90580008  "Fish (organism)"`
 
 Using aliases has no effect on the IG; it simply makes the FSH code a bit neater.
 
