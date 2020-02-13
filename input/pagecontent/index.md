@@ -8,8 +8,7 @@ FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the conten
 
 1. The FHIR community needs scalable, fast, and user-friendly tools for IG creation and maintenance. Profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent.
 1. Editing StructureDefinitions (SDs) by hand is complex and unwieldy.
-1. Available tools such as [Simplifier/Forge](https://fire.ly/products/simplifier-net/), [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com), and [Excel spreadsheet authoring](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) improve this situation, but still have drawbacks:
-   * Although the tools provide a friendlier interface, the user must still understand many SD details.
+1. Available tools such as [Simplifier/Forge](https://fire.ly/products/simplifier-net/), [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com), and [Excel spreadsheet authoring](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) improve this situation by adding friendlier interfaces, they still have drawbacks:
    * The tools are not particularly agile when it comes to [refactoring](https://resources.collab.net/agile-101/code-refactoring).
    * Source code control (SCC) features are not well supported.
 1. Especially for non-FHIR experts, it can be difficult to make sense of the contents of an IG. Some users might find that the FSH representation is more understandable.
@@ -1028,9 +1027,9 @@ Title:      "Primary Cancer Diagnosis"
 
 #### Defining Value Sets
 
-👶 A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
+A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
 
-Value sets are defined using the keywords `ValueSet`, `Title` and `Description`.
+Value sets are defined using the keywords `ValueSet`, `Id`, `Title` and `Description`.
 
 Codes must be taken from one or more terminology systems (also called code systems or vocabularies), and cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
@@ -1093,10 +1092,17 @@ Not all operators are valid for any code system. The `property` and `value` are 
 > **Note:** Intensional and extensional forms can be used together in a single value set definition.
 
 #### Defining Code Systems
+It is sometimes necessary to define new codes inside an IG that are not drawn from an external code system (aka _local codes_). When defining local codes, you must define them in the context of a code system.
 
-🚧 It is usually unnecessary to define code systems (also called terminologies or vocabularies) in FSH. However, FSH does allow definition of local codes inside an IG that are not drawn from an external code system. Defining codes inside an IG is not recommended, since those codes will not be part of any recognized terminology system. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- and when defining new local codes, you must define them in the context of a code system.
+> **Note:** Defining local codes is not generally recommended, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- at least temporarily -- as local codes.
 
-Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are added, one per rule, using the almost same syntax as in value sets, except that the code system is not included before the hash sign `#`. Additional properties of a code can be added using the escape (caret) syntax.
+Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
+
+* #{code} {display text string} {definition text string}
+
+**Note:**
+* Do not include a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
+* The definition of the term can be optionally provided as the second string following the code.
 
 **Example:**
 
@@ -1104,16 +1110,10 @@ Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`
 CodeSystem:  YogaCS
 Title: "Yoga Code System."
 Description:  "A brief vocabulary of yoga-related terms."
-* #Sirsasana "Headstand"
-* #Halasana "Plough Pose"
-* #Matsyasana "Fish Pose"
-* #Bhujangasana "Cobra Pose"
-
-* concept[Sirsasana] ^definition "An inverted asana, also called mudra in classical hatha yoga, involves standing on one's head."
-* concept[Halasana] ^definition "Halasana or Plough pose is an inverted asana in hatha yoga and modern yoga as exercise. Its variations include Karnapidasana with the knees by the ears, and Supta Konasana with the feet wide apart."
-* concept[Matsyasana] ^definition "Matsyasana is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly considered a counterasana to Sarvangasana, or shoulder stand, specifically within the context of the Ashtanga Vinyasa Yoga Primary Series."
-* concept[Bhujangasana] ^definition "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
-
+* #Sirsasana "Headstand" "An inverted asana, also called mudra in classical hatha yoga, involves standing on one's head."
+* #Halasana "Plough Pose" "Halasana or Plough pose is an inverted asana in hatha yoga and modern yoga as exercise. Its variations include Karnapidasana with the knees by the ears, and Supta Konasana with the feet wide apart."
+* #Matsyasana "Fish Pose"  "Matsyasana is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly considered a counterasana to Sarvangasana, or shoulder stand, specifically within the context of the Ashtanga Vinyasa Yoga Primary Series."
+* #Bhujangasana "Cobra Pose" "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
 ```
 > **Note:** FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
 
