@@ -8,8 +8,7 @@ FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the conten
 
 1. The FHIR community needs scalable, fast, and user-friendly tools for IG creation and maintenance. Profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent.
 1. Editing StructureDefinitions (SDs) by hand is complex and unwieldy.
-1. Available tools such as [Simplifier/Forge](https://fire.ly/products/simplifier-net/), [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com), and [Excel spreadsheet authoring](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) improve this situation, but still have drawbacks:
-   * Although the tools provide a friendlier interface, the user must still understand many SD details.
+1. Available tools such as [Simplifier/Forge](https://fire.ly/products/simplifier-net/), [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com), and [Excel spreadsheet authoring](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) improve this situation by adding friendlier interfaces, they still have drawbacks:
    * The tools are not particularly agile when it comes to [refactoring](https://resources.collab.net/agile-101/code-refactoring).
    * Source code control (SCC) features are not well supported.
 1. Especially for non-FHIR experts, it can be difficult to make sense of the contents of an IG. Some users might find that the FSH representation is more understandable.
