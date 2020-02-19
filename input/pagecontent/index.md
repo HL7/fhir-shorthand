@@ -816,7 +816,7 @@ This section shows how to define various items in FSH:
 * [Value Sets](#defining-value-sets)
 * [Code Systems](#defining-code-systems)
 * 🚫 [Mappings](#defining-mappings)
-* 🚫 [Mixins](#defining-mixins)
+* 🚧 [Mixins](#defining-mixins)
 * 🚧 [Invariants](#defining-invariants)
 
 #### Keywords
@@ -847,8 +847,8 @@ The use of individual keywords is explained in greater detail in the following s
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | 🚧 `Invariant` | Declares a new invariant | name |
 | 🚧 `Mapping` | Introduces a new mapping | name |
-| 🚫 `Mixin` | Introduces a class to be used as a mixin | name |
-| 🚫 `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
+| 🚧 `Mixin` | Introduces a class to be used as a mixin | name |
+| 🚧 `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
 | 🚫 `Language` | Declares the language of texts in a localization file | language ISO code |
 | `Parent` | Specifies the base class for a profile or extension | name |
 | `Profile` | Introduces a new profile | name |
@@ -1144,19 +1144,27 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are use
 
 #### Defining Mixins
 
-🚫  Mixins have the ability to take rules defined in one class and apply them to a compatible class. The rules are copied from the source class at compile time. Although there can only be one `Parent` class, there can be multiple `Mixins`.
+🚧  Mixins provide the ability to define rules and apply them to a compatible target. The rules are copied from the mixin at compile time. Profiles, extensions, and instances can all have multiple mixins applied to them. One mixin can be used in multiple different places.
 
-Each mixin class must be compatible parent class, in the sense that all the extensions and constraints defined in the mixin class apply to elements actually present in the Parent class. The legality of a mixin is checked at compile time, with an error signaled if the mixin class is not compatible with the parent class. For example, an error would signalled if there was an attempt to mix a Condition into an Observation.
+At present, mixins must be defined in FSH. The capability for mixing in external definitions is under developement. Mixins are defined by using the keyword `Mixin`.
+```
+Mixin: {MixinName}
+* {rule1}
+* {rule2}
+// More rules
+```
+A mixin is used to define a group of rules. These rules are then included using the keyword `Mixins`.
+```
+Profile: MyPatientProfile
+Parent: Patient
+Mixins: {Mixin1}, {Mixin2}
+```
+Each mixin should be compatible with the target, in the sense that all the rules defined in the mixin apply to elements actually present in the target. The legality of a mixin is checked at compile time. If a particular rule from a mixin applies to an element not present on the target, that rule will not be applied, and an error will be emitted. However, all other valid rules from the mixin will still be applied. The rules from a mixin are applied **before** rules defined on the target itself. When multiple mixins are included using the `Mixins` keyword, the mixin rules are applied in the order that the mixins are listed.
 
-At present, mixin classes must be defined in FSH. The capability for mixing in externally-defined classes is under development. Mixins are defined by using the keywords `Mixin`, `Parent`, and `Description`.
-
-**Example:** 
-
-* Defining a mixin for metadata shared in all US Core profiles:
-
+**Examples:**
+Defining and using a mixin for metadata shared in all US Core Profiles:
 ```
   Mixin: USCoreMetadata
-  Parent: DomainResource
   * ^version = "3.1.0"
   * ^status = #active
   * ^experimental = false
@@ -1164,24 +1172,51 @@ At present, mixin classes must be defined in FSH. The capability for mixing in e
   * ^contact.telecom.system = #url
   * ^contact.telecom.value = "http://www.healthit.gov"
   * ^jurisdiction.coding = COUNTRY#US "United States of America"
+
+  Profile: MyUSCorePatientProfile
+  Parent: Patient
+  Mixins: USCoreMetadata
+  * deceased[x] only deceasedBoolean
+  // More profile rules
 ```
-
-**Example:**
-
-* Defining two national IGs, both based on the same BreastRadiologyProfile:
-
+The `MyUSCorePatientProfile` defined above is equivalent to the following:
+```
+  Profile: MyUSCorePatientProfile
+  Parent: Patient
+  Mixins: USCoreMetadata
+  * ^version = "3.1.0"
+  * ^status = #active
+  * ^experimental = false
+  * ^publisher = "HL7 US Realm Steering Committee"
+  * ^contact.telecom.system = #url
+  * ^contact.telecom.value = "http://www.healthit.gov"
+  * ^jurisdiction.coding = COUNTRY#US "United States of America"
+  * deceased[x] only deceasedBoolean
+  // More profile rules
+```
+Mixins give you the capability to define that metadata once and apply it in as many places as it is applicable. Here is another example showing how mixins can be used to define two national IGs:
 ```
   Profile: USCoreBreastRadiologyProfile
   Parent: BreastRadiologyProfile
-  Mixins:  USCoreObservation
+  Mixins:  USCoreMetadata, USObservationMixin
 
   Profile: FranceBreastRadiologyProfile
   Parent: BreastRadiologyProfile
-  Mixins: FranceCoreObservation
-```
+  Mixins: FranceObservationMixin
+ ```
 
-> **IMPORTANT:** To be a valid mixin, the mixin cannot inherit from a different resource.
+ **External Mixins**
 
+ 🚫 The ability to add external mixins is not yet supported. When supported, this should expand the functionality of the `Mixins` keyword to accept other internally or externally defined profiles or extensions as arguments. Since the profile or extension may be externally defined, we must be able to mix the contents of one Structure Definition onto another. The order of application will be inheritance, then mixins, then rules. For example if we had this FSH:
+ ```
+ Profile: SuperSpecialPatient
+ Parent: SuperPatient
+ Mixins: SpecialPatient
+ * {rule1}
+ * {rule2}
+ // More rules
+ ```
+ First the `SuperSpecialPatient` would inherit from `SuperPatient`. Then the definition of `SpecialPatient` would be merged in. Finally, the rules `rule1` and `rule2` and any more rules would be applied.
 
 #### Defining Invariants
 
