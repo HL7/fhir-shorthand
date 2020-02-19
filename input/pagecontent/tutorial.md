@@ -77,7 +77,7 @@ info:
 
 ### Step 5: Generate the Sample IG
 
-Check to see if the _FishExample/build_ directory (or the directory you specified) is present. Check to see if the _/input/resources_ subdirectory contains the generated structure definitions. 
+Check to see if the _FishExample/build_ directory (or the directory you specified) is present. Also check to see if the _/input/resources_ subdirectory contains the generated structure definitions.
 
 Now change working directory of the command window to the _build_ directory. At the command prompt, enter:
 
@@ -85,7 +85,7 @@ Now change working directory of the command window to the _build_ directory. At 
 
 🍎   `$ ./_updatePublisher.sh`
 
-This will download the latest version of the HL7 FHIR IG Publisher tool. **This step can be skipped if you already have the latest version of the IG Publisher tool.**
+This will download the latest version of the HL7 FHIR IG Publisher tool into _./build/input-cache_. **This step can be skipped if you already have run the command recently, and have the latest version of the IG Publisher tool.**
 
 > **Note:** If you have never run the IG Publisher, you may need to install Jekyll first. See [Installing the IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) for details.
 
@@ -97,7 +97,7 @@ Now run:
 
 🍎   `$ ./_genonce.sh`
 
-This will run the HL7 IG generator, which will take several minutes to complete. 
+This will run the HL7 IG generator, which will take several minutes to complete.
 
 > **Note:** The IG Publisher may report errors, which you can ignore as long as the IG Publisher completes its build process.
 
