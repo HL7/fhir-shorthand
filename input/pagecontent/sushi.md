@@ -15,7 +15,7 @@ The reference manual is targeted to people doing IG development using FSH. Famil
 This guide assumes you have:
 
 * Reviewed the [FHIR Shorthand Tutorial](tutorial.html)
-* Created FSH files representing your profiles and other IG artifacts (see [FHIR Shorthand Reference Manual](index.html) for details)
+* Created FSH files representing your profiles and other IG artifacts (see [Authoring Guide](index.html) and [FSH Language Reference](reference.html) for details).
 
 #### Document Conventions
 
@@ -88,8 +88,9 @@ The general form of the SUSHI execution command is as follows:
 where options include:
 
 ```
--o, --out <out>          the path to the output folder (default: /build)
--h, --help               output usage information
+-o, --out <out>   the path to the output folder (default: /build)
+-h, --help        output usage information
+-v, --version     output the version of SUSHI
 ```
 
 The options are not order-sensitive.
@@ -223,13 +224,13 @@ Now run:
 This will run the HL7 IG Publisher, which will take several minutes to complete. After the publisher is finished, open the file _/build/output/index.html_ in a browser to see the resulting IG.
 
 ### Get Involved
-Thank you for using FHIR Shorthand and the SUSHI reference implementation. We hope it will help you succeed in your FHIR projects. The SUSHI software is provided free of charge. All we ask in return is that you share your ideas, suggestions, and experience with the community. If you are a Typescript developer,code contributions to SUSHI are gladly accepted!
+Thank you for using FHIR Shorthand and the SUSHI reference implementation. We hope it will help you succeed in your FHIR projects. The SUSHI software is provided free of charge. All we ask in return is that you share your ideas, suggestions, and experience with the community. If you are a Typescript developer, code contributions to SUSHI are gladly accepted!
 
 Here are some links to get started:
 
 * Participate, ask or answer questions on the [FHIR Shorthand Chat](https://chat.fhir.org/#narrow/stream/215610-shorthand).
 
-* If you have issues with SUSHI, please report them on the [SUSHI issue tracker](https://github.com/FHIR/sushi/issues).
+* If you encounter issues with SUSHI, please report them on the [SUSHI issue tracker](https://github.com/FHIR/sushi/issues).
 
 * For up-to-date with information and latest releases of SUSHI, check the [release history and release notes](https://github.com/FHIR/sushi/releases).
 
