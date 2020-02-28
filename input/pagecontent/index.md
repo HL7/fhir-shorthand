@@ -440,7 +440,7 @@ Here is a summary of the rules supported in FSH:
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
 | Extensions | `* {extension element path} contains {extensionName1} {card1} {flags1} and {extensionName2} {card2} {flags2}...` |
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
-| 🚧 Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
+| 🚧 Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
 | 🚫 Mapping | `* {path} -> {string}` |
 {: .grid }
 
@@ -759,15 +759,17 @@ One way to specify the slicing logic parameters is to use [structure definition 
 
 #### Invariant Rules
 
-🚧 [Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole, a single element, or multiple elements. The FSH grammars for applying invariants in profiles are as follows:
+🚧 [Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The FSH grammars for applying invariants in profiles are as follows:
 
 `* obeys {invariant}`
 
 `* {path} obeys {invariant}`
 
-`* {path1}, {path2}, ... obeys {invariant}`
+`* obeys {invariant1} and {invariant2} ...`
 
-The first case is where the invariant applies to the profile as a whole. The second is where the invariant applies to a single element, and the third is where the invariant applies to multiple elements.
+`* {path} obeys {invariant1} and {invariant2} ...`
+
+The first case is where the invariant applies to the profile as a whole. The second is where the invariant applies to a single element. The third case is where multiple invariants apply to the profile as a whole, and the fourth is where multiple invariants apply to a single element.
 
 The referenced invariant and its properties must be declared somewhere within the same FSH tank, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
