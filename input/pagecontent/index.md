@@ -67,7 +67,7 @@ This section describes various parts of the FSH language.
 
 A **FSH Tank** is a folder that contains FSH files. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts included in the IG (profiles, extensions, value sets, examples, etc.) are defined in the FSH Tank. Anything else is "external" and must be declared in dependencies.
 
-Information in FSH is stored in plain text files with _.fsh_ extension. How information is divided between files is up to the user. Here are some possibilities:
+Information in FSH is stored in plain text files with _.fsh_ extension. How information is divided between files (as well as subfolders) is up to the user. Here are some possibilities:
 
 * Divide up different type of items: profiles in one file, value sets in another, extensions in another, etc.
 * Group things logically, for example, a profile together with its value sets, extensions, and examples.
@@ -325,7 +325,7 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
   `* valueString = "Hello World"`
 
-* Fix the value[x] Reference (permitted in extensions) to a instance of Patient resource:
+* Fix the value[x] Reference (permitted in extensions) to an instance of Patient resource:
 
   `* valueReference = Reference(EveAnyperson)`
 
@@ -438,7 +438,8 @@ Here is a summary of the rules supported in FSH:
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
 | Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
-| Extensions | `* {extension element path} contains {extensionName1} {card1} {flags1} and {extensionName2} {card2} {flags2}...` |
+| Defined extensions | `* {extension element path} contains {extensionAliasOrURL1} named {extensionSliceName1} {card1} {flags1} and {extensionAliasOrURL2} named {extensionSliceName2} {card2} {flags2}...` |
+| Inline extensions | `* {extension element path} contains {extensionName1} {card1} {flags1} and {extensionName2} {card2} {flags2}...` |
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
 | 🚧 Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
 | 🚫 Mapping | `* {path} -> {string}` |
@@ -622,32 +623,53 @@ The following syntax can be used to assigning flags:
 
 Extensions are created by adding elements to built-in 'extension' array elements. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The same instructions apply to 'modifierExtension' arrays.
 
-Extensions are specified using the `contains` keyword. The shorthand syntax is:
+Extensions are specified using the `contains` keyword. Extensions may refer to an existing Extension definition or may be defined inline.
+
+The shorthand syntax to specify an extension based on an existing Extension definition is:
+
+`* {extension element path} contains {extensionAliasOrURL1} named {extensionSliceName1} {card1} {flags1} and {extensionAliasOrURL2} named {extensionSliceName2} {card2} {flags2}...`
+
+The shorthand syntax to define an extension inline is:
 
 `* {extension element path} contains {extensionName1} {card1} {flags1} and {extensionName2} {card2} {flags2}...`
 
-The cardinality is required, and flags are optional. Adding an extension below the root level is achieved by giving the full path to the extension array to be sliced.
+In both cases the cardinality is required, and flags are optional. Adding an extension below the root level is achieved by giving the full path to the extension array to be sliced.
+
+Inline extensions are typically used to specify sub-extensions in a complex extension. Inline extensions should use additional rules (such as Cardinality rules or Only rules) to further constraint the extension definition inline.
 
 The structure of extensions is pre-defined by FHIR (see [Extension element](https://www.hl7.org/fhir/extensibility.html#extension)). Constraining extensions is discussed in [Defining Extensions](#defining-extensions).
 
 **Examples:**
 
-* Create extensions in US Core Patient at the top level:
+* Add extensions to US Core Patient at the top level using extensions defined elsewhere in the FSH Tank:
+  ```
+  // Assumes USCoreRaceExtension, USCoreEthnicityExtension, and USCoreBirthsexExtension defined using FSH
+  * extension contains USCoreRaceExtension named race 0..1 MS and USCoreEthnicityExtension named ethnicity 0..1 MS and USCoreBirthsexExtension named birthsex 0..1 MS
+  ```
 
-`* extension contains USCoreRaceExtension 0..1 MS and USCoreEthnicityExtension 0..1 MS and USCoreBirthsexExtension 0..1 MS`
-
-* The same statement, using whitespace flexibility for readability:
-
-```
+* The same statement as above, using whitespace flexibility for readability:
+  ```
   * extension contains
-      USCoreRaceExtension 0..1 MS and
-      USCoreEthnicityExtension 0..1 MS and
-      USCoreBirthsexExtension 0..1 MS
-```
+      USCoreRaceExtension named race 0..1 MS and
+      USCoreEthnicityExtension named ethnicity 0..1 MS and
+      USCoreBirthsexExtension named birthsex 0..1 MS
+  ```
 
-* Add a `Laterality` extension to a bodySite attribute (second level extension):
+* Add the externally defined `patient-proficiency` extension to a communication attribute (second level extension):
+  ```
+  // Assumes the following alias is defined somewhere in the FSH Tank
+  // Alias: PatientProficiencyExtension = http://hl7.org/fhir/StructureDefinition/patient-proficiency
+  * communication.extension contains PatientProficiencyExtension named proficiency 0..1
+  ```
 
-  `* bodySite.extension contains Laterality 0..1`
+* Add inline sub-extensions to the US Core Race extension
+  ```
+  * extension contains
+      ombCategory 0..5
+      detailed 0..*
+      text 1..1
+  // constraints for each sub-extension should follow
+  ```
 
 #### Slicing Rules
 
@@ -655,7 +677,7 @@ The subject of slicing is addressed three steps: (1) specifying the slices, (2) 
 
 ##### Step 1. Specifying Slices
 
-The first step in slicing is exactly the same as specifying extensions, using the `contains` keyword. The following syntax is used:
+The first step in slicing is exactly the same as specifying inline extensions, using the `contains` keyword. The following syntax is used:
 
 ```
 * {array element path} contains

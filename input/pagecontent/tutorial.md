@@ -29,7 +29,7 @@ $ npm install -g fsh-sushi
 ### Step 3: Download Sample FSH Tank
 To start with some working examples of FSH files and a skeleton FSH tank, [download the fsh-tutorial-master.zip file](fsh-tutorial-master.zip) and unzip it into a directory of your choice.
 
-The same zip file is available from the current menus, directly above. 
+The same zip file is available from the current menus, directly above.
 
 You should see three subdirectories:
 
@@ -57,7 +57,7 @@ This will create a _FishExample/build/input/resources_ directory, and populate i
 When running SUSHI successfully, you should see output similar to the following:
 
 ```
-info: 
+info:
    Profiles:   2
    Extensions: 0
    Instances:  0
@@ -107,7 +107,7 @@ Under artifacts menu, the IG contains two profiles, FishPatient and Veterinarian
 
 ### Step 6: Setting Cardinalities in a Profile
 
-It is not widely known, but FHIR is designed to be used for veterinary medicine as well as human. For a non-human patient, we need to record the species. The Patients in this Tutorial are going to be various species of fish 🐟. 
+It is not widely known, but FHIR is designed to be used for veterinary medicine as well as human. For a non-human patient, we need to record the species. The Patients in this Tutorial are going to be various species of fish 🐟.
 
 Since (as far as we know) fish don't get married or communicate in a human language, the first thing we'll do in the Patient profile is eliminate these elements from Patient. To do this, open the file _FishPatient.fsh_ in your favorite plain-text editor, and add the following rules after `Description` line:
 
@@ -124,11 +124,11 @@ To specify the species of our aquatic patients, we'll need an extension.
 
 Extensions are created using the `contains` keyword. To add a species extension, add the following rule after the cardinality rules:
 
-`* extension contains FishSpecies 0..1`
+`* extension contains FishSpecies named species 0..1`
 
-This rule states that the `extension` array of the Patient resource will now contain an [Extension element](https://www.hl7.org/fhir/extensibility.html#extension) by the name of 'FishSpecies'.
+This rule states that the `extension` array of the Patient resource will now contain an [Extension element](https://www.hl7.org/fhir/extensibility.html#extension) named 'species' that is a 'FishSpecies' extension.
 
-Now save your file, change the command window back to the _FishExample_ directory, and run SUSHI again (remember `$ sushi .`?). You should now get an error message from SUSHI indicating _"The slice FishSpecies on extension must reference an existing extension"_, indicating that you haven't defined the 'FishSpecies' extension.
+Now save your file, change the command window back to the _FishExample_ directory, and run SUSHI again (remember `$ sushi .`?). You should now get an error message from SUSHI indicating _"Cannot create species extension; unable to locate extension definition for: FishSpecies"_, indicating that you haven't defined the 'FishSpecies' extension.
 
 To do this, add the following lines to the end of the _FishPatient.fsh_ file:
 
@@ -185,7 +185,7 @@ Using aliases has no effect on the IG; it simply makes the FSH code a bit neater
 
 ### Step 10: Create Shorty, an Instance of FishPatient
 
-Every IG should provide examples of its profiles. We should provide an example instance of FishPatient. Our patient example is Shorty. You will use the `Instance` keywords, with `InstanceOf` set to `FishPatient`. 
+Every IG should provide examples of its profiles. We should provide an example instance of FishPatient. Our patient example is Shorty. You will use the `Instance` keywords, with `InstanceOf` set to `FishPatient`.
 
 Here some information about Shorty to include in the instance:
 
