@@ -164,7 +164,7 @@ Keywords common to many types of items include:
 Specialized keywords, used only with one type of item include:
 
 * InstanceOf (Instance)
-* Type (Instance)
+* Usage (Instance)
 * Parent (Profile)
 * Mixins (Profile)
 * Source (Mapping)
@@ -175,26 +175,112 @@ Specialized keywords, used only with one type of item include:
 
 Each type of item has a different set of required and optional keywords. For example, to define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are recommended. The keyword `Mixins` is optional. The [FSH Language Reference](reference) contains a [complete list of keywords and their usage](reference#keywords).
 
-
 #### Rules
 
 The keyword section is followed by a number of rules. Rules are the mechanism for constraining a profile, defining an extension, creating slices, and more. All rules begin with an asterisk:
 
 `* {rule statement}`
 
-There are nine types of rules in FSH:
+There are nine types of rules in FSH. The [formal syntax of rules](reference#rules) are given in the [FSH Language reference](reference). Here is a quick summary:
 
-* Fixed value (assignment) rules are used to set constant values in profiles and instances.
-* Value set binding rules are used with elements with coded values to specify the set of enumerated values for that element. Binding rules include a the binding "strength".
-* Cardinality rules restrict the number of occurrences of an element.
-* Data type rules restrict the type of value that can be used in an element.
-* Reference type rules restrict the type of resource that a Reference can refer to.
-* Flag assignment rules add bits of information about elements impacting how implementers should handle them.
-* Extension rules specify elements populating extensions arrays.
+* Fixed value or assignment rules are used to set constant values in profiles and instances. For example:
+
+  `* bodySite.text = "Left ventricle"`
+
+  `* onsetDateTime = "2019-04-02"`
+
+  `* status = #arrived`
+
+* Value set binding rules are used with elements with coded values to specify the set of enumerated values for that element. Binding rules include one of FHIR's binding strengths (example, preferred, extensible, or required). For example:
+
+  `* gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)`
+
+  `* address.state from USPSTwoLetterAlphabeticCodes (extensible)`
+
+* Cardinality rules constrain the number of occurrences of an element, either both upper and lower bounds, or just upper or lower bound. For example:
+
+  `* note 0..0`
+
+  `* note 1..`
+
+  `* note ..5`
+
+* Data type rules restrict the type of value that can be used in an element. For example:
+
+  `* value[x] only CodeableConcept`
+
+  `* onset[x] only Period or Range`
+
+* Reference type rules restrict the type of resource that a Reference can refer to. For example:
+
+  `* recorder only Reference(Practitioner)`
+
+  `* recorder only Reference(Practitioner | PractitionerRole)`
+
+* Flag assignment rules add bits of information about elements impacting how implementers should handle them. For example:
+
+  `* communication MS ?!`
+
+  `* identifier, identifier.system, identifier.value, name, name.family MS`
+
+* Extension rules specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not create a StructureDefinition. Stand-alone extensions are those with independent StructureDefinitions, and include extensions defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword. 
+
+Here are two examples of defining inline extensions:
+
+ ```
+   * bodySite.extension contains laterality 0..1
+```
+
+```
+   * extension contains
+       treatmentIntent 0..1 MS and
+       terminationReason 0..* MS
+```
+
+Typically, after defining an inline extension, 
+
+   // now constrain the value of the inline extension
+   * bodySite.extension[laterality].value[x] only CodeableConcept
+   * bodySite.extension[laterality].valueCodeableConcept from LateralityVS (required)
+
+
+   // now constrain the values of the extension
+   * extension[treatmentIntent].value[x] only CodeableConcept
+   * extension[treatmentIntent].valueCodeableConcept from TreatmentIntentVS (required)
+   * extension[terminationReason].value[x] only CodeableConcept
+   * extension[terminationReason].valueCodeableConcept from TreatmentTerminationReasonVS (required)
+
+
+Here is a similar example using standalone extensions. The main difference is that the external reference must be assigned a local name (`named {x}`):
+
+```
+  // Aliases for convenience
+  Alias: USCoreRace = http://hl7.org/fhir/us/core/StructureDefinition/us-core-race
+  Alias: USCoreEthnicity = http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity
+  Alias: USCoreBirthsex = http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex
+
+  // include the external extensions with a local name
+  * extension contains
+      USCoreRace named race 0..1 MS and
+      USCoreEthnicity named ethnicity 0..1 MS and
+      USCoreBirthsex named birthsex 0..1 MS
+```
+
 * Slicing rules specify the types of elements an array element can contain.
+
+```
+  * component contains
+      SystolicBP 1..1 and
+      DiastolicBP 1..1
+```
+
 * Invariant rules associate elements with XPath or FHIRPath constraints they must obey.
 
-The [formal syntax of rules](reference#rules) are given in the [FSH Language reference](reference).  
+
+
+
+
+
 
 
 

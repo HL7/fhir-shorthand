@@ -550,9 +550,12 @@ Flags are a set of information about the element that impacts how implementers h
 | S | MS  | Must Support |
 | &#931;  | SU  | Include in summary |
 | ?! | ?! | Modifier |
+| N | N | Normative element |
+| TU | TU | Trial use element |
+| D | D | Draft element |
 {: .grid }
 
-The flags I, NE, TU, N, and D are currently not supported by FSH.
+The flags I and NE flags not supported by FSH, since they are derived from other information.
 
 The following syntax can be used to assigning flags:
 
@@ -586,15 +589,15 @@ The structure of extensions is pre-defined by FHIR (see [Extension element](http
 
 * Create extensions in US Core Patient at the top level:
 
-`* extension contains USCoreRaceExtension 0..1 MS and USCoreEthnicityExtension 0..1 MS and USCoreBirthsexExtension 0..1 MS`
+`* extension contains USCoreRaceExtension named race 0..1 MS and USCoreEthnicityExtension named ethnicity 0..1 MS and USCoreBirthsexExtension named birthsex 0..1 MS`
 
 * The same statement, using whitespace flexibility for readability:
 
 ```
   * extension contains
-      USCoreRaceExtension 0..1 MS and
-      USCoreEthnicityExtension 0..1 MS and
-      USCoreBirthsexExtension 0..1 MS
+      USCoreRaceExtension named race 0..1 MS and
+      USCoreEthnicityExtension named ethnicity 0..1 MS and
+      USCoreBirthsexExtension named birthsex 0..1 MS
 ```
 
 * Add a `Laterality` extension to a bodySite attribute (second level extension):
