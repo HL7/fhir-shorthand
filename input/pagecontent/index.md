@@ -1,9 +1,7 @@
 <img src="../images/FHIR-Shorthand-Logo.png" alt="IG Need for Agility" width="50%" style="margin: 0px 400px 0px 0px;"/>
 
 
-#### About this Implementation Guide
-
-This implementation guide includes the following sections:
+This implementation guide includes the following items:
 
 * [FHIR Shorthand Overview](index) (this document) -- A high level overview of FSH and SUSHI.
 * [FHIR Shorthand Tutorial](tutorial) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI.
@@ -81,7 +79,7 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
   `* active = true`
 
 * **Escape Character**: FSH uses the backslash as the escape character in string literals. For example, use `\"` to embed a quotation mark in a string.
-* **Circumflex Character ("Caret Syntax")**: FSH uses the circumflex (also called caret) `^` to directly reference the definitional structure associated with an item. For example, when defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element `StructureDefinition.experimental`:
+* **Circumflex Character ("Caret Syntax")**: FSH uses the circumflex (also called caret) `^` to directly reference the definitional structure associated with an item. For example, when defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element `StructureDefinition.experimental` from the FSH code that defines a profile:
 
   `* ^experimental = false`
 
@@ -290,17 +288,88 @@ There are nine types of rules in FSH. The [formal syntax of rules](reference#rul
   `* name obeys us-core-8  // invariant applies to the name element`
 
 
-### Defining a Profile (Example)
+### FSH Line-by-Line Walkthrough
 
-A profile combines a set of keywords and a set of rules. 
+In this section, we'll walk through a realistic example of FSH, line by line. 
 
 ```
-Profile:  CancerDiseaseStatus
-Parent:   Observation
-Id:       mcode-cancer-disease-status
-Title:    "Cancer Disease Status"
-Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
+1   Profile:  CancerDiseaseStatus
+2   Parent:   Observation
+3   Id:       mcode-cancer-disease-status
+4   Title:    "Cancer Disease Status"
+5   Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
+6   * extension contains EvidenceType named evidenceType 0..*
+7   * extension[evidenceType].valueCodeableConcept from CancerDiseaseStatusEvidenceTypeVS (required)
+8   * status, code, subject, effective[x], valueCodeableConcept MS
+9   * bodySite 0..0
+10  * specimen 0..0
+11  * device 0..0
+12  * referenceRange 0..0
+13  * hasMember 0..0
+14  * component 0..0
+15  * interpretation 0..1
+16  * subject 1..1
+17  * basedOn only Reference(ServiceRequest | MedicationRequest)
+18  * partOf only Reference(MedicationAdministration | MedicationStatement | Procedure)
+19  * code = LNC#88040-1 "Response to cancer treatment"
+20  * subject only Reference(CancerPatient)
+21  * focus only Reference(CancerConditionParent)
+22  * performer only Reference(USCorePractitioner)
+23  * effective[x] only dateTime or Period
+24  * value[x] only CodeableConcept
+25  * valueCodeableConcept from ConditionStatusTrendVS (required)
+26 
+27  Extension: EvidenceType
+28  Title: "Evidence Type"
+29  Id:  mcode-evidence-type
+30  Description: "Categorization of the kind of evidence used as input to the clinical judgment. This corresponds to both the S and O in SOAP."
+31  * value[x] only CodeableConcept
+32
+33  Alias: LNC = http://loinc.org
+34  Alias: SCT = http://snomed.info/sct
+35
+36  ValueSet:   ConditionStatusTrendVS
+37  Id: mcode-condition-status-trend-vs
+38  Title: "Condition Status Trend Value Set"
+39  Description:  "How patient's given disease, condition, or ability is trending."
+40  * SCT#260415000 "Not detected (qualifier)"
+41  * SCT#268910001 "Patient condition improved (finding)"
+42  * SCT#359746009 "Patient's condition stable (finding)"
+43  * SCT#271299001 "Patient's condition worsened (finding)"
+44  * SCT#709137006 "Patient condition undetermined (finding)"
 ```
+
+* Line 1 establishes the profile, and gives it a name.
+* Line 2 says that this profile will be based on Observation. Specifying the parent is required.
+* Line 3 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
+* Line 4 is a human-readable title for the profile.
+* Line 5 is the description that will appear in the IG on the profile's page.
+* Line 6 is the start of the rule section of the profile. The rule creates an extension using the standalone extension, EvidenceType, and gives it the local name evidenceType, as well as the cardinality 0..*.
+* Line 7 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength.
+* Line 8 designates a list of elements (inherited from Observation) as must-support.
+* Lines 9 to 16 constrain the cardinality of some inherited elements.
+* Lines 17 and 18 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
+* Line 19 fix the value of the code attribute to a specific LOINC code, using an alias for the code system defined later, on line 33
+* Lines 20 to 22 restrict the choice of resource types to a single type, for elements that refer to other resources.
+* Line 23 and 24 restrict the data type for elements that offer a choice of data types in the base resource.
+* Line 25 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding.
+* Line 27 declares a standalone extension named EvidenceType.
+* Line 28 gives the extension a human-readable title.
+* Line 29 assigns it an id.
+* Line 30 gives the extension a description that will appear on the extension's main page.
+* Line 31 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept.
+* Lines 33 and 34 defines aliases for the LOINC and SNOMED-CT code systems.
+* Line 36 declares a value set named ConditionStatusTrendVS.
+* Line 37 gives the value set an id.
+* Line 38 provides a human readable title for the value set.
+* Line 39 gives the value set a description that will appear on the value set's main page.
+* Lines 40 to 44 define the codes that are members of the value set
+
+A few things to note about this example:
+
+* The order of items doesn't matter. In FSH, you can refer to items defined before or after the current item.
+* The example assumes the items are all in one file, but they could just as easily be in separate files. The allocation of items to files is the author's choice.
+* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 7, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference#paths).
 
 
 
