@@ -392,7 +392,7 @@ Here is a summary of the rules supported in FSH:
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
 | Extensions | `* {extension element path} contains {extensionName1} {card1} {flags1} and {extensionName2} {card2} {flags2}...` |
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
-| 🚧 Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
+| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
 | 🚫 Mapping | `* {path} -> {string}` |
 {: .grid }
 
@@ -763,13 +763,13 @@ This section shows how to define various items in FSH:
 * [Aliases](#defining-aliases)
 * [Profiles](#defining-profiles)
 * [Extensions](#defining-extensions)
-* 🚧 [Slices](#defining-slices)
+* [Slices](#defining-slices)
 * [Instances](#defining-instances)
 * [Value Sets](#defining-value-sets)
 * [Code Systems](#defining-code-systems)
 * 🚫 [Mappings](#defining-mappings)
-* 🚧 [Mixins](#defining-mixins)
-* 🚧 [Invariants](#defining-invariants)
+* [Mixins](#defining-mixins)
+* [Invariants](#defining-invariants)
 
 #### Keywords
 
@@ -792,25 +792,24 @@ The use of individual keywords is explained in greater detail in the following s
 | `Alias`| Defines an alias for a URL or OID | uri, url, or oid  |
 | `CodeSystem` | Declares a new code system | name |
 | `Description` | Provides a human-readable description | string, markdown |
-| 🚧 `Expression` | The FHIR path expression in an invariant | string |
+| `Expression` | The FHIR path expression in an invariant | string |
 | `Extension` | Declares a new extension | name |
 | `Id` | Set a unique identifier of an item | name |
 | `Instance` | Declare a new instance | name |
 | `InstanceOf` | The profile or resource an instance instantiates | name |
-| 🚧 `Invariant` | Declares a new invariant | name |
-| 🚧 `Mapping` | Introduces a new mapping | name |
-| 🚧 `Mixin` | Introduces a class to be used as a mixin | name |
-| 🚧 `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
-| 🚫 `Language` | Declares the language of texts in a localization file | language ISO code |
+| `Invariant` | Declares a new invariant | name |
+| 🚫 `Mapping` | Introduces a new mapping | name |
+| `Mixin` | Introduces a class to be used as a mixin | name |
+| `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
 | `Parent` | Specifies the base class for a profile or extension | name |
 | `Profile` | Introduces a new profile | name |
-| 🚧 `Severity` | error, warning, or guideline in invariant | code |
-| 🚧 `Slice` | Introduces a new slice | name, string |
-| 🚫 `Source` | Profile or path a mapping applies to | path |
-| 🚫 `Target` | The standard that the mapping maps to | string |
+| `Severity` | error, warning, or guideline in invariant | code |
+| 🚫 `Slice` | Introduces a new slice | name, string |
+| `Source` | Profile or path a mapping applies to | path |
+| `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
 | `ValueSet` | Declares a new value set | name |
-| 🚧 `XPath` | the xpath in invariant | string |
+| `XPath` | the xpath in invariant | string |
 {: .grid }
 
 #### Defining Aliases
