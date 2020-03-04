@@ -183,7 +183,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 There are nine types of rules in FSH. The [formal syntax of rules](reference#rules) are given in the [FSH Language reference](reference). Here is a quick summary:
 
-* Fixed value or assignment rules are used to set constant values in profiles and instances. For example:
+* **Fixed value (assignment) rules** are used to set constant values in profiles and instances. For example:
 
   `* bodySite.text = "Left ventricle"`
 
@@ -191,13 +191,13 @@ There are nine types of rules in FSH. The [formal syntax of rules](reference#rul
 
   `* status = #arrived`
 
-* Value set binding rules are used with elements with coded values to specify the set of enumerated values for that element. Binding rules include one of FHIR's binding strengths (example, preferred, extensible, or required). For example:
+* **Value set binding rules** are used with elements with coded values to specify the set of enumerated values for that element. Binding rules include one of FHIR's binding strengths (example, preferred, extensible, or required). For example:
 
   `* gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)`
 
   `* address.state from USPSTwoLetterAlphabeticCodes (extensible)`
 
-* Cardinality rules constrain the number of occurrences of an element, either both upper and lower bounds, or just upper or lower bound. For example:
+* **Cardinality rules** constrain the number of occurrences of an element, either both upper and lower bounds, or just upper or lower bound. For example:
 
   `* note 0..0`
 
@@ -205,84 +205,102 @@ There are nine types of rules in FSH. The [formal syntax of rules](reference#rul
 
   `* note ..5`
 
-* Data type rules restrict the type of value that can be used in an element. For example:
+* **Data type rules** restrict the type of value that can be used in an element. For example:
 
   `* value[x] only CodeableConcept`
 
   `* onset[x] only Period or Range`
 
-* Reference type rules restrict the type of resource that a Reference can refer to. For example:
+* **Reference type rules** restrict the type of resource that a Reference can refer to. For example:
 
   `* recorder only Reference(Practitioner)`
 
   `* recorder only Reference(Practitioner | PractitionerRole)`
 
-* Flag assignment rules add bits of information about elements impacting how implementers should handle them. For example:
+* **Flag rules** add bits of information about elements impacting how implementers should handle them. For example:
 
   `* communication MS ?!`
 
   `* identifier, identifier.system, identifier.value, name, name.family MS`
 
-* Extension rules specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not create a StructureDefinition. Stand-alone extensions are those with independent StructureDefinitions, and include extensions defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword. 
+* **Extension rules** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword. 
 
-Here are two examples of defining inline extensions:
+  Here are two examples of defining inline extensions:
 
- ```
-   * bodySite.extension contains laterality 0..1
-```
+  ```
+  * bodySite.extension contains laterality 0..1
+  ```
 
-```
-   * extension contains
-       treatmentIntent 0..1 MS and
-       terminationReason 0..* MS
-```
+  ```
+  * extension contains
+      treatmentIntent 0..1 MS and
+      terminationReason 0..* MS
+  ```
 
-Typically, after defining an inline extension, 
+  Typically, after defining an inline extension, rules constraining the extension are required. In the first example, we can restrict the data type of value[x] and bind a value set:
 
-   // now constrain the value of the inline extension
-   * bodySite.extension[laterality].value[x] only CodeableConcept
-   * bodySite.extension[laterality].valueCodeableConcept from LateralityVS (required)
+  ```
+  * bodySite.extension[laterality].value[x] only CodeableConcept
+  * bodySite.extension[laterality].valueCodeableConcept from LateralityVS (required)
+  ```
 
+  With standalone extensions, the main difference is that the grammar includes both the standalone name and the assigned local name:
 
-   // now constrain the values of the extension
-   * extension[treatmentIntent].value[x] only CodeableConcept
-   * extension[treatmentIntent].valueCodeableConcept from TreatmentIntentVS (required)
-   * extension[terminationReason].value[x] only CodeableConcept
-   * extension[terminationReason].valueCodeableConcept from TreatmentTerminationReasonVS (required)
-
-
-Here is a similar example using standalone extensions. The main difference is that the external reference must be assigned a local name (`named {x}`):
-
-```
+  ```
   // Aliases for convenience
   Alias: USCoreRace = http://hl7.org/fhir/us/core/StructureDefinition/us-core-race
   Alias: USCoreEthnicity = http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity
   Alias: USCoreBirthsex = http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex
 
-  // include the external extensions with a local name
+  // include the external extensions with local names
   * extension contains
       USCoreRace named race 0..1 MS and
       USCoreEthnicity named ethnicity 0..1 MS and
       USCoreBirthsex named birthsex 0..1 MS
-```
+  ```
 
-* Slicing rules specify the types of elements an array element can contain.
+* **Slicing rules** specify the types of elements an array element can contain. Slicing requires at least three parameters to be set before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference#structure-definition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
 
-```
+  ```
+  * component ^slicing.discriminator.type = #pattern
+  * component ^slicing.discriminator.path = "code"
+  * component ^slicing.rules = #open
+  * component ^slicing.ordered = false   // can be omitted, since false is the default
+  * component ^slicing.description = "Slice based on the component.code pattern"  // optional
+  ```
+  Once the slicing rules have been established, the slice is created using the similar syntax as with extensions:
+
+  ```
   * component contains
       SystolicBP 1..1 and
       DiastolicBP 1..1
+  ```
+  The elements of each slice are typically constrained with additional rules, e.g.:
+
+  ```
+  * component[SystolicBP].value[x] only Quantity
+  * component[SystolicBP].valueQuality = UCUM#mm[Hg]
+  ```
+
+* **Invariant rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
+
+
+  `* obeys us-core-9  // invariant applies to entire profile`  
+
+  `* name obeys us-core-8  // invariant applies to the name element`
+
+
+### Defining a Profile (Example)
+
+A profile combines a set of keywords and a set of rules. 
+
 ```
-
-* Invariant rules associate elements with XPath or FHIRPath constraints they must obey.
-
-
-
-
-
-
-
-
+Profile:  CancerDiseaseStatus
+Parent:   Observation
+Id:       mcode-cancer-disease-status
+Title:    "Cancer Disease Status"
+Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
+```
 
 
 
