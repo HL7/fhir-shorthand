@@ -419,7 +419,7 @@ Binding is the process of associating a coded element with a set of possible val
 
 `* {path} from {valueSet} ({strength})`
 
-The value set can be the name of a value set defined in the same FSH tank, or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared a dependency in the _package.json_ file.
+The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-tanks), or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared a dependency in the _package.json_ file.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
 
@@ -675,7 +675,7 @@ Slicing in FHIR requires the user to specify a [discriminator path, type, and ru
 
 One way to specify the slicing logic parameters is to use [structure definition escape (caret) syntax](#structure-definition-escape-paths). The author identifies the sliced element, and then traverses the structure definition at that point.
 
- 🚫 The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no explicit declarations by the user. SUSHI infers slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For more information, see the[SUSHI documentation](sushi.html).
+ 🚫 The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no explicit declarations by the user. SUSHI infers slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For more information, see the[SUSHI documentation](sushi.md).
 
 **Example:**
 
@@ -702,7 +702,7 @@ One way to specify the slicing logic parameters is to use [structure definition 
 
 The first case is where the invariant applies to the profile as a whole. The second is where the invariant applies to a single element, and the third is where the invariant applies to multiple elements.
 
-The referenced invariant and its properties must be declared somewhere within the same FSH tank, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
+The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
 **Examples:**
 
@@ -764,7 +764,7 @@ For example:
 
 `Description: "The intent of the treatment."`
 
-For some keywords, values are **FSH names**. A name is any sequence of non-whitespace characters, used to refer to the item within the same [FSH tank](#fsh-tanks-and-fsh-files). By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
+For some keywords, values are **FSH names**. A name is any sequence of non-whitespace characters, used to refer to the item within the same [FSH tank](index.html#fsh-tanks). By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
 The use of individual keywords is explained in greater detail in the following sections. Here is a summary of keywords in FSH:
 

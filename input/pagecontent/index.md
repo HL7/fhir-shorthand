@@ -1,17 +1,17 @@
 
 This implementation guide includes the following items:
 
-* [FHIR Shorthand Overview](index) (this document) -- A high level overview of FSH and SUSHI.
-* [FHIR Shorthand Tutorial](tutorial) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI.
-* [FHIR Shorthand Language Reference](reference) -- The syntax and usage of the FHIR Shorthand language.
-* [SUSHI User Guide](sushi) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool.
+* [FHIR Shorthand Overview](index.md) (this document) -- A high level overview of FSH and SUSHI.
+* [FHIR Shorthand Tutorial](tutorial.md) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI.
+* [FHIR Shorthand Language Reference](reference.md) -- The syntax and usage of the FHIR Shorthand language.
+* [SUSHI User Guide](sushi.md) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool.
 
 #### FHIR Shorthand and SUSHI
 FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as Github.
 
 <img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="margin: 0px 800px 0px 0px;"/>
 
-Accompanying the FSH language is a reference implementation, [SUSHI](sushi), that translates FSH into FHIR artifacts and enables production of FHIR IGs. There is also a tool, [FSH Food](https://github.com/lantanagroup/fshfood), that converts profiles and extensions (StructureDefinitions) into FSH. Together with the [HL7 IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), these tools present a complete solution for creating and maintaining a FHIR IG.
+Accompanying the FSH language is a reference implementation, [SUSHI](sushi.md), that translates FSH into FHIR artifacts and enables production of FHIR IGs. There is also a tool, [FSH Food](https://github.com/lantanagroup/fshfood), that converts profiles and extensions (StructureDefinitions) into FSH. Together with the [HL7 IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), these tools present a complete solution for creating and maintaining a FHIR IG.
 
 #### Motivations for FHIR Shorthand
 
@@ -47,11 +47,11 @@ Information is stored in plain text files with `.fsh` extension. Each file can c
 * Group things logically, for example, a profile together with its value sets, extensions, and examples.
 * Use one file for each item (and potentially put similar items in different subdirectories).
 
-Additional IG content such as narrative page content, images, and customized menus are also part of the FSH Tank (the rice and seaweed in the illustration). This is discussed in the [SUSHI Users Guide](sushi#ig-creation).
+Additional IG content such as narrative page content, images, and customized menus are also part of the FSH Tank (the rice and seaweed in the illustration). This is discussed in the [SUSHI Users Guide](sushi.html#ig-creation).
 
 #### Running SUSHI
 
-SUSHI is a translator that converts FSH to FHIR. Currently, SUSHI is installed and runs locally on your own computer from the command line. Installing SUSHI is described [here](sushi#installation). The language (Typescript) and the underlying architecture of SUSHI is compatible with future server-based deployment.
+SUSHI is a translator that converts FSH to FHIR. Currently, SUSHI is installed and runs locally on your own computer from the command line. Installing SUSHI is described [here](sushi.html#installation). The language (Typescript) and the underlying architecture of SUSHI is compatible with future server-based deployment.
 
 After SUSHI runs, a new directory appears in the FSH Tank. This directory (named _/build_ by default) contains all the files necessary to run the IG Publisher. FHIR artifacts, such as profiles, extensions, value sets, and instances can be found in the _/build/input_ directory after running SUSHI.
 
@@ -63,7 +63,7 @@ If HL7 is publishing your IG, you need to move the build files (excluding _/buil
 
 ### Shorthand Language Overview
 
-The complete grammar of FSH is described in the [FHIR Shorthand Language Reference](reference). Here we present just enough to get a taste of FSH.
+The complete grammar of FSH is described in the [FHIR Shorthand Language Reference](reference.md). Here we present just enough to get a taste of FSH.
 
 #### Basics
 
@@ -169,7 +169,7 @@ Specialized keywords, used only with one type of item include:
 * XPath (Invariant)
 * Expression (Invariant)
 
-Each type of item has a different set of required and optional keywords. For example, to define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are recommended. The keyword `Mixins` is optional. The [FSH Language Reference](reference) contains a [complete list of keywords and their usage](reference#keywords).
+Each type of item has a different set of required and optional keywords. For example, to define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are recommended. The keyword `Mixins` is optional. The [FSH Language Reference](reference.md) contains a [complete list of keywords and their usage](reference.html#keywords).
 
 #### Rules
 
@@ -177,7 +177,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 `* {rule statement}`
 
-There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference#rules) are given in the [FSH Language reference](reference). Here is a summary:
+There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference.html#rules) are given in the [FSH Language reference](reference.md). Here is a summary:
 
 * **Fixed value (assignment) rules** are used to set constant values in profiles and instances. For example:
 
@@ -255,7 +255,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
       USCoreBirthsex named birthsex 0..1 MS
   ```
 
-* **Slicing rules** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference#structure-definition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
+* **Slicing rules** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference.html#structure-definition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
 
   ```
   * component ^slicing.discriminator.type = #pattern
@@ -399,18 +399,20 @@ A few things to note about this example:
 
 * The order of items doesn't matter. In FSH, you can refer to items defined before or after the current item.
 * The example assumes the items are all in one file, but they could be in separate files. The allocation of items to files is the author's choice.
-* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference#paths).
+* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#paths).
 
 ### Summary and Future Considerations
 
-In this introduction, we presented an overview of FSH and SUSHI. Not all the features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi).
+In this introduction, we presented an overview of FSH and SUSHI. Not all the features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference.md). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi.md).
 
 Version 1.0 of FSH and SUSHI are capable of producing sophisticated IGs and offer more than a "minimum viable product". Future versions may introduce additional features. Some of the features under consideration include (in no order):
 
-* **Multiple Language Support**: At present, FSH supports only one language. In the future, FSH and SUSHI may introduce mechanisms for generating IGs in multiple languages.
+* **Slicing Support:** AKA “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything, SUSHI would handle most slicing situations without explicit declarations of discriminator type or path by the user. SUSHI would infer slicing discriminators based the nature of the slices, based on a set of explicit algorithms.
 
-* **Capability Statements**: Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements.
+* **Multiple Language Support:** At present, FSH supports only one language. In the future, FSH and SUSHI may introduce mechanisms for generating IGs in multiple languages.
 
-* **Logical Models**: FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
+* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements.
 
-* **Resource Definitions**: FSH may provide support for developing new FHIR resources and maintaining existing ones, to help HL7 Work Groups more effectively manage their contributions to FHIR core.
+* **Logical Models:** FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
+
+* **Resource Definitions:** FSH may provide support for developing new FHIR resources and maintaining existing ones, to help HL7 Work Groups more effectively manage their contributions to FHIR core.

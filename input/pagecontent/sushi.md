@@ -1,3 +1,4 @@
+
 SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
 
 > **Note:** HL7® and FHIR® are registered trademarks owned by Health Level Seven International, and are registered with the United States Patent and Trademark Office.
@@ -146,7 +147,7 @@ Here are some general tips on approaching debugging:
 * Eliminate parsing (syntax) errors first. Messages include `extraneous input {x} expecting {y}`, `mismatched input {x} expecting {y}` and `no viable alternative at {x}`. These messages indicate that the line in question is not a valid FSH statement.
 * The order of keywords is not arbitrary. The declarations must start with the type of item you are creating (e.g., Profile, Instance, ValueSet).
 * The order of rules usually doesn't matter, but there are exceptions. Slices and extensions must be created (with `contains` rule) before they are constrained.
-* A common error is `No element found at path`. This means although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there is no spelling error, the element names in the path are correct, and you are using the [path grammar](index#paths) correctly.
+* A common error is `No element found at path`. This means although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there is no spelling error, the element names in the path are correct, and you are using the [path grammar](reference.html#paths) correctly.
 
 ### IG Creation
 
