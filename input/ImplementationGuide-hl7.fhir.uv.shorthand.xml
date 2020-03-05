@@ -2,9 +2,9 @@
 <ImplementationGuide xmlns="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hl7.org/fhir ../input-cache/schemas-r5/fhir-single.xsd">
   <id value="hl7.fhir.uv.shorthand"/>
   <url value="http://hl7.org/fhir/uv/shorthand/ImplementationGuide/hl7.fhir.uv.shorthand"/>
-  <version value="0.1.0"/>
+  <version value="0.9.0"/>
   <name value="FHIRShorthand"/>
-  <title value="FHIR Shorthand Reference Manual"/>
+  <title value="FHIR Shorthand"/>
   <status value="draft"/>
   <experimental value="false"/>
   <publisher value="HL7 International - FHIR Infrastructure Group"/>
@@ -39,15 +39,15 @@
         <generation value="markdown"/>
       </page>
       <page>
+        <nameUrl value="reference.html"/>
+        <title value="Language Reference"/>
+        <generation value="markdown"/>
+      </page>
+      <page>
         <nameUrl value="sushi.html"/>
         <title value="SUSHI"/>
         <generation value="markdown"/>
       </page>
-      <!--page>
-        <nameUrl value="samples.html"/>
-        <title value="Examples"/>
-        <generation value="markdown"/>
-      </page-->
     </page>
     <parameter>
       <code value="releaselabel"/>
