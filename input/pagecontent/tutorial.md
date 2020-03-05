@@ -52,7 +52,7 @@ where `{path}` is the path to the folder containing the FSH files, and `{output-
 
 `$ sushi .`
 
-This will create a _FishExample/build/input/resources_ directory, and populate it with the files needed to create the IG using the HL7 FHIR IG Publisher tool.
+This will create a _FishExample/build/input_ directory, and populate it with the directories and files needed to run the HL7 FHIR IG Publisher tool.
 
 When running SUSHI successfully, you should see output similar to the following:
 
@@ -65,19 +65,9 @@ info:
    Warnings:   0
 ```
 
-> 🚧 Because SUSHI is still under development, you may see the following error message:
-
-```
-  error: SUSHI does not yet support custom pagecontent other than index.md.
-  File: {your directory}\fsh-tutorial-master\FishExample\ig-data\input\pagecontent
-```
-
-> If you encounter this message, manually copy the file _Shorty.png_ from the directory _FishExample/ig-data/input/images_ to the directory _FishExample/build/input/images_.
-
-
 ### Step 5: Generate the Sample IG
 
-Check to see if the _FishExample/build_ directory (or the directory you specified) is present. Also check to see if the _/input/resources_ subdirectory contains the generated structure definitions.
+Check to see if the _FishExample/build_ directory (or the directory you specified) is present. Also check to see if the _build/input/profiles_ subdirectory contains the generated structure definitions.
 
 Now change working directory of the command window to the _build_ directory. At the command prompt, enter:
 
