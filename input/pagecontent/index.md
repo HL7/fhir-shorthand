@@ -1,4 +1,3 @@
-<img src="../images/FHIR-Shorthand-Logo.png" alt="IG Need for Agility" width="50%" style="margin: 0px 400px 0px 0px;"/>
 
 
 This implementation guide includes the following items:
@@ -15,11 +14,13 @@ Accompanying the FSH language is a reference implementation, [SUSHI](sushi), tha
 
 > **Note:** HL7® and FHIR® are registered trademarks owned by Health Level Seven International.
 
+<img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="margin: 0px 900px 0px 0px;"/>
+
 #### Motivations for FHIR Shorthand
 
 FHIR Shorthand was created in response to the need in the FHIR community for scalable, fast, user-friendly tools for IG creation and maintenance. Experience has shown that profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent. Profiling projects often go through many iterations, and as such, an agile approach to refactoring and revision is invaluable.
 
-<img src="../images/IG-Need-For-Agility.png" alt="IG Need for Agility"/>
+<img src="IG-Need-For-Agility.png" alt="IG Need for Agility" width="600px" style="margin: 0px 800px 0px 0px;" />
 
 There are already several existing methods for IG creation: hand editing, using [Excel spreadsheets](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring), [Simplifier/Forge](https://fire.ly/products/simplifier-net/), and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com). Each of these methods have certain advantages as well as drawbacks:
 
@@ -37,7 +38,7 @@ As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 2. Compiling those files using the SUSHI compiler
 3. Creating the IG using the HL7 FHIR IG Publishing Tool
 
-![Overall FSH Workflow](../images/Workflow.png "Overall SUSHI Workflow")
+<img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="margin: 0px 600px 0px 0px;" />
 
 #### FSH Tanks
 

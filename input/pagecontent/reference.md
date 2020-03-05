@@ -1,6 +1,4 @@
 
-### FHIR Shorthand Language Reference
-
 This document describes the FSH language.
 
 #### Document Conventions
@@ -297,43 +295,23 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
 
 ##### Extension Paths
 
-Extensions are arrays populated by slicing. They may be addressed using the slice path syntax presented above. However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.
+Extensions are arrays populated by slicing. They may be addressed using the slice path syntax presented above. However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. <!--The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
 
-**Examples:** 
+**Examples:**
 
 * Set the value of the birthsex extension in US Core Patient (assume USCoreBirthsex has been defined as an alias for the birthsex extension):
 
-   Full syntax:
-
   `* extension[USCoreBirthsex].valueCode = #F`
-
-  🚧 Abbreviated syntax:
-
-  `* USCoreBirthsex.valueCode = #F`
 
 * Set the nested ombCategory extension, under the ethnicity extension in US Core:
 
-  Full syntax:
-
   `* extension[USCoreEthnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"`
-
-  🚧 Abbreviated syntax:
-
-  `* USCoreEthnicity.ombCategory.valueCoding = RACE#2135-2 "Hispanic or Latino"`
 
 * Set two values in the multiply-valued nested extension, detailed, under USCoreEthnicity extension:
 
-  Full syntax:
 ```
   * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"
   * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
-```
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🚧 Abbreviated syntax:
-
-```
-  * USCoreEthnicity.detailed[0].valueCoding = RACE#2184-0 "Dominican"
-  * USCoreEthnicity.detailed[1].valueCoding = RACE#2148-5 "Mexican"
 ```
 
 ##### Sliced Array Paths
