@@ -405,10 +405,12 @@ A few things to note about this example:
 
 In this introduction, we presented an overview of FSH and SUSHI. Not all the features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi).
 
-Version 1.0 of FSH and SUSHI are capable of producing sophisticated IGs, future versions may introduce additional features. Some of the features under consideration include:
+Version 1.0 of FSH and SUSHI are capable of producing sophisticated IGs and offer more than a "minimum viable product". Future versions may introduce additional features. Some of the features under consideration include (in no order):
 
 * **Multiple Language Support**: At present, FSH supports only one language. In the future, FSH and SUSHI may introduce mechanisms for generating IGs in multiple languages.
 
+* **Capability Statements**: Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements.
+
 * **Logical Models**: FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
 
-* **Resource Definitions**: FSH may provide support for groups developing new FHIR resources, or maintaining existing core FHIR resources.
+* **Resource Definitions**: FSH may provide support for developing new FHIR resources and maintaining existing ones, to help HL7 Work Groups more effectively manage their contributions to FHIR core.
