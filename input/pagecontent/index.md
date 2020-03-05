@@ -1,5 +1,4 @@
 
-
 This implementation guide includes the following items:
 
 * [FHIR Shorthand Overview](index) (this document) -- A high level overview of FSH and SUSHI.
@@ -10,11 +9,9 @@ This implementation guide includes the following items:
 #### FHIR Shorthand and SUSHI
 FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as Github.
 
+<img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="margin: 0px 800px 0px 0px;"/>
+
 Accompanying the FSH language is a reference implementation, [SUSHI](sushi), that translates FSH into FHIR artifacts and enables production of FHIR IGs. There is also a tool, [FSH Food](https://github.com/lantanagroup/fshfood), that converts profiles and extensions (StructureDefinitions) into FSH. Together with the [HL7 IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), these tools present a complete solution for creating and maintaining a FHIR IG.
-
-> **Note:** HL7® and FHIR® are registered trademarks owned by Health Level Seven International.
-
-<img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="margin: 0px 900px 0px 0px;"/>
 
 #### Motivations for FHIR Shorthand
 
