@@ -6,7 +6,7 @@
     "list" : [{
      "version" : "current",
      "desc" : "Continuous Integration Build (latest in version control)",
-     "path" : "https://build.fhir.org/ig/HL7/fhir-shorthand",
+     "path" : "http://build.fhir.org/ig/HL7/fhir-shorthand",
      "status" : "ci-build",
      "current" : true
     }, {

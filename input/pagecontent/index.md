@@ -179,7 +179,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 `* {rule statement}`
 
-There are nine types of rules in FSH. The [formal syntax of rules](reference#rules) are given in the [FSH Language reference](reference). Here is a quick summary:
+There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference#rules) are given in the [FSH Language reference](reference). Here is a summary:
 
 * **Fixed value (assignment) rules** are used to set constant values in profiles and instances. For example:
 
@@ -257,7 +257,7 @@ There are nine types of rules in FSH. The [formal syntax of rules](reference#rul
       USCoreBirthsex named birthsex 0..1 MS
   ```
 
-* **Slicing rules** specify the types of elements an array element can contain. Slicing requires at least three parameters to be set before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference#structure-definition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
+* **Slicing rules** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference#structure-definition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
 
   ```
   * component ^slicing.discriminator.type = #pattern
@@ -287,46 +287,67 @@ There are nine types of rules in FSH. The [formal syntax of rules](reference#rul
 
   `* name obeys us-core-8  // invariant applies to the name element`
 
+* **Extensional (explicit) code rules** are used to include or exclude specific codes in value sets and code systems. For example:
+
+  `* SCT#54102005 "G1 grade (finding)"`
+
+  `* exclude SCT#12619005`
+
+When defining a new code system, the code system (SCT, in the examples) is omitted.
+
+* **Intensional (implicit) code rules** are used to include or exclude sets of values in value sets or code systems. For example, to include all codes from a code system:
+
+  `* codes from system RXNORM`
+
+  Similar rules can include or exclude all codes from another value set:
+
+  `* codes from valueset ConditionStatusTrendVS`
+
+  `* exclude codes from valueset ConditionStatusTrendVS`
+
+  More complex intensional rules involving filters are also possible. These rules depend on relationships or properties defined a specific code system. A rule for LOINC, for example, would not be applicable to SNOMED-CT. Here is an example of a SNOMED-CT intensional rule with a filter:
+
+  `* codes from system SCT where concept is-a #123037004 "BodyStructure"`
 
 ### FSH Line-by-Line Walkthrough
 
-In this section, we'll walk through a realistic example of FSH, line by line. 
+In this section, we'll walk through a realistic example line by line.
 
 ```
-1   Profile:  CancerDiseaseStatus
-2   Parent:   Observation
-3   Id:       mcode-cancer-disease-status
-4   Title:    "Cancer Disease Status"
-5   Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
-6   * extension contains EvidenceType named evidenceType 0..*
-7   * extension[evidenceType].valueCodeableConcept from CancerDiseaseStatusEvidenceTypeVS (required)
-8   * status, code, subject, effective[x], valueCodeableConcept MS
-9   * bodySite 0..0
-10  * specimen 0..0
-11  * device 0..0
-12  * referenceRange 0..0
-13  * hasMember 0..0
-14  * component 0..0
-15  * interpretation 0..1
-16  * subject 1..1
-17  * basedOn only Reference(ServiceRequest | MedicationRequest)
-18  * partOf only Reference(MedicationAdministration | MedicationStatement | Procedure)
-19  * code = LNC#88040-1 "Response to cancer treatment"
-20  * subject only Reference(CancerPatient)
-21  * focus only Reference(CancerConditionParent)
-22  * performer only Reference(USCorePractitioner)
-23  * effective[x] only dateTime or Period
-24  * value[x] only CodeableConcept
-25  * valueCodeableConcept from ConditionStatusTrendVS (required)
-26 
-27  Extension: EvidenceType
-28  Title: "Evidence Type"
-29  Id:  mcode-evidence-type
-30  Description: "Categorization of the kind of evidence used as input to the clinical judgment. This corresponds to both the S and O in SOAP."
-31  * value[x] only CodeableConcept
-32
-33  Alias: LNC = http://loinc.org
-34  Alias: SCT = http://snomed.info/sct
+1  Alias: LNC = http://loinc.org
+2  Alias: SCT = http://snomed.info/sct
+3
+4   Profile:  CancerDiseaseStatus
+5   Parent:   Observation
+6   Id:       mcode-cancer-disease-status
+7   Title:    "Cancer Disease Status"
+8   Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
+9   * extension contains EvidenceType named evidenceType 0..*
+10  * extension[evidenceType].valueCodeableConcept from CancerDiseaseStatusEvidenceTypeVS (required)
+11  * status, code, subject, effective[x], valueCodeableConcept MS
+12  * bodySite 0..0
+13  * specimen 0..0
+14  * device 0..0
+15  * referenceRange 0..0
+16  * hasMember 0..0
+17  * component 0..0
+18  * interpretation 0..1
+19  * subject 1..1
+20  * basedOn only Reference(ServiceRequest | MedicationRequest)
+21  * partOf only Reference(MedicationAdministration | MedicationStatement | Procedure)
+22  * code = LNC#88040-1 "Response to cancer treatment"
+23  * subject only Reference(CancerPatient)
+24  * focus only Reference(CancerConditionParent)
+25  * performer only Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner)
+26  * effective[x] only dateTime or Period
+27  * value[x] only CodeableConcept
+28  * valueCodeableConcept from ConditionStatusTrendVS (required)
+29 
+30  Extension: EvidenceType
+31  Title: "Evidence Type"
+32  Id:  mcode-evidence-type
+33  Description: "Categorization of the kind of evidence used as input to the clinical judgment. This corresponds to both the S and O in SOAP."
+34  * value[x] only CodeableConcept
 35
 36  ValueSet:   ConditionStatusTrendVS
 37  Id: mcode-condition-status-trend-vs
@@ -337,50 +358,59 @@ In this section, we'll walk through a realistic example of FSH, line by line.
 42  * SCT#359746009 "Patient's condition stable (finding)"
 43  * SCT#271299001 "Patient's condition worsened (finding)"
 44  * SCT#709137006 "Patient condition undetermined (finding)"
-```
+45  
+46  ValueSet: CancerDiseaseStatusEvidenceTypeVS
+47  Id: mcode-cancer-disease-status-evidence-type-vs
+48  Title: "Cancer Disease Status Evidence Type Value Set"
+49  Description:  "The type of evidence backing up the clinical determination of cancer progression. The code '* SCT#252416005 Histopathology test (procedure)' is intended to be used when there is a biopsy that contributes evidence of the cancer disease status."
+50  * SCT#363679005 "Imaging (procedure)"
+51  * SCT#252416005 "Histopathology test (procedure)"
+52  * SCT#711015009 "Assessment of symptom control (procedure)"
+53  * SCT#5880005   "Physical examination procedure (procedure)"
+54  * SCT#386344002 "Laboratory data interpretation (procedure)"
 
-* Line 1 establishes the profile, and gives it a name.
-* Line 2 says that this profile will be based on Observation. Specifying the parent is required.
-* Line 3 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
-* Line 4 is a human-readable title for the profile.
-* Line 5 is the description that will appear in the IG on the profile's page.
-* Line 6 is the start of the rule section of the profile. The rule creates an extension using the standalone extension, EvidenceType, and gives it the local name evidenceType, as well as the cardinality 0..*.
-* Line 7 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength.
-* Line 8 designates a list of elements (inherited from Observation) as must-support.
-* Lines 9 to 16 constrain the cardinality of some inherited elements.
-* Lines 17 and 18 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
-* Line 19 fix the value of the code attribute to a specific LOINC code, using an alias for the code system defined later, on line 33
-* Lines 20 to 22 restrict the choice of resource types to a single type, for elements that refer to other resources.
-* Line 23 and 24 restrict the data type for elements that offer a choice of data types in the base resource.
-* Line 25 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding.
-* Line 27 declares a standalone extension named EvidenceType.
-* Line 28 gives the extension a human-readable title.
-* Line 29 assigns it an id.
-* Line 30 gives the extension a description that will appear on the extension's main page.
-* Line 31 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept.
-* Lines 33 and 34 defines aliases for the LOINC and SNOMED-CT code systems.
+```
+* Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
+* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus.
+* Line 5 says that this profile will be based on Observation. Specifying the parent is required.
+* Line 6 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
+* Line 7 is a human-readable title for the profile.
+* Line 8 is the description that will appear in the IG on the profile's page.
+* Line 9 is the start of the rule section of the profile. The rule creates an extension using the standalone extension, EvidenceType, and gives it the local name evidenceType, as well as the cardinality 0..*.
+* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength.
+* Line 11 designates a list of elements (inherited from Observation) as must-support.
+* Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a list of items, so these must be separate statements.
+* Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
+* Line 22 fix the value of the code attribute to a specific LOINC code, using an alias for the code system defined later, on line 33
+* Lines 23 to 25 restrict the choice of resource types to a single type, for elements that refer to other resources. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent)
+* Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
+* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding.
+* Line 30 declares a standalone extension named EvidenceType.
+* Line 31 gives the extension a human-readable title.
+* Line 32 assigns it an id.
+* Line 33 gives the extension a description that will appear on the extension's main page.
+* Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept.
 * Line 36 declares a value set named ConditionStatusTrendVS.
 * Line 37 gives the value set an id.
 * Line 38 provides a human readable title for the value set.
 * Line 39 gives the value set a description that will appear on the value set's main page.
 * Lines 40 to 44 define the codes that are members of the value set
+* Lines 46 to 54 create another value set, CancerDiseaseStatusEvidenceTypeVS, similar to the previous one.
 
 A few things to note about this example:
 
 * The order of items doesn't matter. In FSH, you can refer to items defined before or after the current item.
-* The example assumes the items are all in one file, but they could just as easily be in separate files. The allocation of items to files is the author's choice.
-* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 7, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference#paths).
+* The example assumes the items are all in one file, but they could be in separate files. The allocation of items to files is the author's choice.
+* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference#paths).
 
+### Summary and Future Considerations
 
+In this introduction, we presented an overview of FSH and SUSHI. Not all the features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi).
 
-### Features for Future Consideration
+Version 1.0 of FSH and SUSHI are capable of producing sophisticated IGs, future versions may introduce additional features. Some of the features under consideration include:
 
-* Language
+* **Multiple Language Support**: At present, FSH supports only one language. In the future, FSH and SUSHI may introduce mechanisms for generating IGs in multiple languages.
 
-* Reusable Slices
+* **Logical Models**: FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
 
-* Logical Models
-
-* Data Types
-
-* Resource Definitions
+* **Resource Definitions**: FSH may provide support for groups developing new FHIR resources, or maintaining existing core FHIR resources.
