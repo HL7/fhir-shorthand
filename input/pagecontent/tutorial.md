@@ -1,4 +1,3 @@
-
 [FHIR Shorthand](https://github.com/HL7/fhir-shorthand) (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IGs). It is simple and compact, with tools to produce Fast Healthcare Interoperability Resources (FHIR) profiles, extensions and IGs. FSH is compiled from text files to FHIR artifacts using [SUSHI](https://github.com/standardhealth/sushi). To get started using FSH, you need to install and run SUSHI using the steps below.
 
 **Platform notes:**
@@ -27,32 +26,28 @@ $ npm install -g fsh-sushi
 ```
 
 ### Step 3: Download Sample FSH Tank
-To start with some working examples of FSH files and a skeleton FSH tank, [download the fsh-tutorial-master.zip file](fsh-tutorial-master.zip) and unzip it into a directory of your choice.
+To start with some working examples of FSH files and a skeleton FSH tank, [download the fsh-tutorial-master.zip file](fsh-tutorial-master.zip) and unzip it into a directory of your choice. The zip file is also available from the Downloads menus, directly above.
 
-The same zip file is available from the current menus, directly above. 
-
-You should see three subdirectories:
+After the file is unzipped, you should see two subdirectories:
 
 * _FishExample_
 * _FishExampleComplete_
 
-Change the working directory to FishExample. You should see two FSH files:
+Change the working directory to FishExample. There are two FSH files:
 
 * _FishPatient.fsh_
 * _Veterinarian.fsh_
 
-In addition, there is a _package.json_ file and an _ig-data_ folder containing some inputs for building the IG.
+In addition, there is a _package.json_ file and a subdirectory, _ig-data_, containing some inputs for building the IG.
 
 ### Step 4: Run SUSHI
 Now that you have SUSHI installed and a minimal FSH tank, open up a command window, and navigate to the _FishExample_ directory. Run SUSHI on those FSH files by executing:
 
-`$ sushi {path} -o {output-directory}`
-
-where `{path}` is the path to the folder containing the FSH files, and `{output-directory}` is where the generated artifacts (StructureDefinitions, examples, etc.) should go. Since the working directory is already FishExample, type:
-
 `$ sushi .`
 
-This will create a _FishExample/build/input_ directory, and populate it with the directories and files needed to run the HL7 FHIR IG Publisher tool.
+> Note: The dot (.) represents "this directory," the location of the FSH files. You can also specify the location explicitly by replacing the dot with a directory path.
+
+Running SUSHI will create a _FishExample/build/input/resources_ directory, and populate it with the files needed to create the IG using the HL7 FHIR IG Publisher tool.
 
 When running SUSHI successfully, you should see output similar to the following:
 
