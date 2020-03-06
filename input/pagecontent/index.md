@@ -39,9 +39,9 @@ As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 
 #### FSH Tanks
 
-A **FSH Tank** refers to a directory that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, examples, etc.) are defined by FSH files in the FSH Tank. Any other FHIR artifacts (such as profiles from another IG) are "external" and must be declared in dependencies.
+A **FSH Tank** refers to a directory structure that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, examples, etc.) are defined by FSH files in the FSH Tank. Any other FHIR artifacts (such as profiles from another IG) are "external" and must be declared in dependencies.
 
-Information is stored in plain text files with `.fsh` extension. Each file can contain multiple items. It is up to the author to decide how to divide information between the between FSH files. Here are some possibilities:
+Information is stored in plain text files with `.fsh` extension. Each file can contain multiple items. It is up to the author to decide how to divide information between the between FSH files as well as subdirectories. Here are some possibilities:
 
 * Divide up according to the type of item: profiles in one file, value sets in another, extensions in another, etc.
 * Group things logically, for example, a profile together with its value sets, extensions, and examples.

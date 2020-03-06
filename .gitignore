@@ -1,3 +1,4 @@
+.vscode
 input-cache/**
 output/**
 temp/**

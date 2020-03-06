@@ -275,7 +275,7 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
   `* valueString = "Hello World"`
 
-* Fix the value[x] Reference (permitted in extensions) to a instance of Patient resource:
+* Fix the value[x] Reference (permitted in extensions) to an instance of Patient resource:
 
   `* valueReference = Reference(EveAnyperson)`
 
@@ -368,10 +368,11 @@ Here is a summary of the rules supported in FSH:
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
 | Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
-| Extensions | `* {extension element path} contains {extensionName1} {card1} {flags1} and {extensionName2} {card2} {flags2}...` |
+| Standalone Extensions | `* {extension path} contains {ExtensionNameIdOrURL} named {extensionSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2} ...` 
+| Inline Extensions | `* {extension path} contains {extensionSliceName} {card} {flags}`  <br/> `* {extension path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2} ...` |
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
-| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* {path1}, {path2}, ... obeys {invariant}` |
-| 🚫 Mapping | `* {path} -> {string}` |
+| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
+| Mapping | `* {path} -> {string}` |
 {: .grid }
 
 #### Fixed Value Rules
@@ -553,34 +554,74 @@ The following syntax can be used to assigning flags:
 
 #### Extension Rules
 
-Extensions are created by adding elements to built-in 'extension' array elements. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The same instructions apply to 'modifierExtension' arrays.
+Extensions are created by adding elements to built-in 'extension' array elements. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/extensibility.html#extension)). Constraining extensions is discussed in [Defining Extensions](#defining-extensions). The same instructions apply to 'modifierExtension' arrays.
 
-Extensions are specified using the `contains` keyword. The shorthand syntax is:
+Extensions are specified using the `contains` keyword. There are two types of extensions: **standalone** and **inline**:
 
-`* {extension element path} contains {extensionName1} {card1} {flags1} and {extensionName2} {card2} {flags2}...`
+* Standalone extensions have independent StructureDefinitions, and can be reused. Standalone extension can be externally-defined, and referred to by their canonical URLs, or defined in the same FSH tank using the `Extension` keyword, and referenced by their name or id.
+* Inline extensions do not have separate StructureDefinitions, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
 
-The cardinality is required, and flags are optional. Adding an extension below the root level is achieved by giving the full path to the extension array to be sliced.
+The shorthand syntax to specify a standalone extension is:
 
-The structure of extensions is pre-defined by FHIR (see [Extension element](https://www.hl7.org/fhir/extensibility.html#extension)). Constraining extensions is discussed in [Defining Extensions](#defining-extensions).
+`* {extension element path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2}...`
+
+The shorthand syntax to define an inline extension is:
+
+`* {extension element path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2}...`
+
+In both styles, the cardinality is required, and flags are optional. Adding an extension below the root level is achieved by giving the full path to the extension array to be sliced.
 
 **Examples:**
 
-* Create extensions in US Core Patient at the top level:
+* Add standalone FHIR extensions [`patient-disability`](http://hl7.org/fhir/R4/extension-patient-disability.html) and [`patient-genderIdentity`](http://hl7.org/fhir/StructureDefinition/patient-genderIdentity) to a profile on the Patient resource, at the top level:
 
-`* extension contains USCoreRaceExtension named race 0..1 MS and USCoreEthnicityExtension named ethnicity 0..1 MS and USCoreBirthsexExtension named birthsex 0..1 MS`
+  ```
+  * extension contains http://hl7.org/fhir/StructureDefinition/patient-disability named disability 0..1 MS and http://hl7.org/fhir/StructureDefinition/patient-genderIdentity named genderIdentity 0..1 MS
+  ```
 
-* The same statement, using whitespace flexibility for readability:
+* The same statement, using aliases and whitespace flexibility for readability:
 
-```
+  ```
+  * Alias: DisabilityExtension = http://hl7.org/fhir/StructureDefinition/patient-disability
+  * Alias: GenderIdentityExtension = http://hl7.org/fhir/StructureDefinition/patient-genderIdentity
+
+  ...
+
   * extension contains
-      USCoreRaceExtension named race 0..1 MS and
-      USCoreEthnicityExtension named ethnicity 0..1 MS and
-      USCoreBirthsexExtension named birthsex 0..1 MS
-```
+      DisabilityExtension named disability 0..1 MS and
+      GenderIdentityExtension named genderIdentity 0..1 MS
+  ```
 
-* Add a `Laterality` extension to a bodySite attribute (second level extension):
+* Add a standalone extension, defined in the same FSH tank, to a bodySite attribute (second level extension):
 
-  `* bodySite.extension contains Laterality 0..1`
+  ```
+  * bodySite.extension contains Laterality 0..1
+
+  ...
+
+  // FSH definition of Laterality (for example)
+  Extension: Laterality
+  Description: "Body side of a body location."
+  * value[x] only CodeableConcept
+  * valueCodeableConcept from LateralityVS (required)
+  ```
+
+* Add inline extensions to the US Core Race extension:
+
+  ```
+  * extension contains
+      ombCategory 0..5
+      detailed 0..*
+      text 1..1
+
+  // constraints to define the inline extensions would follow, e.g.:
+  * extension[ombCategory] only Coding
+  * extension[ombCategory].valueCoding from http://hl7.org/fhir/us/core/ValueSet/omb-race-category (required)
+  * extension[text] only string
+  // etc...
+  ```
+
+
 
 #### Slicing Rules
 
@@ -588,7 +629,7 @@ The subject of slicing is addressed three steps: (1) specifying the slices, (2) 
 
 ##### Step 1. Specifying Slices
 
-The first step in slicing is exactly the same as specifying extensions, using the `contains` keyword. The following syntax is used:
+The first step in slicing is exactly the same as specifying inline extensions, using the `contains` keyword. The following syntax is used:
 
 ```
 * {array element path} contains
@@ -642,10 +683,10 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 There are two approaches to defining the slices themselves:
 
-1. 👶 Provide the slice details inline in the profile. This approach is applicable as long as the sliced array is not a Reference to another resource.
+1. Provide the slice details inline in the profile. This approach is applicable as long as the sliced array is not a Reference to another resource.
 2.  Define the slice as a separate item. There are two sub-cases:
     * If the sliced array involves references to other resources, such as Observation.hasMember, the slice will be defined by a profile (defined internally and referred to by its name, or externally and referred by its URL).
-    * 🚧 If the slice is a datatype or backbone element, see [defining slices](#defining-slices).
+    * If the slice is a datatype or backbone element, see [defining slices](#defining-slices).
 
 The syntax for inline definition of slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
 
@@ -675,8 +716,6 @@ Slicing in FHIR requires the user to specify a [discriminator path, type, and ru
 
 One way to specify the slicing logic parameters is to use [structure definition escape (caret) syntax](#structure-definition-escape-paths). The author identifies the sliced element, and then traverses the structure definition at that point.
 
- 🚫 The second approach, nicknamed "Ginsu Slicing" for the [amazing 1980's TV knife that slices through anything](https://www.youtube.com/watch?v=6wzULnlHr8w), is provided by SUSHI and requires no explicit declarations by the user. SUSHI infers slicing discriminators based the nature of the slices, based on a set of explicit algorithms. For more information, see the[SUSHI documentation](sushi.html).
-
 **Example:**
 
 * Provide slicing logic for slices on Observation.component:
@@ -692,15 +731,17 @@ One way to specify the slicing logic parameters is to use [structure definition 
 
 #### Invariant Rules
 
-🚧 [Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole, a single element, or multiple elements. The FSH grammars for applying invariants in profiles are as follows:
+[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The FSH grammars for applying invariants in profiles are as follows:
 
 `* obeys {invariant}`
 
 `* {path} obeys {invariant}`
 
-`* {path1}, {path2}, ... obeys {invariant}`
+`* obeys {invariant1} and {invariant2} ...`
 
-The first case is where the invariant applies to the profile as a whole. The second is where the invariant applies to a single element, and the third is where the invariant applies to multiple elements.
+`* {path} obeys {invariant1} and {invariant2} ...`
+
+The first case is where the invariant applies to the profile as a whole. The second is where the invariant applies to a single element. The third case is where multiple invariants apply to the profile as a whole, and the fourth is where multiple invariants apply to a single element.
 
 The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
@@ -748,7 +789,7 @@ This section shows how to define various items in FSH:
 * [Instances](#defining-instances)
 * [Value Sets](#defining-value-sets)
 * [Code Systems](#defining-code-systems)
-* 🚫 [Mappings](#defining-mappings)
+* [Mappings](#defining-mappings)
 * [Mixins](#defining-mixins)
 * [Invariants](#defining-invariants)
 
@@ -1152,7 +1193,7 @@ Mixins give you the capability to define that metadata once and apply it in as m
 
 #### Defining Invariants
 
-🚧 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
+Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
 **Example:**
 ```
