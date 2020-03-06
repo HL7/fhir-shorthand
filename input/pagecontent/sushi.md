@@ -151,10 +151,10 @@ Populate these directories as follows:
 * The _/images_ directory: Put anything that is not a page in the IG, such as images, spreadsheets or zip files, in the _images_ folder. These files will be copied into the build and can be referenced by user-provided pages or menus.
 * _menu.xml_: If present, this file will be used for the IG's main menu layout.
 * The _/pagecontent_ directory, put either markup (.xml) or markdown (.md) files with the narrative content of your IG:
-  * _index.xml|md_: This file provides the content for the IG's main page.
-  * _N\_pagename.xml|md_: If present, these files will be generated as individual pages in the IG. The leading integer (N) determines the order of the pages in the table of contents. These numbers are stripped and do not appear in the actual page URLs.
-  * _{artifact-file-name}-intro.xml|md_: If present, the contents of the file will be placed on the relevant page **before** the artifact's definition.
-  * _{artifact-file-name}-notes.xml|md_: If present, the contents of the file will be placed on the relevant page **after** the artifact's definition.
+  * _index.xml\|md_: This file provides the content for the IG's main page.
+  * _N\_pagename.xml\|md_: If present, these files will be generated as individual pages in the IG. The leading integer (N) determines the order of the pages in the table of contents. These numbers are stripped and do not appear in the actual page URLs.
+  * _{artifact-file-name}-intro.xml\|md_: If present, the contents of the file will be placed on the relevant page **before** the artifact's definition.
+  * _{artifact-file-name}-notes.xml\|md_: If present, the contents of the file will be placed on the relevant page **after** the artifact's definition.
 
 Examples of _ig.ini_, _package-list.json_, _ignoreWarnings.txt_ and _menu.xml_ files can be found in the [sample IG project](https://github.com/FHIR/sample-ig) provided for this purpose. More general guidance can be found in [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/). The [mCODE Implementation Guide](https://github.com/standardhealth/fsh-mcode) has a good example of a populated _ig-data_ directory.
 
