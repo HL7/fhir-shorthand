@@ -31,8 +31,6 @@ This guide assumes you have:
 
 | Symbol | Explanation |
 |:----------|:------|
-| 🚧 | Under construction; full functionality not yet available |
-| 🚫 | Indicates a planned feature, not yet implemented |
 | 🍎 | Indicates information or command specific to OS X. The instructions assume the shell script is **bash**. As of the Mac Catalina release, the default is **zsh** and will need to be reconfigured as a default or at runtime to call bash shell. You can find out the default shell in a Mac terminal by running `echo $SHELL`.|
 | 💻 | Indicates information or command specific to Windows. A command window can be launched by typing `cmd` at the _Search Windows_ tool. |
 | $ | Represents command prompt (may vary depending on platform) |
@@ -69,15 +67,19 @@ SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MI
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
 * PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
 
-> **Note:** For the most up-to-date information and latest releases of SUSHI, check the [release history and release notes](https://github.com/FHIR/sushi/releases). To update SUSHI to the latest version, re-run:
+For the most up-to-date information and latest releases of SUSHI, check the [release history and release notes](https://github.com/FHIR/sushi/releases).
 
-> `$ npm install -g fsh-sushi`
+##### Updating or Reverting SUSHI
 
-> To revert to a previous version of SUSHI, run:
+To update SUSHI to the latest version, re-run:
 
->  `npm install -g fsh-sushi@{version}`
+`$ npm install -g fsh-sushi`
 
-> where the version is in the form MAJOR.MINOR.PATCH.
+To revert to a previous version of SUSHI, run:
+
+`npm install -g fsh-sushi@{version}`
+
+where the version is in the form MAJOR.MINOR.PATCH.
 
 
 ### Executing SUSHI from Command Line
@@ -92,51 +94,15 @@ where options include:
 -o, --out <out>   the path to the output folder (default: /build)
 -h, --help        output usage information
 -v, --version     output the version of SUSHI
+-s, --snapshot    have SUSHI generate profile snapshots
 ```
-
 The options are not order-sensitive.
 
-If you run SUSHI from the same folder where your .fsh files are located, and you use the default output location, the command can be shortened to:
+> Note: By default, SUSHI only generates the [profile differential](https://www.hl7.org/fhir/profiling.html#snapshot), leaving it to the IG Publisher to create the [profile snapshot](https://www.hl7.org/fhir/profiling.html#snapshot). The `-s` option will cause SUSHI to generate the snapshot without having to run the IG Publisher.
+
+If you run SUSHI from the same folder where your .fsh files are located, and accept the defaults, the command can be shortened to:
 
 `$ sushi .`
-
-The resulting _/build_ folder will look something like this:
-
-```
-/build
-├── _genonce.bat
-├── _genonce.sh
-├── _updatePublisher.sh
-├── _updatePublisher.sh
-├── ig.ini
-├── package.json
-├── package-list.json
-└── /input
-    ├── ImplementationGuide-myIG.json
-    ├── /examples
-    │   └── Patient-myPatient-example.json
-    ├── /extensions
-    │   └── StructureDefinition-myExtension.json
-    ├── /images
-    │   ├── myJpgGraphic.jpg
-    │   ├── myDocument.docx
-    │   ├── mySpreadsheet.xlsx
-    │   └── myPngGraphic.png
-    ├── /includes
-    │   └── menu.xml
-    ├── /pagecontent
-    │   ├── index.md
-    │   ├── mySecondPage.md
-    │   ├── myThirdPage.md
-    │   └── myFourthPage.md
-    ├── /profiles
-    │   └── StructureDefinition-myProfile.json
-    └── /vocabulary
-        ├── ValueSet-myValueSet.json
-        └── CodeSystem-myCodeSystem.json
-```
-
- SUSHI puts each item where the FHIR publisher expects to find them, assuming the IG publisher is run from the _/build_ directory.
 
 #### Error Messages
 
@@ -153,42 +119,22 @@ Here are some general tips on approaching debugging:
 
 SUSHI supports publishing implementation guides via the new template-based IG Publisher. See the [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/) for more details.
 
-#### Setting Up
+#### SUSHI Inputs
 
-SUSHI uses the contents of the _ig-data_ directory to generate an Implementation Guide project that can be built using the template-based IG Publisher. Currently, you must create the _ig-data_ directory and its subdirectories. Here is the directory structure to add to the top level of your FSH tank:
+SUSHI uses the contents of a user-created _ig-data_ directory to generate the inputs to the IG Publisher. Currently, you must create and populate this directory manually. If the input folder does not contain a sub-folder named _ig-data_, then only the FHIR artifacts (e.g., profiles, extensions, etc.) will be generated.
 
-```
-/ig-data
-└── /input
-    ├── /images
-    ├── /includes
-    └── /pagecontent
-```
-Populate these directories as follows:
-
-* _ig-data/ig.ini_: If present, the user-provided _ig.ini_ values will be merged with SUSHI-generated _ig.ini_.
-* _ig-data/package-list.json_: This file should contain the version history of your IG. If present, it will be used instead of a generated _package-list.json_.
-* _ig-data/input/images/*_: Anything that is not a page in the IG, such as images, spreadsheets or zip files, put in the _images_ folder. If present, these files will be copied into the build and can be referenced by user-provided pages.
-* _ig_data/input/includes/menu.xml_: If present, _menu.xml_ will be used for the IG's main menu layout.
-* Pages to be included in the IG:
-  * _ig-data/input/pagecontent/index.md_ (or .xml): If present, it will provide the content for the IG's main page.
-  * _ig-data/input/pagecontent/n\_pagename.md_ (or .xml): If present, these files will be generated as individual pages in the IG and will be present in the table of contents in the order indicated by the leading integer (n).
-  * _ig-data/input/pagecontent/{name-of-resource-file}-[intro|notes].md_ (or .xml): If present, these files will place content directly on the relevant resource page. `intro` file contents will placed before the resource definition; `notes` file contents will placed after.
-
-Examples of ig.ini, package-list.json, and menu.xml files can be found in the [sample IG project](https://github.com/FHIR/sample-ig) provided for this purpose. An example of a complete IG with examples of these files is the [mCODE IG](https://github.com/standardhealth/fsh-mcode). More general guidance can be found in [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/). 
-
-The resulting populated _ig-data_ directory should look something like this:
+A populated _ig-data_ directory should look something like this:
 
 ```
 /ig-data
 ├── ig.ini (optional)
 ├── package-list.json (optional)
 └── /input
+    ├── ignoreWarnings.txt (optional)
     ├── /images
-    │   ├── graphic.jpg
-    │   ├── recipes.docx
-    │   ├── tables.xlsx
-    │   └── flowchart.png
+    │   ├── myGraphic.jpg
+    │   ├── myDocument.docx
+    │   └── mySpreadsheet.xlsx
     ├── /includes
     │   └── menu.xml (optional)
     └── /pagecontent
@@ -198,11 +144,63 @@ The resulting populated _ig-data_ directory should look something like this:
         └── 3_myFourthPage.md
 ```
 
-The page number prefixes control the ordering of the pages in the table of contents. These numbers are stripped by SUSHI, and do not appear in the page URLs.
+Populate these directories as follows:
 
-Based on these inputs, SUSHI builds the [ImplementationGuide resource](http://hl7.org/fhir/R4/implementationguide.html) for your IG, which can be found in _/build/input_ after you run SUSHI.
+* _ig.ini_: If present, the user-provided values will be merged with SUSHI-generated _ig.ini_.
+* _package-list.json_: This file should contain the version history of your IG. If present, it will be used instead of a generated _package-list.json_.
+* The _/images_ directory: Put anything that is not a page in the IG, such as images, spreadsheets or zip files, in the _images_ folder. These files will be copied into the build and can be referenced by user-provided pages or menus.
+* _menu.xml_: If present, this file will be used for the IG's main menu layout.
+* The _/pagecontent_ directory, put either markup (.xml) or markdown (.md) files with the narrative content of your IG:
+  * _index.xml|md_: This file provides the content for the IG's main page.
+  * _N\_pagename.xml|md_: If present, these files will be generated as individual pages in the IG. The leading integer (N) determines the order of the pages in the table of contents. These numbers are stripped and do not appear in the actual page URLs.
+  * _{artifact-file-name}-intro.xml|md_: If present, the contents of the file will be placed on the relevant page **before** the artifact's definition.
+  * _{artifact-file-name}-notes.xml|md_: If present, the contents of the file will be placed on the relevant page **after** the artifact's definition.
 
-**Note**: If the input folder does not contain a sub-folder named _ig-data_, then only the FHIR artifacts (e.g., profiles, extensions, etc.) will be generated.
+Examples of _ig.ini_, _package-list.json_, _ignoreWarnings.txt_ and _menu.xml_ files can be found in the [sample IG project](https://github.com/FHIR/sample-ig) provided for this purpose. More general guidance can be found in [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/). The [mCODE Implementation Guide](https://github.com/standardhealth/fsh-mcode) has a good example of a populated _ig-data_ directory.
+
+#### SUSHI Outputs
+
+Based on the inputs in FSH files and the _ig-data_ directory, SUSHI populates the specified output directory (_build_ by default). SUSHI will create the [ImplementationGuide resource](http://hl7.org/fhir/R4/implementationguide.html) for your IG, which can be found in _/build/input_ after you run SUSHI.
+
+The resulting _/build_ folder will look something like this:
+
+```
+/build
+├── _genonce.bat
+├── _genonce.sh
+├── _updatePublisher.sh
+├── _updatePublisher.sh
+├── ig.ini
+├── package.json
+├── package-list.json
+└── /input
+    ├── ImplementationGuide-myIG.json
+    ├── ignoreWarnings.txt
+    ├── /examples
+    │   └── Patient-myPatient-example.json
+    ├── /extensions
+    │   └── StructureDefinition-myExtension.json
+    ├── /images
+    │   ├── myGraphic.jpg
+    │   ├── myDocument.docx
+    │   └── mySpreadsheet.xlsx
+    ├── /includes
+    │   └── menu.xml
+    ├── /pagecontent
+    │   ├── index.md
+    │   ├── mySecondPage.md
+    │   ├── myThirdPage.md
+    │   └── myFourthPage.md
+    ├── /profiles
+    │   └── StructureDefinition-myProfile.json
+    └── /vocabulary
+        ├── ValueSet-myValueSet.json
+        └── CodeSystem-myCodeSystem.json
+```
+
+ SUSHI puts each item where the FHIR publisher expects to find them, assuming the IG publisher is run from the _/build_ directory. 
+ 
+ > Note: The _/build/input_ directory is actually an **output** of SUSHI, but so named because it is an **input** to the IG Publisher.
 
 #### Downloading and Running the IG Publisher
 
@@ -225,6 +223,7 @@ Now run:
 This will run the HL7 IG Publisher, which will take several minutes to complete. After the publisher is finished, open the file _/build/output/index.html_ in a browser to see the resulting IG.
 
 ### Get Involved
+
 Thank you for using FHIR Shorthand and the SUSHI reference implementation. We hope it will help you succeed in your FHIR projects. The SUSHI software is provided free of charge. All we ask in return is that you share your ideas, suggestions, and experience with the community. If you are a Typescript developer, code contributions to SUSHI are gladly accepted!
 
 Here are some links to get started:
