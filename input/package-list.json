@@ -10,7 +10,7 @@
      "status" : "ci-build",
      "current" : true
     }, {
-      "version": "0.5.0",
+      "version": "0.10.0",
       "fhirversion": "4.0.1",
       "date": "2029-12-19",
       "desc": "Initial FHIR Shorthand documentation",
