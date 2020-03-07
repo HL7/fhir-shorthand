@@ -111,7 +111,7 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
 
 **Examples:**
 
-* The code '363346000' from SNOMED-CT:
+* The code for malignant neoplastic disease from SNOMED-CT:
 
   `http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"`
 
@@ -834,17 +834,25 @@ The use of individual keywords is explained in greater detail in the following s
 
 #### Defining Aliases
 
-Aliases are a convenience measure that allows the user to replace a lengthy url or oid with a short string. By convention, an alias name is written in all capitals. A typical use of an alias is to represent a code system.
+Aliases allow the user to replace a lengthy url or oid with a short string. Aliases are for readability only, and do not change the meaning of rules. Typical uses of aliases are to represent code systems and canonical URLs.
 
-Defining an alias is a one-line declaration, as follows:
+Alias definitions follow this syntax:
 
-`Alias: {NAME} = {url or oid}`
+`Alias: {AliasName} = {url or oid}`
+
+In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin dollar sign ($).
+
+If you choose a name beginning with a dollar sign, then additional error checks can be carried out. Specifically, if a rule involves a $name, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
+
+Another best practice is to choose alias names written in all capitals.
 
 **Examples:**
 
 `Alias: SCT = http://snomed.info/sct`
 
 `Alias: RACE = urn:oid:2.16.840.1.113883.6.238`
+
+`Alias: $ObsCat = http://terminology.hl7.org/CodeSystem/observation-category`
 
 #### Defining Profiles
 
