@@ -105,9 +105,7 @@ For code systems that encode the version separately from the URL, the version ca
 
 `{system}|{version}#{code} "{display text}"`
 
-An alternative is to set the `version` element of Coding (see examples).
-
-While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR.
+While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR. An alternative is to set the `version` element of Coding (see examples).
 
 To set the less-common properties of a Coding, use a [fixed value rule](#fixed-value-rules) on that element.
 
