@@ -319,8 +319,8 @@ When defining a new code system, the code system (SCT, in the examples) is omitt
 In this section, we'll walk through a realistic example line by line.
 
 ```
-1  Alias: LNC = http://loinc.org
-2  Alias: SCT = http://snomed.info/sct
+1   Alias: LNC = http://loinc.org
+2   Alias: SCT = http://snomed.info/sct
 3
 4   Profile:  CancerDiseaseStatus
 5   Parent:   Observation
@@ -340,7 +340,7 @@ In this section, we'll walk through a realistic example line by line.
 19  * subject 1..1
 20  * basedOn only Reference(ServiceRequest | MedicationRequest)
 21  * partOf only Reference(MedicationAdministration | MedicationStatement | Procedure)
-22  * code = LNC#88040-1 "Response to cancer treatment"
+22  * code = LNC#88040-1 // Response to cancer treatment
 23  * subject only Reference(CancerPatient)
 24  * focus only Reference(CancerConditionParent)
 25  * performer only Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner)
@@ -376,25 +376,25 @@ In this section, we'll walk through a realistic example line by line.
 
 ```
 * Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
-* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus.
+* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and should be "computer-ready" (i.e., suitable for code generation).
 * Line 5 says that this profile will be based on Observation. Specifying the parent is required.
 * Line 6 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
-* Line 9 is the start of the rule section of the profile. The rule creates an extension using the standalone extension, EvidenceType, and gives it the local name evidenceType, as well as the cardinality 0..*.
-* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength.
+* Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, EvidenceType, and gives it the local name evidenceType, as well as the cardinality 0..*. EvidenceType is defined on line 30.
+* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. CancerDiseaseStatusEvidenceTypeVS is defined on line 46.
 * Line 11 designates a list of elements (inherited from Observation) as must-support.
-* Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a list of items, so these must be separate statements.
+* Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
 * Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
-* Line 22 fix the value of the code attribute to a specific LOINC code, using an alias for the code system defined later, on line 33
-* Lines 23 to 25 restrict the choice of resource types to a single type, for elements that refer to other resources. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent)
+* Line 22 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1. Note that the display name is after the comment marker "//"; as formally setting the display name would require all instances to send the display name exact as specified.
+* Lines 23 to 25 each restrict the choice of resource types to a reference to a single resource type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
 * Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
-* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding.
+* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. ConditionStatusTrendVS is defined on line 36.
 * Line 30 declares a standalone extension named EvidenceType.
 * Line 31 gives the extension a human-readable title.
 * Line 32 assigns it an id.
 * Line 33 gives the extension a description that will appear on the extension's main page.
-* Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept.
+* Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept. Since extensions only allow value[x] _or_ extension elements, the extension element will automatically have its cardinality set to 0..0.
 * Line 36 declares a value set named ConditionStatusTrendVS.
 * Line 37 gives the value set an id.
 * Line 38 provides a human readable title for the value set.
