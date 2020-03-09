@@ -274,11 +274,15 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
       SystolicBP 1..1 and
       DiastolicBP 1..1
   ```
-  The elements of each slice are typically constrained with additional rules, e.g.:
+  The elements of each slice must be constrained such that they can be uniquely identified via the discriminator. Other constraints may also be applied. Using the example above, each `component.code` should be constrained to satisfy the discriminator, and the values may also be constrained to indicate the type of value that is expected:
 
   ```
+  * component[SystolicBP].code = http://loinc.org#8480-6 // Systolic blood pressure
   * component[SystolicBP].value[x] only Quantity
   * component[SystolicBP].valueQuality = UCUM#mm[Hg]
+  * component[DiastolicBP].code = http://loinc.org#8462-4 // Diastolic blood pressure
+  * component[DiastolicBP].value[x] only Quantity
+  * component[DiastolicBP].valueQuality = UCUM#mm[Hg]
   ```
 
 * **Invariant rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
