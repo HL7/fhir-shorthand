@@ -154,23 +154,23 @@ Keywords that declare new items (the `Profile` keyword in the previous example) 
 
 Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
-Keywords common to many types of items include:
+Keywords common to several types of items include:
 
-* Description
-* Id
-* Title
+* Description _(CodeSystem, Extension, Instance, Invariant, Profile, ValueSet)_
+* Id _(CodeSystem, Extension, Profile, ValueSet)_
+* Title _(CodeSystem, Extension, Profile, ValueSet)_
+* Mixins _(Extension, Instance, Profile)_
+* Parent _(Extension, Profile)_
 
 Specialized keywords, used only with one type of item include:
 
-* InstanceOf (Instance)
-* Usage (Instance)
-* Parent (Profile)
-* Mixins (Profile)
-* Source (Mapping)
-* Target (Mapping)
-* Severity (Invariant)
-* XPath (Invariant)
-* Expression (Invariant)
+* InstanceOf _(Instance)_
+* Usage _(Instance)_
+* Source _(Mapping)_
+* Target _(Mapping)_
+* Severity _(Invariant)_
+* XPath _(Invariant)_
+* Expression _(Invariant)_
 
 Each type of item has a different set of required and optional keywords. For example, to define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are recommended. The keyword `Mixins` is optional. The [FSH Language Reference](reference.html) contains a [complete list of keywords and their usage](reference.html#keywords).
 
