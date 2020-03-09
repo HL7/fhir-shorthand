@@ -35,7 +35,33 @@ FSH has a number of Keywords and reserved words (e.g., `Alias`, `Profile`, `Exte
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 
-For convenience, FSH also supports multi-line strings, demarcated with triple double quotation marks `"""`. The line breaks are for visual convenience only, and multi-line strings are translated to conventional FHIR strings.
+##### Multi-line Strings
+
+For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and indent it as appropriate to retain visual consistency in the FSH file.  When processing multi-line strings, the following approach is followed:
+* If the first line contains only whitespace (including newline), discard it.
+* If the last line contains only whitespace (including newline), discard it.
+* If another line contains only whitespace, truncate it to zero characters.
+* For all other non-whitespace lines, detect the shortest number of leading spaces and trim that from the beginning of every line.
+
+For example, an author might use a multi-line string to write markdown so that the markdown can be indented inside the FSH:
+```
+* ^purpose = """
+    * This profile is intended to support workflows where:
+      * this happens; or
+      * that happens
+    * This profile is not intended to support workfows where:
+      * nothing happens
+  """
+```
+
+Using a normal string would require the following spacing to accomplish the same markdown formatting:
+```
+* ^purpose = "* This profile is intended to support workflows where:
+  * this happens; or
+  * that happens
+* This profile is not intended to support workfows where:
+  * nothing happens"
+```
 
 #### Whitespace
 
