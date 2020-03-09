@@ -148,11 +148,11 @@ Keywords that declare new items (the `Profile` keyword in the previous example) 
 * Instance
 * Invariant
 * Mapping
-* Mixin
 * Profile
+* RuleSet
 * ValueSet
 
-Note that not every type of FSH item has a direct FHIR equivalent. Alias and Mixin are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
+Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
 Keywords common to many types of items include:
 
