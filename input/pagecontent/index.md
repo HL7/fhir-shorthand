@@ -1,11 +1,11 @@
 
 This implementation guide includes the following items:
 
-* (Informative Content) [FHIR Shorthand Overview](index.html) (this document) -- Introduction to FSH and SUSHI.
-* (Informative Content) [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI.
-* (Normative Content) [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language.
-* (Informative Content) [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool.
-* (Informative Content) Downloads -- including a Quick Reference Sheet and zip file for the FSH Tutorial
+* [FHIR Shorthand Overview](index.html) (this document) -- Introduction to FSH and SUSHI _(informative content)_.
+* [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI _(informative content)_.
+* [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(normative content)_.
+* [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool _(informative content)_.
+* Downloads -- including a [Quick Reference Sheet](FSHQuickReference.pdf) and [zip file](fsh-tutorial-master.zip) for the FSH Tutorial _(informative content)_.
 
 #### FHIR Shorthand and SUSHI
 FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as Github.
