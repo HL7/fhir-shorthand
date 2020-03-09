@@ -105,15 +105,13 @@ For code systems that encode the version separately from the URL, the version ca
 
 `{system}|{version}#{code} "{display text}"`
 
-An alternative is to set the `version` element of Coding (see examples).
-
-While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR.
+While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR. An alternative is to set the `version` element of Coding (see examples).
 
 To set the less-common properties of a Coding, use a [fixed value rule](#fixed-value-rules) on that element.
 
 **Examples:**
 
-* The code '363346000' from SNOMED-CT:
+* The code for malignant neoplastic disease from SNOMED-CT:
 
   `http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"`
 
@@ -836,17 +834,25 @@ The use of individual keywords is explained in greater detail in the following s
 
 #### Defining Aliases
 
-Aliases are a convenience measure that allows the user to replace a lengthy url or oid with a short string. By convention, an alias name is written in all capitals. A typical use of an alias is to represent a code system.
+Aliases allow the user to replace a lengthy url or oid with a short string. Aliases are for readability only, and do not change the meaning of rules. Typical uses of aliases are to represent code systems and canonical URLs.
 
-Defining an alias is a one-line declaration, as follows:
+Alias definitions follow this syntax:
 
-`Alias: {NAME} = {url or oid}`
+`Alias: {AliasName} = {url or oid}`
+
+In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin dollar sign ($).
+
+If you choose a name beginning with a dollar sign, then additional error checks can be carried out. Specifically, if a rule involves a $name, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
+
+Another best practice is to choose alias names written in all capitals.
 
 **Examples:**
 
 `Alias: SCT = http://snomed.info/sct`
 
 `Alias: RACE = urn:oid:2.16.840.1.113883.6.238`
+
+`Alias: $ObsCat = http://terminology.hl7.org/CodeSystem/observation-category`
 
 #### Defining Profiles
 
