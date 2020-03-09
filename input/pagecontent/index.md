@@ -14,6 +14,8 @@ FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the conten
 
 Accompanying the FSH language is a reference implementation, [SUSHI](sushi.html), that translates FSH into FHIR artifacts and enables production of FHIR IGs. There is also a tool, [FSH Food](https://github.com/lantanagroup/fshfood), that converts profiles and extensions (StructureDefinitions) into FSH. Together with the [HL7 IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), these tools present a complete solution for creating and maintaining a FHIR IG.
 
+_NOTE: SUSHI and FSH Food are in active development. SUSHI is expected to support all proposed FHIR Shorthand features at the time of ballot, but FSH Food is not guaranteed to do so. In addition, these tools are expected to continue to evolve and change during and after the ballot._
+
 #### Motivations for FHIR Shorthand
 
 FHIR Shorthand was created in response to the need in the FHIR community for scalable, fast, user-friendly tools for IG creation and maintenance. Experience has shown that profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent. Profiling projects often go through many iterations, and as such, an agile approach to refactoring and revision is invaluable.
