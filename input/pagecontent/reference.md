@@ -401,7 +401,7 @@ Here is a summary of the rules supported in FSH:
 | --- | --- |
 | Fixed value |`* {path} = {value}`  | 
 | Value set binding |`* {path} from {valueSet} ({strength})`| 
-| Narrowing cardinality | `* {path} {min}..{max}` |
+| Narrowing cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
 | Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
@@ -489,7 +489,7 @@ To change the cardinality, the grammar is:
 
 `* {path} {min}..{max}`
 
-As in FHIR, min and max are non-negative integers, and max can also be *, representing unbounded.
+As in FHIR, min and max are non-negative integers, and max can also be *, representing unbounded. It is valid (and even encouraged) to include both the min and max, even if one of them remains the same as in the original cardinality. In this case, FSH processors (e.g., SUSHI) should only generate constraints for the changed values. FSH also supports one-sided cardinalities if the author wishes to omit an unconstrained min or max in the expression.
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
@@ -502,6 +502,14 @@ Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/con
 * Set the cardinality of a sub-element to 0..0 (not permitted):
 
   `* component.referenceRange 0..0`
+
+* 🚧 Require at least one category without changing its upper bound (*):
+
+  `* category 1..`
+
+* 🚧 Allow at most one category without changing its lower bound (0):
+
+  `* category ..1`
 
 #### Data Type Restriction Rules
 
