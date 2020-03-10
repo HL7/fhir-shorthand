@@ -11,7 +11,6 @@ This document describes the FSH language.
 | {curly braces} | An item to be substituted | `{codesystem}#{code}` |
 | **bold** | Emphasis |  Do **not** ignore this. |
 | 🚧 | Indicates a feature implemented in FSH but not yet implemented in SUSHI | |
-| 🚫 | Indicates a planned feature, not yet implemented in FSH or SUSHI | |
 
 #### Versioning
 
