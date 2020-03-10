@@ -1,26 +1,36 @@
 
-This implementation guide includes the following items:
+This implementation guide includes the following chapters :
 
-* [FHIR Shorthand Overview](index.html) (this document) -- Introduction to FSH and SUSHI _(informative content)_.
-* [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI _(informative content)_.
-* [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(normative content)_.
-* [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool _(informative content)_.
-* Downloads -- including a [Quick Reference Sheet](FSHQuickReference.pdf) and [zip file](fsh-tutorial-master.zip) for the FSH Tutorial _(informative content)_.
+1. [FHIR Shorthand Overview](index.html) (this chapter) -- Introduction to FSH and SUSHI _(informative content)_.
+1. [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI _(informative content)_.
+1. [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(normative content)_.
+1. [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool _(informative content)_.
 
-#### FHIR Shorthand and SUSHI
+In addition, the IG includes several downloads, including a [Quick Reference Sheet](FSHQuickReference.pdf) and [zip file](fsh-tutorial-master.zip) for the FSH Tutorial _(informative content)_.
+
+The IG uses the following conventions:
+
+| Style | Explanation | Example |
+|:----------|:------|:---------|
+| `Code` | Code fragments, such as commands and FSH statements  | `* status = #open` |
+| _italics_ | Used to introduce named items, such as data types, resource names, file names, etc. | _example-1.fsh_ |
+| ' ' (single quotes) | Used to highlight a literal value | the code 'confirmed'|
+| {curly braces} | An item to be substituted | `{codesystem}#{code}` |
+| **bold** | Emphasis |  Do **not** ignore this. |
+{: .grid }
+
+
+### Introduction
+
 FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as Github.
 
-<img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="margin: 0px 800px 0px 0px;"/>
-
-Accompanying the FSH language is a reference implementation, [SUSHI](sushi.html), that translates FSH into FHIR artifacts and enables production of FHIR IGs. There is also a tool, [FSH Food](https://github.com/lantanagroup/fshfood), that converts profiles and extensions (StructureDefinitions) into FSH. Together with the [HL7 IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), these tools present a complete solution for creating and maintaining a FHIR IG.
-
-_NOTE: SUSHI and FSH Food are in active development. SUSHI is expected to support all proposed FHIR Shorthand features at the time of ballot, but FSH Food is not guaranteed to do so. In addition, these tools are expected to continue to evolve and change during and after the ballot._
+<img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="float:none; margin: 0px 0px 0px 0px;" />
 
 #### Motivations for FHIR Shorthand
 
 FHIR Shorthand was created in response to the need in the FHIR community for scalable, fast, user-friendly tools for IG creation and maintenance. Experience has shown that profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent. Profiling projects often go through many iterations, and as such, an agile approach to refactoring and revision is invaluable.
 
-<img src="IG-Need-For-Agility.png" alt="IG Need for Agility" width="600px" style="margin: 0px 800px 0px 0px;" />
+<img src="IG-Need-For-Agility.png" alt="IG Need for Agility" width="800px" style="float:none; margin: 0px 0px 0px 0px;" />
 
 There are already several existing methods for IG creation: hand editing, using [Excel spreadsheets](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring), [Simplifier/Forge](https://fire.ly/products/simplifier-net/), and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com). Each of these methods have certain advantages as well as drawbacks:
 
@@ -30,6 +40,12 @@ There are already several existing methods for IG creation: hand editing, using 
 
 Experience across many domains has shown that complex software projects are best approached with textual languages. As a DSL designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles. Because it is text-based, FHIR Shorthand brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
 
+#### Related Tools
+
+Accompanying the FSH language is a reference implementation, [SUSHI](sushi.html) (an acronym for for "**S**USHI **U**nshortens **SH**orthand **I**nputs"), that translates FSH into FHIR artifacts and enables production of FHIR IGs. There is also a tool, [FSH Food](https://github.com/lantanagroup/fshfood), that converts profiles and extensions (StructureDefinitions) into FSH. Together with the [HL7 IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), these tools present a complete solution for creating and maintaining a FHIR IG.
+
+_NOTE: SUSHI and FSH Food are in active development. SUSHI is expected to support all proposed FHIR Shorthand features at the time of ballot, but FSH Food is not guaranteed to do so. In addition, these tools are expected to continue to evolve and change during and after the ballot._
+
 ### Creating an IG with FSH and SUSHI
 
 As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
@@ -38,7 +54,7 @@ As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 2. Compiling those files using the SUSHI compiler.
 3. Creating the IG using the HL7 FHIR IG Publishing Tool.
 
-<img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="margin: 0px 600px 0px 0px;" />
+<img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="float:none; margin: 0px 0px 0px 0px;" />
 
 #### FSH Tanks
 
@@ -408,7 +424,7 @@ A few things to note about this example:
 * The example assumes the items are all in one file, but they could be in separate files. The allocation of items to files is the author's choice.
 * Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#paths).
 
-### Summary and Future Considerations
+### Future Considerations
 
 In this introduction, we presented an overview of FSH and SUSHI. Not all the features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference.html). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi.html).
 
