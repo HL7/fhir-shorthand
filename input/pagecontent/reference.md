@@ -10,14 +10,13 @@ This document describes the FSH language.
 | ' ' (single quotes) | Used to highlight a literal value | the code 'confirmed'|
 | {curly braces} | An item to be substituted | `{codesystem}#{code}` |
 | **bold** | Emphasis |  Do **not** ignore this. |
-| 🚧 | Indicates a feature implemented in FSH but not yet implemented in SUSHI | |
 {: .grid }
 
 #### Versioning
 
 The FSH specification, like other IGs, follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
 
-* MAJOR: A major release has significant new functionality and potentially has grammar changes or other non-backward-compatible changes.
+* MAJOR: A major release has significant new functionality and, potentially, grammar changes or other non-backward-compatible changes.
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
 * PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
 
@@ -37,9 +36,8 @@ The primitive data types and value formats in FSH are identical to the [primitiv
 
 ##### Multi-line Strings
 
-For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and indent it as appropriate to retain visual consistency in the FSH file.  When processing multi-line strings, the following approach is followed:
-* If the first line contains only whitespace (including newline), discard it.
-* If the last line contains only whitespace (including newline), discard it.
+For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and retain consistent indentation in the FSH file. When processing multi-line strings, the following approach is followed:
+* If the first line or last line contains only whitespace (including newline), discard it.
 * If another line contains only whitespace, truncate it to zero characters.
 * For all other non-whitespace lines, detect the shortest number of leading spaces and trim that from the beginning of every line.
 
@@ -49,7 +47,7 @@ For example, an author might use a multi-line string to write markdown so that t
     * This profile is intended to support workflows where:
       * this happens; or
       * that happens
-    * This profile is not intended to support workfows where:
+    * This profile is not intended to support workflows where:
       * nothing happens
   """
 ```
@@ -59,7 +57,7 @@ Using a normal string would require the following spacing to accomplish the same
 * ^purpose = "* This profile is intended to support workflows where:
   * this happens; or
   * that happens
-* This profile is not intended to support workfows where:
+* This profile is not intended to support workflows where:
   * nothing happens"
 ```
 
@@ -207,50 +205,52 @@ To set the top-level text of a CodeableConcept, the shorthand expression is:
 
 ##### Quantity
 
-In addition to having a quantitative value, a FHIR Quantity has a coded value that is interpreted as the units of measure. As such, a Quantity can be bound to a value set or assigned a coded value. The shorthand is:
+FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes. The syntax is:
+
+`* {Quantity type} = {number} '{valid UCUM unit}'`
+
+This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org) (CQL).
+
+The value and units can also be set independently. To set the value of quantity value, the quantity `value` property can be set directly:
+
+`* {Quantity type}.value = {number}`
+
+To set the units of measure independently, a Quantity can be bound to a value set or assigned a coded value. The shorthand is:
 
 `* {Quantity type} = {system}#{code} "{display text}"`
 
-Although this appears like the quantity is being set to a coded value, it is legal and sets only the coded units part of the quantity. 
+Although it appears the quantity itself is being set to a coded value, this expression sets only the units of measure. To make this more intuitive, FSH allows you to use the word `units`, as follows:
 
-🚧 To make this a bit more intuitive, FSH allows you to use the word `units`, as follows:
+🚧 `* {Quantity type} units = {system}#{code} "{display text}"`
 
-`* {Quantity type} units = {system}#{code} "{display text}"`
+and for [binding](#value-set-binding-rules):
 
-🚧 and for [binding](#value-set-binding-rules):
-
-`* {Quantity type} units from {value set} ({strength})`
+🚧 `* {Quantity type} units from {value set} ({strength})`
 
 >**Note:** Use of the word `units` is suggested for clarity, but is optional.
 
-To set an actual quantity value, the quantity `value` property can be set directly. In addition, FHIR Shorthand allows quantity values to be specified "[CQL-style](https://cql.hl7.org)" by providing a number followed by a single-quoted UCUM unit.  The shorthand for this syntax is:
-
-`* {Quantity type} = {number} '{valid ucum unit}'`
-
 **Examples:**
 
-* Set the units of the valueQuantity of an Observation to millimeters (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
+* Set the valueQuantity of an Observation to 55 millimeters using UCUM units:
+
+  `* valueQuantity = 55.0 'mm'`
+
+* Set the numerical value of Observation.valueQuantity to 55.0 without setting the units:
+
+  `* valueQuantity.value = 55.0`
+
+* Set the units of the same valueQuantity to millimeters, without setting the value (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
 
   `* valueQuantity = UCUM#mm "millimeters"`
 
-* 🚧 Alternate syntax for the same operation (addition of 'units'):
+* Alternate syntax for the same operation (addition of the word `units`):
 
   `* valueQuantity units = UCUM#mm "millimeters"`
 
-* 🚧 Bind a value set to the units of a Quantity (using alternate syntax):
+* Bind a value set to the units of the same quantity (using alternate syntax):
 
   `* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
 
-* Set the valueQuantity of an observation to 55 millimeters using the separate value property:
-
-  ```
-  * valueQuantity = UCUM#mm "millimeters"
-  * valueQuantity.value = 55
-  ```
-
-* Set the valueQuantity of an observation to 55 millimeters using the CQL-style syntax:
-
-  `* valueQuantity = 55 'mm'`
 
 #### Paths
 
@@ -506,7 +506,7 @@ For convenience and compactness, cardinality rules can be combined with [flag as
 
   `* subject 1..1`
 
-* Set the cardinality of the subject element to 1..1 and declare it as Must Support:
+* Set the cardinality of the subject element to 1..1 and declare it Must Support:
 
   `* subject 1..1 MS`
 
@@ -655,7 +655,7 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
 
   ...
 
-  // FSH definition of Laterality (for example)
+  // Definition of Laterality used as standalone extension
   Extension: Laterality
   Description: "Body side of a body location."
   * value[x] only CodeableConcept
@@ -757,7 +757,7 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 At a minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
 
-Future versions of FHIR Shorthand may support standalone slice definitions, but FHIR Shorthand version 1.0 requires slice contents to be defined inline. The syntax for inline definition of slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
+Future versions of FHIR Shorthand may support standalone slice definitions, but FHIR Shorthand version 1.0 requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
 
 ```
 * {path to slice}.{subpath} {constraint}
@@ -823,7 +823,7 @@ In FSH, mapping rules are not included in the profile definition.  Rather, they 
 
   `* identifier.value -> "Patient.identifier.value"`
 
->**Note:** Unlike setting the mapping dmappingirectly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
+>**Note:** Unlike setting the mapping directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
 ***
 
@@ -889,7 +889,7 @@ Alias definitions follow this syntax:
 
 `Alias: {AliasName} = {url or oid}`
 
-In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with dollar sign ($).
+In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with a dollar sign ($).
 
 If you choose a name beginning with a dollar sign, then additional error checks can be carried out. Specifically, if a rule involves a $name, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
 
@@ -1061,7 +1061,7 @@ Not all operators are valid for any code system. The `property` and `value` are 
 * Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
 
 ```
-ValueSet:    BodyWeightPreconditionVS
+ValueSet: BodyWeightPreconditionVS
 Title: "Body weight preconditions."
 Description:  "Circumstances for body weight measurement."
 * SCT#971000205103 "Wearing street clothes with shoes"
@@ -1137,7 +1137,7 @@ In the example above, the target is another FHIR profile, but in many cases, the
 
 #### Defining Rule Sets
 
-🚧 Rule sets provide the ability to define rules and apply (or "mixin") them to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places.
+🚧 Rule sets provide the ability to define rules and apply them ("mix in") to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places.
 
 Rule sets are defined by using the keyword `RuleSet`:
 ```
@@ -1159,7 +1159,7 @@ Currently only rule sets can be mixed into profiles and extensions, but future v
 **Examples:**
 Defining and using a mixin for metadata shared in all US Core Profiles:
 ```
-  Mixin: USCoreMetadata
+  RuleSet: USCoreMetadata
   * ^version = "3.1.0"
   * ^status = #active
   * ^experimental = false
@@ -1178,7 +1178,6 @@ The `MyUSCorePatientProfile` defined above is equivalent to the following:
 ```
   Profile: MyUSCorePatientProfile
   Parent: Patient
-  Mixins: USCoreMetadata
   * ^version = "3.1.0"
   * ^status = #active
   * ^experimental = false
@@ -1193,11 +1192,11 @@ Mixins give you the capability to define that metadata once and apply it in as m
 ```
   Profile: USCoreBreastRadiologyProfile
   Parent: BreastRadiologyProfile
-  Mixins:  USCoreMetadata, USObservationMixin
+  Mixins:  USObservationRuleSet
 
   Profile: FranceBreastRadiologyProfile
   Parent: BreastRadiologyProfile
-  Mixins: FranceObservationMixin
+  Mixins: FranceObservationRuleSet
  ```
 
 #### Defining Invariants
