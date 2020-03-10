@@ -39,7 +39,7 @@ As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 3. Creating the IG using the HL7 FHIR IG Publishing Tool.
 
 <img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="margin: 0px 600px 0px 0px;" />
-
+v
 #### FSH Tanks
 
 A **FSH Tank** refers to a directory structure that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, code systems, examples, etc.) are defined by FSH files in the FSH Tank. FHIR artifacts defined elsewhere (such as profiles from another IG) are "external" and their IGs must be declared in dependencies.
@@ -50,7 +50,7 @@ Information is stored in plain text files with `.fsh` extensions. Each file can 
 * Group things logically, for example, a profile together with its value sets, extensions, and examples.
 * Use one file for each item (and potentially put similar items in different subdirectories).
 
-Additional IG content such as narrative page content, images, and customized menus are also part of the FSH Tank (the rice and seaweed in the illustration). This is discussed in the [SUSHI User's Guide](sushi.html#ig-creation).
+Additional IG content such as narrative page content, images, and customized menus are also part of the FSH Tank (the rice and seaweed in the illustration). This is discussed in the [SUSHI Users Guide](sushi.html#ig-creation).
 
 #### Running SUSHI
 
@@ -73,7 +73,7 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 * **Formal grammar**: [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
 * **Reserved words**: FSH has a number of special words that are considered part of the language, and cannot be used as item names. Refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) for a complete list of these words.
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
-* **Whitespace**: Repeated whitespace is not meaningful within FSH files except when within string delimiters.
+* **Whitespace**: Repeated whitespace is not meaningful within FSH files, except within string delimiters.
 * **Comments**: FSH follows [JavaScript syntax](https://www.w3schools.com/js/js_comments.asp) for code comments, with `//` denoting single-line comments, and the pair `/*`  `*/` delimiting multiple line comments.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set `Organization.active` to `true`:
 
@@ -381,20 +381,20 @@ In this section, we'll walk through a realistic example line by line.
 * Line 6 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
-* Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, EvidenceType, and gives it the local name evidenceType, as well as the cardinality 0..*. EvidenceType is defined on line 30.
-* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. CancerDiseaseStatusEvidenceTypeVS is defined on line 46.
+* Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
+* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 46._
 * Line 11 designates a list of elements (inherited from Observation) as must-support.
 * Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
 * Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
-* Line 22 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1. Note that the display name is after the comment marker "//"; as formally setting the display name would require all instances to send the display name exact as specified.
+* Line 22 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1. Note that the display name is presented in a comment, since setting the display name would require all instances to send the display name exact as specified.
 * Lines 23 to 25 each restrict the choice of resource types to a reference to a single resource type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
 * Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
-* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. ConditionStatusTrendVS is defined on line 36.
+* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
 * Line 30 declares a standalone extension named EvidenceType.
 * Line 31 gives the extension a human-readable title.
 * Line 32 assigns it an id.
 * Line 33 gives the extension a description that will appear on the extension's main page.
-* Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept. Since extensions only allow value[x] _or_ extension elements, the extension element will automatically have its cardinality set to 0..0.
+* Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept. Since extensions in FHIR only allow value[x] _or_ extension elements, the extension element will automatically have its cardinality set to 0..0.
 * Line 36 declares a value set named ConditionStatusTrendVS.
 * Line 37 gives the value set an id.
 * Line 38 provides a human readable title for the value set.
