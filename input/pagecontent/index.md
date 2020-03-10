@@ -1,11 +1,11 @@
 
 This implementation guide includes the following items:
 
-* (Informative Content) [FHIR Shorthand Overview](index.html) (this document) -- Introduction to FSH and SUSHI.
-* (Informative Content) [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI.
-* (Normative Content) [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language.
-* (Informative Content) [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool.
-* (Informative Content) Downloads -- including a Quick Reference Sheet and zip file for the FSH Tutorial
+* [FHIR Shorthand Overview](index.html) (this document) -- Introduction to FSH and SUSHI _(informative content)_.
+* [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI _(informative content)_.
+* [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(normative content)_.
+* [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool _(informative content)_.
+* Downloads -- including a [Quick Reference Sheet](FSHQuickReference.pdf) and [zip file](fsh-tutorial-master.zip) for the FSH Tutorial _(informative content)_.
 
 #### FHIR Shorthand and SUSHI
 FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as Github.
@@ -13,6 +13,8 @@ FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the conten
 <img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="margin: 0px 800px 0px 0px;"/>
 
 Accompanying the FSH language is a reference implementation, [SUSHI](sushi.html), that translates FSH into FHIR artifacts and enables production of FHIR IGs. There is also a tool, [FSH Food](https://github.com/lantanagroup/fshfood), that converts profiles and extensions (StructureDefinitions) into FSH. Together with the [HL7 IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), these tools present a complete solution for creating and maintaining a FHIR IG.
+
+_NOTE: SUSHI and FSH Food are in active development. SUSHI is expected to support all proposed FHIR Shorthand features at the time of ballot, but FSH Food is not guaranteed to do so. In addition, these tools are expected to continue to evolve and change during and after the ballot._
 
 #### Motivations for FHIR Shorthand
 
@@ -23,26 +25,26 @@ FHIR Shorthand was created in response to the need in the FHIR community for sca
 There are already several existing methods for IG creation: hand editing, using [Excel spreadsheets](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring), [Simplifier/Forge](https://fire.ly/products/simplifier-net/), and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com). Each of these methods have certain advantages as well as drawbacks:
 
 1. Hand-editing StructureDefinitions (SDs) is unwieldy, but authors get full control over every aspect of the resulting profiles and extensions.
-1. The spreadsheet method has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A significant downside is that version management is next to impossible; either the files are saved in binary form (.xslx) or as XML files, with the content lost in thousands of lines of formatting.
-1. Simplifier/Forge and Trifolia-on-FHIR provide graphical user interfaces that are very helpful guiding users through common tasks. However, making significant cross-cutting changes ([refactoring](https://resources.collab.net/agile-101/code-refactoring)) requires navigating through many screens. Currently these tools are not advanced in terms of source code control (SCC) features.
+1. The spreadsheet method has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A significant downside is that version management is extremely difficult; either the files are saved in binary form (.xslx) or as XML files, with the content lost in thousands of lines of formatting.
+1. Simplifier/Forge and Trifolia-on-FHIR provide graphical user interfaces that are very helpful guiding users through common tasks. However, making significant cross-cutting changes ([refactoring](https://resources.collab.net/agile-101/code-refactoring)) requires navigating through many screens. Currently these tools do not have advanced source code control (SCC) features.
 
-Experience across many domains has shown that complex software projects are best approached with textual languages. As a DSL designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles. Because it is text-based, FHIR Shorthand brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH.
+Experience across many domains has shown that complex software projects are best approached with textual languages. As a DSL designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles. Because it is text-based, FHIR Shorthand brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
 
 ### Creating an IG with FSH and SUSHI
 
 As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 
 1. Populating a FSH Tank (a directory) with FSH files containing definitions of FHIR artifacts, and additional content for your IG.
-2. Compiling those files using the SUSHI compiler
-3. Creating the IG using the HL7 FHIR IG Publishing Tool
+2. Compiling those files using the SUSHI compiler.
+3. Creating the IG using the HL7 FHIR IG Publishing Tool.
 
 <img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="margin: 0px 600px 0px 0px;" />
-
+v
 #### FSH Tanks
 
-A **FSH Tank** refers to a directory structure that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, examples, etc.) are defined by FSH files in the FSH Tank. Any other FHIR artifacts (such as profiles from another IG) are "external" and must be declared in dependencies.
+A **FSH Tank** refers to a directory structure that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, code systems, examples, etc.) are defined by FSH files in the FSH Tank. FHIR artifacts defined elsewhere (such as profiles from another IG) are "external" and their IGs must be declared in dependencies.
 
-Information is stored in plain text files with `.fsh` extension. Each file can contain multiple items. It is up to the author to decide how to divide information between the between FSH files as well as subdirectories. Here are some possibilities:
+Information is stored in plain text files with `.fsh` extensions. Each file can contain multiple items. It is up to the author to decide how to divide information between the between FSH files as well as subdirectories. Here are some possibilities:
 
 * Divide up according to the type of item: profiles in one file, value sets in another, extensions in another, etc.
 * Group things logically, for example, a profile together with its value sets, extensions, and examples.
@@ -60,7 +62,7 @@ After SUSHI runs, a new directory appears in the FSH Tank. This directory (named
 
 After running SUSHI, the IG Publisher can be run from the build directory, populating the _/build/output_ directory. The home page for the IG is _/build/output/index.html_. It can be opened in any browser.
 
-If HL7 is publishing your IG, you need to move the build files (excluding _/build/output_, _/build/temp_, and _/build/template_) to your IG's repository on http://hl7.github.com. When you copy the build files to the HL7 repository, the IG Publisher will run automatically, and your IG will appear on the continuous integration site, https://build.fhir.org.
+If HL7 is publishing your IG, you need to move the build files (excluding _/build/output_, _/build/temp_, and _/build/template_) to your IG's repository on http://hl7.github.com. If your HL7 repository is configured to use the [Auto-Builder](https://github.com/FHIR/auto-ig-builder), then when you push the build files to it, the IG Publisher will run automatically and your IG will appear on the continuous integration site, https://build.fhir.org.
 
 ### Shorthand Language Overview
 
@@ -71,7 +73,7 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 * **Formal grammar**: [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
 * **Reserved words**: FSH has a number of special words that are considered part of the language, and cannot be used as item names. Refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) for a complete list of these words.
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
-* **Whitespace**: Repeated whitespace is not meaningful within FSH files.
+* **Whitespace**: Repeated whitespace is not meaningful within FSH files, except within string delimiters.
 * **Comments**: FSH follows [JavaScript syntax](https://www.w3schools.com/js/js_comments.asp) for code comments, with `//` denoting single-line comments, and the pair `/*`  `*/` delimiting multiple line comments.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set `Organization.active` to `true`:
 
@@ -146,29 +148,29 @@ Keywords that declare new items (the `Profile` keyword in the previous example) 
 * Instance
 * Invariant
 * Mapping
-* Mixin
 * Profile
+* RuleSet
 * ValueSet
 
-Note that not every type of FSH item has a direct FHIR equivalent. Alias and Mixin are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
+Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
-Keywords common to many types of items include:
+Keywords common to several types of items include:
 
-* Description
-* Id
-* Title
+* Description _(CodeSystem, Extension, Instance, Invariant, Profile, ValueSet)_
+* Id _(CodeSystem, Extension, Profile, ValueSet)_
+* Title _(CodeSystem, Extension, Profile, ValueSet)_
+* Mixins _(Extension, Instance, Profile)_
+* Parent _(Extension, Profile)_
 
 Specialized keywords, used only with one type of item include:
 
-* InstanceOf (Instance)
-* Usage (Instance)
-* Parent (Profile)
-* Mixins (Profile)
-* Source (Mapping)
-* Target (Mapping)
-* Severity (Invariant)
-* XPath (Invariant)
-* Expression (Invariant)
+* InstanceOf _(Instance)_
+* Usage _(Instance)_
+* Source _(Mapping)_
+* Target _(Mapping)_
+* Severity _(Invariant)_
+* XPath _(Invariant)_
+* Expression _(Invariant)_
 
 Each type of item has a different set of required and optional keywords. For example, to define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are recommended. The keyword `Mixins` is optional. The [FSH Language Reference](reference.html) contains a [complete list of keywords and their usage](reference.html#keywords).
 
@@ -188,7 +190,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
 
   `* status = #arrived`
 
-* **Value set binding rules** are used with elements with coded values to specify the set of enumerated values for that element. Binding rules include one of FHIR's binding strengths (example, preferred, extensible, or required). For example:
+* **Value set binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include one of FHIR's binding strengths (example, preferred, extensible, or required). For example:
 
   `* gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)`
 
@@ -249,7 +251,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   Alias: USCoreEthnicity = http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity
   Alias: USCoreBirthsex = http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex
 
-  // include the external extensions with local names
+  // Within a profile definition, include the external extensions with local names
   * extension contains
       USCoreRace named race 0..1 MS and
       USCoreEthnicity named ethnicity 0..1 MS and
@@ -272,11 +274,15 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
       SystolicBP 1..1 and
       DiastolicBP 1..1
   ```
-  The elements of each slice are typically constrained with additional rules, e.g.:
+  The elements of each slice must be constrained such that they can be uniquely identified via the discriminator. Other constraints may also be applied. Using the example above, each `component.code` should be constrained to satisfy the discriminator, and the values may also be constrained to indicate the type of value that is expected:
 
   ```
+  * component[SystolicBP].code = http://loinc.org#8480-6 // Systolic blood pressure
   * component[SystolicBP].value[x] only Quantity
   * component[SystolicBP].valueQuality = UCUM#mm[Hg]
+  * component[DiastolicBP].code = http://loinc.org#8462-4 // Diastolic blood pressure
+  * component[DiastolicBP].value[x] only Quantity
+  * component[DiastolicBP].valueQuality = UCUM#mm[Hg]
   ```
 
 * **Invariant rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
@@ -292,9 +298,9 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
 
   `* exclude SCT#12619005`
 
-When defining a new code system, the code system (SCT, in the examples) is omitted.
+  When defining a new code system, the code system (SCT, in the examples) is omitted and an optional definition can be appended as a separate string.
 
-* **Intensional (implicit) code rules** are used to include or exclude sets of values in value sets or code systems. For example, to include all codes from a code system:
+* **Intensional (implicit) code rules** are used to include or exclude sets of values in value sets. For example, to include all codes from a code system:
 
   `* codes from system RXNORM`
 
@@ -304,7 +310,7 @@ When defining a new code system, the code system (SCT, in the examples) is omitt
 
   `* exclude codes from valueset ConditionStatusTrendVS`
 
-  More complex intensional rules involving filters are also possible. These rules depend on relationships or properties defined a specific code system. A rule for LOINC, for example, would not be applicable to SNOMED-CT. Here is an example of a SNOMED-CT intensional rule with a filter:
+  More complex intensional rules involving filters are also possible. These rules depend on relationships or properties defined in a specific code system. A rule for LOINC, for example, would not be applicable to SNOMED-CT. Here is an example of a SNOMED-CT intensional rule with a filter:
 
   `* codes from system SCT where concept is-a #123037004 "BodyStructure"`
 
@@ -313,8 +319,8 @@ When defining a new code system, the code system (SCT, in the examples) is omitt
 In this section, we'll walk through a realistic example line by line.
 
 ```
-1  Alias: LNC = http://loinc.org
-2  Alias: SCT = http://snomed.info/sct
+1   Alias: LNC = http://loinc.org
+2   Alias: SCT = http://snomed.info/sct
 3
 4   Profile:  CancerDiseaseStatus
 5   Parent:   Observation
@@ -334,7 +340,7 @@ In this section, we'll walk through a realistic example line by line.
 19  * subject 1..1
 20  * basedOn only Reference(ServiceRequest | MedicationRequest)
 21  * partOf only Reference(MedicationAdministration | MedicationStatement | Procedure)
-22  * code = LNC#88040-1 "Response to cancer treatment"
+22  * code = LNC#88040-1 // Response to cancer treatment
 23  * subject only Reference(CancerPatient)
 24  * focus only Reference(CancerConditionParent)
 25  * performer only Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner)
@@ -370,25 +376,25 @@ In this section, we'll walk through a realistic example line by line.
 
 ```
 * Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
-* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus.
+* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and should be "computer-ready" (i.e., suitable for code generation).
 * Line 5 says that this profile will be based on Observation. Specifying the parent is required.
 * Line 6 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
-* Line 9 is the start of the rule section of the profile. The rule creates an extension using the standalone extension, EvidenceType, and gives it the local name evidenceType, as well as the cardinality 0..*.
-* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength.
+* Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
+* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 46._
 * Line 11 designates a list of elements (inherited from Observation) as must-support.
-* Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a list of items, so these must be separate statements.
+* Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
 * Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
-* Line 22 fix the value of the code attribute to a specific LOINC code, using an alias for the code system defined later, on line 33
-* Lines 23 to 25 restrict the choice of resource types to a single type, for elements that refer to other resources. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent)
+* Line 22 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1. Note that the display name is presented in a comment, since setting the display name would require all instances to send the display name exact as specified.
+* Lines 23 to 25 each restrict the choice of resource types to a reference to a single resource type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
 * Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
-* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding.
+* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
 * Line 30 declares a standalone extension named EvidenceType.
 * Line 31 gives the extension a human-readable title.
 * Line 32 assigns it an id.
 * Line 33 gives the extension a description that will appear on the extension's main page.
-* Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept.
+* Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept. Since extensions in FHIR only allow value[x] _or_ extension elements, the extension element will automatically have its cardinality set to 0..0.
 * Line 36 declares a value set named ConditionStatusTrendVS.
 * Line 37 gives the value set an id.
 * Line 38 provides a human readable title for the value set.
@@ -408,11 +414,11 @@ In this introduction, we presented an overview of FSH and SUSHI. Not all the fea
 
 Version 1.0 of FSH and SUSHI are capable of producing sophisticated IGs and offer more than a "minimum viable product". Future versions may introduce additional features. Some of the features under consideration include (in no order):
 
-* **Slicing Support:** AKA “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything, SUSHI would handle most slicing situations without explicit declarations of discriminator type or path by the user. SUSHI would infer slicing discriminators based the nature of the slices, based on a set of explicit algorithms.
+* **Slicing Support:** AKA “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything, SUSHI will handle most slicing situations without explicit declarations of discriminator type or path by the user. To enable this, FHIR Shorthand will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices.
 
 * **Multiple Language Support:** At present, FSH supports only one language. In the future, FSH and SUSHI may introduce mechanisms for generating IGs in multiple languages.
 
-* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements.
+* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements. Creative approaches and purpose-specific syntax could also be employed for other conformance resources such as SearchParameter.
 
 * **Logical Models:** FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
 
