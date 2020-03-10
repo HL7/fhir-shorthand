@@ -796,24 +796,23 @@ The referenced invariant and its properties must be declared somewhere within th
 
 #### Mapping Rules
 
-🚫 [Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
+🚧 [Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
-Mapping rules use the symbol `->` with the following grammar:
+In FSH, mapping rules are not included in the profile definition.  Rather, they are included in a separate [Mapping definition](#defining-mappings) that provides additional context such as the higher level source and target. Within that definition mapping rules use the symbol `->` with the following grammar:
 
 `* {path} -> {string}`
 
 **Examples:**
 
-* Map the entire profile to another item:
+* Map the entire profile to a Patient item in another specification:
 
   `* -> Patient`
 
-* Map the identifier.value element:
+* Map the identifier.value element from one IG to another:
 
-  `* identifier.value -> "identifier.value"`
+  `* identifier.value -> "Patient.identifier.value"`
 
-
->**Note:** Unlike setting the mapping directly in the SD, mapping rules within a Mapping do not include the name of the resource.
+>**Note:** Unlike setting the mapping dmappingirectly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
 ***
 
@@ -858,7 +857,7 @@ The use of individual keywords is explained in greater detail in the following s
 | `Instance` | Declare a new instance | name |
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Invariant` | Declares a new invariant | name |
-| 🚫 `Mapping` | Introduces a new mapping | name |
+| 🚧 `Mapping` | Declares a new mapping | name |
 | `Mixin` | Introduces a class to be used as a mixin | name |
 | `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
 | `Parent` | Specifies the base class for a profile or extension | name |
@@ -1101,7 +1100,7 @@ Description:  "A brief vocabulary of yoga-related terms."
 
 #### Defining Mappings
 
-🚫 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
+🚧 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
 
 > **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
@@ -1115,15 +1114,16 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are use
   Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
   Id:       argonaut-dq-dstu2
   * -> Patient
-  * extension[USCoreRaceExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
-  * extension[USCoreEthnicityExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
-  * extension[USCoreBirthSexExtension] -> "extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
-  * identifier -> "identifier"
-  * identifier.system -> "identifier.system"
-  * identifier.value -> "identifier.value"
+  * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
+  * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
+  * extension[USCoreBirthSexExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
+  * identifier -> "Patient.identifier"
+  * identifier.system -> "Patient.identifier.system"
+  * identifier.value -> "Patient.identifier.value"
 ```
 
-#### Defining Mixins
+In the example above, the target is another FHIR profile, but in many cases, the target will not use FHIR. For this reason, the right-hand side of mapping statements is always a string in order to allow the greatest flexibility. For this same reason, even though the target is FHIR in the example above, FSH cannot make any assumptions about how the individual target values work; thus the resource name "Patient" is included in the right-hand side values since this is how the mapping targets should be expressed in the SD.
+
 
 🚧  Mixins provide the ability to define rules and apply them to a compatible target. The rules are copied from the mixin at compile time. Profiles, extensions, and instances can all have multiple mixins applied to them. One mixin can be used in multiple different places.
 
