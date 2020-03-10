@@ -209,7 +209,7 @@ In addition to having a quantitative value, a FHIR Quantity has a coded value th
 
 `* {Quantity type} = {system}#{code} "{display text}"`
 
-Although this appears the quantity is being set to a coded value, it is legal. 
+Although this appears like the quantity is being set to a coded value, it is legal and sets only the coded units part of the quantity. 
 
 🚧 To make this a bit more intuitive, FSH allows you to use the word `units`, as follows:
 
@@ -221,7 +221,9 @@ Although this appears the quantity is being set to a coded value, it is legal.
 
 >**Note:** Use of the word `units` is suggested for clarity, but is optional.
 
+To set an actual quantity value, the quantity `value` property can be set directly. In addition, FHIR Shorthand allows quantity values to be specified "[CQL-style](https://cql.hl7.org)" by providing a number followed by a single-quoted UCUM unit.  The shorthand for this syntax is:
 
+`* {Quantity type} = {number} '{valid ucum unit}'`
 
 **Examples:**
 
@@ -236,6 +238,17 @@ Although this appears the quantity is being set to a coded value, it is legal.
 * 🚧 Bind a value set to the units of a Quantity (using alternate syntax):
 
   `* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
+
+* Set the valueQuantity of an observation to 55 millimeters using the separate value property:
+
+  ```
+  * valueQuantity = UCUM#mm "millimeters"
+  * valueQuantity.value = 55
+  ```
+
+* Set the valueQuantity of an observation to 55 millimeters using the CQL-style syntax:
+
+  `* valueQuantity = 55 'mm'`
 
 #### Paths
 
