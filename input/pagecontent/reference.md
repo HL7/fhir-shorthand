@@ -1189,19 +1189,6 @@ Mixins give you the capability to define that metadata once and apply it in as m
   Mixins: FranceObservationMixin
  ```
 
- **External Mixins**
-
- 🚫 The ability to add external mixins is not yet supported. When supported, this should expand the functionality of the `Mixins` keyword to accept other internally or externally defined profiles or extensions as arguments. Since the profile or extension may be externally defined, we must be able to mix the contents of one Structure Definition onto another. The order of application will be inheritance, then mixins, then rules. For example if we had this FSH:
- ```
- Profile: SuperSpecialPatient
- Parent: SuperPatient
- Mixins: SpecialPatient
- * {rule1}
- * {rule2}
- // More rules
- ```
- First the `SuperSpecialPatient` would inherit from `SuperPatient`. Then the definition of `SpecialPatient` would be merged in. Finally, the rules `rule1` and `rule2` and any more rules would be applied.
-
 #### Defining Invariants
 
 Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
