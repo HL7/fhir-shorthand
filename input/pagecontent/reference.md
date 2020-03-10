@@ -780,7 +780,7 @@ Future versions of FHIR Shorthand may support standalone slice definitions, but 
 
 `* {path} obeys {invariant1} and {invariant2} ...`
 
-The first case is where the invariant applies to the profile as a whole. The second is where the invariant applies to a single element. The third case is where multiple invariants apply to the profile as a whole, and the fourth is where multiple invariants apply to a single element.
+The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
 
 The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
@@ -790,7 +790,7 @@ The referenced invariant and its properties must be declared somewhere within th
 
   `* obeys us-core-9`
 
-* Assign invariant to Patient.name in US Core:
+* Assign invariant to Patient.name in US Core Patient:
 
   `* name obeys us-core-8`
 
@@ -1191,15 +1191,14 @@ Mixins give you the capability to define that metadata once and apply it in as m
 
 #### Defining Invariants
 
-Invariants are defined using the keywords `Invariant`, `Id`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
+Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
 **Example:**
 ```
-Invariant:  USCoreNameInvariant
-Id:         us-core-8
-Definition: "Patient.name.given  or Patient.name.family or both SHALL be present"
+Invariant:  us-core-8
+Definition: "Patient.name.given or Patient.name.family or both SHALL be present"
 Expression: "family.exists() or given.exists()"
-Severity:   "error"
+Severity:   #error
 XPath:      "f:given or f:family"
 ```
 
