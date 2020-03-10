@@ -11,12 +11,13 @@ This document describes the FSH language.
 | {curly braces} | An item to be substituted | `{codesystem}#{code}` |
 | **bold** | Emphasis |  Do **not** ignore this. |
 | 🚧 | Indicates a feature implemented in FSH but not yet implemented in SUSHI | |
+{: .grid }
 
 #### Versioning
 
 The FSH specification, like other IGs, follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
 
-* MAJOR: A major release has significant new functionality and potentially, grammar changes or other non-backward-compatible changes.
+* MAJOR: A major release has significant new functionality and potentially has grammar changes or other non-backward-compatible changes.
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
 * PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
 
@@ -64,7 +65,7 @@ Using a normal string would require the following spacing to accomplish the same
 
 #### Whitespace
 
-Repeated whitespace is not meaningful within FSH files. This:
+Repeated whitespace is not meaningful within FSH files (except within string literals). This:
 
 ```
 Profile:  SecondaryCancerCondition
@@ -93,6 +94,8 @@ Use slash-asterisk and asterisk-slash for larger block comments.
 These comments can take up multiple lines.
 */
 ```
+
+The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation.
 
 #### Coded Data Types
 
@@ -251,8 +254,9 @@ To set an actual quantity value, the quantity `value` property can be set direct
 
 #### Paths
 
-FSH path grammar allows you to refer to any element of a profile, extension, or profile, regardless of nesting. Paths also provide a grammar for addressing elements of a SD directly. Here are a few examples of how paths are used in FSH:
+FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Paths also provide a grammar for addressing elements of a SD directly. Here are a few examples of how paths are used in FSH:
 
+* To refer to a top-level element such as the 'code' element in Observation
 * To refer to a nested element, such as the 'method.text' element in Observation
 * To address a particular item in a list or array
 * To refer to individual elements inside choice elements (e.g., onsetAge in onset[x])
@@ -265,13 +269,13 @@ In the following, the various types of path references are discussed.
 
 ##### Nested Element Paths
 
-To refer to nested elements, the path lists the properties in order, separated by a dot (.)
+To refer to nested elements, the path lists the properties in order, separated by a dot (`.`).  Since the resource can be inferred from the definition, the resource name is not a formal part of the path (e.g., `subject` is a valid path within a Procedure definition, but `Procedure.subject` is not).
 
-> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject, Reference(Patient), and Patient has a gender, then `Procedure.subject` is a valid path, but `Procedure.subject.gender` is not, because it crosses into the Patient reference.
+> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that is a Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient reference.
 
 **Example:**
 
-* Observation has an element named method, and method has a text property (note that inside a FSH definition, the resource is inferred from the context and not a formal part of the path):
+* Observation has an element named method, and method has a text property.  Set the text property of an Observation's method to "Laparoscopy":
 
   `* method.text = "Laparoscopy"`
 
@@ -297,7 +301,7 @@ Frequently in FHIR, an element has a Reference that has multiple targets. To add
 
 **Example:**
 
-* Restrict a performer element (type Reference(Organization | Pracititioner) to PrimaryCareProvider in a profile, assuming PrimaryCareProvider is a profile on Practitioner:
+* Restrict the Practitioner reference in a performer element (type Reference(Organization \| Practitioner)) to PrimaryCareProvider, assuming PrimaryCareProvider is a profile on Practitioner:
 
   `* performer[Practitioner] only PrimaryCareProvider`
 
@@ -311,7 +315,7 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
   `* valueString = "Hello World"`
 
-* Fix the value[x] Reference (permitted in extensions) to an instance of Patient resource:
+* Fix the value[x] Reference (permitted in extensions) to an instance of the Patient resource:
 
   `* valueReference = Reference(EveAnyperson)`
 
@@ -370,7 +374,7 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
 
 ##### Structure Definition Escape Paths
 
-FSH uses the caret (^) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax is used to set the metadata attributes in SD, other than those set through [FSH Keywords](#keywords) (name, id, title, and description) or specified in the one of the configuration files used to create the IG. Examples of metadata elements in SDs can be set with caret syntax include experimental, useContext, and abstract.
+FSH uses the caret (`^`) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax is used to set the metadata attributes in SD, other than those set through [FSH Keywords](#keywords) (name, id, title, and description) or specified in one of the configuration files used to create the IG. Examples of metadata elements in SDs can be set with caret syntax include experimental, useContext, and abstract.
 
 The caret syntax can also be combined with element paths to set values in the ElementDefinitions that populate the SD.
 
@@ -441,7 +445,7 @@ The left side of the expression follows the [FSH path grammar](#paths). The righ
 
   `* onsetDateTime = "2019-04-02"`
 
-* 🚧 Assignment of a quantity with single quotes indicating UCUM units:
+* Assignment of a quantity with single quotes indicating UCUM units:
 
   `* valueQuantity = 36.5 'C'`
 
@@ -492,11 +496,19 @@ As in FHIR, min and max are non-negative integers, and max can also be *, repres
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
+For convenience and compactness, cardinality rules can be combined with [flag assignement rules](#flag-assignment-rules) via the following grammar:
+
+`* {path} {min}..{max} {flag1} {flag2} ...`
+
 **Examples:**
 
 * Set the cardinality of the subject element to 1..1 (required, non-repeating):
 
   `* subject 1..1`
+
+* Set the cardinality of the subject element to 1..1 and declare it as Must Support:
+
+  `* subject 1..1 MS`
 
 * Set the cardinality of a sub-element to 0..0 (not permitted):
 
@@ -542,7 +554,7 @@ Certain elements in FHIR offer a choice of data types using the [x] syntax. Choi
 
 #### Reference Type Restriction Rules
 
-Elements that refer to other resources often offer a choice of target resource types. For example, Condition.recorder has reference type choice Reference(Practitioner | PractitionerRole | Patient | RelatedPerson). A reference type restriction rule can narrow these choices, using the following grammar:
+Elements that refer to other resources often offer a choice of target resource types. For example, Condition.recorder has reference type choice Reference(Practitioner \| PractitionerRole \| Patient \| RelatedPerson). A reference type restriction rule can narrow these choices, using the following grammar:
 
 `{path} only Reference({type1} | {type2} | {type3} ...)`
 
@@ -566,7 +578,7 @@ It is important to note that a reference can only be restricted to a compatible 
 
 #### Flag Assignment Rules
 
-Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, as as follows:
+Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
 
 | FHIR Flag | FSH Flag | Meaning |
 |------|-----|----|
@@ -578,7 +590,7 @@ Flags are a set of information about the element that impacts how implementers h
 | D | D | Draft element |
 {: .grid }
 
-The flags I and NE flags not supported by FSH, since they are derived from other information.
+FHIR also defines I and NE flags. These are not supported by FSH, since they are derived from other information.
 
 The following syntax can be used to assigning flags:
 
@@ -592,7 +604,7 @@ The following syntax can be used to assigning flags:
 
   `* communication MS ?!`
 
-* Declare a list of elements and nested elements to MustSupport:
+* Declare a list of elements and nested elements to be MustSupport:
 
   `* identifier, identifier.system, identifier.value, name, name.family MS`
 
@@ -654,9 +666,9 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
 
   ```
   * extension contains
-      ombCategory 0..5
+      ombCategory 0..5 MS
       detailed 0..*
-      text 1..1
+      text 1..1 MS
 
   // constraints to define the inline extensions would follow, e.g.:
   * extension[ombCategory] only Coding
@@ -853,20 +865,20 @@ The use of individual keywords is explained in greater detail in the following s
 | `Expression` | The FHIR path expression in an invariant | string |
 | `Extension` | Declares a new extension | name |
 | `Id` | Set a unique identifier of an item | name |
-| `Instance` | Declare a new instance | name |
+| `Instance` | Declares a new instance | name |
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Invariant` | Declares a new invariant | name |
 | 🚧 `Mapping` | Declares a new mapping | name |
 | `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
 | `Parent` | Specifies the base class for a profile or extension | name |
-| `Profile` | Introduces a new profile | name |
+| `Profile` | Declares a new profile | name |
 | `RuleSet` | Declares a set of rules to be used as a mixin | name |
 | `Severity` | error, warning, or guideline in invariant | code |
 | `Source` | Profile or path a mapping applies to | path |
 | `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
 | `ValueSet` | Declares a new value set | name |
-| `XPath` | the xpath in invariant | string |
+| `XPath` | the xpath in an invariant | string |
 {: .grid }
 
 #### Defining Aliases
@@ -877,7 +889,7 @@ Alias definitions follow this syntax:
 
 `Alias: {AliasName} = {url or oid}`
 
-In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin dollar sign ($).
+In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with dollar sign ($).
 
 If you choose a name beginning with a dollar sign, then additional error checks can be carried out. Specifically, if a rule involves a $name, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
 
@@ -893,24 +905,24 @@ Another best practice is to choose alias names written in all capitals.
 
 #### Defining Profiles
 
-To define a profile, the keywords `Profile`, `Parent` are required, and `Id`, `Title`, and `Description` should be used. The keyword `Mixins` is optional.
+To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` should be used. The keyword `Mixins` is optional.
 
 **Example:**
 
 * Define a profile for USCorePatient:
 
 ```
-  Profile:        USCorePatient
-  Parent:         Patient
-  Id:             us-core-patient
-  Title:          "US Core Patient Profile"
-  Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
+Profile:        USCorePatient
+Parent:         Patient
+Id:             us-core-patient
+Title:          "US Core Patient Profile"
+Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
 ```
 Any rules defined for the profiles would follow immediately after the keyword section.
 
 #### Defining Extensions
 
-Defining extensions is similar to defining a profile, except that the parent of extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/extensibility.html#extension). 
+Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/extensibility.html#extension). 
 
 > **Note:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
 
@@ -931,34 +943,34 @@ Description: "A code classifying the person's sex assigned at birth"
 * Define a complex extension (extension with nested extensions) for US Core Ethnicity:
 
 ```
-  Extension:      USCoreEthnicityExtension
-  Id:             us-core-ethnicity
-  Title:          "US Core Ethnicity Extension"
-  Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. "
-  * extension contains
-      ombCategory 0..1 MS and
-      detailed 0..* and
-      text 1..1 MS
-  // inline definition of sub-extensions
-  * extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
-  * extension[ombCategory].value[x] only Coding
-  * extension[ombCategory].valueCoding from OmbEthnicityCategories (required)
-  * extension[detailed] ^short = "Extended ethnicity codes"
-  * extension[detailed].value[x] only Coding
-  * extension[detailed].valueCoding from DetailedEthnicity (required)
-  * extension[text] ^short = "Ethnicity text"
-  * extension[text].value[x] only string
+Extension:      USCoreEthnicityExtension
+Id:             us-core-ethnicity
+Title:          "US Core Ethnicity Extension"
+Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. "
+* extension contains
+    ombCategory 0..1 MS and
+    detailed 0..* and
+    text 1..1 MS
+// inline definition of sub-extensions
+* extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
+* extension[ombCategory].value[x] only Coding
+* extension[ombCategory].valueCoding from OmbEthnicityCategories (required)
+* extension[detailed] ^short = "Extended ethnicity codes"
+* extension[detailed].value[x] only Coding
+* extension[detailed].valueCoding from DetailedEthnicity (required)
+* extension[text] ^short = "Ethnicity text"
+* extension[text].value[x] only string
 ```
 
 * Define an extension with an explicit parent, specializing the US Core Birth Sex extension:
 
 ```
-  Extension:      BinaryBirthSexExtension
-  Parent:         USCoreBirthSexExtension
-  Id:             binary-birthsex
-  Title:          "Binary Birth Sex Extension"
-  Description:     "As of 2019, certain US states only allow M or F on birth certificates."
-  * valueCode from BinaryBirthSex (required)
+Extension:      BinaryBirthSexExtension
+Parent:         USCoreBirthSexExtension
+Id:             binary-birthsex
+Title:          "Binary Birth Sex Extension"
+Description:     "As of 2019, certain US states only allow M or F on birth certificates."
+* valueCode from BinaryBirthSex (required)
 ```
 
 #### Defining Instances
@@ -1019,12 +1031,12 @@ The contents of a value set are defined by a set of rules. There are four types 
 | A single code | `* {Coding}` | `* SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from a value set | `* codes from valueset {Id}` | `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | `* codes from system {Id}` | `* codes from system http://snomed.info/sct` |
-| Selected codes from a code system (filters are code system dependent) | `* codes from system {Id} where {filter} and {filter} and ...` | `* codes from system SCT where concept is-a #254837009` |
+| Selected codes from a code system (filters are code system dependent) | `* codes from system {system} where {filter} and {filter} and ...` | `* codes from system SCT where concept is-a #254837009` |
 {: .grid }
 
 See [below](#filters) for discussion of filters.
 
-> **Note:** `Id` can be a FSH name, alias or URL.
+> **Note:** `{system}` can be a FSH name, alias or URL.
 
 Analogous rules can be used to leave out certain codes, with the addition of the word `exclude`:
 
@@ -1049,15 +1061,15 @@ Not all operators are valid for any code system. The `property` and `value` are 
 * Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
 
 ```
-  ValueSet:    BodyWeightPreconditionVS
-  Title: "Body weight preconditions."
-  Description:  "Circumstances for body weight measurement."
-  * SCT#971000205103 "Wearing street clothes with shoes"
-  * SCT#961000205106 "Wearing street clothes, no shoes"
-  * SCT#951000205108 "Wearing underwear or less"
+ValueSet:    BodyWeightPreconditionVS
+Title: "Body weight preconditions."
+Description:  "Circumstances for body weight measurement."
+* SCT#971000205103 "Wearing street clothes with shoes"
+* SCT#961000205106 "Wearing street clothes, no shoes"
+* SCT#951000205108 "Wearing underwear or less"
 ```
 
-* Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set
+* Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set:
 
 ```
 * codes from system SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
@@ -1075,9 +1087,9 @@ It is sometimes necessary to define new codes inside an IG that are not drawn fr
 
 > **Note:** Defining local codes is not generally recommended, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- at least temporarily -- as local codes.
 
-Creating a code system uses the keywords `CodeSystem`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
+Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
 
-* #{code} {display text string} {definition text string}
+`* #{code} {display text string} {definition text string}`
 
 **Note:**
 * Do not include a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
@@ -1094,7 +1106,7 @@ Description:  "A brief vocabulary of yoga-related terms."
 * #Matsyasana "Fish Pose"  "Matsyasana is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly considered a counterasana to Sarvangasana, or shoulder stand, specifically within the context of the Ashtanga Vinyasa Yoga Primary Series."
 * #Bhujangasana "Cobra Pose" "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
 ```
-> **Note:** FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
+> **Note:** FSH does not currently support definition of relationships between local codes, such as parent-child (is-a) relationships.
 
 
 #### Defining Mappings
