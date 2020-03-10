@@ -39,7 +39,7 @@ As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 3. Creating the IG using the HL7 FHIR IG Publishing Tool.
 
 <img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="margin: 0px 600px 0px 0px;" />
-v
+
 #### FSH Tanks
 
 A **FSH Tank** refers to a directory structure that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, code systems, examples, etc.) are defined by FSH files in the FSH Tank. FHIR artifacts defined elsewhere (such as profiles from another IG) are "external" and their IGs must be declared in dependencies.
