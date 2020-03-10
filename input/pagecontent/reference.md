@@ -827,7 +827,7 @@ This section shows how to define various items in FSH:
 * [Value Sets](#defining-value-sets)
 * [Code Systems](#defining-code-systems)
 * [Mappings](#defining-mappings)
-* [Mixins](#defining-mixins)
+* [Rule Sets](#defining-rule-sets)
 * [Invariants](#defining-invariants)
 
 #### Keywords
@@ -858,10 +858,10 @@ The use of individual keywords is explained in greater detail in the following s
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Invariant` | Declares a new invariant | name |
 | 🚧 `Mapping` | Declares a new mapping | name |
-| `Mixin` | Introduces a class to be used as a mixin | name |
 | `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
 | `Parent` | Specifies the base class for a profile or extension | name |
 | `Profile` | Introduces a new profile | name |
+| `RuleSet` | Declares a set of rules to be used as a mixin | name |
 | `Severity` | error, warning, or guideline in invariant | code |
 | `Source` | Profile or path a mapping applies to | path |
 | `Target` | The standard that the mapping maps to | string |
@@ -1124,23 +1124,26 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are use
 
 In the example above, the target is another FHIR profile, but in many cases, the target will not use FHIR. For this reason, the right-hand side of mapping statements is always a string in order to allow the greatest flexibility. For this same reason, even though the target is FHIR in the example above, FSH cannot make any assumptions about how the individual target values work; thus the resource name "Patient" is included in the right-hand side values since this is how the mapping targets should be expressed in the SD.
 
+#### Defining Rule Sets
 
-🚧  Mixins provide the ability to define rules and apply them to a compatible target. The rules are copied from the mixin at compile time. Profiles, extensions, and instances can all have multiple mixins applied to them. One mixin can be used in multiple different places.
+🚧 Rule sets provide the ability to define rules and apply (or "mixin") them to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places.
 
-At present, mixins must be defined in FSH. The capability for mixing in external definitions is under developement. Mixins are defined by using the keyword `Mixin`.
+Rule sets are defined by using the keyword `RuleSet`:
 ```
-Mixin: {MixinName}
+RuleSet: {RuleSetName}
 * {rule1}
 * {rule2}
 // More rules
 ```
-A mixin is used to define a group of rules. These rules are then included using the keyword `Mixins`.
+A defined rule set can be applied to an item by using the keyword `Mixins`:
 ```
 Profile: MyPatientProfile
 Parent: Patient
-Mixins: {Mixin1}, {Mixin2}
+Mixins: {RuleSet1}, {RuleSet2}
 ```
-Each mixin should be compatible with the target, in the sense that all the rules defined in the mixin apply to elements actually present in the target. The legality of a mixin is checked at compile time. If a particular rule from a mixin applies to an element not present on the target, that rule will not be applied, and an error will be emitted. However, all other valid rules from the mixin will still be applied. The rules from a mixin are applied **before** rules defined on the target itself. When multiple mixins are included using the `Mixins` keyword, the mixin rules are applied in the order that the mixins are listed.
+Each rule set should be compatible with the target, in the sense that all the rules defined in the rule set apply to elements actually present in the target. The legality of a rule set is checked at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error will be emitted. However, all other valid rules from the rule set will still be applied. The rules from a rule set are applied **before** rules defined on the target itself. When multiple rule sets are included using the `Mixins` keyword, the rule set rules are applied in the order that the rule sets are listed.
+
+Currently only rule sets can be mixed into profiles and extensions, but future versions of FHIR Shorthand may allow external definitions (such as other profiles and extensions) to be mixed in as well.
 
 **Examples:**
 Defining and using a mixin for metadata shared in all US Core Profiles:
