@@ -1,24 +1,14 @@
 
 SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
 
-> **Note:** HL7® and FHIR® are registered trademarks owned by Health Level Seven International, and are registered with the United States Patent and Trademark Office.
-
-#### Purpose
-
-This reference manual is a comprehensive guide to the command line interface, auxiliary files, and configurations needed to create an HL7 FHIR IG using SUSHI.
-
-#### Intended Audience
-
-The reference manual is targeted to people doing IG development using FSH. Familiarity with FHIR is helpful as the manual references various FHIR concepts (profiles, extensions, value sets, etc.)
-
-#### Prerequisite
+This reference manual is a comprehensive guide to the command line interface, auxiliary files, and configurations needed to create an HL7 FHIR IG using SUSHI. It is targeted to people doing IG development using FSH. Familiarity with FHIR is helpful as the manual references various FHIR concepts (profiles, extensions, value sets, etc.)
 
 This guide assumes you have:
 
 * Reviewed the [FHIR Shorthand Tutorial](tutorial.html)
 * Created FSH files representing your profiles and other IG artifacts (see [Authoring Guide](index.html) and [FSH Language Reference](reference.html) for details).
 
-#### Document Conventions
+The following conventions are used:
 
 | Style | Explanation | Example |
 |:----------|:------|:---------|
@@ -82,9 +72,9 @@ To revert to a previous version of SUSHI, run:
 where the version is in the form MAJOR.MINOR.PATCH.
 
 
-### Executing SUSHI from Command Line
+### Executing SUSHI
 
-The general form of the SUSHI execution command is as follows:
+SUSHI is executed from the command line. The general form of the SUSHI execution command is as follows:
 
 `$ sushi {specification-directory} {options}`
 
@@ -202,7 +192,7 @@ The resulting _/build_ folder will look something like this:
  
  > Note: The _/build/input_ directory is actually an **output** of SUSHI, but so named because it is an **input** to the IG Publisher.
 
-#### Downloading and Running the IG Publisher
+### Downloading and Running the IG Publisher
 
 After running SUSHI, change directories to the output directory, usually _/build_. At the command prompt, enter:
 

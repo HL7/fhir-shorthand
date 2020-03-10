@@ -1,7 +1,6 @@
+This chapter describes the FHIR Shorthand (FSH) language in detail. It is intended as a reference manual, not a pedagogical document. 
 
-This document describes the FSH language.
-
-#### Document Conventions
+This chapter uses the following conventions:
 
 | Style | Explanation | Example |
 |:----------|:------|:---------|
@@ -12,6 +11,8 @@ This document describes the FSH language.
 | **bold** | Emphasis |  Do **not** ignore this. |
 {: .grid }
 
+### FSH Foundations
+
 #### Versioning
 
 The FSH specification, like other IGs, follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
@@ -20,7 +21,7 @@ The FSH specification, like other IGs, follows the [semantic versioning](https:/
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
 * PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
 
-There are some language elements documented here that are not yet implemented in SUSHI. See the [SUSHI Release Notes](https://github.com/FHIR/sushi/releases) for futher details.
+There are some language elements documented here that are not yet implemented in SUSHI. See the [SUSHI Release Notes](https://github.com/FHIR/sushi/releases) for further details.
 
 #### Formal Grammar
 
@@ -252,7 +253,7 @@ and for [binding](#value-set-binding-rules):
   `* valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units`
 
 
-#### Paths
+### Paths
 
 FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Paths also provide a grammar for addressing elements of a SD directly. Here are a few examples of how paths are used in FSH:
 
@@ -267,7 +268,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 
 In the following, the various types of path references are discussed.
 
-##### Nested Element Paths
+#### Nested Element Paths
 
 To refer to nested elements, the path lists the properties in order, separated by a dot (`.`).  Since the resource can be inferred from the definition, the resource name is not a formal part of the path (e.g., `subject` is a valid path within a Procedure definition, but `Procedure.subject` is not).
 
@@ -279,7 +280,7 @@ To refer to nested elements, the path lists the properties in order, separated b
 
   `* method.text = "Laparoscopy"`
 
-##### Array Property Paths
+#### Array Property Paths
 
 If an element allows more than one value (e.g., `0..*`), then it must be possible to address each individual value. FSH denotes this with square brackets (`[` `]`) containing the **0-based** index of the item (e.g., first item is `[0]`, second item is `[1]`, etc.).
 
@@ -295,7 +296,7 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
   `* name.given[1] = "Marie"`
 
-##### Reference Paths
+#### Reference Paths
 
 Frequently in FHIR, an element has a Reference that has multiple targets. To address a specific target, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
 
@@ -305,7 +306,7 @@ Frequently in FHIR, an element has a Reference that has multiple targets. To add
 
   `* performer[Practitioner] only PrimaryCareProvider`
 
-##### Data Type Choice [x] Paths
+#### Data Type Choice [x] Paths
 
 Addressing a type from a choice of types replaces the `[x]` in the property name with the type name (while also capitalizing the first letter). This follows the approach used in FHIR JSON and XML serialization.
 
@@ -319,7 +320,7 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
   `* valueReference = Reference(EveAnyperson)`
 
-##### Profiled Type Choice Paths
+#### Profiled Type Choice Paths
 
 In some cases, a type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[` `]`) containing the profile's `name`, `id`, or `url`.
 
@@ -333,7 +334,7 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
   * address[CanadianAddress].state from CanadianProvenceValueSet (required)
   ```
 
-##### Extension Paths
+#### Extension Paths
 
 Extensions are arrays populated by slicing. They may be addressed using the slice path syntax presented above. However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. <!--The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
 
@@ -354,7 +355,7 @@ Extensions are arrays populated by slicing. They may be addressed using the slic
   * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
 ```
 
-##### Sliced Array Paths
+#### Sliced Array Paths
 
 FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
 
@@ -372,7 +373,7 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
 
   `* component[RespiratoryScore][FiveMinuteScore].code = SCT#13323003 "Apgar score 7 (finding)"`
 
-##### Structure Definition Escape Paths
+#### Structure Definition Escape Paths
 
 FSH uses the caret (`^`) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax is used to set the metadata attributes in SD, other than those set through [FSH Keywords](#keywords) (name, id, title, and description) or specified in one of the configuration files used to create the IG. Examples of metadata elements in SDs can be set with caret syntax include experimental, useContext, and abstract.
 
@@ -484,9 +485,9 @@ The following rules apply to binding in FSH:
 
   `* address.state from USPSTwoLetterAlphabeticCodes (extensible)`
 
-#### Narrowing Cardinality Rules
+#### Cardinality Rules
 
-Cardinality rules constrain the number of repetitions of an element. Every element has a cardinality inherited from its parent resource or profile. If the inheriting profile does not alter the cardinality, no cardinality rule is required.
+Cardinality rules constrain (narrow) the number of repetitions of an element. Every element has a cardinality inherited from its parent resource or profile. If the inheriting profile does not alter the cardinality, no cardinality rule is required.
 
 To change the cardinality, the grammar is:
 
@@ -496,7 +497,7 @@ As in FHIR, min and max are non-negative integers, and max can also be *, repres
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
-For convenience and compactness, cardinality rules can be combined with [flag assignement rules](#flag-assignment-rules) via the following grammar:
+For convenience and compactness, cardinality rules can be combined with [flag assignment rules](#flag-assignment-rules) via the following grammar:
 
 `* {path} {min}..{max} {flag1} {flag2} ...`
 
@@ -827,7 +828,7 @@ In FSH, mapping rules are not included in the profile definition.  Rather, they 
 
 ***
 
-### Defining Items in FHIR Shorthand
+### Defining Items
 
 This section shows how to define various items in FSH:
 
