@@ -670,11 +670,29 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
 
 #### Slicing Rules
 
-The subject of slicing is addressed three steps: (1) specifying the slices, (2) defining slice contents, and (3) providing the slicing logic.
+Slicing is an advanced, but necessary, feature of FHIR. While future versions of FHIR Shorthand will aim to lower the learning curve, FHIR Shorthand version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) specifying the slicing logic, (2) identifying the slices, and (3) defining each slice's contents.
 
-##### Step 1. Specifying Slices
+##### Step 1. Specifying the Slicing Logic
 
-The first step in slicing is exactly the same as specifying inline extensions, using the `contains` keyword. The following syntax is used:
+Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description.
+
+In FSH, authors must specify the slicing logic parameters using [structure definition escape (caret) syntax](#structure-definition-escape-paths). First they identify the element to be sliced, which is typically a multi-cardinality element. Then they traverses the structure definition at that point.
+
+**Example:**
+
+* Provide slicing logic for slices on Observation.component that should be distinguished by their code:
+
+```
+* component ^slicing.discriminator.type = #pattern
+* component ^slicing.discriminator.path = "code"
+* component ^slicing.rules = #open
+* component ^slicing.ordered = false   // can be omitted, since false is the default
+* component ^slicing.description = "Slice based on the component.code pattern"
+```
+
+##### Step 2. Identifying Slices
+
+The next step in slicing is exactly the same as specifying inline extensions, using the `contains` keyword. The following syntax is used:
 
 ```
 * {array element path} contains
@@ -683,13 +701,13 @@ The first step in slicing is exactly the same as specifying inline extensions, u
        {sliceName3} {card3} {flags3} ...
 ```
 
-In this pattern, the `{array element path}` is a path to an element with multiple cardinality that is to be sliced, `{card}` is required, and `{flags}` is optional.
+In this pattern, the `{array element path}` is a path to the element that is to be sliced (and to which the slicing rules were applied in step 1). The `{card}` declaration is required, and `{flags}` are optional.
 
-A slice must match the data type of the array it slices. In particular:
+Each slice will match or constrain the data type of the array it slices. In particular:
 
-* If an array is a one of the FHIR data types, the slice must be the same data type. For example, if you want to slice has type 'identifier', then each slice must also be type 'identifier' -- typically, a constrained version of that data type.
+* If an array is a one of the FHIR data types, each slice will be the same data type or a profile of it. For example, if an array of 'identifier' is sliced, then each slice will also be type 'identifier' or a profile of 'identifier'.
 * If the sliced array is a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints may be applied to the slices.
-* If the array to be sliced is a Reference, then each slice must be one of the allowed Reference types. For example, if element to be sliced is Reference(Observation \| Condition), then each slice must either be Reference(Observation) or Reference(Condition), or a profiled version of those resources.
+* If the array to be sliced is a Reference, then each slice must be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation \| Condition), then each slice must either be Reference(Observation \| Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
 
 **Example:**
 
@@ -724,16 +742,11 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
          TenMinuteScore 0..1
 ```
 
-##### Step 2. Defining Slice Contents
+##### Step 3. Defining Slice Contents
 
-There are two approaches to defining the slices themselves:
+At a minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
 
-1. Provide the slice details inline in the profile. This approach is applicable as long as the sliced array is not a Reference to another resource.
-2.  Define the slice as a separate item. There are two sub-cases:
-    * If the sliced array involves references to other resources, such as Observation.hasMember, the slice will be defined by a profile (defined internally and referred to by its name, or externally and referred by its URL).
-    * If the slice is a datatype or backbone element, see [defining slices](#defining-slices).
-
-The syntax for inline definition of slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
+Future versions of FHIR Shorthand may support standalone slice definitions, but FHIR Shorthand version 1.0 requires slice contents to be defined inline. The syntax for inline definition of slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
 
 ```
 * {path to slice}.{subpath} {constraint}
@@ -747,32 +760,13 @@ The syntax for inline definition of slices is the same as constraining any other
 * component contains 
      SystolicBP 1..1 and 
      DiastolicBP 1..1
-* component[SystolicBP].code = LNC#8480-6 "Systolic blood pressure"
+* component[SystolicBP].code = LNC#8480-6 // Systolic blood pressure
 * component[SystolicBP].value[x] only Quantity
 * component[SystolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
-* component[DiastolicBP].code = LNC#8462-4 "Diastolic blood pressure"
+* component[DiastolicBP].code = LNC#8462-4 // Diastolic blood pressure
 * component[DiastolicBP].value[x] only Quantity
 * component[DiastolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
 ```
-
-##### Step 3. Providing the Slicing Logic
-
-Slicing in FHIR requires the user to specify a [discriminator path, type, and rules](http://www.hl7.org/fhiR/profiling.html#discriminator). Optionally, you can declare provide a description and declare the slice as ordered or unordered (the default is unordered).
-
-One way to specify the slicing logic parameters is to use [structure definition escape (caret) syntax](#structure-definition-escape-paths). The author identifies the sliced element, and then traverses the structure definition at that point.
-
-**Example:**
-
-* Provide slicing logic for slices on Observation.component:
-
-```
-* component ^slicing.discriminator.type = #pattern
-* component ^slicing.discriminator.path = "code"
-* component ^slicing.rules = #open
-* component ^slicing.ordered = false   // can be omitted, since false is the default
-* component ^slicing.description = "Slice based on the component.code pattern"
-```
-
 
 #### Invariant Rules
 
@@ -830,7 +824,6 @@ This section shows how to define various items in FSH:
 * [Aliases](#defining-aliases)
 * [Profiles](#defining-profiles)
 * [Extensions](#defining-extensions)
-* [Slices](#defining-slices)
 * [Instances](#defining-instances)
 * [Value Sets](#defining-value-sets)
 * [Code Systems](#defining-code-systems)
@@ -871,7 +864,6 @@ The use of individual keywords is explained in greater detail in the following s
 | `Parent` | Specifies the base class for a profile or extension | name |
 | `Profile` | Introduces a new profile | name |
 | `Severity` | error, warning, or guideline in invariant | code |
-| 🚫 `Slice` | Introduces a new slice | name, string |
 | `Source` | Profile or path a mapping applies to | path |
 | `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
@@ -969,43 +961,6 @@ Description: "A code classifying the person's sex assigned at birth"
   Title:          "Binary Birth Sex Extension"
   Description:     "As of 2019, certain US states only allow M or F on birth certificates."
   * valueCode from BinaryBirthSex (required)
-```
-
-#### Defining Slices
-
-🚧 As [discussed earlier](#slicing-rules), slices are incorporated into profiles using `contains` rules. Slices can be defined through  [define inline slice definitions](#step-2-defining-slice-contents).
-
-Alternatively, slices can be defined as independent, modular entities. Defining slices outside a particular profile also allows the slices to be reused in multiple contexts.
-
-The syntax for defining a slice is the same as for FSH profiles, except that the initial keyword is `Slice`. The parent of a slice must be declared, and must be a data type or backbone element. Note that the SD escape character (^) cannot be used in a slice definition, since slices do not have separate SDs.
-
-**Example** 
-
-* Define the slices for a BloodPressure profile:
-
-```
-  Slice:     SystolicBP
-  Parent:    Observation.component
-  Description: "The blood pressure during left ventricle contraction"
-  * code = LNC#8480-6 "Systolic blood pressure"
-  * value[x] only Quantity
-  * valueQuantity units = UCUM#mm[Hg] "mmHg"
-
-  Slice:    DiastolicBP
-  Parent:   Observation.component
-  Description: "The blood pressure when the heart rests between beats"
-  * code = LNC#8462-4 "Diastolic blood pressure"
-  * value[x] only Quantity
-  * valueQuantity units = UCUM#mm[Hg] "mmHg"
-```
-
-Note that since Observation.component is a BackboneElement, the example above must use the path `Observation.component` for the `Parent` value. It is also possible to specify a FHIR complex data type as the value for `Parent`.  This would allow the slice to be used wherever there is an array of that type.  For example:
-
-```
-Slice:    NPI
-Parent:   Identifier
-Description: "The U.S. National Provider Identifier (NPI)"
-* system = http://hl7.org/fhir/sid/us-npi
 ```
 
 #### Defining Instances
