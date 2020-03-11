@@ -403,7 +403,7 @@ Here is a summary of the rules supported in FSH:
 
 | Rule Type | Syntax |
 | --- | --- |
-| Fixed value |`* {path} = {value}`  | 
+| Fixed value |`* {path} = {value}` <br/> `* path := value` |
 | Value set binding |`* {path} from {valueSet} ({strength})`| 
 | Narrowing cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
@@ -418,9 +418,13 @@ Here is a summary of the rules supported in FSH:
 
 #### Fixed Value Rules
 
-Fixed value assignments follow this syntax:
+Fixed value assignments follow one of these syntaxes:
 
 `* {path} = {value}`
+
+`* {path} = {value} (exactly)`
+
+The `exactly` option is applicable only to Profiles and Extensions, not to instances. It indicates that conformance to the profile requires an exact match to the specified value, and any extensions or ids, array elements are disallowed. Without the `exactly` flag, an instance that matches the pattern defined in the profile is considered conformant.
 
 To assign a reference to another resource, use:
 
