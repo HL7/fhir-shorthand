@@ -8,16 +8,15 @@ This implementation guide includes the following chapters :
 
 In addition, the IG includes several downloads, including a [Quick Reference Sheet](FSHQuickReference.pdf) and [zip file](fsh-tutorial-master.zip) for the FSH Tutorial _(informative content)_.
 
-The IG uses the following conventions:
+This IG uses the following conventions:
 
 | Style | Explanation | Example |
 |:----------|:------|:---------|
-| `Code` | Code fragments, such as commands and FSH statements  | `* status = #open` |
-| _italics_ | Used to introduce named items, such as data types, resource names, file names, etc. | _example-1.fsh_ |
-| ' ' (single quotes) | Used to highlight a literal value | the code 'confirmed'|
-| {curly braces} | An item to be substituted | `{codesystem}#{code}` |
-| **bold** | Emphasis |  Do **not** ignore this. |
+| `Code` | Code fragments, such as commands, FSH statements, and syntax expressions  | `* status = #open` |
+| {curly braces} | An item to be substituted in a syntax pattern | `{codesystem}#{code}` |
+| **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
+
 
 
 ### Introduction
@@ -72,13 +71,13 @@ Additional IG content such as narrative page content, images, and customized men
 
 SUSHI is a translator that converts FSH to FHIR. Currently, SUSHI is installed and runs locally on your own computer from the command line. Installing SUSHI is described [here](sushi.html#installation). The language (Typescript) and the underlying architecture of SUSHI is compatible with future server-based deployment.
 
-After SUSHI runs, a new directory appears in the FSH Tank. This directory (named _/build_ by default) contains all the files necessary to run the IG Publisher. FHIR artifacts, such as profiles, extensions, value sets, and instances can be found in the _/build/input_ directory after running SUSHI.
+After SUSHI runs, a new directory appears in the FSH Tank. This directory (named **/build** by default) contains all the files necessary to run the IG Publisher. FHIR artifacts, such as profiles, extensions, value sets, and instances can be found in the **/build/input** directory after running SUSHI.
 
 #### Running the IG Publisher
 
-After running SUSHI, the IG Publisher can be run from the build directory, populating the _/build/output_ directory. The home page for the IG is _/build/output/index.html_. It can be opened in any browser.
+After running SUSHI, the IG Publisher can be run from the build directory, populating the **/build/output** directory. The home page for the IG is **/build/output/index.html**. It can be opened in any browser.
 
-If HL7 is publishing your IG, you need to move the build files (excluding _/build/output_, _/build/temp_, and _/build/template_) to your IG's repository on http://hl7.github.com. If your HL7 repository is configured to use the [Auto-Builder](https://github.com/FHIR/auto-ig-builder), then when you push the build files to it, the IG Publisher will run automatically and your IG will appear on the continuous integration site, https://build.fhir.org.
+If HL7 is publishing your IG, you need to move the build files (excluding **/build/output**, **/build/temp**, and **/build/template**) to your IG's repository on http://hl7.github.com. If your HL7 repository is configured to use the [Auto-Builder](https://github.com/FHIR/auto-ig-builder), then when you push the build files to it, the IG Publisher will run automatically and your IG will appear on the continuous integration site, https://build.fhir.org.
 
 ### Shorthand Language Overview
 
@@ -91,18 +90,24 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 * **Whitespace**: Repeated whitespace is not meaningful within FSH files, except within string delimiters.
 * **Comments**: FSH follows [JavaScript syntax](https://www.w3schools.com/js/js_comments.asp) for code comments, with `//` denoting single-line comments, and the pair `/*`  `*/` delimiting multiple line comments.
-* **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set `Organization.active` to `true`:
+* **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
 
-  `* active = true`
+  ```
+  * active = true
+  ```
 
 * **Escape Character**: FSH uses the backslash as the escape character in string literals. For example, use `\"` to embed a quotation mark in a string.
-* **Circumflex Character ("Caret Syntax")**: FSH uses the circumflex (also called caret) `^` to directly reference the definitional structure associated with an item. For example, when defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element `StructureDefinition.experimental` from the FSH code that defines a profile:
+* **Circumflex Character ("Caret Syntax")**: FSH uses the circumflex (also called caret) `^` to directly reference the definitional structure associated with an item. For example, when defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental from the FSH code that defines a profile:
 
-  `* ^experimental = false`
+  ```
+  * ^experimental = false
+  ```
 
 * **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and oids. Once defined anywhere in the FSH tank, the alias can be used anywhere the url or oid can be used. For example:
 
-  `Alias: SCT = http://snomed.info/sct`
+  ```
+  Alias: SCT = http://snomed.info/sct
+  ```
 
 
 
@@ -110,41 +115,54 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 
 FSH provides special grammar for expressing coded data types. The shorthand for a Coding is:
 
-`{system}#{code} "{display text}"`
+```
+{system}#{code} "{display text}"
+```
 
 For a FHIR `code` data type, the {system} is omitted. The display text is optional but helps with readability. The `{system}` represents the controlled terminology that the code is taken from. Here are a few examples:
 
 * The code 363346000 from SNOMED-CT:
 
-  `http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"`
+  ```
+  http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
+  ```
 
 * The same code, using the Snomed-CT alias defined above: 
 
-  `SCT#363346000 "Malignant neoplastic disease (disorder)"`
+  ```
+  SCT#363346000 "Malignant neoplastic disease (disorder)"
+  ```
 
 This grammar can be used when assigning a coded value to an element whose data type is code, Coding, or CodeableConcept. FSH uses the `=` sign to express assignment. Assignment statements (and other [FSH rules](#rules)) always begin with an asterisk.
 
 * To set the first Coding in a CodeableConcept:
 
-  `* bodySite = SCT#87878005 "Left cardiac ventricular structure"`
+  ```
+  * bodySite = SCT#87878005 "Left cardiac ventricular structure"
+  ```
 
 * To set the text of a CodeableConcept:
 
-  `* bodySite.text = "Left ventricle"`
+  ```
+  * bodySite.text = "Left ventricle"
+  ```
 
 Quantity is another case of a coded data type. The code is interpreted as the units of measure of the quantity:
 
- ```
- Alias: UCUM = http://unitsofmeasure.org
- ...
- * valueQuantity = UCUM#mm "millimeters"
- ```
+```
+Alias: UCUM = http://unitsofmeasure.org
+...
+
+* valueQuantity = UCUM#mm "millimeters"
+```
 
 #### Keywords
 
 Keywords are used to make declarations that introduce new items. A keyword statement follows the syntax:
 
-`{Keyword}: {value or expression}`
+```
+{Keyword}: {value or expression}
+```
 
 Here's an example of keywords declaring a profile:
 
@@ -194,49 +212,79 @@ Each type of item has a different set of required and optional keywords. For exa
 
 The keyword section is followed by a number of rules. Rules are the mechanism for constraining a profile, defining an extension, creating slices, and more. All rules begin with an asterisk:
 
-`* {rule statement}`
+```
+* {rule statement}
+```
 
 There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference.html#rules) are given in the [FSH Language reference](reference.html). Here is a summary:
 
 * **Fixed value (assignment) rules** are used to set constant values in profiles and instances. For example:
 
-  `* bodySite.text = "Left ventricle"`
+  ```
+  * bodySite.text = "Left ventricle"
+  ```
 
-  `* onsetDateTime = "2019-04-02"`
+  ```
+  * onsetDateTime = "2019-04-02"
+  ```
 
-  `* status = #arrived`
+  ```
+  * status = #arrived
+  ```
 
 * **Value set binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include one of FHIR's binding strengths (example, preferred, extensible, or required). For example:
 
-  `* gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)`
+  ```
+  * gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)
+  ```
 
-  `* address.state from USPSTwoLetterAlphabeticCodes (extensible)`
+  ```
+  * address.state from USPSTwoLetterAlphabeticCodes (extensible)
+  ```
 
 * **Cardinality rules** constrain the number of occurrences of an element, either both upper and lower bounds, or just upper or lower bound. For example:
 
-  `* note 0..0`
+  ```
+  * note 0..0
+  ```
 
-  `* note 1..`
+  ```
+  * note 1..
+  ```
 
-  `* note ..5`
+  ```
+  * note ..5
+  ```
 
 * **Data type rules** restrict the type of value that can be used in an element. For example:
 
-  `* value[x] only CodeableConcept`
+  ```
+  * value[x] only CodeableConcept
+  ```
 
-  `* onset[x] only Period or Range`
+  ```
+  * onset[x] only Period or Range
+  ```
 
 * **Reference type rules** restrict the type of resource that a Reference can refer to. For example:
 
-  `* recorder only Reference(Practitioner)`
+  ```
+  * recorder only Reference(Practitioner)
+  ```
 
-  `* recorder only Reference(Practitioner | PractitionerRole)`
+  ```
+  * recorder only Reference(Practitioner | PractitionerRole)
+  ```
 
 * **Flag rules** add bits of information about elements impacting how implementers should handle them. For example:
 
-  `* communication MS ?!`
+  ```
+  * communication MS ?!
+  ```
 
-  `* identifier, identifier.system, identifier.value, name, name.family MS`
+  ```
+  * identifier, identifier.system, identifier.value, name, name.family MS
+  ```
 
 * **Extension rules** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword. 
 
@@ -304,31 +352,47 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
 * **Invariant rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
 
 
-  `* obeys us-core-9  // invariant applies to entire profile`  
+  ```
+  * obeys us-core-9  // invariant applies to entire profile
+  ```  
 
-  `* name obeys us-core-8  // invariant applies to the name element`
+  ```
+  * name obeys us-core-8  // invariant applies to the name element
+  ```
 
 * **Extensional (explicit) code rules** are used to include or exclude specific codes in value sets and code systems. For example:
 
-  `* SCT#54102005 "G1 grade (finding)"`
+  ```
+  * SCT#54102005 "G1 grade (finding)"
+  ```
 
-  `* exclude SCT#12619005`
+  ```
+  * exclude SCT#12619005
+  ```
 
   When defining a new code system, the code system (SCT, in the examples) is omitted and an optional definition can be appended as a separate string.
 
 * **Intensional (implicit) code rules** are used to include or exclude sets of values in value sets. For example, to include all codes from a code system:
 
-  `* codes from system RXNORM`
+  ```
+  * codes from system RXNORM
+  ```
 
   Similar rules can include or exclude all codes from another value set:
 
-  `* codes from valueset ConditionStatusTrendVS`
+  ```
+  * codes from valueset ConditionStatusTrendVS
+  ```
 
-  `* exclude codes from valueset ConditionStatusTrendVS`
+  ```
+  * exclude codes from valueset ConditionStatusTrendVS
+  ```
 
   More complex intensional rules involving filters are also possible. These rules depend on relationships or properties defined in a specific code system. A rule for LOINC, for example, would not be applicable to SNOMED-CT. Here is an example of a SNOMED-CT intensional rule with a filter:
 
-  `* codes from system SCT where concept is-a #123037004 "BodyStructure"`
+  ```
+  * codes from system SCT where concept is-a #123037004 "BodyStructure"
+  ```
 
 ### FSH Line-by-Line Walkthrough
 
@@ -426,11 +490,11 @@ A few things to note about this example:
 
 ### Future Considerations
 
-In this introduction, we presented an overview of FSH and SUSHI. Not all the features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference.html). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi.html).
+In this introduction, we presented an overview of FSH and SUSHI. Not all features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference.html). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi.html).
 
 Version 1.0 of FSH and SUSHI are capable of producing sophisticated IGs and offer more than a "minimum viable product". Future versions may introduce additional features. Some of the features under consideration include (in no order):
 
-* **Slicing Support:** AKA “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything, SUSHI will handle most slicing situations without explicit declarations of discriminator type or path by the user. To enable this, FHIR Shorthand will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices.
+* **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FHIR Shorthand will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices. We have nicknamed this “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything.
 
 * **Multiple Language Support:** At present, FSH supports only one language. In the future, FSH and SUSHI may introduce mechanisms for generating IGs in multiple languages.
 
