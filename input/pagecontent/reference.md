@@ -28,9 +28,9 @@ There are some language elements documented here that are not yet implemented in
 
 [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
 
-#### Reserved Words
+#### Keywords
 
-FSH has a number of Keywords and reserved words (e.g., `Alias`, `Profile`, `Extension`, `and`, `or`, `from`, `contains`, `obeys`). For a complete list of reserved words, refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr).
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`. The following words are reserved when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`.
 
 #### Primitives
 
