@@ -71,13 +71,13 @@ Additional IG content such as narrative page content, images, and customized men
 
 SUSHI is a translator that converts FSH to FHIR. Currently, SUSHI is installed and runs locally on your own computer from the command line. Installing SUSHI is described [here](sushi.html#installation). The language (Typescript) and the underlying architecture of SUSHI is compatible with future server-based deployment.
 
-After SUSHI runs, a new directory appears in the FSH Tank. This directory (named _/build_ by default) contains all the files necessary to run the IG Publisher. FHIR artifacts, such as profiles, extensions, value sets, and instances can be found in the _/build/input_ directory after running SUSHI.
+After SUSHI runs, a new directory appears in the FSH Tank. This directory (named **/build** by default) contains all the files necessary to run the IG Publisher. FHIR artifacts, such as profiles, extensions, value sets, and instances can be found in the **/build/input** directory after running SUSHI.
 
 #### Running the IG Publisher
 
-After running SUSHI, the IG Publisher can be run from the build directory, populating the _/build/output_ directory. The home page for the IG is _/build/output/index.html_. It can be opened in any browser.
+After running SUSHI, the IG Publisher can be run from the build directory, populating the **/build/output** directory. The home page for the IG is **/build/output/index.html**. It can be opened in any browser.
 
-If HL7 is publishing your IG, you need to move the build files (excluding _/build/output_, _/build/temp_, and _/build/template_) to your IG's repository on http://hl7.github.com. If your HL7 repository is configured to use the [Auto-Builder](https://github.com/FHIR/auto-ig-builder), then when you push the build files to it, the IG Publisher will run automatically and your IG will appear on the continuous integration site, https://build.fhir.org.
+If HL7 is publishing your IG, you need to move the build files (excluding **/build/output**, **/build/temp**, and **/build/template**) to your IG's repository on http://hl7.github.com. If your HL7 repository is configured to use the [Auto-Builder](https://github.com/FHIR/auto-ig-builder), then when you push the build files to it, the IG Publisher will run automatically and your IG will appear on the continuous integration site, https://build.fhir.org.
 
 ### Shorthand Language Overview
 
