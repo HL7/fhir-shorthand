@@ -487,7 +487,7 @@ Binding is the process of associating a coded element with a set of possible val
 
 `* {path} from {valueSet} ({strength})`
 
-The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-tanks), or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared a dependency in the _package.json_ file.
+The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-tanks), or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared an external dependency.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
 
@@ -896,14 +896,15 @@ The use of individual keywords is explained in greater detail in the following s
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Invariant` | Declares a new invariant | name |
 | 🚧 `Mapping` | Declares a new mapping | name |
-| `Mixins` | Declares mix-in constraints in a profile | name or names (comma separated) |
+| `Mixins` | Declares rule sets or profile rules to be included in a profile | name or names (comma separated) |
 | `Parent` | Specifies the base class for a profile or extension | name |
 | `Profile` | Declares a new profile | name |
-| `RuleSet` | Declares a set of rules to be used as a mixin | name |
+| `RuleSet` | Declares a set of rules that can be used as a mixin | name |
 | `Severity` | error, warning, or guideline in invariant | code |
 | `Source` | Profile or path a mapping applies to | path |
 | `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
+| `Usage` | Specifies how an instance is intended to be used in the IG | Example, Definition, or Inline |
 | `ValueSet` | Declares a new value set | name |
 | `XPath` | the xpath in an invariant | string |
 {: .grid }
@@ -1002,15 +1003,23 @@ Description:     "As of 2019, certain US states only allow M or F on birth certi
 
 #### Defining Instances
 
-Instances are defined using the keywords `Instance`, `InstanceOf`, `Title` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` in profiles. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL if defined externally.
+Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL (or alias) if defined externally.
 
 Instances inherit structures and values from their StructureDefinition (i.e. fixed codes, extensions). Fixed value rules are used to set additional values.
 
-**Examples:** 
+The `Usage` keyword specifies how the instance should be presented in the IG:
+
+* `Usage: Example` means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
+* `Usage: Definition` means the instance is a conformance item that is an instances of a resource such as a search parameter, operation definition, or questionnaire. These items will presented on their own IG page.
+* `Usage: Inline` means the instance should not be instantiated as an independent resource, but appears as part of another instance (for example, in a composition or bundle).
+
+
+**Examples:**
 ```
-Instance:   EveAnyperson
+Instance:  EveAnyperson
 InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
-Title:      "Eve Anyperson"
+Title:   "Eve Anyperson"
+Usage:  Example
 * name.given = "Eve"
 * name.given[1] = "Steve"
 * name.family = "Anyperson"
@@ -1022,7 +1031,8 @@ Title:      "Eve Anyperson"
 ```
 Instance:   DrDavidAnydoc
 InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
-Title:      "Dr. David Anydoc"
+Title:  "Dr. David Anydoc"
+Usage:  Example
 * name[0].family = Anydoc
 * name[0].given[0] = David
 * name[0].suffix[0] = MD
@@ -1032,7 +1042,8 @@ Title:      "Dr. David Anydoc"
 ```
 Instance:   PrimaryCancerDiagnosis
 InstanceOf: http://hl7.org/fhir/us/mcode/StructureDefinition/onco-core-PrimaryCancerCondition
-Title:      "Primary Cancer Diagnosis"
+Title:  "Primary Cancer Diagnosis"
+Usage:  Example
 * subject = EveAnyperson
 * clinicalStatus = #active
 * verificationStatus = #confirmed
