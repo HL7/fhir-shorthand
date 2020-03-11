@@ -4,7 +4,7 @@ This chapter uses the following conventions:
 
 | Style | Explanation | Example |
 |:----------|:------|:---------|
-| `Code` | Code fragments, such as commands and FSH statements, or a syntax expression  | `* status = #open` |
+| `Code` | Code fragments, such as commands, FSH statements, and syntax expressions  | `* status = #open` |
 | {curly braces} | An item to be substituted in a syntax pattern | `{codesystem}#{code}` |
 | **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
