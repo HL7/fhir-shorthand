@@ -9,6 +9,7 @@ This chapter uses the following conventions:
 | ' ' (single quotes) | Used to highlight a literal value | the code 'confirmed'|
 | {curly braces} | An item to be substituted | `{codesystem}#{code}` |
 | **bold** | Emphasis |  Do **not** ignore this. |
+| 💪 | Power User Feature | 💪 Don't try this at home |
 {: .grid }
 
 ### FSH Foundations
@@ -310,7 +311,7 @@ Frequently in FHIR, an element has a Reference that has multiple targets. To add
 
 Addressing a type from a choice of types replaces the `[x]` in the property name with the type name (while also capitalizing the first letter). This follows the approach used in FHIR JSON and XML serialization.
 
-**Example:** 
+**Example:**
 
 * Fix value[x] string value to "Hello World":
 
@@ -403,7 +404,7 @@ Here is a summary of the rules supported in FSH:
 
 | Rule Type | Syntax |
 | --- | --- |
-| Fixed value |`* {path} = {value}`  | 
+| Fixed value |`* {path} = {value}` <br/> `* {path} = {value} (exactly)` |
 | Value set binding |`* {path} from {valueSet} ({strength})`| 
 | Narrowing cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
@@ -418,7 +419,7 @@ Here is a summary of the rules supported in FSH:
 
 #### Fixed Value Rules
 
-Fixed value assignments follow this syntax:
+Fixed value assignments follows this syntax:
 
 `* {path} = {value}`
 
@@ -428,15 +429,40 @@ To assign a reference to another resource, use:
 
 The left side of the expression follows the [FSH path grammar](#paths). The right side's data type must aligned with the data type of the final element in the path.
 
+**Note:** In profiles and extensions, fixed values represent the **minimum criteria** for conformance. Consider the following two statements:
+
+`* code = http://loinc.org#69548-6`
+
+`* code = http://loinc.org#69548-6 "Genetic variant assessment"`
+
+In the context of a **profile**, the first statement signifies an instance must have (1) the system http://loinc.org and (2) the code 69548-6 to pass validation. The second statement says that an instance must have (1) the system http://loinc.org, (2) the code 69548-6, **and (3)** the display text "Genetic variant assessment" to pass validation. Typically, only the system and code are important conformance criteria, so the first statement (without the display text) is preferred in a profiling context. In an **instance**, however, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
+
+***
+ 💪 Power-User Feature: Forcing An Exact Match
+
+An additional syntax, applicable only to Profiles and Extensions, is:
+
+`* {path} = {value} (exactly)`
+
+The `exactly` option indicates that conformance to the profile requires a precise match to the specified value, **no more and no less**. Any additional extensions, ids, or additional array elements are specifically disallowed. The usual assignment, without `(exactly)`, allows any instance that fulfills the prescribed pattern to be considered conformant, **no less but possibly more**. For example, when assigning a fixed CodeableConcept in a profile, the typical simple assignment `=` allows additional codes in the Coding array. If you specify `(exactly)`, then one and only one Coding is allowed.
+
+**Note:** The `(exact)` modifier does not apply to instances.
+
+***
+
 **Examples:**
 
 * Assignment of a code data type:
 
   `* status = #arrived`
 
-* Assignment of a Coding or the first Coding element in a CodeableConcept:
+* Recommended style for assignment of a LOINC code in an **instance** of an Observation:
 
-  `* code = SCT#363346000 "Malignant neoplastic disease (disorder)"`
+  `* code = LNC#69548-6 "Genetic variant assessment"`
+
+* Recommended style for assignment of a LOINC code in an Observation **profile**:
+
+  `* code = LNC#69548-6  // Genetic variant assessment (display text in comment only!)`
 
 * Assignment of a boolean:
 
