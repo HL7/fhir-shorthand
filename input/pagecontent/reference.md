@@ -404,7 +404,7 @@ Here is a summary of the rules supported in FSH:
 
 | Rule Type | Syntax |
 | --- | --- |
-| Fixed value |`* {path} = {value}` <br/> `* path := value` |
+| Fixed value |`* {path} = {value}` <br/> `* {path} = {value} (exactly)` |
 | Value set binding |`* {path} from {valueSet} ({strength})`| 
 | Narrowing cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
@@ -460,9 +460,9 @@ The `exactly` option indicates that conformance to the profile requires a precis
 
   `* code = LNC#69548-6 "Genetic variant assessment"`
 
-* Recommended style for assignment of a LOINC code in a Observation **profile**:
+* Recommended style for assignment of a LOINC code in an Observation **profile**:
 
-  `* code = LNC#69548-6  // No display text!`
+  `* code = LNC#69548-6  // Genetic variant assessment (display text in comment only!)`
 
 * Assignment of a boolean:
 
