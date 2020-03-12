@@ -1,11 +1,11 @@
-[FHIR Shorthand](https://github.com/HL7/fhir-shorthand) (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IGs). It is simple and compact, with tools to produce Fast Healthcare Interoperability Resources (FHIR) profiles, extensions and IGs. FSH is compiled from text files to FHIR artifacts using [SUSHI](https://github.com/standardhealth/sushi). To get started using FSH, you need to install and run SUSHI using the steps below.
+[FHIR Shorthand](reference.html) (FSH) is a specially-designed language for defining the content of FHIR Implementation Guides (IGs). It is simple and compact, with tools to produce Fast Healthcare Interoperability Resources (FHIR) profiles, extensions and IGs. FSH is compiled from text files to FHIR artifacts using [SUSHI](sushi.html). To get started using FSH, you need to install and run SUSHI using the steps below.
 
 **Platform notes:**
 
 | Symbol | Explanation |
 |:----------|:------|
 | 💻 | Indicates information or command specific to Windows. A command window can be launched by typing `cmd` at the _Search Windows_ tool. |
-| 🍎 | Indicates information or command specific to OS X. The instructions assume the shell script is **bash**. As of the Mac Catalina release, the default is **zsh** and will need to be reconfigured as a default or at runtime to call bash shell. You can find out the default shell in a Mac terminal by running `echo $SHELL`.|
+| 🍎 | Indicates information or command specific to OS X. Commands can be run within the Terminal application. |
 | $ | Represents command prompt (may vary depending on platform) |
 {: .grid }
 
@@ -25,6 +25,14 @@ To install SUSHI, return to the command prompt, and issue this command:
 ```
 $ npm install -g fsh-sushi
 ```
+
+Check the installation by typing the following command:
+
+```
+$ sushi -h
+```
+
+If the command outputs instructions on using SUSHI command line interface (CLI), you're ready to run SUSHI.
 
 ### Step 3: Download Sample FSH Tank
 To start with some working examples of FSH files and a skeleton FSH tank, [download the fsh-tutorial-master.zip file](fsh-tutorial-master.zip) and unzip it into a directory of your choice. The zip file is also available from the Downloads menus, directly above.
@@ -85,17 +93,17 @@ Now run:
 
 🍎   `$ ./_genonce.sh`
 
-This will run the HL7 FHIR IG generator, which might several minutes to complete.
+This will run the HL7 FHIR IG generator, which may take several minutes to complete.
 
 After the publisher is finished, open the file **/FishExample/build/output/index.html** to see the resulting IG.
 
-Under artifacts menu, the IG contains two profiles, FishPatient and Veterinarian. However, if you look more closely, they don't yet have any differentials.
+If you click on the Artifacts Summary item in the menu, you will see that the IG contains two profiles, FishPatient and Veterinarian. If you look at each of them, you will notice that they have minimal differentials. The only way in which they differ from their base resource is that they require at least one name.
 
 ### Step 6: Setting Cardinalities in a Profile
 
 It is not widely known, but FHIR is designed to be used for veterinary medicine as well as human. For a non-human patient, we need to record the species. The Patients in this Tutorial are going to be various species of fish 🐟. 
 
-Since fish don't get legally married (although some species do pair bond) and they don't communicate in a human language, the first thing we'll do in the FishPatient profile is eliminate these elements. To do this, open the file **FishPatient.fsh** in your favorite plain-text editor, and add the following rules after `Description` line:
+Since fish don't get legally married (although some species do pair bond) and they don't communicate in a human language, the first thing we'll do in the FishPatient profile is eliminate these elements. To do this, open the file **FishPatient.fsh** in your favorite plain-text editor, and add the following rules after the last non-blank line in the file:
 
 ```
 * maritalStatus 0..0
@@ -114,18 +122,20 @@ Extensions are created using the `contains` keyword. To add a standalone species
 
 `* extension contains FishSpecies named species 0..1`
 
-> Note: You must be running SUSHI version 0.10.0 or higher for this to not generate a parsing error
+> **Note:** You must be running SUSHI version 0.10.0 or higher for this to not generate a parsing error
 
 This rule states that the `extension` array of the Patient resource will incorporate the `FishSpecies` extension with the local name `species`.
 
-To do this, add the following lines to the end of the **FishPatient.fsh** file:
+To define the `FishSpecies` extension, add the following lines to the end of the **FishPatient.fsh** file:
 
 ```
-Extension:  FishSpecies
-Id: fish-species
-Title: "Fish Species"
+Extension:   FishSpecies
+Id:          fish-species
+Title:       "Fish Species"
 Description: "The species of the fish."
 ```
+
+> **NOTE:** FSH ignores extra whitespace, so authors can choose to use whitespace for improved visual alignment, as in the extension definition above.
 
 Run SUSHI again (`$ sushi .`). The count of Extensions should now be 1.
 
@@ -138,15 +148,15 @@ The FishSpecies extension doesn't quite do its job yet, because we haven't speci
 * valueCodeableConcept from FishSpeciesValueSet (extensible)
 ```
 
-The first rule restricts the value[x] (an built-in element of every FHIR extension) to a CodeableConcept using the `only` keyword. The second binds it to a value set (yet to be defined) using the `from` keyword. The binding strength will be `extensible`.
+The first rule restricts the value[x] (a built-in element of every FHIR extension) to a CodeableConcept using the `only` keyword. The second binds it to a value set (yet to be defined) using the `from` keyword. The binding strength will be `extensible`.
 
 To define FishSpeciesValueSet, add the following lines to the same file:
 
 ```
-ValueSet:  FishSpeciesValueSet
-Title: "Fish Species Value Set"
-Id: fish-species-value-set
-Description:  "Codes describing various species of fish, taken from SNOMED-CT."
+ValueSet:    FishSpeciesValueSet
+Title:       "Fish Species Value Set"
+Id:          fish-species-value-set
+Description: "Codes describing various species of fish, taken from SNOMED-CT."
 * codes from system http://snomed.info/sct where concept is-a SCT#90580008  "Fish (organism)"
 ```
 
@@ -174,19 +184,19 @@ Using aliases has no effect on the IG; it simply makes the FSH code a bit neater
 
 ### Step 10: Create Shorty, an Instance of FishPatient
 
-Every IG should provide examples of its profiles. We should provide an example instance of FishPatient. Our patient example is Shorty. You will use the `Instance` keywords, with `InstanceOf` set to `FishPatient`.
+Every IG should provide examples of its profiles. We should provide an example instance of FishPatient. Our patient example is Shorty. Create this example instance using the `Instance` keyword, with `InstanceOf` set to `FishPatient` and `Usage` set to `Example`.
 
-Here some information about Shorty to include in the instance:
+Include the following information about Shorty in the instance:
 
 * His given (first) name is "Shorty" and his family (last) name is "Koi-Fish".
 * Shorty is a Koi fish (Cyprinus rubrofuscus), represented as SNOMED-CT code 47978005 "Carpiodes cyprinus (organism)".
+
+If you need help with this, you can reference the [Defining Instances](reference.html#defining-instances) section of the specification. If you still need help, you can peek at the FSH files in the **FishExampleComplete** directory.
 
 Run SUSHI again, and re-generate the IG.
 
 * Did it compile without errors?
 * What does the IG look like now?
-
-If you need help with this, you can reference the FSH files in the **FishExampleComplete** directory.
 
 ### Step 11: Create a Veterinarian Profile
 
@@ -196,11 +206,11 @@ Now, add constraints and/or extensions to the Veterinarian profile:
 
 * In addition, slice the `identifier` array, making a license number required. The code system is http://terminology.hl7.org/CodeSystem/v2-0203 and the code is LN, for "License number".
 
+If you need help with this, you can reference the [Fixed Value Rules](reference.html#fixed-value-rules) and [Slicing Rules](reference.html#slicing-rules) sections of the specification. If you still need help, you can peek at the FSH files in the **FishExampleComplete** directory.
+
 Run SUSHI again, and re-generate the IG.
 
 * Did it compile without errors?
 * What does the IG look like now?
-
-If you need help with this, you can reference the FSH files in the **FishExampleComplete** directory.
 
 Congratulations! You've completed the FSH tutorial. It might be time to feast on some sushi!
