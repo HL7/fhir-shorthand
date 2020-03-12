@@ -1224,8 +1224,8 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
   * name.given[1] = "Steve"
   * name.family = "Anyperson"
   * birthDate = 1960-04-25
-  * us-core-race.ombCategory.valueCoding = RACE#2106-3 "White"
-  * us-core-ethnicity.ombCategory.valueCoding = RACE#21865 "Non Hispanic or Latino"
+  * extension[us-core-race].extension[ombCategory].valueCoding = RACE#2106-3 "White"
+  * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RACE#21865 "Non Hispanic or Latino"
   ```
 
 * Define an instance of US Core Practitioner, with name and NPI, meant to be inlined in a composition:
