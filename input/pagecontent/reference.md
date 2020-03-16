@@ -671,13 +671,13 @@ For convenience and compactness, cardinality rules can be combined with [flag as
   * component.referenceRange 0..0
   ```
 
-* 🚧 Require at least one category without changing its upper bound (*):
+* Require at least one category without changing its upper bound (*):
 
   ```
   * category 1..
   ```
 
-* 🚧 Allow at most one category without changing its lower bound (0):
+* Allow at most one category without changing its lower bound (0):
 
   ```
   * category ..1
@@ -959,8 +959,8 @@ Future versions of FHIR Shorthand may support standalone slice definitions, but 
 * Define SystolicBP and DiastolicBP slices inline:
 
   ```
-  * component contains 
-      SystolicBP 1..1 and 
+  * component contains
+      SystolicBP 1..1 and
       DiastolicBP 1..1
   * component[SystolicBP].code = LNC#8480-6 // Systolic blood pressure
   * component[SystolicBP].value[x] only Quantity
@@ -1010,20 +1010,26 @@ The referenced invariant and its properties must be declared somewhere within th
 
 #### Mapping Rules
 
-🚧 [Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
+[Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
 In FSH, mapping rules are not included in the profile definition.  Rather, they are included in a separate [Mapping definition](#defining-mappings) that provides additional context such as the higher level source and target. Within that definition mapping rules use the symbol `->` with the following grammar:
 
 ```
-* {path} -> {string}
+* -> "{map}" "{comment}" {mime-type}
 ```
+
+```
+* {path} -> "{map}" "{comment}" {mime-type}
+```
+
+In these rules, the `"{comment}"` and `{mime-type}` are optional. The mime type must conform to https://tools.ietf.org/html/bcp13 (FHIR value set https://www.hl7.org/fhir/valueset-mimetypes.html).
 
 **Examples:**
 
 * Map the entire profile to a Patient item in another specification:
 
   ```
-  * -> Patient
+  * -> "Patient" "This profile maps to Patient in Argonaut"
   ```
 
 * Map the identifier.value element from one IG to another:
@@ -1360,7 +1366,7 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 #### Defining Mappings
 
-🚧 [Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
+[Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
 
 > **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
@@ -1373,7 +1379,7 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are use
   Source:   USCorePatient
   Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
   Id:       argonaut-dq-dstu2
-  * -> Patient
+  * -> "Patient"
   * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
   * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
   * extension[USCoreBirthSexExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
@@ -1386,7 +1392,7 @@ In the example above, the target is another FHIR profile, but in many cases, the
 
 #### Defining Rule Sets
 
-🚧 Rule sets provide the ability to define rules and apply them ("mix in") to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places.
+Rule sets provide the ability to define rules and apply them ("mix in") to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places.
 
 Rule sets are defined by using the keyword `RuleSet`:
 
