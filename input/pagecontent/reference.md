@@ -498,11 +498,11 @@ Here is a summary of the rules supported in FSH:
 | Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
 | Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
 | Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
-| Standalone Extensions | `* {extension path} contains {ExtensionNameIdOrURL} named {extensionSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2} ...` 
+| Standalone Extensions | `* {extension path} contains {ExtensionNameIdOrURL} named {extensionSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2} ...`
 | Inline Extensions | `* {extension path} contains {extensionSliceName} {card} {flags}`  <br/> `* {extension path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2} ...` |
 | Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
 | Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
-| Mapping | `* {path} -> {string}` |
+| Mapping | `* -> "{map}" "{comment}" {mime-type}` <br/> `* {path} -> "{map}" "{comment}" {mime-type}` |
 {: .grid }
 
 #### Fixed Value Rules
@@ -1012,7 +1012,7 @@ The referenced invariant and its properties must be declared somewhere within th
 
 [Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
-In FSH, mapping rules are not included in the profile definition.  Rather, they are included in a separate [Mapping definition](#defining-mappings) that provides additional context such as the higher level source and target. Within that definition mapping rules use the symbol `->` with the following grammar:
+In FSH, mapping rules are not included in the profile definition. They are included in a separate [Mapping definition](#defining-mappings) that provides additional context such as the higher level source and target. Within that definition mapping rules use the symbol `->` with the following grammar:
 
 ```
 * -> "{map}" "{comment}" {mime-type}
@@ -1022,7 +1022,9 @@ In FSH, mapping rules are not included in the profile definition.  Rather, they 
 * {path} -> "{map}" "{comment}" {mime-type}
 ```
 
-In these rules, the `"{comment}"` and `{mime-type}` are optional. The mime type must conform to https://tools.ietf.org/html/bcp13 (FHIR value set https://www.hl7.org/fhir/valueset-mimetypes.html).
+The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target.
+
+In these rules, the `"{comment}"` string and `{mime-type}` code are optional. The mime type code must conform to https://tools.ietf.org/html/bcp13 (FHIR value set https://www.hl7.org/fhir/valueset-mimetypes.html).
 
 **Examples:**
 
@@ -1085,7 +1087,7 @@ The use of individual keywords is explained in greater detail in the following s
 | `Description` | Provides a human-readable description | string, markdown |
 | `Expression` | The FHIR path expression in an invariant | string |
 | `Extension` | Declares a new extension | name |
-| `Id` | Set a unique identifier of an item | name |
+| `Id` | An identifier for an item | name |
 | `Instance` | Declares a new instance | name |
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Invariant` | Declares a new invariant | name |
@@ -1095,7 +1097,7 @@ The use of individual keywords is explained in greater detail in the following s
 | `Profile` | Declares a new profile | name |
 | `RuleSet` | Declares a set of rules that can be used as a mixin | name |
 | `Severity` | error, warning, or guideline in invariant | code |
-| `Source` | Profile or path a mapping applies to | path |
+| `Source` | The profile mapping applies to | path |
 | `Target` | The standard that the mapping maps to | string |
 | `Title` | Short human-readable name | string |
 | `Usage` | Specifies how an instance is intended to be used in the IG | Example, Definition, or Inline |
@@ -1350,7 +1352,7 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 * Do not include a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
 * The definition of the term can be optionally provided as the second string following the code.
 
-**Example:**
+**Example:** Define a code system for yoga poses.
 
   ```
   CodeSystem:  YogaCS
@@ -1366,21 +1368,33 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 #### Defining Mappings
 
-[Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more modular approach.
+[Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more concise and efficient approach.
 
 > **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
-To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are used. Any number of [mapping rules](#mapping-rules) then follow.
+To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are required and `Title` and `Description` are optional. Any number of [mapping rules](#mapping-rules) follow. The keywords are defined as follows:
+
+| Keyword | Usage | SD element |
+|-------|------------|--------------|
+| Mapping | Appears first and provides a unique name for the mapping | n/a |
+| Source | The name of the profile the mapping applies to | n/a |
+| Target | The URL, URI, or OID for the specification being mapped to | mapping.uri |
+| Id | An internal identifier for the target specification | mapping.identity |
+| Title | A human-readable name for the target specification | mapping.name  |
+| Description | Additional information such as version notes, issues, or scope limitations. | mapping.comment |
 
 **Example:**
 
+* Define a map between USCorePatient and Argonaut
   ```
+
   Mapping:  USCorePatientToArgonaut
   Source:   USCorePatient
   Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
+  Title:    "Argonaut DSTU2"
   Id:       argonaut-dq-dstu2
   * -> "Patient"
-  * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
+  * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]" 
   * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
   * extension[USCoreBirthSexExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
   * identifier -> "Patient.identifier"
@@ -1388,7 +1402,7 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are use
   * identifier.value -> "Patient.identifier.value"
   ```
 
-In the example above, the target is another FHIR profile, but in many cases, the target will not use FHIR. For this reason, the right-hand side of mapping statements is always a string in order to allow the greatest flexibility. For this same reason, even though the target is FHIR in the example above, FSH cannot make any assumptions about how the individual target values work; thus the resource name "Patient" is included in the right-hand side values since this is how the mapping targets should be expressed in the SD.
+In the example above, the target is another FHIR IG, but in many cases, the target will not use FHIR. For this reason, the right-hand side of mapping statements is always a string, to allow the greatest flexibility. For the same reason, even though the target is FHIR in the example above, FSH cannot make any assumptions about how the individual target values work; thus the resource name "Patient" is included in the right-hand side values since this is how the mapping targets should be expressed in the SD.
 
 #### Defining Rule Sets
 

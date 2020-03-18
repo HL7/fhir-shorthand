@@ -105,5 +105,10 @@
       <code value="path-history"/>
       <value value="http://hl7.org/fhir/uv/shorthand/history.html"/>
     </parameter>
+    <resource>
+      <reference>
+        <reference value="ValueSet/nothing-vs"/>
+      </reference>
+    </resource>
   </definition>
 </ImplementationGuide>
