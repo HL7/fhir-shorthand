@@ -1474,7 +1474,7 @@ Invariants are incorporated into a profile via `obeys` rules explained [above](#
 
   ```
   Invariant:  us-core-8
-  Definition: "Patient.name.given or Patient.name.family or both SHALL be present"
+  Description: "Patient.name.given or Patient.name.family or both SHALL be present"
   Expression: "family.exists() or given.exists()"
   Severity:   #error
   XPath:      "f:given or f:family"

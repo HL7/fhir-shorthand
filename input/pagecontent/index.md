@@ -1,5 +1,5 @@
 
-This implementation guide includes the following chapters :
+This implementation guide includes the following chapters:
 
 1. [FHIR Shorthand Overview](index.html) (this chapter) -- Introduction to FSH and SUSHI _(informative content)_.
 1. [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI _(informative content)_.
@@ -16,7 +16,6 @@ This IG uses the following conventions:
 | {curly braces} | An item to be substituted in a syntax pattern | `{codesystem}#{code}` |
 | **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
-
 
 
 ### Introduction
