@@ -13,13 +13,7 @@ This chapter uses the following conventions:
 
 #### Versioning
 
-The FSH specification, like other IGs, follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
-
-* MAJOR: A major release has significant new functionality and, potentially, grammar changes or other non-backward-compatible changes.
-* MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
-* PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
-
-There are some language elements documented here that are not yet implemented in SUSHI. See the [SUSHI Release Notes](https://github.com/FHIR/sushi/releases) for further details.
+The FSH specification, like other IGs, follows the [semantic versioning](https://semver.org) convention (Major.Minor.Patch).
 
 #### Formal Grammar
 
@@ -27,40 +21,28 @@ There are some language elements documented here that are not yet implemented in
 
 #### Keywords
 
-FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`. The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. 
+
+The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`. 
+
+The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
 
 #### Primitives
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 
-##### Multi-line Strings
+References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
 
-For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and retain consistent indentation in the FSH file. When processing multi-line strings, the following approach is followed:
-* If the first line or last line contains only whitespace (including newline), discard it.
-* If another line contains only whitespace, truncate it to zero characters.
-* For all other non-whitespace lines, detect the shortest number of leading spaces and trim that from the beginning of every line.
 
-For example, an author might use a multi-line string to write markdown so that the markdown can be indented inside the FSH:
+#### Names
 
-```
-* ^purpose = """
-    * This profile is intended to support workflows where:
-      * this happens; or
-      * that happens
-    * This profile is not intended to support workflows where:
-      * nothing happens
-  """
-```
+Names in FSH follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". This guidance applies to Profile, Extension, ValueSet, and CodeSystem names.
 
-Using a normal string would require the following spacing to accomplish the same markdown formatting:
+Alias names may begin with `$`.
 
-```
-* ^purpose = "* This profile is intended to support workflows where:
-  * this happens; or
-  * that happens
-* This profile is not intended to support workflows where:
-  * nothing happens"
-```
+#### References to External FHIR Artifacts
+
+FHIR resources, profiles, extensions, and value sets defined outside the FSH tank are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`.
 
 #### Whitespace
 
@@ -95,6 +77,35 @@ These comments can take up multiple lines.
 ```
 
 The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation.
+
+#### Multi-line Strings
+
+For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and retain consistent indentation in the FSH file. When processing multi-line strings, the following approach is followed:
+* If the first line or last line contains only whitespace (including newline), discard it.
+* If another line contains only whitespace, truncate it to zero characters.
+* For all other non-whitespace lines, detect the shortest number of leading spaces and trim that from the beginning of every line.
+
+For example, an author might use a multi-line string to write markdown so that the markdown can be indented inside the FSH:
+
+```
+* ^purpose = """
+    * This profile is intended to support workflows where:
+      * this happens; or
+      * that happens
+    * This profile is not intended to support workflows where:
+      * nothing happens
+  """
+```
+
+Using a normal string would require the following spacing to accomplish the same markdown formatting:
+
+```
+* ^purpose = "* This profile is intended to support workflows where:
+  * this happens; or
+  * that happens
+* This profile is not intended to support workflows where:
+  * nothing happens"
+```
 
 #### Coded Data Types
 
@@ -476,8 +487,6 @@ The caret syntax can also be combined with element paths to set values in the El
   * communication.language ^binding.description = "This binding is dictated by US FDA regulations."
   ```
 
-
-***
 ### Rules
 
 Rules are the mechanism for constraining a profile, defining an extension, creating slices, and more. All rules begin with an asterisk:
@@ -1042,8 +1051,6 @@ In these rules, the `"{comment}"` string and `{mime-type}` code are optional. Th
 
 >**Note:** Unlike setting the mapping directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
-***
-
 ### Defining Items
 
 This section shows how to define various items in FSH:
@@ -1082,27 +1089,27 @@ The use of individual keywords is explained in greater detail in the following s
 
 | Keyword | Purpose | Data Type |
 |----------|---------|---------|
-| `Alias`| Defines an alias for a URL or OID | uri, url, or oid  |
+| `Alias`| Defines an alias for a URL or OID | name or $name |
 | `CodeSystem` | Declares a new code system | name |
 | `Description` | Provides a human-readable description | string, markdown |
-| `Expression` | The FHIR path expression in an invariant | string |
+| `Expression` | The FHIR path expression in an invariant | FHIRPath string |
 | `Extension` | Declares a new extension | name |
-| `Id` | An identifier for an item | name |
-| `Instance` | Declares a new instance | name |
+| `Id` | An identifier for an item | id |
+| `Instance` | Declares a new instance | id |
 | `InstanceOf` | The profile or resource an instance instantiates | name |
-| `Invariant` | Declares a new invariant | name |
-| `Mapping` | Declares a new mapping | name |
+| `Invariant` | Declares a new invariant | id |
+| `Mapping` | Declares a new mapping | id |
 | `Mixins` | Declares rule sets or profile rules to be included in a profile | name or names (comma separated) |
-| `Parent` | Specifies the base class for a profile or extension | name |
+| `Parent` | Specifies the base class for a profile or extension | name or url |
 | `Profile` | Declares a new profile | name |
-| `RuleSet` | Declares a set of rules that can be used as a mixin | name |
+| `RuleSet` | Declares a set of rules that can be used as a mixin | id |
 | `Severity` | error, warning, or guideline in invariant | code |
-| `Source` | The profile mapping applies to | path |
-| `Target` | The standard that the mapping maps to | string |
+| `Source` | The profile the mapping applies to | name |
+| `Target` | The standard being mapped to | uri |
 | `Title` | Short human-readable name | string |
-| `Usage` | Specifies how an instance is intended to be used in the IG | Example, Definition, or Inline |
+| `Usage` | Specifies how an instance is intended to be used in the IG | choice of `Example`, `Definition`, or `Inline` |
 | `ValueSet` | Declares a new value set | name |
-| `XPath` | the xpath in an invariant | string |
+| `XPath` | the xpath in an invariant | XPath string |
 {: .grid }
 
 #### Defining Aliases
@@ -1117,7 +1124,7 @@ Alias: {AliasName} = {url or oid}
 
 In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with a dollar sign ($).
 
-If you choose a name beginning with a dollar sign, then additional error checks can be carried out. Specifically, if a rule involves a $name, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
+If you choose an alias name beginning with a dollar sign, then additional error checks can be carried out. If a rule involves a name beginning with `$`, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
 
 Another best practice is to choose alias names written in all capitals.
 
@@ -1368,7 +1375,7 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 #### Defining Mappings
 
-[Mappings to other standards](https://www.hl7.org/fhir/mappings.html) are an optional part of a SD. These mappings are informative and are provided to help implementers understand the content of the SD and use the profile or resource correctly. While it is possible for profile authors to include mappings using escape syntax, FSH provides a more concise and efficient approach.
+[Mapping to other standards](https://www.hl7.org/fhir/mappings.html) is an optional part of a SD. These mappings are intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach.
 
 > **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
@@ -1499,4 +1506,3 @@ Invariants are incorporated into a profile via `obeys` rules explained [above](#
   Severity:   #error
   XPath:      "f:given or f:family"
   ```
-
