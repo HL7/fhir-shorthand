@@ -27,13 +27,26 @@ There are some language elements documented here that are not yet implemented in
 
 #### Keywords
 
-FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`. The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. 
+
+The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`. 
+
+The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
 
 #### Primitives
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 
-##### Multi-line Strings
+References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
+
+
+#### Names
+
+Names in FSH follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". This guidance applies to Profile, Extension, ValueSet, and CodeSystem names.
+
+Alias names (which have no FHIR analogy) may begin with `$`.
+
+#### Multi-line Strings
 
 For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and retain consistent indentation in the FSH file. When processing multi-line strings, the following approach is followed:
 * If the first line or last line contains only whitespace (including newline), discard it.
@@ -1080,29 +1093,29 @@ For some keywords, values are **FSH names**. A name is any sequence of non-white
 
 The use of individual keywords is explained in greater detail in the following sections. Here is a summary of keywords in FSH:
 
-| Keyword | Purpose | Data Type |
-|----------|---------|---------|
-| `Alias`| Defines an alias for a URL or OID | uri, url, or oid  |
-| `CodeSystem` | Declares a new code system | name |
-| `Description` | Provides a human-readable description | string, markdown |
-| `Expression` | The FHIR path expression in an invariant | string |
-| `Extension` | Declares a new extension | name |
-| `Id` | An identifier for an item | name |
-| `Instance` | Declares a new instance | name |
-| `InstanceOf` | The profile or resource an instance instantiates | name |
-| `Invariant` | Declares a new invariant | name |
-| `Mapping` | Declares a new mapping | name |
-| `Mixins` | Declares rule sets or profile rules to be included in a profile | name or names (comma separated) |
-| `Parent` | Specifies the base class for a profile or extension | name |
-| `Profile` | Declares a new profile | name |
-| `RuleSet` | Declares a set of rules that can be used as a mixin | name |
-| `Severity` | error, warning, or guideline in invariant | code |
-| `Source` | The profile mapping applies to | path |
-| `Target` | The standard that the mapping maps to | string |
-| `Title` | Short human-readable name | string |
-| `Usage` | Specifies how an instance is intended to be used in the IG | Example, Definition, or Inline |
-| `ValueSet` | Declares a new value set | name |
-| `XPath` | the xpath in an invariant | string |
+| Keyword | Purpose |
+|----------|---------|
+| `Alias`| Defines an alias for a URL or OID |
+| `CodeSystem` | Declares a new code system |
+| `Description` | Provides a human-readable description |
+| `Expression` | The FHIR path expression in an invariant |
+| `Extension` | Declares a new extension |
+| `Id` | An identifier for an item |
+| `Instance` | Declares a new instance |
+| `InstanceOf` | The profile or resource an instance instantiates |
+| `Invariant` | Declares a new invariant | identifier |
+| `Mapping` | Declares a new mapping |
+| `Mixins` | Declares rule sets or profile rules to be included in a profile |
+| `Parent` | Specifies the base class for a profile or extension |
+| `Profile` | Declares a new profile |
+| `RuleSet` | Declares a set of rules that can be used as a mixin |
+| `Severity` | error, warning, or guideline in invariant |
+| `Source` | The profile mapping applies to |
+| `Target` | The standard that the mapping maps to |
+| `Title` | Short human-readable name |
+| `Usage` | Specifies how an instance is intended to be used in the IG |
+| `ValueSet` | Declares a new value set |
+| `XPath` | the xpath in an invariant |
 {: .grid }
 
 #### Defining Aliases
@@ -1117,7 +1130,7 @@ Alias: {AliasName} = {url or oid}
 
 In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with a dollar sign ($).
 
-If you choose a name beginning with a dollar sign, then additional error checks can be carried out. Specifically, if a rule involves a $name, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
+If you choose an alias name beginning with a dollar sign, then additional error checks can be carried out. If a rule involves a name beginning with `$`, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
 
 Another best practice is to choose alias names written in all capitals.
 
