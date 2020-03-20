@@ -1,0 +1,32 @@
+{
+  "resourceType": "ValueSet",
+  "status": "active",
+  "name": "InstanceTags",
+  "id": "instance-tags",
+  "title": "Instance Tags",
+  "description": "Value set containing codes to be used with the Usage keyword on Instances defined by FHIR Shorthand. These codes are currently only used within FHIR Shorthand, but they could be used as resource tags in meta.tag.",
+  "version": "1.0.0",
+  "url": "http://hl7.org/fhir/uv/shorthand/ValueSet/instance-tags",
+  "compose": {
+    "include": [
+      {
+        "system": "hl7.org/fhir/uv/shorthand/shorthand-vocab",
+        "concept": [
+          {
+            "code": "example",
+            "display": "Example"
+          },
+          {
+            "code": "definition",
+            "display": "Definition"
+          },
+          {
+            "code": "inline",
+            "display": "Inline"
+          } 
+        ]
+      }
+
+    ]
+  }
+}
