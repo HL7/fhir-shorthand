@@ -107,8 +107,19 @@
     </parameter>
     <resource>
       <reference>
-        <reference value="ValueSet/nothing-vs"/>
+        <reference value="ValueSet/shorthand-instance-tags"/>
       </reference>
+      <name value="Shorthand Instance Tags"/>
+      <description value="Value set containing codes to be used with the Usage keyword on Instances defined by FHIR Shorthand. These codes are currently only used within FHIR Shorthand, but they could be used as resource tags in meta.tag."/>
+      <exampleBoolean value="false"/>
+    </resource>
+    <resource>
+      <reference>
+        <reference value="CodeSystem/shorthand-code-system"/>
+      </reference>
+      <name value="Shorthand Code System"/>
+      <description value="Code system containing local codes defined in FHIR Shorthand"/>
+      <exampleBoolean value="false"/>
     </resource>
   </definition>
 </ImplementationGuide>
