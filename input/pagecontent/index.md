@@ -501,7 +501,8 @@ Some of the features already under consideration include (in no order):
 
 * **Capability Statements:** Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements. Creative approaches and purpose-specific syntax could also be employed for other conformance resources such as SearchParameter.
 
+* **YAML Support:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is creating Questionnaires, essentially a hierarchical list. In this and similar situations, YAML is much more concise than FSH. Embedding YAML documents in FSH is under consideration.
+
 * **Logical Models:** FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
 
 * **Resource Definitions:** FSH may provide support for developing new FHIR resources and maintaining existing ones, to help HL7 Work Groups more effectively manage their contributions to FHIR core.
-
