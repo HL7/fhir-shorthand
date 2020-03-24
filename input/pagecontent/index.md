@@ -1,3 +1,11 @@
+<blockquote>
+<p style="color:#367615";>
+<strong>May 2020 HL7 Ballot Reviewers:</strong><br/>This is the first ballot of FHIR Shorthand, proposed as a Standard for Trial Use (STU). The FHIR Shorthand Implementation Guide contains both informal ("informative") and formal ("normative") content. The <a href="reference.html">FHIR Shorthand Language Reference</a> is the formal part of the specification. Other parts of the IG (Overview, Tutorial, SUSHI) are informative. Ballot comments are welcome on both the informative and normative content, but formal ballot resolution process will be applied to the normative content only.
+</p>
+<p style="color:#367615";>
+SUSHI &mdash; a reference implementation of software that transforms FHIR Shorthand into FHIR artifacts &mdash; has been developed hand-in-hand with FHIR Shorthand. SUSHI is available to test the specification, but is not a formal part of the ballot.
+</p>
+</blockquote>
 
 This implementation guide includes the following chapters:
 
@@ -501,7 +509,7 @@ Some of the features already under consideration include (in no order):
 
 * **Capability Statements:** Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements. Creative approaches and purpose-specific syntax could also be employed for other conformance resources such as SearchParameter.
 
-* **YAML Support:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is creating Questionnaires, essentially a hierarchical list. In this and similar situations, YAML is much more concise than FSH. Embedding YAML documents in FSH is under consideration.
+* **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain yet more items. A syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
 
 * **Logical Models:** FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
 
