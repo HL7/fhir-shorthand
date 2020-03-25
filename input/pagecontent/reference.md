@@ -38,7 +38,7 @@ References in this document to `code`, `id`, `oid`, etc. refer to the primitive 
 
 Names in FSH follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". This guidance applies to Profile, Extension, ValueSet, and CodeSystem names.
 
-Alias names may begin with `$`.
+Alias names may begin with `$`. Choosing alias names beginning with `$` allows for additional error checking.
 
 #### References to External FHIR Artifacts
 
@@ -57,7 +57,7 @@ Parent:   CancerCondition
 is equivalent to:
 ```
              Profile:  
-SecondaryCancerCondition            Parent: CancerCondition
+SecondaryCancerCondition     Parent: CancerCondition
 
          * focus only
 PrimaryCancerCondition
@@ -118,8 +118,11 @@ Codes are denoted with `#` sign. The shorthand is:
 ```
 #{code}
 ```
-
->**Reminder:** In this document, curly braces are used to indicate a term that should be substituted.
+or 
+```
+#"{code}"
+```
+In general, the first syntax is sufficient. Quotes are only required in the rare case of a code containing white space.
 
 **Examples:**
 
@@ -133,6 +136,12 @@ Codes are denoted with `#` sign. The shorthand is:
 
   ```
   #<=
+  ```
+
+* Express a code with white space:
+
+  ```
+  #"VL 1-1, 18-65_1.2.2"
   ```
 
 * Assign the code `female` to the gender of a Patient:
@@ -161,25 +170,25 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
 
 **Examples:**
 
-* The code for malignant neoplastic disease from SNOMED-CT:
+* A Coding from SNOMED-CT:
 
   ```
   http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
   ```
   
-* The same code, assuming SCT has been defined as an alias for http://snomed.info/sct:
+* The same Coding, assuming SCT has been defined as an alias for http://snomed.info/sct:
 
   ```
   SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
   
-* A code from ICD10-CM (assuming a code system alias has been defined):
+* A Coding from ICD10-CM, assuming the alias $ICD for that code system:
 
   ```
-  ICD10CM#C004  "Malignant neoplasm of lower lip, inner aspect"
+  $ICD#C004  "Malignant neoplasm of lower lip, inner aspect"
   ```
   
-* A code with an explicit version set specified with bar syntax:
+* A Coding with an explicit version specified with bar syntax:
 
   ```
   http://hl7.org/fhir/CodeSystem/example-supplement|201801103#chol-mmol
