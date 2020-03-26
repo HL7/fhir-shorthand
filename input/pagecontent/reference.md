@@ -880,9 +880,9 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
         text 1..1 MS
 
     // constraints to define the inline extensions would follow, e.g.:
-  * extension[ombCategory] only Coding
+  * extension[ombCategory].value[x] only Coding
   * extension[ombCategory].valueCoding from http://hl7.org/fhir/us/core/ValueSet/omb-race-category (required)
-  * extension[text] only string
+  * extension[text].value[x] only string
     // etc...
   ```
 
