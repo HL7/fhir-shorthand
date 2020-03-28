@@ -243,7 +243,7 @@ This will run the HL7 IG Publisher, which will take several minutes to complete.
 
 ### IG Publisher Integration (Autobuild Configuration)
 
-The IG Publisher version 1.0.75 and higher includes native support for FHIR Shorthand and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named `/fsh`. Not having to run SUSHI seperately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
+The IG Publisher version 1.0.75 and higher includes native support for FHIR Shorthand and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named **/fsh**. Not having to run SUSHI separately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
 
 Autobuild is an action that is triggered when you commit IG sources to a Github repository hosted on https://github.com/HL7. Autobuild starts the IG Publisher, which does error checking and, if successful, publishes your IG to http://build.fhir.org. With SUSHI integration, you check in your FSH files to your github repository on https://github.com/HL7, and SUSHI and the IG Publisher will run automatically. 
 
@@ -251,12 +251,12 @@ To take advantage of autobuild with SUSHI support, the entire FSH tank must be p
 
 ```
 {Github repository root}
-└── /fsh
-    ├── File1.fsh
-    ├── File2.fsh
-    ├── File3.fsh
-    ├── ...
-    └── /ig-data (as shown above)
+      └── /fsh
+          ├── File1.fsh
+          ├── File2.fsh
+          ├── File3.fsh
+          ├── ...
+          └── /ig-data (as shown above)
 ```
 Every time you make a new commit to the repository, the SUSHI and the IG Publisher will run automatically.
 
@@ -264,14 +264,14 @@ For testing purposes, it is useful to run the IG Publisher locally. If you are u
 
 ```
 {Github repository root}
-├── /input-cache
-│   └── org.hl7.fhir.publisher.jar
-└── /fsh
-    ├── File1.fsh
-    ├── File2.fsh
-    ├── File3.fsh
-    ├── ...
-    └── /ig-data (as shown above)
+      ├── /input-cache
+      │   └── org.hl7.fhir.publisher.jar
+      └── /fsh
+          ├── File1.fsh
+          ├── File2.fsh
+          ├── File3.fsh
+          ├── ...
+          └── /ig-data (as shown above)
 ```
 
 Instead of running `_genonce`, use the following command:
@@ -284,15 +284,15 @@ The resulting directory structure will look something like this, with the home p
 
 ```
 {Github repository root}
-├── /input
-├── /input-cache
-├── /output
-├── /temp
-├── /template
-├── /fsh
-├── ig.ini
-├── package.json
-└── package-list.json
+      ├── /input
+      ├── /input-cache
+      ├── /output
+      ├── /temp
+      ├── /template
+      ├── /fsh
+      ├── ig.ini
+      ├── package.json
+      └── package-list.json
 ```
 When your files are in the autobuild configuration, and you want to only run SUSHI, issue this command from your root directory:
 
