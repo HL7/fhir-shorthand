@@ -62,6 +62,8 @@ As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 
 <img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="float:none; margin: 0px 0px 0px 0px;" />
 
+> Note: The IG Publisher has recently (late March 2020) integrated SUSHI, so steps 2 and 3 can be combined. For details, see [SUSHI](sushi.html) documentation. 
+
 #### FSH Tanks
 
 A **FSH Tank** refers to a directory structure that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, code systems, examples, etc.) are defined by FSH files in the FSH Tank. FHIR artifacts defined elsewhere (such as profiles from another IG) are "external" and their IGs must be declared in dependencies.

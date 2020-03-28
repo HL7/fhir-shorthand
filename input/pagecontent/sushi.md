@@ -125,7 +125,7 @@ SUSHI supports publishing implementation guides via the new template-based IG Pu
 
 #### SUSHI Inputs
 
-SUSHI uses the contents of a user-created **ig-data** directory to generate the inputs to the IG Publisher. For a basic IG with no customization, simply create an empty **ig-data** folder. For a customized IG, create and populate the **ig-data** folder with custom content and configuration. To export only the FHIR artifacts (e.g., profiles, extensions, etc.) with no additional IG support files, ensure that no **ig-data** folder is present.
+SUSHI uses the contents of a user-created **ig-data** directory to generate the inputs to the IG Publisher. For a bare-bones IG with no customization, simply create an empty **ig-data** folder. For a customized IG, create and populate the **ig-data** folder with custom content and configuration. To export only the FHIR artifacts (e.g., profiles, extensions, etc.) with no additional IG support files, ensure that no **ig-data** folder is present.
 
 A populated **ig-data** directory should look something like this:
 
@@ -215,11 +215,11 @@ The resulting **/build** directory will look something like this:
 After running SUSHI, change directories to the output directory, usually **/build**. At the command prompt, enter:
 
 ```
-💻$  _updatePublisher
+💻  $ _updatePublisher
 ```
 
 ```
-🍎$  ./_updatePublisher.sh
+🍎  $ ./_updatePublisher.sh
 ```
 
 This will download the latest version of the HL7 FHIR IG Publisher tool into the **/build/input-cache** directory. _This step can be skipped if you already have the latest version of the IG Publisher tool in **input-cache**._
@@ -228,21 +228,82 @@ This will download the latest version of the HL7 FHIR IG Publisher tool into the
 
 > **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory **/build/input-cache** (creating the directory if necessary.)
 
-Now run:
+Now run the following command:
 
 ```
-💻$  _genonce
+💻  $ _genonce
 ```
 
 ```
-🍎$  ./_genonce.sh
+🍎  $ ./_genonce.sh
 ```
-
 This will run the HL7 IG Publisher, which will take several minutes to complete. After the publisher is finished, open the file **/build/output/index.html** in a browser to see the resulting IG.
+
+> **Note:** `_genonce` embeds the command `JAVA -jar input-cache/org.hl7.fhir.publisher.jar -ig ig.ini`. If the publisher jar or `ig.ini` file are different locations, the command can be adjusted accordingly.
+
+### IG Publisher Integration (Autobuild Configuration)
+
+The IG Publisher version 1.0.75 and higher includes native support for FHIR Shorthand and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named `/fsh`. Not having to run SUSHI seperately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
+
+Autobuild is an action that is triggered when you commit IG sources to a Github repository hosted on https://github.com/HL7. Autobuild starts the IG Publisher, which does error checking and, if successful, publishes your IG to http://build.fhir.org. With SUSHI integration, you check in your FSH files to your github repository on https://github.com/HL7, and SUSHI and the IG Publisher will run automatically. 
+
+To take advantage of autobuild with SUSHI support, the entire FSH tank must be put into a subdirectory named **fsh**: 
+
+```
+{Github repository root}
+└── /fsh
+    ├── File1.fsh
+    ├── File2.fsh
+    ├── File3.fsh
+    ├── ...
+    └── /ig-data (as shown above)
+```
+Every time you make a new commit to the repository, the SUSHI and the IG Publisher will run automatically.
+
+For testing purposes, it is useful to run the IG Publisher locally. If you are using the autobuild configuration, you need to manually [download the IG Publisher jar file](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar) and put it into the **/input-cache** directory:
+
+```
+{Github repository root}
+├── /input-cache
+│   └── org.hl7.fhir.publisher.jar
+└── /fsh
+    ├── File1.fsh
+    ├── File2.fsh
+    ├── File3.fsh
+    ├── ...
+    └── /ig-data (as shown above)
+```
+
+Instead of running `_genonce`, use the following command:
+
+```
+JAVA -jar input-cache/org.hl7.fhir.publisher.jar -ig .
+```
+
+The resulting directory structure will look something like this, with the home page of the resulting IG in the file **/output/index.html**:
+
+```
+{Github repository root}
+├── /input
+├── /input-cache
+├── /output
+├── /temp
+├── /template
+├── /fsh
+├── ig.ini
+├── package.json
+└── package-list.json
+```
+When your files are in the autobuild configuration, and you want to only run SUSHI, issue this command from your root directory:
+
+```
+$ sushi fsh -o .
+```
+This will create the **/input** directory containing the FHIR artifacts, but not the **/output,** **/temp** and **/template** directories.
 
 ### Get Involved
 
-Thank you for using FHIR Shorthand and the SUSHI reference implementation. We hope it will help you succeed in your FHIR projects. The SUSHI software is provided free of charge. All we ask in return is that you share your ideas, suggestions, and experience with the community. If you are a Typescript developer, code contributions to SUSHI are gladly accepted!
+Thank you for using FHIR Shorthand and the SUSHI reference implementation. We hope it will help you succeed in your FHIR projects. The SUSHI software is provided free of charge. All we ask in return is that you share your ideas, suggestions, and experience with the community. If you are a Typescript developer, code contributions to SUSHI are gladly accepted.
 
 Here are some links to get started:
 
