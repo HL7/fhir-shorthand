@@ -116,23 +116,28 @@ Here are some general tips on approaching debugging:
 * Eliminate parsing (syntax) errors first. Messages include `extraneous input {x} expecting {y}`, `mismatched input {x} expecting {y}` and `no viable alternative at {x}`. These messages indicate that the line in question is not a valid FSH statement.
 * The order of keywords is not arbitrary. The declarations must start with the type of item you are creating (e.g., Profile, Instance, ValueSet).
 * The order of rules usually doesn't matter, but there are exceptions. Slices and extensions must be created (with `contains` rule) before they are constrained.
-* A common error is `No element found at path`. This means that although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there is no spelling error, the element names in the path are correct, and you are using the [path grammar](reference.html#paths) correctly.
-* If SUSHI still reports errors, but the FSH definitions appear to be correct, please report the issue using the [SUSHI issue tracker](https://github.com/FHIR/sushi/issues).
+* A common error is `No element found at path`. This means that although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there are no spelling errors, the element names in the path are correct, and you are using the [path grammar](reference.html#paths) correctly.
+* If you are getting an error you can't resolve, you can ask for help on the [FHIR Shorthand Chat channel](https://chat.fhir.org/#narrow/stream/215610-shorthand).
 
 ### IG Creation
 
-SUSHI supports publishing implementation guides via the new template-based IG Publisher. See the [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/) for more details.
+SUSHI supports publishing implementation guides via the [template-based IG Publisher](https://build.fhir.org/ig/FHIR/ig-guidance/). This section describes the inputs and outputs from this process.
 
 #### SUSHI Inputs
 
-SUSHI uses the contents of a user-created **ig-data** directory to generate the inputs to the IG Publisher. For a bare-bones IG with no customization, simply create an empty **ig-data** folder. For a customized IG, create and populate the **ig-data** folder with custom content and configuration. To export only the FHIR artifacts (e.g., profiles, extensions, etc.) with no additional IG support files, ensure that no **ig-data** folder is present.
+SUSHI uses the contents of a user-created **package.json** and **ig-data** directory to generate the inputs to the IG Publisher. For a bare-bones IG with no customization, simply create an empty **ig-data** folder. For a customized IG, create and populate the **ig-data** folder with custom content and configurations.
 
-A populated **ig-data** directory should look something like this:
+The project should look something like this:
 
 ```
+File1.fsh
+File2.fsh
+File3.fsh
+...
+package.json
 /ig-data
-├── ig.ini (optional)
 ├── package-list.json (optional)
+├── ig.ini (optional)
 └── /input
     ├── ignoreWarnings.txt (optional)
     ├── /images
@@ -148,10 +153,11 @@ A populated **ig-data** directory should look something like this:
         └── 3_myFourthPage.md
 ```
 
-Populate these directories as follows:
+Populate your project as follows:
 
+* **package.json**: This required file is the package manifest. The content is described [here](https://confluence.hl7.org/pages/viewpage.action?pageId=35718629#NPMPackageSpecification-Packagemanifest). 
+* **package-list.json**: This optional file should contain the version history of your IG. If present, it will be used instead of a generated **package-list.json**.
 * **ig.ini**: If present, the user-provided values will be merged with SUSHI-generated **ig.ini**.
-* **package-list.json**: This file should contain the version history of your IG. If present, it will be used instead of a generated **package-list.json**.
 * **ignoreWarnings.txt**: If present, this file can be used to suppress specific QA warnings and information messages during the FHIR IG publication process.
 * The **/images** subdirectory: Put anything that is not a page in the IG, such as images, spreadsheets or zip files, in the **images** subdirectory. These files will be copied into the build and can be referenced by user-provided pages or menus.
 * **menu.xml**: If present, this file will be used for the IG's main menu layout.
@@ -162,7 +168,9 @@ Populate these directories as follows:
   * **{artifact-file-name}-notes.xml\|md**: If present, the contents of the file will be placed on the relevant page _after_ the artifact's definition.
 * **input/{supported-resource-input-folder}** (not shown above): JSON files in supported resource folders (e.g., **profiles**, **extensions**, **examples**, etc.) will be be copied to the corresponding locations in the IG input and processed as additional (non-FSH) IG resources. This feature is not expected to be commonly used.
 
-Examples of **ig.ini**, **package-list.json**, **ignoreWarnings.txt** and **menu.xml** files can be found in the [sample IG project](https://github.com/FHIR/sample-ig) provided for this purpose. More general guidance can be found in [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/). The [mCODE Implementation Guide](https://github.com/standardhealth/fsh-mcode) has a good example of a populated **ig-data** directory.
+Examples of **package.json**, **ig.ini**, **package-list.json**, **ignoreWarnings.txt** and **menu.xml** files can be found in the [sample IG project](https://github.com/FHIR/sample-ig) provided for this purpose. More general guidance can be found in [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/). The [mCODE Implementation Guide](https://github.com/standardhealth/fsh-mcode) has a good example of a populated **ig-data** directory.
+
+> ** Note:** If no IG is desired, and you only want to export the FHIR artifacts (e.g., profiles, extensions, etc.), ensure that no **ig-data** folder is present.
 
 #### SUSHI Outputs
 
@@ -178,9 +186,9 @@ The resulting **/build** directory will look something like this:
 ├── _gencontinous.sh
 ├── _updatePublisher.sh
 ├── _updatePublisher.sh
-├── ig.ini
-├── package.json
-├── package-list.json
+├── package.json (copied from fsh tank)
+├── package-list.json (generated or copied from fsh tank)
+├── ig.ini  (generated or copied from fsh tank)
 └── /input
     ├── ImplementationGuide-myIG.json
     ├── ignoreWarnings.txt
@@ -206,7 +214,7 @@ The resulting **/build** directory will look something like this:
         └── CodeSystem-myCodeSystem.json
 ```
 
- SUSHI puts each item where the FHIR publisher expects to find them, assuming the IG publisher is run from the **/build** directory. 
+ SUSHI puts each item where the FHIR publisher expects to find them, assuming the IG publisher is run from the **/build** directory.
  
  > Note: The **/build/input** directory is actually an _output_ of SUSHI, but so named because it is an _input_ to the IG Publisher.
 
@@ -241,13 +249,13 @@ This will run the HL7 IG Publisher, which will take several minutes to complete.
 
 > **Note:** `_genonce` embeds the command `JAVA -jar input-cache/org.hl7.fhir.publisher.jar -ig ig.ini`. If the publisher jar or `ig.ini` file are different locations, the command can be adjusted accordingly.
 
-### IG Publisher Integration (Autobuild Configuration)
+### New! IG Publisher Integration (Autobuild Configuration)
 
 The IG Publisher version 1.0.75 and higher includes native support for FHIR Shorthand and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named **/fsh**. Not having to run SUSHI separately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
 
-Autobuild is an action that is triggered when you commit IG sources to a Github repository hosted on https://github.com/HL7. Autobuild starts the IG Publisher, which does error checking and, if successful, publishes your IG to http://build.fhir.org. With SUSHI integration, you check in your FSH files to your github repository on https://github.com/HL7, and SUSHI and the IG Publisher will run automatically. 
+[Autobuild](https://github.com/FHIR/auto-ig-builder/blob/master/README.md) is a build service triggered when you commit IG source code to a Github repository. Autobuild can be configured to work from any Github repository, but is pre-configured to run from repositories hosted on https://github.com/HL7. Autobuild starts the IG Publisher, which does error checking and, if successful, publishes your IG to http://build.fhir.org. With SUSHI integration, you check in your FSH files to your github repository on https://github.com/HL7, and SUSHI and the IG Publisher will run automatically.
 
-To take advantage of autobuild with SUSHI support, the entire FSH tank must be put into a subdirectory named **fsh**: 
+To take advantage of autobuild with SUSHI support, the entire FSH tank must be put into a subdirectory named **fsh**:
 
 ```
 {Github repository root}
@@ -256,9 +264,10 @@ To take advantage of autobuild with SUSHI support, the entire FSH tank must be p
           ├── File2.fsh
           ├── File3.fsh
           ├── ...
+          ├── package.json
           └── /ig-data (as shown above)
 ```
-Every time you make a new commit to the repository, the SUSHI and the IG Publisher will run automatically.
+Every time you make a new commit to the repository, on any branch, the SUSHI and the IG Publisher will run automatically.
 
 For testing purposes, it is useful to run the IG Publisher locally. If you are using the autobuild configuration, you need to manually [download the IG Publisher jar file](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar) and put it into the **/input-cache** directory:
 
@@ -301,9 +310,9 @@ $ sushi fsh -o .
 ```
 This will create the **/input** directory containing the FHIR artifacts, but not the **/output,** **/temp** and **/template** directories.
 
-### Get Involved
+### A Final Word
 
-Thank you for using FHIR Shorthand and the SUSHI reference implementation. We hope it will help you succeed in your FHIR projects. The SUSHI software is provided free of charge. All we ask in return is that you share your ideas, suggestions, and experience with the community. If you are a Typescript developer, code contributions to SUSHI are gladly accepted.
+Thank you for using FHIR Shorthand and the SUSHI reference implementation. We hope it will help you succeed in your FHIR projects. The SUSHI software is provided free of charge. All we ask in return is that you share your ideas, suggestions, and experience with the community. If you are a Typescript developer, consider contributing to SUSHI open source project.
 
 Here are some links to get started:
 
