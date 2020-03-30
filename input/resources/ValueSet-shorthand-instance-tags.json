@@ -5,7 +5,7 @@
   "id": "shorthand-instance-tags",
   "title": "Instance Tags",
   "description": "Value set containing codes to be used with the Usage keyword on Instances defined by FHIR Shorthand. These codes are currently only used within FHIR Shorthand, but they could be used as resource tags in meta.tag.",
-  "version": "1.0.0",
+  "version": "0.12.0",
   "url": "http://hl7.org/fhir/uv/shorthand/ValueSet/shorthand-instance-tags",
   "compose": {
     "include": [
