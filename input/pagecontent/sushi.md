@@ -280,6 +280,7 @@ For testing purposes, it is useful to run the IG Publisher locally. If you are u
           ├── File2.fsh
           ├── File3.fsh
           ├── ...
+          ├── package.json
           └── /ig-data (as shown above)
 ```
 
