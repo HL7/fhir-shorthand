@@ -156,7 +156,7 @@ package.json
 Populate your project as follows:
 
 * **package.json**: This required file is the package manifest. The content is described [here](https://confluence.hl7.org/pages/viewpage.action?pageId=35718629#NPMPackageSpecification-Packagemanifest). 
-* **package-list.json**: This optional file should contain the version history of your IG. If present, it will be used instead of a generated **package-list.json**.
+* **package-list.json**: This optional file, described [here](https://confluence.hl7.org/display/FHIR/FHIR+IG+PackageList+doco), should contain the version history of your IG. If present, it will be used instead of a generated **package-list.json**.
 * **ig.ini**: If present, the user-provided values will be merged with SUSHI-generated **ig.ini**.
 * **ignoreWarnings.txt**: If present, this file can be used to suppress specific QA warnings and information messages during the FHIR IG publication process.
 * The **/images** subdirectory: Put anything that is not a page in the IG, such as images, spreadsheets or zip files, in the **images** subdirectory. These files will be copied into the build and can be referenced by user-provided pages or menus.
@@ -253,7 +253,7 @@ This will run the HL7 IG Publisher, which will take several minutes to complete.
 
 The IG Publisher version 1.0.75 and higher includes native support for FHIR Shorthand and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named **/fsh**. Not having to run SUSHI separately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
 
-[Autobuild](https://github.com/FHIR/auto-ig-builder/blob/master/README.md) is a build service triggered when you commit IG source code to a Github repository. Autobuild can be configured to work from any Github repository, but is pre-configured to run from repositories hosted on https://github.com/HL7. Autobuild starts the IG Publisher, which does error checking and, if successful, publishes your IG to http://build.fhir.org. With SUSHI integration, you check in your FSH files to your github repository on https://github.com/HL7, and SUSHI and the IG Publisher will run automatically.
+[Autobuild](https://github.com/FHIR/auto-ig-builder/blob/master/README.md) is a build service that can be triggered when you commit IG source code to any Github repository. Autobuild starts the IG Publisher and publishes your IG to http://build.fhir.org. Because SUSHI is now included in the IG Publisher, when you check in your FSH files to a Github repository configured to autobuild, everything will run automatically to produce your IG.
 
 To take advantage of autobuild with SUSHI support, the entire FSH tank must be put into a subdirectory named **fsh**:
 
