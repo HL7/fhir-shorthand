@@ -15,7 +15,7 @@
       "fhirversion": "4.0.1",
       "date": "2020-04-07",
       "desc": "FHIR Shorthand STU 1, version 0.12.0",
-      "path": "http://hl7.org/fhir/uv/shorthand/stu1",
+      "path": "http://hl7.org/fhir/uv/shorthand/2020May",
       "status": "draft",
       "sequence": "STU 1"
     }]
