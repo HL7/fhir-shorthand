@@ -1,12 +1,3 @@
-<blockquote>
-<p style="color:#367615;">
-<strong>May 2020 HL7 Ballot Reviewers:</strong><br/>This is the first ballot of FHIR Shorthand, proposed as a Standard for Trial Use (STU). The FHIR Shorthand Implementation Guide contains both informal ("informative") and formal ("normative") content. The <a href="reference.html">FHIR Shorthand Language Reference</a> is the formal part of the specification. Other parts of the IG (Overview, Tutorial, SUSHI) are informative. Ballot comments are welcome on both the informative and normative content, but formal ballot resolution process will be applied to the normative content only.
-</p>
-<p style="color:#367615;">
-SUSHI &mdash; a reference implementation of software that transforms FHIR Shorthand into FHIR artifacts &mdash; has been developed hand-in-hand with FHIR Shorthand. SUSHI is available to test the specification, but is not a formal part of the ballot.
-</p>
-</blockquote>
-
 This implementation guide includes the following chapters:
 
 1. [FHIR Shorthand Overview](index.html) (this chapter) -- Introduction to FSH and SUSHI _(informative content)_.
