@@ -478,23 +478,53 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
 
 #### Structure Definition Escape Paths
 
-FSH uses the caret (`^`) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax is used to set the metadata attributes in SD, other than those set through [FSH Keywords](#keywords) (name, id, title, and description) or specified in one of the configuration files used to create the IG. Examples of metadata elements in SDs can be set with caret syntax include experimental, useContext, and abstract.
+FSH uses the caret (`^`) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax can be used to set attributes that are not addressed through [FSH Keywords](#keywords) (e.g., name, id, title, and description) or those specified through IF configuration files (e.g., url, publisher, fhirVersion). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the differential.
 
-The caret syntax can also be combined with element paths to set values in the ElementDefinitions that populate the SD.
+To set a value in the root-level attributes of StructureDefinition, use the following syntax:
+
+```
+* ^{StructureDefinition path} = {value}
+```
+
+To set a values in ElementDefinitions, corresponding to the elements in the resource or slices of arrays, use this syntax:
+
+```
+* {Element path} ^{ElementDefinition path}= {value}
+```
 
 **Examples:**
 
-* Set the status 'experimental' attribute of a StructureDefinition from inside a profile:
+* In a profile definition, set the 'experimental' attribute of the StructureDefinition of that profile:
 
   ```
   * ^experimental = false
   ```
 
-* For element communication.language, set the description attribute of the binding in the ElementDefinition:
+* In a profile of Patient, set the description attribute on the binding of communication.language:
 
   ```
   * communication.language ^binding.description = "This binding is dictated by US FDA regulations."
   ```
+
+
+***
+Power-User Feature: The "Self" ElementDefinition
+
+A special case of the caret syntax is setting properties of the first element of the differential. This element always refers to the profile or stand-alone extension itself. Since the path to this element is essentially "here" or "myself", we use the dot or full stop (.) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of StructureDefinition, but elements of ElementDefinition. The syntax is:
+
+```
+* . ^{ElementDefinition path} = {value}
+```
+
+**Example:**
+
+* Provide a short description for an extension (defined in the "self" ElementDefinition):
+
+  ```
+  * . ^short = "US Core Race Extension"
+  ```
+
+***
 
 ### Rules
 
