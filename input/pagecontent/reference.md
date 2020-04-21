@@ -478,7 +478,7 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
 
 #### Structure Definition Escape Paths
 
-FSH uses the caret (`^`) syntax to provide direct access to attributes of a StructureDefinition. The caret syntax can be used to set attributes that are not addressed through [FSH Keywords](#keywords) (e.g., name, id, title, and description) or those specified through IF configuration files (e.g., url, publisher, fhirVersion). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the differential.
+FSH uses the caret (`^`) syntax to provide direct access to elements of a StructureDefinition. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#keywords) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
 
 To set a value in the root-level attributes of StructureDefinition, use the following syntax:
 
@@ -486,10 +486,10 @@ To set a value in the root-level attributes of StructureDefinition, use the foll
 * ^{StructureDefinition path} = {value}
 ```
 
-To set a values in ElementDefinitions, corresponding to the elements in the resource or slices of arrays, use this syntax:
+To set values in ElementDefinitions, corresponding to the elements in the resource or slices of arrays, use this syntax:
 
 ```
-* {Element path} ^{ElementDefinition path}= {value}
+* {Element path} ^{ElementDefinition path} = {value}
 ```
 
 **Examples:**
@@ -510,7 +510,7 @@ To set a values in ElementDefinitions, corresponding to the elements in the reso
 ***
 Power-User Feature: The "Self" ElementDefinition
 
-A special case of the caret syntax is setting properties of the first element of the differential. This element always refers to the profile or stand-alone extension itself. Since the path to this element is essentially "here" or "myself", we use the dot or full stop (.) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of StructureDefinition, but elements of ElementDefinition. The syntax is:
+A special case of the caret syntax is setting properties of the first element of the differential. This element always refers to the profile or stand-alone extension itself. Since the path to this element is essentially "here" or "myself", we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of StructureDefinition, but elements of ElementDefinition. The syntax is:
 
 ```
 * . ^{ElementDefinition path} = {value}
