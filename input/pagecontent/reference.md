@@ -489,7 +489,7 @@ To set a value in the root-level attributes of StructureDefinition, use the foll
 To set values in ElementDefinitions, corresponding to the elements in the resource or slices of arrays, use this syntax:
 
 ```
-* {Element path} ^{ElementDefinition path}= {value}
+* {Element path} ^{ElementDefinition path} = {value}
 ```
 
 **Examples:**
