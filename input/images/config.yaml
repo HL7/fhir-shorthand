@@ -18,10 +18,10 @@ version: 1.0.0
 
 # Although fhirVersions is 0..* in the ImplementationGuide resource
 # it can be a single item OR and array here (but so far SUSHI only
-# support 4.0.1 anyway).
+# supports 4.0.1 anyway).
 fhirVersion: 4.0.1
 
-# The template property will be copied into the ig.ini file.
+# The template property will be used to generate an ig.ini file.
 # To provide a custom ig.ini file, do not include this property and
 # include an `ig.ini` file in ig-data.
 template: hl7.fhir.template#0.0.5
@@ -132,15 +132,27 @@ pages:
     simpleExamples.xml:
     complexExamples.xml:
 
+# The ImplementationGuide resource defines several other properties
+# not represented above. These properties can be used as-is and
+# should follow the format defined in ImplementationGuide:
+# * meta
+# * implicitRules
+# * language
+# * text
+# * contained
+# * extension
+# * modifierExtension
+# * experimental
+# * useContext
+# * copyright
+# * packageId
+
 # The menu property will be used to generate the input/menu.xml file.
 # The menu is represented as a simple structure where the YAML key
 # is the menu item name and the value is the URL. The IG publisher
 # currently only supports one level deep on sub-menus.
 # To provide a custom menu.xml file, do not include this property and
 # include a `menu.xml` file in input/includes.
-# TO CONSIDER: If no menu data is provided, can we generate the menu
-# based on the pages order or should we just generate a very standard
-# menu (since there may be too many pages to fit in a menu).
 menu:
   Home: index.html
   Artifacts:
@@ -193,18 +205,10 @@ history:
     status: ballot
     sequence: STU 1
 
-# The ImplementationGuide resource defines several other properties
-# not represented above. These properties can be used as-is and
-# should follow the format defined in ImplementationGuide:
-# * experimental
-# * useContext
-# * copyright
-# * definition.template (but use a top-level "templates" property)
-
 # The indexPageContent property is used to generate a basic index.md file. To provide a
 # custom index file, do not include this property and include an index.md or index.xml file
 # in input/pages/ or input/pagecontent folders.
-  indexPageContent?: string;
+indexPageContent: 'Example Index Page Content'
 
 # The fshOnly flag indicates if only FSH resources should be exported.
 # If set to true, no IG related content will be generated.
