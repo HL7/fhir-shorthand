@@ -162,6 +162,7 @@ Most properties that can be used in the SUSHI configuration file come directly f
 
 | Property  | Difference from IG resource | Usage   |
 | :---------------------- | :-------------------------- |:---------|
+| id | none | Used as specified the IG resource |
 | meta | none | Used as specified the IG resource |
 | implicitRules | none | Used as specified the IG resource |
 | language | none | Used as specified the IG resource |
@@ -169,12 +170,22 @@ Most properties that can be used in the SUSHI configuration file come directly f
 | contained | none | Used as specified the IG resource |
 | extension | none | Used as specified the IG resource |
 | modifierExtension | none | Used as specified the IG resource |
+| url | none | Used as specified in the IG resource. If not specified, defaults to `${canonical}/ImplementationGuide/${id}`. |
+| version | none | Used as specified the IG resource |
+| name | none | Used as specified the IG resource |
+| title | none | Used as specified the IG resource |
+| status | none | Used as specified the IG resource |
 | experimental | none | Used as specified the IG resource |
-| useContext | none | Used as specified the IG resource |
-| copyright | none | Used as specified the IG resource |
-| packageId | none | Used as specified the IG resource |
-| canonical | N/A | The canonical URL to be used throughout the IG |
+| date | none | Used as specified the IG resource |
 | publisher | changed cardinality to 0..* | Publisher can be a single item or a list, each with a name and optional url and/or email. The first publisher's name will be used as IG.publisher.  The contact details and/or additional publishers will be translated into IG.contact values |
+| contact | none | Used as specified the IG resource |
+| description | none | Used as specified the IG resource |
+| useContext | none | Used as specified the IG resource |
+| jurisdiction | none | Used as specified the IG resource |
+| copyright | none | Used as specified the IG resource |
+| packageId | none | Used as specified the IG resource. If not specified, defaults to `id`. |
+| license | none | Used as specified the IG resource |
+| fhirVersion | none | Used as specified the IG resource |
 | dependencies | corresponds to `IG.dependsOn` | Key is the package id and value is the version (or dev/current). |
 | global | none | Key is the type and value is the profile |
 | groups | corresponds to `IG.definition.grouping` | Key is the name of the package and value is the description of the package |
@@ -185,6 +196,7 @@ Most properties that can be used in the SUSHI configuration file come directly f
 | template | N/A | Template used in `ig.ini` file. <br><br> Authors can provide their own `ig.ini` file by removing this property and placing an `igi.ini` file in `ig-data`. |
 | copyrightYear or copyrightyear | N/A | Used to add a `copyrightyear` parameter to `IG.definition.parameter` |
 | releaseLabel or releaselabel | N/A | Used to add a `releaseLabel` parameter to `IG.definition.parameter` |
+| canonical | N/A | The canonical URL to be used throughout the IG |
 | menu | N/A | Used to generate the input/index.md file. The key is the menu item name and the value is the URL. Menus can contain sub-menus, but the IG Publisher currently only supports sub-menus one level deep. <br><br> Authors can provide their own `menu.xml` by removing this property and placing a `menu.xml` file in `ig-data/input/includes` |
 | history | N/A | Used to create a `package-list.json`. SUSHI will use the existing top-level properties in its config to populate the top-level package-list.json properties: package-id, canonical, title, and introduction. Authors that wish to provide different values can supply them as properties under history. All other properties under history are assumed to be versions. <br><br> Additionally, the current version is special. If the author provides only a single string value, it is assumed to be the URL path to the current build. The following default values will then be used: `desc: Continuous Integration Build` (latest in version control), `status: ci-build`, and `current: true`. <br><br> Authors can provide their own `package-list.json` by removing this property and placing a `package-list.json` file in `ig-data`. |
 | indexPageContent | N/A | Used to specify the content of `index.md`. <br><br> Authors can provide their own index file by removing this property and placing an `index.md` or `index.html` file in `input/pages` or `input/pagecontent`. This property is provided for backwards compatibility reasons, but its use is discouraged. |
