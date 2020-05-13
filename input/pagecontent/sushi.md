@@ -188,7 +188,7 @@ Most properties that can be used in the SUSHI configuration file come directly f
 | menu | N/A | Used to generate the input/index.md file. The key is the menu item name and the value is the URL. Menus can contain sub-menus, but the IG Publisher currently only supports sub-menus one level deep. <br><br> Authors can provide their own `menu.xml` by removing this property and placing a `menu.xml` file in `ig-data/input/includes` |
 | history | N/A | Used to create a `package-list.json`. SUSHI will use the existing top-level properties in its config to populate the top-level package-list.json properties: package-id, canonical, title, and introduction. Authors that wish to provide different values can supply them as properties under history. All other properties under history are assumed to be versions. <br><br> Additionally, the current version is special. If the author provides only a single string value, it is assumed to be the URL path to the current build. The following default values will then be used: `desc: Continuous Integration Build` (latest in version control), `status: ci-build`, and `current: true`. <br><br> Authors can provide their own `package-list.json` by removing this property and placing a `package-list.json` file in `ig-data`. |
 | indexPageContent | N/A | Used to specify the content of `index.md`. <br><br> Authors can provide their own index file by removing this property and placing an `index.md` or `index.html` file in `input/pages` or `input/pagecontent`. This property is provided for backwards compatibility reasons, but its use is discouraged. |
-| fshOnly | N/A | When this flag is set to true, no IG specific content will be generated, SUSHI will only convert FSH definitions to JSON files. When false or unset, IG content is generated. |
+| FSHOnly | N/A | When this flag is set to true, no IG specific content will be generated, SUSHI will only convert FSH definitions to JSON files. When false or unset, IG content is generated. |
 
 While there are a variety of properties that can be used in the SUSHI configuration file, only a few are needed to create a complete IG. For an example of the minimal configuration that can be provided, see the [minimal configuration file](minimal-config.yaml).
 
@@ -240,7 +240,7 @@ Populate your project as follows:
 
 Examples of **package.json**, **ig.ini**, **package-list.json**, **ignoreWarnings.txt** and **menu.xml** files can be found in the [sample IG project](https://github.com/FHIR/sample-ig) provided for this purpose. More general guidance can be found in [Guidance for HL7 IG Creation](https://build.fhir.org/ig/FHIR/ig-guidance/). The [mCODE Implementation Guide](https://github.com/standardhealth/fsh-mcode) has a good example of a populated **ig-data** directory.
 
-> ** Note:** If no IG is desired, and you only want to export the FHIR artifacts (e.g., profiles, extensions, etc.), ensure that the `fshOnly` flag is enabled in **config.yaml**.
+> ** Note:** If no IG is desired, and you only want to export the FHIR artifacts (e.g., profiles, extensions, etc.), ensure that the `FSHOnly` flag is enabled in **config.yaml**.
 
 #### SUSHI Outputs
 
