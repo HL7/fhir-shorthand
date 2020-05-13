@@ -125,7 +125,7 @@ SUSHI supports publishing implementation guides via the [template-based IG Publi
 
 #### Configuration File
 
-The IG Publisher relies on several configuration files, including **package.json**, **ig.ini**, **package-list.json** and **menu.xml**. Splitting information among multiple files and managing different formats makes IG configuration difficult to manage.
+The IG Publisher relies on several configuration files, including **ig.ini**, **package-list.json**, **menu.xml**, and an ImplementationGuide resource. Splitting information among multiple files and managing different formats makes IG configuration difficult to manage.
 
 SUSHI offers a single configuration file, in consistent format, with no duplication of information. For ease of use, this file is written using YAML.
 
@@ -162,22 +162,33 @@ Most properties that can be used in the SUSHI configuration file come directly f
 
 | Property  | Difference from IG resource | Usage   |
 | :---------------------- | :-------------------------- |:---------|
-| canonical | added property | The canonical URL to be used throughout the IG |
+| meta | none | Used as specified the IG resource |
+| implicitRules | none | Used as specified the IG resource |
+| language | none | Used as specified the IG resource |
+| text | none | Used as specified the IG resource |
+| contained | none | Used as specified the IG resource |
+| extension | none | Used as specified the IG resource |
+| modifierExtension | none | Used as specified the IG resource |
+| experimental | none | Used as specified the IG resource |
+| useContext | none | Used as specified the IG resource |
+| copyright | none | Used as specified the IG resource |
+| packageId | none | Used as specified the IG resource |
+| canonical | N/A | The canonical URL to be used throughout the IG |
 | publisher | changed cardinality to 0..* | Publisher can be a single item or a list, each with a name and optional url and/or email. The first publisher's name will be used as IG.publisher.  The contact details and/or additional publishers will be translated into IG.contact values |
 | dependencies | corresponds to `IG.dependsOn` | Key is the package id and value is the version (or dev/current). |
 | global | none | Key is the type and value is the profile |
-| groups | corresponds to `IG.definition.grouping` | Key is the name and value is the description |
+| groups | corresponds to `IG.definition.grouping` | Key is the name of the package and value is the description of the package |
 | resources | corresponds to `IG.definition.resource` | SUSHI can auto-generate this based on FSH definitions and provided JSON resources, but this property can be used to add additional entries if necessary. If the reference matches a generated entry, it will replace the generated entry. If it doesn't match any generated entries, it will be added to the generated entries. SUSHI uses IG.definition.resource.reference.reference as the YAML key (so reference is optional). Authors can specify "omit" to omit a FSH-generated resource from the resource list. `groupingId` can be used, but top-level groups syntax may be a better option. |
 | pages | corresponds to `IG.definition.page` | SUSHI can auto-generate pages, but authors can manages pages through this property. If this property is used, SUSHI will not generate any page entries. The key is the page file name. If title is not provided, then the title will be generated from the file name.  If a generation value is not provided, it will be inferred from the file name extension.  Any subproperties that are valid filenames with supported extensions (e.g., .md/.xml) will be treated as sub-pages. |
-| parameters | corresponds to `IG.definition.parameter` | The key is the code. If a parameter allows repeating values, the value in the YAML should be a sequence/array. |
+| parameters | corresponds to `IG.definition.parameter` | The key is the code. If a parameter allows repeating values, the value in the YAML may be a sequence/array. |
 | templates | corresponds to `IG.definition.template` | Used the same as IG property |
 | template | N/A | Template used in `ig.ini` file. <br><br> Authors can provide their own `ig.ini` file by removing this property and placing an `igi.ini` file in `ig-data`. |
 | copyrightYear or copyrightyear | N/A | Used to add a `copyrightyear` parameter to `IG.definition.parameter` |
 | releaseLabel or releaselabel | N/A | Used to add a `releaseLabel` parameter to `IG.definition.parameter` |
-| menu | N/A | Used to generate the input/index.md file. The key is the menu item name and the value is the URL. Menus can contain submenus, but the IG Publisher currently only supports menus one level deep. <br><br> Authors can provide their own `menu.xml` removing this property and placing a `menu.xml` file in `ig-data/input/includes` |
+| menu | N/A | Used to generate the input/index.md file. The key is the menu item name and the value is the URL. Menus can contain sub-menus, but the IG Publisher currently only supports sub-menus one level deep. <br><br> Authors can provide their own `menu.xml` by removing this property and placing a `menu.xml` file in `ig-data/input/includes` |
 | history | N/A | Used to create a `package-list.json`. SUSHI will use the existing top-level properties in its config to populate the top-level package-list.json properties: package-id, canonical, title, and introduction. Authors that wish to provide different values can supply them as properties under history. All other properties under history are assumed to be versions. <br><br> Additionally, the current version is special. If the author provides only a single string value, it is assumed to be the URL path to the current build. The following default values will then be used: `desc: Continuous Integration Build` (latest in version control), `status: ci-build`, and `current: true`. <br><br> Authors can provide their own `package-list.json` by removing this property and placing a `package-list.json` file in `ig-data`. |
-| indexPageContent | N/A | Used to specify the content of `index.md`. <br><br> Authors can provide their own index file by removing this property and placing an `index.md` or `index.html` file in `input/pages` or `input/pagecontent`. |
-| FSHOnly | N/A | When this flag is set to true, no IG specific content will be generated, SUSHI will only convert FSH definitions to JSON files. When false or unset, IG content is generated. |
+| indexPageContent | N/A | Used to specify the content of `index.md`. <br><br> Authors can provide their own index file by removing this property and placing an `index.md` or `index.html` file in `input/pages` or `input/pagecontent`. This property is provided for backwards compatibility reasons, but its use is discouraged. |
+| fshOnly | N/A | When this flag is set to true, no IG specific content will be generated, SUSHI will only convert FSH definitions to JSON files. When false or unset, IG content is generated. |
 
 While there are a variety of properties that can be used in the SUSHI configuration file, only a few are needed to create a complete IG. For an example of the minimal configuration that can be provided, see the [minimal configuration file](minimal-config.yaml).
 
@@ -248,7 +259,7 @@ The resulting **/build** directory will look something like this:
 ├── package-list.json (generated or copied from fsh tank)
 ├── ig.ini  (generated or copied from fsh tank)
 └── /input
-    ├── ImplementationGuide-myIG.json
+    ├── ImplementationGuide-myIG.json (generated)
     ├── ignoreWarnings.txt
     ├── /examples
     │   └── Patient-myPatient-example.json
