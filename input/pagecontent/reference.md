@@ -23,7 +23,7 @@ The FSH specification, like other IGs, follows the [semantic versioning](https:/
 
 FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. 
 
-The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`. 
+The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`.
 
 The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
 
@@ -42,7 +42,7 @@ Alias names may begin with `$`. Choosing alias names beginning with `$` allows f
 
 #### References to External FHIR Artifacts
 
-FHIR resources, profiles, extensions, and value sets defined outside the FSH tank are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`.
+FHIR resources, profiles, extensions, and value sets defined outside the [FSH tank](index.html#fsh-tanks) are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`.
 
 #### Whitespace
 
@@ -201,7 +201,7 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
   * myCoding.version = "201801103"
   ```
   
-* In an instance of a on Signature, set Signature.type:
+* In an instance of a Signature, set Signature.type:
 
   ```
   * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
@@ -337,7 +337,7 @@ and for [binding](#value-set-binding-rules):
 
 ### Paths
 
-FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Paths also provide a grammar for addressing elements of an SD directly. Here are a few examples of how paths are used in FSH:
+FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Paths also provide a grammar for addressing elements of a StructureDefinition (SD) directly. Here are a few examples of how paths are used in FSH:
 
 * To refer to a top-level element such as the 'code' element in Observation
 * To refer to a nested element, such as the 'method.text' element in Observation
@@ -345,7 +345,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * To refer to individual elements inside choice elements (e.g., onsetAge in onset[x])
 * To pick out an individual item within a multiple choice reference, such as Observation in Reference(Observation \| Condition)
 * To refer to an individual slice within a sliced array, such as the SystolicBP component within a blood pressure
-* To set metadata elements in SD, like 'active' and 'experimental'
+* To set metadata elements in an SD, like 'active' and 'experimental'
 * To address properties of ElementDefinitions nested within an SD, such as 'maxLength' property of string-type elements
 
 In the following, the various types of path references are discussed.
@@ -366,7 +366,7 @@ To refer to nested elements, the path lists the properties in order, separated b
 
 #### Array Property Paths
 
-If an element allows more than one value (e.g., `0..*`), then it must be possible to address each individual value. FSH denotes this with square brackets (`[` `]`) containing the **0-based** index of the item (e.g., first item is `[0]`, second item is `[1]`, etc.).
+If an element allows more than one value (e.g., `0..*`), then it must be possible to address each individual value. FSH denotes this with square brackets (`[` `]`) containing the 0-based index of the item (e.g., first item is `[0]`, second item is `[1]`, etc.).
 
 If the index is omitted, the first element of the array (`[0]`) is assumed. 
 
@@ -432,7 +432,7 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
 
 In FHIR, extensions are represented as elements in pre-existing arrays designated for this purpose. Every resource has an extension and a modifierExtension array at the top level, inherited from DomainResource. Every element in the resource also has a pre-existing extension array, inherited from [Element](https://www.hl7.org/fhir/element.html). These arrays contain elements of the [data type Extension](https://www.hl7.org/fhir/extensibility.html).
 
-Specific extensions are created in FSH profiles using by [extension rules](#extension-rules). Similar to numerical array indices, square brackets are used in paths to indicate a member of the extension (or modifierExtension) array. However,extensions are referred to by name or by URL (Extension.url), not by number.
+In FSH, extensions are created using [extension rules](#extension-rules). These rules have the effect of adding the extension to the corresponding FHIR extension array, technically, by slicing that array. The extension is referred as a member of the extension array, using its name or URL in square brackets.
 
 <!-- However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
 
@@ -483,9 +483,9 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
 
 #### Structure Definition Escape Paths
 
-FSH uses the caret (`^`) syntax to provide direct access to elements of a StructureDefinition. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#keywords) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
+FSH uses the caret (`^`) syntax to provide direct access to elements of an SD. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#keywords) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
 
-To set a value in the root-level attributes of StructureDefinition, use the following syntax:
+To set a value in the root-level attributes of an SD, use the following syntax:
 
 ```
 * ^{StructureDefinition path} = {value}
@@ -499,7 +499,7 @@ To set values in ElementDefinitions, corresponding to the elements in the resour
 
 **Examples:**
 
-* In a profile definition, set the 'experimental' attribute of the StructureDefinition of that profile:
+* In a profile definition, set the 'experimental' attribute in the SD for that profile:
 
   ```
   * ^experimental = false
@@ -515,7 +515,7 @@ To set values in ElementDefinitions, corresponding to the elements in the resour
 ***
 Power-User Feature: The "Self" ElementDefinition
 
-A special case of the caret syntax is setting properties of the first element of the differential. This element always refers to the profile or stand-alone extension itself. Since the path to this element is essentially "here" or "myself", we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of StructureDefinition, but elements of ElementDefinition. The syntax is:
+A special case of the caret syntax is setting properties of the first element of the differential. This element always refers to the profile or stand-alone extension itself. Since the path to this element is essentially "here" or "myself", we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
 
 ```
 * . ^{ElementDefinition path} = {value}
@@ -609,13 +609,13 @@ The `exactly` option indicates that conformance to the profile requires a precis
   * status = #arrived
   ```
 
-* Recommended style for assignment of a LOINC code in an **instance** of an Observation:
+* Recommended style for assignment of a LOINC code in an instance of an Observation:
 
   ```
   * code = LNC#69548-6 "Genetic variant assessment"
   ```
 
-* Recommended style for assignment of a LOINC code in an Observation **profile**:
+* Recommended style for assignment of a LOINC code in an Observation profile:
 
   ```
   * code = LNC#69548-6  // Genetic variant assessment (display text in comment only!)
@@ -856,8 +856,8 @@ Extensions are created by adding elements to built-in 'extension' array elements
 
 Extensions are specified using the `contains` keyword. There are two types of extensions: **standalone** and **inline**:
 
-* Standalone extensions have independent StructureDefinitions, and can be reused. Standalone extension can be externally-defined, and referred to by their canonical URLs, or defined in the same FSH tank using the `Extension` keyword, and referenced by their name or id.
-* Inline extensions do not have separate StructureDefinitions, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
+* Standalone extensions have independent SDs, and can be reused. Standalone extension can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
+* Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
 
 The shorthand syntax to specify a standalone extension is:
 
@@ -893,7 +893,7 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
         GenderIdentityExtension named genderIdentity 0..1 MS
   ```
 
-* Add a standalone extension, defined in the same FSH tank, to a bodySite attribute (second level extension):
+* Add a standalone extension, defined in the same [FSH tank](index.html#fsh-tanks), to a bodySite attribute (second level extension):
 
   ```
   * bodySite.extension contains Laterality 0..1

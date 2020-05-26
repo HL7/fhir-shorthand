@@ -59,7 +59,7 @@ The SUSHI/IG Publisher integration workflow presents steps two and three above a
 
 A **FSH Tank** refers to a directory structure that contains FSH files for an IG. A FSH Tank corresponds one-to-one to an IG and represents a complete module that can be placed under SCC. The FHIR artifacts (profiles, extensions, value sets, code systems, examples, etc.) are defined by FSH files in the FSH Tank. FHIR artifacts defined elsewhere (such as profiles from another IG) are "external" and their IGs must be declared in dependencies.
 
-Information is stored in plain text files with `.fsh` extensions. Each file can contain multiple items. It is up to the author to decide how to divide information between the between FSH files as well as subdirectories. Here are some possibilities:
+Information is stored in text files (either ASCII or UTF-8) with `.fsh` extensions. Each file can contain multiple items. It is up to the author to decide how to divide information between the between FSH files as well as subdirectories. Here are some possibilities:
 
 * Divide up according to the type of item: profiles in one file, value sets in another, extensions in another, etc.
 * Group things logically, for example, a profile together with its value sets, extensions, and examples.
@@ -90,14 +90,15 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 * **Whitespace**: Repeated whitespace is not meaningful within FSH files, except within string delimiters.
 * **Comments**: FSH follows [JavaScript syntax](https://www.w3schools.com/js/js_comments.asp) for code comments, with `//` denoting single-line comments, and the pair `/*`  `*/` delimiting multiple line comments.
+* **Hash Sign**: A leading hash sign (#) (variously called the number sign, pound sign, or octothorp) is used in FSH to denote a code from a formal terminology.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
-
+S
   ```
   * active = true
   ```
 
 * **Escape Character**: FSH uses the backslash as the escape character in string literals. For example, use `\"` to embed a quotation mark in a string.
-* **Circumflex Character ("Caret Syntax")**: FSH uses the circumflex (also called caret) `^` to directly reference the definitional structure associated with an item. For example, when defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental from the FSH code that defines a profile:
+* **Circumflex Character ("Caret Syntax")**: FSH uses the circumflex (also called caret) `^` to directly reference the definitional structure associated with an item. When defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental from the FSH code that defines a profile:
 
   ```
   * ^experimental = false
