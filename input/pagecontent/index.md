@@ -53,7 +53,7 @@ As illustrated below, creating an IG with FSH and SUSHI consists of three steps:
 
 <img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="float:none; margin: 0px 0px 0px 0px;" />
 
-> Note: The IG Publisher has recently (late March 2020) integrated SUSHI, so steps 2 and 3 can be combined. For details, see [SUSHI](sushi.html) documentation. 
+The SUSHI/IG Publisher integration workflow presents steps two and three above as a single step. For details, see [SUSHI](sushi.html) documentation.
 
 #### FSH Tanks
 

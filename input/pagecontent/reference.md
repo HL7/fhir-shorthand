@@ -81,9 +81,10 @@ The formal grammar for FSH discards all comments during import; they are not ret
 #### Multi-line Strings
 
 For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and retain consistent indentation in the FSH file. When processing multi-line strings, the following approach is followed:
+
 * If the first line or last line contains only whitespace (including newline), discard it.
 * If another line contains only whitespace, truncate it to zero characters.
-* For all other non-whitespace lines, detect the shortest number of leading spaces and trim that from the beginning of every line.
+* For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
 For example, an author might use a multi-line string to write markdown so that the markdown can be indented inside the FSH:
 
@@ -336,7 +337,7 @@ and for [binding](#value-set-binding-rules):
 
 ### Paths
 
-FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Paths also provide a grammar for addressing elements of a SD directly. Here are a few examples of how paths are used in FSH:
+FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Paths also provide a grammar for addressing elements of an SD directly. Here are a few examples of how paths are used in FSH:
 
 * To refer to a top-level element such as the 'code' element in Observation
 * To refer to a nested element, such as the 'method.text' element in Observation
@@ -345,7 +346,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * To pick out an individual item within a multiple choice reference, such as Observation in Reference(Observation \| Condition)
 * To refer to an individual slice within a sliced array, such as the SystolicBP component within a blood pressure
 * To set metadata elements in SD, like 'active' and 'experimental'
-* To address properties of ElementDefinitions nested within a SD, such as 'maxLength' property of string-type elements
+* To address properties of ElementDefinitions nested within an SD, such as 'maxLength' property of string-type elements
 
 In the following, the various types of path references are discussed.
 
@@ -392,7 +393,7 @@ Frequently in FHIR, an element has a Reference that has multiple targets. To add
 * Restrict the Practitioner reference in a performer element (type Reference(Organization \| Practitioner)) to PrimaryCareProvider, assuming PrimaryCareProvider is a profile on Practitioner:
 
   ```
-  * performer[Practitioner] only PrimaryCareProvider
+  * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
 #### Data Type Choice [x] Paths
@@ -429,7 +430,11 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
 
 #### Extension Paths
 
-Extensions are arrays populated by slicing. They may be addressed using the slice path syntax presented above. However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. <!--The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
+In FHIR, extensions are represented as elements in pre-existing arrays designated for this purpose. Every resource has an extension and a modifierExtension array at the top level, inherited from DomainResource. Every element in the resource also has a pre-existing extension array, inherited from [Element](https://www.hl7.org/fhir/element.html). These arrays contain elements of the [data type Extension](https://www.hl7.org/fhir/extensibility.html).
+
+Specific extensions are created in FSH profiles using by [extension rules](#extension-rules). Similar to numerical array indices, square brackets are used in paths to indicate a member of the extension (or modifierExtension) array. However,extensions are referred to by name or by URL (Extension.url), not by number.
+
+<!-- However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
 
 **Examples:**
 
@@ -555,7 +560,7 @@ Here is a summary of the rules supported in FSH:
 
 #### Fixed Value Rules
 
-Fixed value assignments follows this syntax:
+Fixed value assignments follow this syntax:
 
 ```
 * {path} = {value}
@@ -567,7 +572,7 @@ To assign a reference to another resource, use:
 * {path} = Reference({resource instance})
 ```
 
-The left side of the expression follows the [FSH path grammar](#paths). The right side's data type must aligned with the data type of the final element in the path.
+The left side of the expression follows the [FSH path grammar](#paths). The right side's data type must align with the data type of the final element in the path.
 
 **Note:** In profiles and extensions, fixed values represent the **minimum criteria** for conformance. Consider the following two statements:
 
@@ -918,29 +923,12 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
 
 #### Slicing Rules
 
-Slicing is an advanced, but necessary, feature of FHIR. While future versions of FHIR Shorthand will aim to lower the learning curve, FHIR Shorthand version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) specifying the slicing logic, (2) identifying the slices, and (3) defining each slice's contents.
+Slicing is an advanced, but necessary, feature of FHIR. While future versions of FHIR Shorthand will aim to lower the learning curve, FHIR Shorthand version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
 
-##### Step 1. Specifying the Slicing Logic
 
-Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description.
+##### Step 1. Identifying the Slices
 
-In FSH, authors must specify the slicing logic parameters using [structure definition escape (caret) syntax](#structure-definition-escape-paths). First they identify the element to be sliced, which is typically a multi-cardinality element. Then they traverses the structure definition at that point.
-
-**Example:**
-
-* Provide slicing logic for slices on Observation.component that should be distinguished by their code:
-
-  ```
-  * component ^slicing.discriminator.type = #pattern
-  * component ^slicing.discriminator.path = "code"
-  * component ^slicing.rules = #open
-  * component ^slicing.ordered = false   // can be omitted, since false is the default
-  * component ^slicing.description = "Slice based on the component.code pattern"
-  ```
-
-##### Step 2. Identifying Slices
-
-The next step in slicing is exactly the same as specifying inline extensions, using the `contains` keyword. The following syntax is used:
+The first step in slicing is populating the array that is to be sliced, using the `contains` keyword. The following syntax is used:
 
 ```
 * {array element path} contains
@@ -949,7 +937,7 @@ The next step in slicing is exactly the same as specifying inline extensions, us
        {sliceName3} {card3} {flags3} ...
 ```
 
-In this pattern, the `{array element path}` is a path to the element that is to be sliced (and to which the slicing rules were applied in step 1). The `{card}` declaration is required, and `{flags}` are optional.
+In this pattern, the `{array element path}` is a path to the element that is to be sliced (and to which the slicing rules will applied in step 3). The `{card}` declaration is required, and `{flags}` are optional.
 
 Each slice will match or constrain the data type of the array it slices. In particular:
 
@@ -992,9 +980,9 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
       TenMinuteScore 0..1
   ```
 
-##### Step 3. Defining Slice Contents
+##### Step 2. Defining Slice Contents
 
-At a minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
+At minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
 
 Future versions of FHIR Shorthand may support standalone slice definitions, but FHIR Shorthand version 1.0 requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
 
@@ -1017,6 +1005,25 @@ Future versions of FHIR Shorthand may support standalone slice definitions, but 
   * component[DiastolicBP].value[x] only Quantity
   * component[DiastolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
   ```
+
+##### Step 3. Specifying the Slicing Logic
+
+Slicing in FHIR requires authors to specify a [discriminator path, type, and rules]. In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
+
+In FSH, authors must specify the slicing logic parameters using [structure definition escape (caret) syntax](#structure-definition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type 
+
+**Example:**
+
+* Provide slicing logic for slices on Observation.component that should be distinguished by their code:
+
+  ```
+  * component ^slicing.discriminator.type = #pattern
+  * component ^slicing.discriminator.path = "code"
+  * component ^slicing.rules = #open
+  * component ^slicing.ordered = false   // can be omitted, since false is the default
+  * component ^slicing.description = "Slice based on the component.code pattern"
+  ```
+
 
 #### Invariant Rules
 
@@ -1261,7 +1268,7 @@ Instances inherit structures and values from their StructureDefinition (i.e. fix
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
-* `Usage: #definition` means the instance is a conformance item that is an instances of a resource such as a search parameter, operation definition, or questionnaire. These items will presented on their own IG page.
+* `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will presented on their own IG page.
 * `Usage: #inline` means the instance should not be instantiated as an independent resource, but appears as part of another instance (for example, in a composition or bundle).
 
 
@@ -1415,7 +1422,7 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 #### Defining Mappings
 
-[Mapping to other standards](https://www.hl7.org/fhir/mappings.html) is an optional part of a SD. These mappings are intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach.
+[Mapping to other standards](https://www.hl7.org/fhir/mappings.html) is an optional part of an SD. These mappings are intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach.
 
 > **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
 
