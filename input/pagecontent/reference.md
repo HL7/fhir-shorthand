@@ -195,22 +195,22 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
   http://hl7.org/fhir/CodeSystem/example-supplement|201801103#chol-mmol
   ```
   
-* As an alternative to the bar syntax, set the version of a Coding directly:
+* As an alternative to the bar syntax for version, set the code system version of a Coding datatype (myCoding) directly:
 
   ```
   * myCoding.version = "201801103"
+  ```
+
+* Set the userSelected property of myCoding (one of the lesser-used attributes of Codings):
+
+  ```
+  * myCoding.userSelected = true
   ```
   
 * In an instance of a Signature, set Signature.type:
 
   ```
   * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
-  ```
-  
-* Set Coding.userSelected, one of the lesser-used attributes of a Coding:
-
-  ```
-  * myCoding.userSelected = true
   ```
   
 ##### CodeableConcept
@@ -1371,7 +1371,7 @@ Not all operators are valid for any code system. The `property` and `value` are 
 
 **Examples** 
 
-* Explicit ([extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
+* Define an [extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
 
   ```
   ValueSet: BodyWeightPreconditionVS
@@ -1382,7 +1382,7 @@ Not all operators are valid for any code system. The `property` and `value` are 
   * SCT#951000205108 "Wearing underwear or less"
   ```
 
-* Algorithmically-defined ([intensional](https://www.hl7.org/fhir/valueset.html#int-ext))  value set:
+* Define a value set using [intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules:
 
   ```
   * codes from system SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"

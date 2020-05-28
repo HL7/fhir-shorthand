@@ -86,10 +86,10 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 #### Basics
 
 * **Formal grammar**: [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
-* **Reserved words**: FSH has a number of special words that are considered part of the language, and cannot be used as item names. Refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) for a complete list of these words.
+* **Reserved words**: FSH has a number of reserved words that are considered part of the language, and cannot be used as item names. Refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) for a complete list of these words.
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
-* **Whitespace**: Repeated whitespace is not meaningful within FSH files, except within string delimiters. New lines are considered whitespace.
-* **Comments**: FSH follows [JavaScript syntax](https://www.w3schools.com/js/js_comments.asp) for code comments, with `//` denoting single-line comments, and the pair `/*`  `*/` delimiting multiple line comments.
+* **Whitespace**: Repeated whitespaces are equivalent to one whitespace within FSH files, unless they are part of string literals. New lines are considered whitespace.
+* **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
 * **Hash Sign**: A leading hash sign (#) (variously called the number sign, pound sign, or octothorp) is used in FSH to denote a code from a formal terminology.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
 S
@@ -233,7 +233,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * status = #arrived
   ```
 
-* **Value set binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include one of FHIR's binding strengths (example, preferred, extensible, or required). For example:
+* **Value set binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR's binding strengths](http://hl7.org/fhir/valueset-binding-strength.html) (example, preferred, extensible, or required). For example:
 
   ```
   * gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)
@@ -277,19 +277,19 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * recorder only Reference(Practitioner | PractitionerRole)
   ```
 
-* **Flag rules** add bits of information about elements impacting how implementers should handle them. For example:
+* **Flag rules** add bits of information about elements impacting how implementers should handle them. The flags are as [defined FHIR](http://hl7.org/fhir/R4/formats.html#table), except FSH uses `MS` for must-support and `SU` for summary. For example:
 
   ```
-  * communication MS ?!
+  * communication MS SU
   ```
 
   ```
   * identifier, identifier.system, identifier.value, name, name.family MS
   ```
 
-* **Extension rules** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword. 
+* **Extension rules** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword.
 
-  Here are two examples of defining inline extensions:
+  Here are two examples of defining inline extensions, the first with a single extension, the second with multiple extensions.
 
   ```
   * bodySite.extension contains laterality 0..1
@@ -308,7 +308,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * bodySite.extension[laterality].valueCodeableConcept from LateralityVS (required)
   ```
 
-  With standalone extensions, the main difference is that the grammar includes both the standalone name and the assigned local name:
+  With standalone extensions, the main difference is that the grammar includes both the standalone name and the assigned local name. In this example, local names begin with a lower case letter, and standalone and external extension have capitalized (alias) names. This is a helpful convention, not part of the specification.
 
   ```
   // Aliases for convenience
@@ -361,7 +361,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * name obeys us-core-8  // invariant applies to the name element
   ```
 
-* **Extensional (explicit) code rules** are used to include or exclude specific codes in value sets and code systems. For example:
+* **Value set rules** are used to include or exclude codes in value sets. These rules can be defined two ways. [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly lists the codes to be included and/or excluded, for example:
 
   ```
   * SCT#54102005 "G1 grade (finding)"
@@ -371,9 +371,9 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * exclude SCT#12619005
   ```
 
-  When defining a new code system, the code system (SCT, in the examples) is omitted and an optional definition can be appended as a separate string.
+Because including codes is much more common than excluding codes, inclusion is implicit and exclusion is explicit in the rule grammar.
 
-* **Intensional (implicit) code rules** are used to include or exclude sets of values in value sets. For example, to include all codes from a code system:
+[Intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules are used when code membership in the value set is defined algorithmically, rather than listed explicitly. For example, to include all codes from a code system:
 
   ```
   * codes from system RXNORM
@@ -397,7 +397,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
 
 ### FSH Line-by-Line Walkthrough
 
-In this section, we'll walk through a realistic example line by line.
+In this section, we will walk through a realistic example line by line.
 
 ```
 1   Alias: LNC = http://loinc.org
@@ -459,7 +459,7 @@ In this section, we'll walk through a realistic example line by line.
 * Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
 * Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and should be "computer-ready" (i.e., suitable for code generation).
 * Line 5 says that this profile will be based on Observation.
-* Line 6 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
+* Line 6 gives an id for the profile. The id is be used to create the globally unique URL for the profile by pre-pending the canonical URL provided by the user in the **package.json** file. The id typically follows the convention of IG short name followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
 * Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
@@ -468,7 +468,7 @@ In this section, we'll walk through a realistic example line by line.
 * Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
 * Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
 * Line 22 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1. Note that the display name is presented in a comment, since setting the display name would require all instances to send the display name exact as specified.
-* Lines 23 to 25 each restrict the choice of resource types to a reference to a single resource type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
+* Lines 23 to 25 reduce an inherited choice of resource references down to a single resource or profile type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
 * Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
 * Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
 * Line 30 declares a standalone extension named EvidenceType.
@@ -485,7 +485,7 @@ In this section, we'll walk through a realistic example line by line.
 
 A few things to note about this example:
 
-* The order of items doesn't matter. In FSH, you can refer to items defined before or after the current item.
+* The order of items (aliases, profile, value set, extension) doesn't matter. In FSH, you can refer to items defined before or after the current item. By convention, aliases appear at the beginning of a file.
 * The example assumes the items are all in one file, but they could be in separate files. The allocation of items to files is the author's choice.
 * Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#paths).
 
@@ -495,7 +495,7 @@ In this introduction, we presented an overview of FSH and SUSHI. Not all feature
 
 While this version of FSH and SUSHI are capable of producing sophisticated IGs, future versions may introduce additional features. Feature suggestions are welcome, and can be made [here](https://github.com/FHIR/sushi/issues).
 
-Some of the features already under consideration include (in no order):
+Some of the features already under consideration include (in no particular order):
 
 * **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FHIR Shorthand will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices. We have nicknamed this “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything.
 
@@ -503,7 +503,7 @@ Some of the features already under consideration include (in no order):
 
 * **Capability Statements:** Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements. Creative approaches and purpose-specific syntax could also be employed for other conformance resources such as SearchParameter.
 
-* **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain yet more items. A syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
+* **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain sub-items. While not suggesting that FSH adopt YAML, it is worth noting that a syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
 
 * **Logical Models:** FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
 
