@@ -19,7 +19,7 @@ This IG uses the following conventions:
 
 ### Introduction
 
-FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as Github.
+FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as GitHub.
 
 <img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="float:none; margin: 0px 0px 0px 0px;" />
 
@@ -88,7 +88,7 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 * **Formal grammar**: [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
 * **Reserved words**: FSH has a number of special words that are considered part of the language, and cannot be used as item names. Refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) for a complete list of these words.
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
-* **Whitespace**: Repeated whitespace is not meaningful within FSH files, except within string delimiters.
+* **Whitespace**: Repeated whitespace is not meaningful within FSH files, except within string delimiters. New lines are considered whitespace.
 * **Comments**: FSH follows [JavaScript syntax](https://www.w3schools.com/js/js_comments.asp) for code comments, with `//` denoting single-line comments, and the pair `/*`  `*/` delimiting multiple line comments.
 * **Hash Sign**: A leading hash sign (#) (variously called the number sign, pound sign, or octothorp) is used in FSH to denote a code from a formal terminology.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
@@ -344,10 +344,10 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   ```
   * component[SystolicBP].code = http://loinc.org#8480-6 // Systolic blood pressure
   * component[SystolicBP].value[x] only Quantity
-  * component[SystolicBP].valueQuality = UCUM#mm[Hg]
+  * component[SystolicBP].valueQuantity = UCUM#mm[Hg]
   * component[DiastolicBP].code = http://loinc.org#8462-4 // Diastolic blood pressure
   * component[DiastolicBP].value[x] only Quantity
-  * component[DiastolicBP].valueQuality = UCUM#mm[Hg]
+  * component[DiastolicBP].valueQuantity = UCUM#mm[Hg]
   ```
 
 * **Invariant rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
@@ -458,7 +458,7 @@ In this section, we'll walk through a realistic example line by line.
 ```
 * Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
 * Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and should be "computer-ready" (i.e., suitable for code generation).
-* Line 5 says that this profile will be based on Observation. Specifying the parent is required.
+* Line 5 says that this profile will be based on Observation.
 * Line 6 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
@@ -493,7 +493,7 @@ A few things to note about this example:
 
 In this introduction, we presented an overview of FSH and SUSHI. Not all features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference.html). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi.html).
 
-Version 1.0 of FSH and SUSHI are capable of producing sophisticated IGs and offer more than a "minimum viable product". Future versions may introduce additional features. Feature suggestions are welcome, and can be made [here](https://github.com/FHIR/sushi/issues).
+While this version of FSH and SUSHI are capable of producing sophisticated IGs, future versions may introduce additional features. Feature suggestions are welcome, and can be made [here](https://github.com/FHIR/sushi/issues).
 
 Some of the features already under consideration include (in no order):
 

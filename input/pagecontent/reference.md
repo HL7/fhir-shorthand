@@ -386,14 +386,19 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
 #### Reference Paths
 
-Frequently in FHIR, an element has a Reference that has multiple targets. To address a specific target, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
+Frequently in FHIR, an element has a Reference that can reference different types of resources or profiles. To address a specific resource or profile among the choices, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
 
 **Example:**
 
-* Restrict the Practitioner reference in a performer element (type Reference(Organization \| Practitioner)) to PrimaryCareProvider, assuming PrimaryCareProvider is a profile on Practitioner:
+* Given an element named `performer` with an inherited choice type of Reference(Organization \| Practitioner), restrict the type of Practitioner to PrimaryCareProvider, assuming PrimaryCareProvider is a profile on Practitioner:
 
   ```
   * performer[Practitioner] only Reference(PrimaryCareProvider)
+  ```
+  The result of this rule is that the `performer` element can reference either a Practitioner resource that validates against the PrimaryCareProvider profile or an Organization resource. Because the path specifically calls out the Practitioner choice, the rule has no effect on the Reference(Organization) choice. Contrast that with the following rule, which eliminates the Reference(Organization) choice:
+
+  ```
+  * performer only Reference(PrimaryCareProvider)  
   ```
 
 #### Data Type Choice [x] Paths
@@ -450,7 +455,7 @@ In FSH, extensions are created using [extension rules](#extension-rules). These 
   * extension[USCoreEthnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"
   ```
 
-* Set two values in the multiply-valued nested extension, detailed, under USCoreEthnicity extension:
+* Set two values in the multiple-valued nested extension, detailed, under USCoreEthnicity extension:
 
   ```
   * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"
@@ -724,13 +729,13 @@ For convenience and compactness, cardinality rules can be combined with [flag as
   * component.referenceRange 0..0
   ```
 
-* Require at least one category without changing its upper bound (*):
+* Require at least one category without changing its upper bound:
 
   ```
   * category 1..
   ```
 
-* Allow at most one category without changing its lower bound (0):
+* Allow at most one category without changing its lower bound:
 
   ```
   * category ..1
@@ -824,7 +829,7 @@ Flags are a set of information about the element that impacts how implementers h
 | D | D | Draft element |
 {: .grid }
 
-FHIR also defines I and NE flags. These are not supported by FSH, since they are derived from other information.
+FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. These flags can be set using [caret syntax](#structure-definition-escape-paths), if needed.
 
 The following syntax can be used to assigning flags:
 
@@ -1010,7 +1015,7 @@ Future versions of FHIR Shorthand may support standalone slice definitions, but 
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules]. In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
 
-In FSH, authors must specify the slicing logic parameters using [structure definition escape (caret) syntax](#structure-definition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type 
+In FSH, authors must specify the slicing logic parameters using [StructureDefinition escape (caret) syntax](#structure-definition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type 
 
 **Example:**
 
@@ -1268,7 +1273,7 @@ Instances inherit structures and values from their StructureDefinition (i.e. fix
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
-* `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will presented on their own IG page.
+* `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
 * `Usage: #inline` means the instance should not be instantiated as an independent resource, but appears as part of another instance (for example, in a composition or bundle).
 
 
