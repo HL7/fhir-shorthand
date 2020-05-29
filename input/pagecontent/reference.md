@@ -19,6 +19,7 @@ The FSH specification, like other IGs, follows the [semantic versioning](https:/
 
 [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
 
+
 #### Keywords
 
 FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. 
@@ -33,7 +34,6 @@ The primitive data types and value formats in FSH are identical to the [primitiv
 
 References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
 
-
 #### Names
 
 Names in FSH follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". This guidance applies to Profile, Extension, ValueSet, and CodeSystem names.
@@ -42,7 +42,15 @@ Alias names may begin with `$`. Choosing alias names beginning with `$` allows f
 
 #### References to External FHIR Artifacts
 
-FHIR resources, profiles, extensions, and value sets defined outside the [FSH tank](index.html#fsh-tanks) are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`.
+FHIR resources, profiles, extensions, and value sets defined outside the [FSH tank](index.html#fsh-tanks) are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`. In cases where an IG defines a profile or extension matching an existing FHIR ID, use the canonical URL to refer to the FHIR resource.
+
+#### Files
+
+Content in one project can be contained in one or more files with **.fsh** extension. How content is divided among files is not meaningful in FSH, and all content can be considered pooled together for the purposes of FSH. It is up to implementations to define which **.fsh** files should be included in a given project.
+
+#### Order of Items in Files
+
+The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. Items can appear in any order within **.fsh** files, and can be moved around within a file (or to other **.fsh** files) without affecting the interpretation of the content.
 
 #### Whitespace
 

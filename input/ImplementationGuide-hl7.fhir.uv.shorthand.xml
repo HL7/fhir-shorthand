@@ -30,22 +30,22 @@
       <generation value="html"/>
       <page>
         <nameUrl value="index.html"/>
-        <title value="FHIR Shorthand"/>
+        <title value="FHIR Shorthand (Informative)"/>
         <generation value="markdown"/>
       </page>
       <page>
         <nameUrl value="tutorial.html"/>
-        <title value="Tutorial"/>
+        <title value="Tutorial (Informative)"/>
         <generation value="markdown"/>
       </page>
       <page>
         <nameUrl value="reference.html"/>
-        <title value="Language Reference"/>
+        <title value="Language Reference (Normative)"/>
         <generation value="markdown"/>
       </page>
       <page>
         <nameUrl value="sushi.html"/>
-        <title value="SUSHI"/>
+        <title value="SUSHI (Informative)"/>
         <generation value="markdown"/>
       </page>
     </page>
