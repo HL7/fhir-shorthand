@@ -381,7 +381,7 @@ SUSHI can be used in two modes:
 
 #### SUSHI Stand-Alone Mode
 
-In the stand-alone mode, SUSHI runs independently of the IG Publisher. This is a good option to quickly check for errors when you are creating your FSH code, or if you are only interesting in creating FHIR artifacts without an IG. Creating FHIR artifacts with FSH and SUSHI consists of the following steps:
+In the stand-alone mode, SUSHI runs independently of the IG Publisher. This is a good option to quickly check for errors when you are creating your FSH code, or if you are only interesting in creating FHIR artifacts without an IG. Creating FHIR artifacts with FSH and SUSHI in stand-alone mode involves the following steps:
 
 1. Populate a FSH Tank (2) with FSH files (1) containing your Shorthand definitions.
 2. Create a **[package.json](https://confluence.hl7.org/pages/viewpage.action?pageId=35718629#NPMPackageSpecification-Packagemanifest)** file (3).
@@ -389,7 +389,7 @@ In the stand-alone mode, SUSHI runs independently of the IG Publisher. This is a
 
 #### SUSHI IG Mode
 
-Creating an IG with FSH and SUSHI consists of the following steps:
+Creating an IG with FSH and SUSHI involves the following steps:
 
 1. Create Shorthand definitions in FSH files (1) in a directory (FSH Tank) named **/fsh** (2).
 2. Create configuration information (3) for SUSHI and the IG publisher (at minimum, **[package.json](https://confluence.hl7.org/pages/viewpage.action?pageId=35718629#NPMPackageSpecification-Packagemanifest)** file)
@@ -498,7 +498,7 @@ In this introduction, we presented an overview of FSH and SUSHI. Not all feature
 
 While this version of FSH and SUSHI are capable of producing sophisticated IGs, future versions may introduce additional features. Feature suggestions are welcome, and can be made [here](https://github.com/FHIR/sushi/issues).
 
-Some of the features already under consideration include (in no particular order):
+Some of the features for FSH and SUSHI under consideration include (in no particular order):
 
 * **Round-Tripping** Currently there is no mature tool to translate existing FHIR artifacts into FSH. There is also a tool under development, [FSH Food](https://github.com/lantanagroup/fshfood), that converts StructureDefinitions into FSH.
 
@@ -506,9 +506,9 @@ Some of the features already under consideration include (in no particular order
 
 * **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FHIR Shorthand will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices. We have nicknamed this “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything.
 
-* **Multiple Language Support:** At present, FSH supports only one language. In the future, FSH and SUSHI may introduce mechanisms for generating IGs in multiple languages.
+* **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 
-* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance (using `InstanceOf: CapabilityStatement`) but FSH does nothing to help populate that instance. There may be more [interesting approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements. Creative approaches and purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
+* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance in FSH using `InstanceOf: CapabilityStatement`, but FSH does nothing to help populate that instance. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
 
 * **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain sub-items. While not suggesting that FSH adopt YAML, it is worth noting that a syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
 

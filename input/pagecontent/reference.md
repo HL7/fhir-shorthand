@@ -42,7 +42,7 @@ Alias names may begin with `$`. Choosing alias names beginning with `$` allows f
 
 #### References to External FHIR Artifacts
 
-FHIR resources, profiles, extensions, and value sets defined outside the [FSH tank](index.html#fsh-tanks) are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`. In cases where an IG defines a profile or extension matching an existing FHIR ID, use the canonical URL to refer to the FHIR resource.
+FHIR resources, profiles, extensions, and value sets defined outside the [FSH tank](index.html#fsh-files-and-fsh-tanks) are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`. In cases where an IG defines a profile or extension matching an existing FHIR ID, use the canonical URL to refer to the FHIR resource.
 
 #### Files
 
@@ -667,7 +667,7 @@ Binding is the process of associating a coded element with a set of possible val
 * {path} from {valueSet} ({strength})
 ```
 
-The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-tanks), or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared an external dependency.
+The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks), or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared an external dependency.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
 
@@ -869,7 +869,7 @@ Extensions are created by adding elements to built-in 'extension' array elements
 
 Extensions are specified using the `contains` keyword. There are two types of extensions: **standalone** and **inline**:
 
-* Standalone extensions have independent SDs, and can be reused. Standalone extension can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
+* Standalone extensions have independent SDs, and can be reused. Standalone extension can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
 * Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
 
 The shorthand syntax to specify a standalone extension is:
@@ -906,7 +906,7 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
         GenderIdentityExtension named genderIdentity 0..1 MS
   ```
 
-* Add a standalone extension, defined in the same [FSH tank](index.html#fsh-tanks), to a bodySite attribute (second level extension):
+* Add a standalone extension, defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks), to a bodySite attribute (second level extension):
 
   ```
   * bodySite.extension contains Laterality 0..1
@@ -1060,7 +1060,7 @@ In FSH, authors must specify the slicing logic parameters using [StructureDefini
 
 The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
 
-The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
+The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-files-and-fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
 **Examples:**
 
@@ -1142,7 +1142,7 @@ Profile: SecondaryCancerCondition
 Description: "The intent of the treatment."
 ```
 
-For some keywords, values are **FSH names**. A name is any sequence of non-whitespace characters, used to refer to the item within the same [FSH tank](index.html#fsh-tanks). By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
+For some keywords, values are **FSH names**. A name is any sequence of non-whitespace characters, used to refer to the item within the same [FSH tank](index.html#fsh-files-and-fsh-tanks). By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
 The use of individual keywords is explained in greater detail in the following sections. Here is a summary of keywords in FSH:
 
