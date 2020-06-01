@@ -1,9 +1,9 @@
 This implementation guide includes the following chapters:
 
 1. [FHIR Shorthand Overview](index.html) (this chapter) -- Introduction to FSH and SUSHI _(informative content)_.
-1. [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an IG with FHIR Shorthand and SUSHI _(informative content)_.
+1. [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an Implementation Guide (IG) with FHIR Shorthand and SUSHI _(informative content)_.
 1. [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(normative content)_.
-1. [SUSHI User Guide](sushi.html) -- A guide to producing an Implementation Guide (IG) from FSH files using SUSHI compiler and the HL7 IG Publishing tool _(informative content)_.
+1. [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool _(informative content)_.
 
 In addition, the IG includes several downloads, including a [Quick Reference Sheet](FSHQuickReference.pdf) and [zip file](fsh-tutorial-master.zip) for the FSH Tutorial _(informative content)_.
 
@@ -25,7 +25,7 @@ FHIR Shorthand (FSH) is a domain-specific language for defining the contents of 
 
 #### Motivations for FHIR Shorthand
 
-FHIR Shorthand was created in response to the need in the FHIR community for scalable, fast, user-friendly tools for IG creation and maintenance. Experience has shown that profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent. Profiling projects often go through many iterations, and as such, an agile approach to refactoring and revision is invaluable.
+FSH was created in response to the need in the FHIR community for scalable, fast, user-friendly tools for IG creation and maintenance. Experience has shown that profiling projects can be difficult and slow, and the resulting IG quality can be inconsistent. Profiling projects often go through many iterations, and as such, an agile approach to refactoring and revision is invaluable.
 
 <img src="IG-Need-For-Agility.png" alt="IG Need for Agility" width="800px" style="float:none; margin: 0px 0px 0px 0px;" />
 
@@ -35,9 +35,9 @@ There are already several existing methods for IG creation: hand editing, using 
 1. The spreadsheet method has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A significant downside is that version management is extremely difficult; either the files are saved in binary form (.xslx) or as XML files, with the content lost in thousands of lines of formatting.
 1. Simplifier/Forge and Trifolia-on-FHIR provide graphical user interfaces that are very helpful guiding users through common tasks. However, making significant cross-cutting changes ([refactoring](https://resources.collab.net/agile-101/code-refactoring)) requires navigating through many screens. Currently these tools do not have advanced source code control features.
 
-Experience across many domains has shown that complex software projects are best approached with textual languages. As a language designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles. Because it is text-based, FHIR Shorthand brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
+Experience across many domains has shown that complex software projects are best approached with textual languages. As a language designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles. Because it is text-based, FSH brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
 
-### Shorthand Language Overview
+### FHIR Shorthand Language Overview
 
 The complete grammar of FSH is described in the [FHIR Shorthand Language Reference](reference.html). Here we present just enough to get a taste of FSH.
 
@@ -46,7 +46,7 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
 * **Formal grammar**: [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
 * **Reserved words**: FSH has a number of reserved words that are considered part of the language, and cannot be used as item names. Refer to the keywords section in [FSH's formal ANTLR4 grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) for a complete list of these words.
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
-* **Whitespace**: Repeated whitespaces are equivalent to one whitespace within FSH files, unless they are part of string literals. New lines are considered whitespace.
+* **Whitespace**: Repeated whitespace characters are equivalent to one whitespace character within FSH files, unless they are part of string literals. New lines are considered whitespace.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
 * **Hash Sign**: A leading hash sign (#) (variously called the number sign, pound sign, or octothorp) is used in FSH to denote a code from a formal terminology.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
@@ -56,7 +56,7 @@ The complete grammar of FSH is described in the [FHIR Shorthand Language Referen
   ```
 
 * **Escape Character**: FSH uses the backslash as the escape character in string literals. For example, use `\"` to embed a quotation mark in a string.
-* **Circumflex Character ("Caret Syntax")**: FSH uses the circumflex (also called caret) `^` to directly reference the definitional structure associated with an item. When defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental from the FSH code that defines a profile:
+* **Caret Character**: FSH uses the caret (also called circumflex) `^` to directly reference the definitional structure associated with an item. When defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental from the FSH code that defines a profile:
 
   ```
   * ^experimental = false
@@ -316,7 +316,9 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * name obeys us-core-8  // invariant applies to the name element
   ```
 
-* **Value set rules** are used to include or exclude codes in value sets. These rules can be defined two ways. [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly lists the codes to be included and/or excluded, for example:
+* **Value set rules** are used to include or exclude codes in value sets. These rules can be defined two ways:
+
+  [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly list the codes to be included and/or excluded, for example:
 
   ```
   * SCT#54102005 "G1 grade (finding)"
@@ -326,9 +328,9 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * exclude SCT#12619005
   ```
 
-Because including codes is much more common than excluding codes, inclusion is implicit and exclusion is explicit in the rule grammar.
+  Because including codes is much more common than excluding codes, inclusion is implicit and exclusion is explicit in the rule grammar.
 
-[Intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules are used when code membership in the value set is defined algorithmically, rather than listed explicitly. For example, to include all codes from a code system:
+  [Intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules are used when code membership in the value set is defined algorithmically, rather than listed explicitly. For example, to include all codes from a code system:
 
   ```
   * codes from system RXNORM
@@ -358,7 +360,7 @@ This section presents an overview of how the FSH language is put into practice. 
 
 #### FSH Files and FSH Tanks
 
-Content written in FHIR Shorthand is stored in plain text files (ASCII or UTF-8) with `.fsh` extensions (1). Profiles, extensions, value sets, code systems, examples, and other FHIR artifacts are defined in FSH files.
+Content written in FSH is stored in plain text files (ASCII or UTF-8) with `.fsh` extensions (1). Profiles, extensions, value sets, code systems, examples, and other FHIR artifacts are defined in FSH files.
 
 Any text editor can be used to create a FSH file. [Visual Studio Code](https://code.visualstudio.com/) has a useful [FSH plug-in](https://marketplace.visualstudio.com/items?itemName=kmahalingam.vscode-language-fsh) that knows FSH syntax and colorizes text accordingly.
 
@@ -383,7 +385,7 @@ SUSHI can be used in two modes:
 
 In the stand-alone mode, SUSHI runs independently of the IG Publisher. This is a good option to quickly check for errors when you are creating your FSH code, or if you are only interesting in creating FHIR artifacts without an IG. Creating FHIR artifacts with FSH and SUSHI in stand-alone mode involves the following steps:
 
-1. Populate a FSH Tank (2) with FSH files (1) containing your Shorthand definitions.
+1. Populate a FSH Tank (2) with FSH files (1) containing your FSH definitions.
 2. Create a **[package.json](https://confluence.hl7.org/pages/viewpage.action?pageId=35718629#NPMPackageSpecification-Packagemanifest)** file (3).
 3. Run SUSHI (4). After SUSHI runs, a new directory (named **/build** by default) appears in the FSH Tank. This directory contains FHIR artifacts (5) such as profiles, extensions, value sets, and instances.
 
@@ -391,7 +393,7 @@ In the stand-alone mode, SUSHI runs independently of the IG Publisher. This is a
 
 Creating an IG with FSH and SUSHI involves the following steps:
 
-1. Create Shorthand definitions in FSH files (1) in a directory (FSH Tank) named **/fsh** (2).
+1. Create FSH definitions in FSH files (1) in a directory (FSH Tank) named **/fsh** (2).
 2. Create configuration information (3) for SUSHI and the IG publisher (at minimum, **[package.json](https://confluence.hl7.org/pages/viewpage.action?pageId=35718629#NPMPackageSpecification-Packagemanifest)** file)
 3. Provide additional inputs for the IG, including static pages, images, navigation menu configurations (6).
 4. Run the IG Publisher (7). The IG Publisher will detect the ./fsh directory (2) and run SUSHI (4) to produce FHIR Artifacts (5) before running the remaining IG publishing steps (8), to produce the IG (9).
@@ -474,7 +476,7 @@ In this section, we will walk through a realistic example of FSH, line by line.
 * Lines 23 to 25 reduce an inherited choice of resource references down to a single resource or profile type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
 * Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
 * Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
-* Line 30 declares a standalone extension named EvidenceType.
+* Line 30 declares a  named EvidenceType.
 * Line 31 gives the extension a human-readable title.
 * Line 32 assigns it an id.
 * Line 33 gives the extension a description that will appear on the extension's main page.
@@ -504,7 +506,7 @@ Some of the features for FSH and SUSHI under consideration include (in no partic
 
 * **Web-Based SUSHI** The underlying architecture of SUSHI is compatible with future server-based deployment, potentially providing an interactive experience with FSH and SUSHI.
 
-* **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FHIR Shorthand will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices. We have nicknamed this “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything.
+* **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FSH will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices. We have nicknamed this “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything.
 
 * **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 

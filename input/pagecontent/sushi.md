@@ -117,7 +117,7 @@ Here are some general tips on approaching debugging:
 * The order of keywords is not arbitrary. The declarations must start with the type of item you are creating (e.g., Profile, Instance, ValueSet).
 * The order of rules usually doesn't matter, but there are exceptions. Slices and extensions must be created (with `contains` rule) before they are constrained.
 * A common error is `No element found at path`. This means that although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there are no spelling errors, the element names in the path are correct, and you are using the [path grammar](reference.html#paths) correctly.
-* If you are getting an error you can't resolve, you can ask for help on the [FHIR Shorthand Chat channel](https://chat.fhir.org/#narrow/stream/215610-shorthand).
+* If you are getting an error you can't resolve, you can ask for help on the [#shorthand chat channel](https://chat.fhir.org/#narrow/stream/215610-shorthand).
 
 ### IG Creation
 
@@ -251,7 +251,7 @@ This will run the HL7 IG Publisher, which will take several minutes to complete.
 
 ### New! IG Publisher Integration (Autobuild Configuration)
 
-The IG Publisher version 1.0.75 and higher includes native support for FHIR Shorthand and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named **/fsh**. Not having to run SUSHI separately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
+The IG Publisher version 1.0.75 and higher includes native support for FSH and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named **/fsh**. Not having to run SUSHI separately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
 
 [Autobuild](https://github.com/FHIR/auto-ig-builder/blob/master/README.md) is a build service that can be triggered when you commit IG source code to any GitHub repository. Autobuild starts the IG Publisher and publishes your IG to http://build.fhir.org. Because SUSHI is now included in the IG Publisher, when you check in your FSH files to a GitHub repository configured to autobuild, everything will run automatically to produce your IG.
 
@@ -317,7 +317,7 @@ Thank you for using FHIR Shorthand and the SUSHI reference implementation. We ho
 
 Here are some links to get started:
 
-* Participate, ask or answer questions on the [FHIR Shorthand Chat](https://chat.fhir.org/#narrow/stream/215610-shorthand).
+* Participate, ask or answer questions on the [#shorthand chat](https://chat.fhir.org/#narrow/stream/215610-shorthand).
 
 * If you encounter issues with SUSHI, please report them on the [SUSHI issue tracker](https://github.com/FHIR/sushi/issues).
 

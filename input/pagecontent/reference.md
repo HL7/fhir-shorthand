@@ -22,7 +22,7 @@ The FSH specification, like other IGs, follows the [semantic versioning](https:/
 
 #### Keywords
 
-FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, and `,`. 
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `|`, and `,`. 
 
 The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`.
 
@@ -122,7 +122,7 @@ The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. 
 
 ##### code
 
-Codes are denoted with `#` sign. The shorthand is:
+Codes are denoted with `#` sign. The FSH is:
 
 ```
 #{code}
@@ -161,7 +161,7 @@ In general, the first syntax is sufficient. Quotes are only required in the rare
 
 ##### Coding
 
-The shorthand for a Coding value is:
+The FSH for a Coding value is:
 
 ```
 {system}#{code} "{display text}"
@@ -223,7 +223,7 @@ To set the less-common properties of a Coding, use a [fixed value rule](#fixed-v
   
 ##### CodeableConcept
 
-A CodeableConcept consists of an array of Codings, plus a text. Codings are expressed using the shorthand explained [directly above](#coding). The shorthand for setting the first Coding in a CodeableConcept is:
+A CodeableConcept consists of an array of Codings, plus a text. Codings are expressed using the shorthand explained [directly above](#coding). The FSH for setting the first Coding in a CodeableConcept is:
 
 ```
 * {CodeableConcept type} = {system}#{code} "{display text}"
@@ -237,7 +237,7 @@ To set additional values, array indices are used. Indices are denoted by bracket
 
 FSH arrays are zero-based. If no array index is given, the index [0] is assumed (see [Array Property Paths](#array-property-paths) for more information).
 
-To set the top-level text of a CodeableConcept, the shorthand expression is:
+To set the top-level text of a CodeableConcept, the FSH expression is:
 
 ```
 * {CodeableConcept type}.text = {string}
@@ -291,7 +291,7 @@ The value and units can also be set independently. To set the value of quantity 
 * {Quantity type}.value = {number}
 ```
 
-To set the units of measure independently, a Quantity can be bound to a value set or assigned a coded value. The shorthand is:
+To set the units of measure independently, a Quantity can be bound to a value set or assigned a coded value. The FSH is:
 
 ```
 * {Quantity type} = {system}#{code} "{display text}"
@@ -443,9 +443,9 @@ In some cases, a type may be constrained to a set of possible profiles. To addre
 
 #### Extension Paths
 
-In FHIR, extensions are represented as elements in pre-existing arrays designated for this purpose. Every resource has an extension and a modifierExtension array at the top level, inherited from DomainResource. Every element in the resource also has a pre-existing extension array, inherited from [Element](https://www.hl7.org/fhir/element.html). These arrays contain elements of the [data type Extension](https://www.hl7.org/fhir/extensibility.html).
+FHIR provides for user customization through extensions. Extensions are added to resources by populating pre-existing arrays designated for this purpose. Most resources have extension and a modifierExtension arrays at the top level, inherited from [DomainResource](http://hl7.org/fhir/R4/domainresource.html) (exceptions include Bundle, Parameters, and Binary). Every element of a resource also has an extension array, inherited from [Element](https://www.hl7.org/fhir/element.html). These arrays contain elements of [data type Extension](https://www.hl7.org/fhir/extensibility.html#extension). Particular types of extensions are created by profiling Extension.
 
-In FSH, extensions are created using [extension rules](#extension-rules). These rules have the effect of adding the extension to the corresponding FHIR extension array, technically, by slicing that array. The extension is referred as a member of the extension array, using its name or URL in square brackets.
+In FSH, extensions are created using [extension rules](#extension-rules). These rules have the effect of adding the extension to the corresponding FHIR extension array (technically, by slicing that array). The extension is then referred to by its name or URL as a member of the extension array using square brackets, i.e., `extension[{name or URL}]`.
 
 <!-- However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
 
@@ -456,6 +456,12 @@ In FSH, extensions are created using [extension rules](#extension-rules). These 
   ```
   * extension[USCoreBirthsex].valueCode = #F
   ```
+
+* Set the value of a nested extension in US Core Patient, indicating the given email address is a "direct" address:
+
+```
+  * telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct] = true
+```
 
 * Set the nested ombCategory extension, under the ethnicity extension in US Core:
 
@@ -667,7 +673,7 @@ Binding is the process of associating a coded element with a set of possible val
 * {path} from {valueSet} ({strength})
 ```
 
-The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks), or the defining URL of an external value set that is part of the core FHIR spec, or an IG that has been declared an external dependency.
+The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) or the defining URL of an external value set in the core FHIR spec or in an IG that has been declared an external dependency.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
 
@@ -751,7 +757,7 @@ For convenience and compactness, cardinality rules can be combined with [flag as
 
 #### Data Type Restriction Rules
 
-FSH rules can be used to restrict the data type of an element. The shorthand syntax to restrict the type is:
+FSH rules can be used to restrict the data type of an element. The FSH syntax to restrict the type is:
 
   ```
   * {path} only {type}
@@ -869,16 +875,16 @@ Extensions are created by adding elements to built-in 'extension' array elements
 
 Extensions are specified using the `contains` keyword. There are two types of extensions: **standalone** and **inline**:
 
-* Standalone extensions have independent SDs, and can be reused. Standalone extension can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
+* Standalone extensions have independent SDs, and can be reused. They can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
 * Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
 
-The shorthand syntax to specify a standalone extension is:
+The FSH syntax to specify a standalone extension is:
 
 ```
 * {extension element path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2}...
 ```
 
-The shorthand syntax to define an inline extension is:
+The FSH syntax to define an inline extension is:
 
 ```
 * {extension element path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2}...
@@ -936,7 +942,7 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
 
 #### Slicing Rules
 
-Slicing is an advanced, but necessary, feature of FHIR. While future versions of FHIR Shorthand will aim to lower the learning curve, FHIR Shorthand version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
+Slicing is an advanced, but necessary, feature of FHIR. While future versions of FSH will aim to lower the learning curve, FSH version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
 
 
 ##### Step 1. Identifying the Slices
@@ -997,7 +1003,7 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 At minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
 
-Future versions of FHIR Shorthand may support standalone slice definitions, but FHIR Shorthand version 1.0 requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
+FSH requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
 
 ```
 * {path to slice}.{subpath} {constraint}
@@ -1473,7 +1479,7 @@ In the example above, the target is another FHIR IG, but in many cases, the targ
 
 #### Defining Rule Sets
 
-Rule sets provide the ability to define rules and apply them ("mix in") to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places.
+Rule sets provide the ability to define rules and apply them ("mix in") to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places. Rule sets can only be mixed into profiles and extensions.
 
 Rule sets are defined by using the keyword `RuleSet`:
 
@@ -1492,11 +1498,7 @@ Parent: Patient
 Mixins: {RuleSet1}, {RuleSet2}
 ```
 
-Each rule set should be compatible with the target, in the sense that all the rules defined in the rule set apply to elements actually present in the target. The legality of a rule set is checked at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error will be emitted. However, all other valid rules from the rule set will still be applied. The rules from a rule set are applied **before** rules defined on the target itself. When multiple rule sets are included using the `Mixins` keyword, the rule set rules are applied in the order that the rule sets are listed.
-
-Mixins give you the capability to define that metadata once and apply it in as many places as it is applicable. 
-
-Currently only rule sets can be mixed into profiles and extensions, but future versions of FHIR Shorthand may allow external definitions (such as other profiles and extensions) to be mixed in as well.
+The rules from a rule set are applied **before** rules defined on the target itself. When multiple rule sets are included using the `Mixins` keyword, the rule set rules are applied in the order that the rule sets are listed.  Each rule set should be compatible with the target, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations should check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error should be emitted. It is up to implementations if other valid rules from the rule set are applied.
 
 **Examples:**
 
