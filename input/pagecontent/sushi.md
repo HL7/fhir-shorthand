@@ -113,9 +113,9 @@ In the process of developing your IG using FSH, you may encounter SUSHI error me
 
 Here are some general tips on approaching debugging:
 
-* Eliminate parsing (syntax) errors first. Messages include `extraneous input {x} expecting {y}`, `mismatched input {x} expecting {y}` and `no viable alternative at {x}`. These messages indicate that the line in question is not a valid FSH statement.
+* Eliminate parsing (syntax) errors first. Syntax error messages may include `extraneous input {x} expecting {y}`, `mismatched input {x} expecting {y}` and `no viable alternative at {x}`. These messages indicate that the line in question is not a valid FSH statement.
 * The order of keywords is not arbitrary. The declarations must start with the type of item you are creating (e.g., Profile, Instance, ValueSet).
-* The order of rules usually doesn't matter, but there are exceptions. Slices and extensions must be created (with `contains` rule) before they are constrained.
+* The order of rules usually doesn't matter, but there are exceptions. Slices and extensions must be created before they are constrained.
 * A common error is `No element found at path`. This means that although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there are no spelling errors, the element names in the path are correct, and you are using the [path grammar](reference.html#paths) correctly.
 * If you are getting an error you can't resolve, you can ask for help on the [#shorthand chat channel](https://chat.fhir.org/#narrow/stream/215610-shorthand).
 
@@ -125,9 +125,11 @@ SUSHI supports publishing implementation guides via the [template-based IG Publi
 
 #### Configuration File
 
-The IG Publisher relies on several configuration files, including **ig.ini**, **package-list.json**, **menu.xml**, and an ImplementationGuide resource. Splitting information among multiple files and managing different formats makes IG configuration difficult to manage.
+Certain additional information, above and beyond what is found in `.fsh` files, is needed to produce an IG.
 
-SUSHI offers a single configuration file, in consistent format, with no duplication of information. For ease of use, this file is written using YAML.
+The HL7 FHIR IG Publisher relies on several configuration files, including **ig.ini**, **package-list.json**, **menu.xml**, and an instance of the ImplementationGuide resource. Splitting information among multiple files and managing different formats makes IG configuration difficult to manage. There is also some duplication of information between these files.
+
+SUSHI offers a single configuration file, in consistent format, with no duplication of information. This file is written using [YAML](https://yaml.org/).
 
 Here is a simple example of a config.yaml file:
 
@@ -136,7 +138,7 @@ id: fhir.us.example
 canonical: http://hl7.org/fhir/us/example
 name: ExampleIG
 title: "HL7 FHIR Implementation Guide: Example IG Release 1 - US Realm | STU1"
-description: Example IG exercises many of the fields in a SUSHI configuration.
+description: An example IG that exercises many of the fields in a SUSHI configuration
 status: active
 license: CC0-1.0
 version: 1.0.0
@@ -155,61 +157,64 @@ dependencies:
 In YAML:
 
 * White space (new lines and indentation) is significant
+* Information is presented in `key: value` pairs
 * Strings do not have to be quoted unless they contain reserved characters, such as colon (:)
 * Arrays/sequences are created using indentation or `-`
 
-Most properties that can be used in the SUSHI configuration file come directly from the [Implementation Guide resource](https://www.hl7.org/fhir/implementationguide.html#resource). Below are properties that can be used in SUSHI configuration that differ from the resource.
+While there are a variety of properties that can be used in the SUSHI configuration file, only a few are needed to create a complete IG. Readers are encouraged to examine the following examples:
 
-| Property  | Difference from IG resource | Usage   |
+* For an example of the minimal configuration, see the [minimal configuration file](minimal-config.yaml).
+
+* For an example of a more extensive configuration file, see the [example configuration file](config.yaml).
+
+Most properties that can be used in the SUSHI configuration file come directly from the [Implementation Guide resource](https://www.hl7.org/fhir/implementationguide.html#resource). Below are properties that can be used in SUSHI configuration, and any differences between those properties and the FHIR source are highlighted.
+
+| Property  | Corresponding IG element | Usage   |
 | :---------------------- | :-------------------------- |:---------|
-| id | none | Used as specified the IG resource |
-| meta | none | Used as specified the IG resource |
-| implicitRules | none | Used as specified the IG resource |
-| language | none | Used as specified the IG resource |
-| text | none | Used as specified the IG resource |
-| contained | none | Used as specified the IG resource |
-| extension | none | Used as specified the IG resource |
-| modifierExtension | none | Used as specified the IG resource |
-| url | none | Used as specified in the IG resource. If not specified, defaults to `${canonical}/ImplementationGuide/${id}`. |
-| version | none | Used as specified the IG resource |
-| name | none | Used as specified the IG resource |
-| title | none | Used as specified the IG resource |
-| status | none | Used as specified the IG resource |
-| experimental | none | Used as specified the IG resource |
-| date | none | Used as specified the IG resource |
-| publisher | changed cardinality to 0..* | Publisher can be a single item or a list, each with a name and optional url and/or email. The first publisher's name will be used as IG.publisher.  The contact details and/or additional publishers will be translated into IG.contact values |
-| contact | none | Used as specified the IG resource |
-| description | none | Used as specified the IG resource |
-| useContext | none | Used as specified the IG resource |
-| jurisdiction | none | Used as specified the IG resource |
-| copyright | none | Used as specified the IG resource |
-| packageId | none | Used as specified the IG resource. If not specified, defaults to `id`. |
-| license | none | Used as specified the IG resource |
-| fhirVersion | none | Used as specified the IG resource |
-| dependencies | corresponds to `IG.dependsOn` | Key is the package id and value is the version (or dev/current). |
-| global | none | Key is the type and value is the profile |
-| groups | corresponds to `IG.definition.grouping` | Key is the name of the package and value is the description of the package |
-| resources | corresponds to `IG.definition.resource` | SUSHI can auto-generate this based on FSH definitions and provided JSON resources, but this property can be used to add additional entries if necessary. If the reference matches a generated entry, it will replace the generated entry. If it doesn't match any generated entries, it will be added to the generated entries. SUSHI uses IG.definition.resource.reference.reference as the YAML key (so reference is optional). Authors can specify "omit" to omit a FSH-generated resource from the resource list. `groupingId` can be used, but top-level groups syntax may be a better option. |
-| pages | corresponds to `IG.definition.page` | SUSHI can auto-generate pages, but authors can manages pages through this property. If this property is used, SUSHI will not generate any page entries. The key is the page file name. If title is not provided, then the title will be generated from the file name.  If a generation value is not provided, it will be inferred from the file name extension.  Any subproperties that are valid filenames with supported extensions (e.g., .md/.xml) will be treated as sub-pages. |
-| parameters | corresponds to `IG.definition.parameter` | The key is the code. If a parameter allows repeating values, the value in the YAML may be a sequence/array. |
-| templates | corresponds to `IG.definition.template` | Used the same as IG property |
+| id | id | As specified in the IG resource |
+| meta | meta | As specified in the IG resource |
+| implicitRules | implicitRules | As specified in the IG resource |
+| language | language | As specified in the IG resource |
+| text | text | As specified in the IG resource |
+| contained | contained | As specified in the IG resource |
+| extension | extension | As specified in the IG resource |
+| modifierExtension | modifierExtension | As specified in the IG resource |
+| url | url | As specified in the IG resource. If not specified, defaults to `${canonical}/ImplementationGuide/${id}`. |
+| version | version | As specified in the IG resource |
+| name | name | As specified in the IG resource |
+| title | title | As specified in the IG resource |
+| status | status | As specified in the IG resource |
+| experimental | experimental | As specified in the IG resource |
+| date | date | As specified in the IG resource |
+| publisher | publisher, with cardinality changed to 0..* | Publisher can be a single item or a list, each with a name and optional url and/or email. The first publisher's name will be used as IG.publisher.  The contact details and/or additional publishers will be translated into IG.contact values |
+| contact | contact | As specified in the IG resource |
+| description | description | As specified in the IG resource |
+| useContext | useContext | As specified in the IG resource |
+| jurisdiction | jurisdiction | As specified in the IG resource |
+| copyright | copyright | As specified in the IG resource |
+| packageId | packageI | As specified in the IG resource. If not specified, defaults to `id`. |
+| license | license | As specified in the IG resource |
+| fhirVersion | fhirVersion | As specified in the IG resource |
+| dependencies | dependsOn | A `key: value` pair, where key is the package id and value is the version (or dev/current). |
+| global | global | Key is the type and value is the profile |
+| groups | definition.grouping | A `key: value` pair, where key is the name of the package and value is the description of the package |
+| resources | definition.resource | SUSHI can auto-generate a list of resources based on FSH definitions and provided JSON resources, but this property can be used to add additional entries or override generated entries. SUSHI uses the {resource type}/{resource name} format as the YAML key (corresponding to IG.definition.resource.reference). Authors can specify the value "omit" to omit a FSH-generated resource from the resource list. `groupingId` can be used, but top-level groups syntax may be a better option. |
+| pages | definition.page | SUSHI can auto-generate pages, but authors can manage pages through this property. If this property is used, SUSHI will not generate any page entries. The YAML key is the file name containing the page. The title key-value pair provides the title for the page. If a title is not provided, then the title will be generated from the file name. If a generation value (corresponding to definition.page.generation) is not provided, it will be inferred from the file name extension. In the IG resource, pages can contain sub-pages; so in the config file, any sub-properties that are valid filenames with supported extensions (e.g., .md/.xml) will be treated as sub-pages. |
+| parameters | definition.parameter | The key is the code. If a parameter allows repeating values, the value in the YAML may be a sequence/array. |
+| templates | definition.template | As specified in the IG resource |
 | copyrightYear or copyrightyear | N/A | Used to add a `copyrightyear` parameter to `IG.definition.parameter` |
 | releaseLabel or releaselabel | N/A | Used to add a `releaseLabel` parameter to `IG.definition.parameter` |
 | canonical | N/A | The canonical URL to be used throughout the IG |
-| template | N/A | Template used in `ig.ini` file. <br><br> Authors can provide their own `ig.ini` file by removing this property and placing an `igi.ini` file in `ig-data`. |
+| template | N/A | Template used in `ig.ini` file. <br><br> Authors can provide their own `ig.ini` file by removing this property and placing an `igi.ini` file in the `ig-data` directory. |
 | menu | N/A | Used to generate the input/index.md file. The key is the menu item name and the value is the URL. Menus can contain sub-menus, but the IG Publisher currently only supports sub-menus one level deep. <br><br> Authors can provide their own `menu.xml` by removing this property and placing a `menu.xml` file in `ig-data/input/includes` |
-| history | N/A | Used to create a `package-list.json`. SUSHI will use the existing top-level properties in its config to populate the top-level package-list.json properties: package-id, canonical, title, and introduction. Authors that wish to provide different values can supply them as properties under history. All other properties under history are assumed to be versions. <br><br> Additionally, the current version is special. If the author provides only a single string value, it is assumed to be the URL path to the current build. The following default values will then be used: `desc: Continuous Integration Build` (latest in version control), `status: ci-build`, and `current: true`. <br><br> Authors can provide their own `package-list.json` by removing this property and placing a `package-list.json` file in `ig-data`. |
-| indexPageContent | N/A | Used to specify the content of `index.md`. <br><br> Authors can provide their own index file by removing this property and placing an `index.md` or `index.html` file in `input/pages` or `input/pagecontent`. This property is provided for backwards compatibility reasons, but its use is discouraged. |
+| history | N/A | Used to create a `package-list.json`. SUSHI will use the existing top-level properties in its config to populate the top-level package-list.json properties: package-id, canonical, title, and introduction. Authors who wish to provide different values can supply them as properties under history. All other properties under history are assumed to be versions. <br><br> Additionally, the current version is special. If the author provides only a single string value, it is assumed to be the URL path to the current build. The following default values will then be used: `desc: Continuous Integration Build` (latest in version control), `status: ci-build`, and `current: true`. <br><br> Authors can provide their own `package-list.json` by removing this property and placing a `package-list.json` file in `ig-data`. |
+| indexPageContent | N/A | This property is provided for backwards compatibility reasons, and its use is discouraged. It was used to specify the content of `index.md`, however, authors should provide their own index file by not using this property and placing an `index.md` or `index.html` file in `input/pages` or `input/pagecontent`.  |
 | FSHOnly | N/A | When this flag is set to true, no IG specific content will be generated, SUSHI will only convert FSH definitions to JSON files. When false or unset, IG content is generated. |
 {: .grid }
 
-While there are a variety of properties that can be used in the SUSHI configuration file, only a few are needed to create a complete IG. For an example of the minimal configuration that can be provided, see the [minimal configuration file](minimal-config.yaml).
-
-For an example of a more extensive configuration file, see the [example configuration file](config.yaml).
-
 #### SUSHI Inputs
 
-SUSHI uses your FSH files, a **config.yaml** file, and the contents of a user-created **ig-data** directory to generate the inputs to the IG Publisher. For a bare-bones IG with no customization, simply create a minimal **config.yaml** file. For a customized IG, use additional properties in the **config.yaml** file to customize Implementation Guide content. Additionally, you can create and populate the **ig-data** folder with custom content for **package-list.json**, **ig.ini**, **menu.xml**, **index.[md | xml]**, pages, images, and other IG Publisher inputs.
+SUSHI uses your FSH files, the **config.yaml** file, and the contents of a user-created **ig-data** directory to generate the inputs to the IG Publisher. For a bare-bones IG with no customization, simply create a minimal **config.yaml** file. For a customized IG, use additional properties in the **config.yaml** file to customize Implementation Guide content. Additionally, you can create and populate the **ig-data** folder with custom content for **package-list.json**, **ig.ini**, **menu.xml**, **index.[md | xml]**, pages, images, and other IG Publisher inputs.
 
 The FSH tank (project directory) should look something like this:
 
@@ -219,8 +224,8 @@ File2.fsh
 File3.fsh
 config.yaml
 /ig-data (optional)
-├── package-list.json (optional)
-├── ig.ini (optional)
+├── package-list.json (optional -- config.yaml history property can be used instead)
+├── ig.ini (optional -- config.yaml template property can be used instead)
 └── /input
     ├── ignoreWarnings.txt (optional)
     ├── /images
@@ -228,7 +233,7 @@ config.yaml
     │   ├── myDocument.docx
     │   └── mySpreadsheet.xlsx
     ├── /includes
-    │   └── menu.xml (optional)
+    │   └── menu.xml (optional -- config.yaml menu property can be used instead)
     └── /pagecontent
         ├── index.md
         ├── 1_mySecondPage.md
@@ -245,7 +250,7 @@ Populate your project as follows:
 * The **/images** subdirectory: Put anything that is not a page in the IG, such as images, spreadsheets or zip files, in the **images** subdirectory. These files will be copied into the build and can be referenced by user-provided pages or menus.
 * **menu.xml**: If present and no `menu` property is specified in **config.yaml**, this file will be used for the IG's main menu layout.
 * The **/pagecontent** subdirectory, put either markup (.xml) or markdown (.md) files with the narrative content of your IG:
-  * **index.xml\|md**: If an `indexPageContent` property is not specified in **config.yaml**, this file provides the content for the IG's main page.
+  * **index.xml\|md**: If the `indexPageContent` property is not specified in **config.yaml**, this file provides the content for the IG's main page.
   * **N\_pagename.xml\|md**: If present, these files will be generated as individual pages in the IG. The leading integer (N) determines the order of the pages in the table of contents. These numbers are stripped and do not appear in the actual page URLs.
   * **{artifact-file-name}-intro.xml\|md**: If present, the contents of the file will be placed on the relevant page _before_ the artifact's definition.
   * **{artifact-file-name}-notes.xml\|md**: If present, the contents of the file will be placed on the relevant page _after_ the artifact's definition.
@@ -327,15 +332,15 @@ Now run the following command:
 ```
 🍎  $ ./_genonce.sh
 ```
-This will run the HL7 IG Publisher, which will take several minutes to complete. After the publisher is finished, open the file **/build/output/index.html** in a browser to see the resulting IG.
+This will run the HL7 IG Publisher, which may take several minutes to complete. After the publisher is finished, open the file **/build/output/index.html** in a browser to see the resulting IG.
 
-> **Note:** `_genonce` embeds the command `JAVA -jar input-cache/org.hl7.fhir.publisher.jar -ig ig.ini`. If the publisher jar or `ig.ini` file are different locations, the command can be adjusted accordingly.
+> **Note:** `_genonce` embeds the command `JAVA -jar input-cache/org.hl7.fhir.publisher.jar -ig ig.ini`. If the publisher jar or `ig.ini` file are in different locations, the command can be adjusted accordingly.
 
-### New! IG Publisher Integration (Autobuild Configuration)
+### IG Publisher Integration (Autobuild Configuration)
 
 The IG Publisher version 1.0.75 and higher includes native support for FSH and SUSHI. The IG Publisher launches SUSHI and runs it if it detects a folder named **/fsh**. Not having to run SUSHI separately is a minor benefit, but there is a significant advantage related to the _autobuild_ process.
 
-[Autobuild](https://github.com/FHIR/auto-ig-builder/blob/master/README.md) is a build service that can be triggered when you commit IG source code to any GitHub repository. Autobuild starts the IG Publisher and publishes your IG to http://build.fhir.org. Because SUSHI is now included in the IG Publisher, when you check in your FSH files to a GitHub repository configured to autobuild, everything will run automatically to produce your IG.
+[Autobuild](https://github.com/FHIR/auto-ig-builder/blob/master/README.md) is a build service that can be triggered when you commit IG source code to any GitHub repository. Autobuild starts the IG Publisher and publishes your IG to http://build.fhir.org. Because SUSHI is now included in the IG Publisher, when you check your FSH files into a GitHub repository configured to autobuild, everything will run automatically to produce your IG.
 
 To take advantage of autobuild with SUSHI support, the entire FSH tank must be put into a subdirectory named **fsh**:
 
@@ -390,6 +395,7 @@ When your files are in the autobuild configuration, and you want to only run SUS
 ```
 $ sushi fsh -o .
 ```
+
 This will create the **/input** directory containing the FHIR artifacts, but not the **/output,** **/temp** and **/template** directories.
 
 ### A Final Word
