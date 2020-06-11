@@ -1,6 +1,6 @@
 {
   "name": "hl7.fhir.uv.shorthand",
-  "version": "0.13.0",
+  "version": "0.12.7",
   "canonical": "http://hl7.org/fhir/uv/shorthand",
   "url": "http://hl7.org/fhir/uv/shorthand",
   "title": "FHIR Shorthand (FSH)",
