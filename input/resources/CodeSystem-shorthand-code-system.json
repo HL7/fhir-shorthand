@@ -6,7 +6,7 @@
     "id": "shorthand-code-system",
     "title": "Shorthand Code System",
     "description": "Code system containing local codes defined in FHIR Shorthand.",
-    "version": "0.12.7",
+    "version": "0.13.0",
     "url": "http://hl7.org/fhir/uv/shorthand/CodeSystem/shorthand-code-system",
     "concept": [
       {
