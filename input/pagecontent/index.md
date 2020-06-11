@@ -458,7 +458,7 @@ In this section, we'll walk through a realistic example line by line.
 * Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
 * Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and should be "computer-ready" (i.e., suitable for code generation).
 * Line 5 says that this profile will be based on Observation. Specifying the parent is required.
-* Line 6 gives an id for this profile. The id is often not the same as a the profile name, and typically follows the convention of putting the IG short name first, followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
+* Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
 * Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
