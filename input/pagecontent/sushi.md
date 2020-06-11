@@ -127,9 +127,9 @@ SUSHI supports publishing implementation guides via the [template-based IG Publi
 
 Certain additional information, above and beyond what is found in `.fsh` files, is needed to produce an IG.
 
-The HL7 FHIR IG Publisher relies on several configuration files, including **ig.ini**, **package-list.json**, **menu.xml**, and an instance of the ImplementationGuide resource. Splitting information among multiple files and managing different formats makes IG configuration difficult to manage. There is also some duplication of information between these files.
+* The HL7 FHIR IG Publisher relies on several configuration files, including **ig.ini**, **package-list.json**, **menu.xml**, and an instance of the ImplementationGuide resource. Splitting information among multiple files and managing different formats makes IG configuration difficult to manage. There is also some duplication of information between these files.
 
-SUSHI offers a single configuration file, in consistent format, with no duplication of information. This file is written using [YAML](https://yaml.org/).
+* SUSHI offers the same functionality in a single configuration file, in consistent format, with no duplication of information. This file is written using [YAML](https://yaml.org/).
 
 Here is a simple example of a config.yaml file:
 
@@ -214,7 +214,7 @@ Most properties that can be used in the SUSHI configuration file come directly f
 
 #### SUSHI Inputs
 
-SUSHI uses your FSH files, the **config.yaml** file, and the contents of a user-created **ig-data** directory to generate the inputs to the IG Publisher. For a bare-bones IG with no customization, simply create a minimal **config.yaml** file. For a customized IG, use additional properties in the **config.yaml** file to customize Implementation Guide content. Additionally, you can create and populate the **ig-data** folder with custom content for **package-list.json**, **ig.ini**, **menu.xml**, **index.[md | xml]**, pages, images, and other IG Publisher inputs.
+SUSHI uses your FSH files, the **config.yaml** file, and the contents of a user-created **ig-data** directory to generate the inputs to the IG Publisher. For a bare-bones IG with no customization, create a minimal **config.yaml** file. For a customized IG, use the additional properties in the **config.yaml** file. Additionally, you can create and populate the **ig-data** folder with custom content for **package-list.json**, **ig.ini**, **menu.xml**, **index.md** (or **index.xml**), pages, images, and other IG Publisher inputs.
 
 The FSH tank (project directory) should look something like this:
 
@@ -224,8 +224,8 @@ File2.fsh
 File3.fsh
 config.yaml
 /ig-data (optional)
-├── package-list.json (optional -- config.yaml history property can be used instead)
-├── ig.ini (optional -- config.yaml template property can be used instead)
+├── package-list.json (config.yaml history property can be used instead)
+├── ig.ini (config.yaml template property can be used instead)
 └── /input
     ├── ignoreWarnings.txt (optional)
     ├── /images
@@ -233,7 +233,7 @@ config.yaml
     │   ├── myDocument.docx
     │   └── mySpreadsheet.xlsx
     ├── /includes
-    │   └── menu.xml (optional -- config.yaml menu property can be used instead)
+    │   └── menu.xml (config.yaml menu property can be used instead)
     └── /pagecontent
         ├── index.md
         ├── 1_mySecondPage.md
