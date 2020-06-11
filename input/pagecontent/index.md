@@ -464,7 +464,7 @@ In this section, we will walk through a realistic example of FSH, line by line.
 * Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
 * Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and according to FHIR, should be "[usable by machine processing applications such as code generation](http://www.hl7.org/fhir/structuredefinition.html#resource)".
 * Line 5 says that this profile will be based on Observation.
-* Line 6 gives an id for the profile. The id is be used to create the globally unique URL for the profile by pre-pending the canonical URL provided by the user in the **package.json** file. The id typically follows the convention of IG short name followed by hyphenated version of the profile name. If the id is not specified, the name of the profile will be used for the id.
+* Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
 * Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
@@ -490,7 +490,7 @@ In this section, we will walk through a realistic example of FSH, line by line.
 
 A few things to note about this example:
 
-* The order of items (aliases, profile, value set, extension) doesn't matter. In FSH, you can refer to items defined before or after the current item. By convention, aliases appear at the beginning of a file.
+* The order of the items (aliases, profile, value set, extension) doesn't matter. In FSH, you can refer to items defined before or after the current item. By convention, aliases appear at the beginning of a file.
 * The example assumes the items are all in one file, but they could be in separate files. The allocation of items to files is the author's choice.
 * Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#paths).
 
