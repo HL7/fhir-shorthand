@@ -85,7 +85,7 @@ This will download the latest version of the HL7 FHIR IG Publisher tool into **.
 
 > **Note:** If you have never run the IG Publisher, you may need to install Jekyll first. See [Installing the IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) for details.
 
-> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory **/FishExample/build/input-cache** (create the directory if necessary.)
+> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://storage.googleapis.com/ig-build/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory **/FishExample/build/input-cache** (create the directory if necessary.)
 
 Now run:
 
