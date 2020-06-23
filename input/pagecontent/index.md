@@ -131,7 +131,7 @@ Title:    "Cancer Disease Status"
 Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
 ```
 
-Keywords that declare new items (the `Profile` keyword in the previous example) must occur first in any set of keywords. There are nine primary keywords in FSH:
+Keywords that declare new items (the `Profile` keyword in the previous example) must occur first in any set of keywords. There are nine declarative keywords in FSH:
 
 * Alias
 * CodeSystem
@@ -145,25 +145,20 @@ Keywords that declare new items (the `Profile` keyword in the previous example) 
 
 Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
-Keywords common to several types of items include:
+Each type of item has a different set of required (R) and optional (O) keywords, as shown in the following table. For example, a profile requires a `Parent`  and can have an `Id`, `Description`, and `Title`. The [FSH Language Reference](reference.html) contains a [complete list of keywords and their usage](reference.html#keywords).
 
-* Description _(CodeSystem, Extension, Instance, Invariant, Profile, ValueSet)_
-* Id _(CodeSystem, Extension, Profile, ValueSet)_
-* Title _(CodeSystem, Extension, Profile, ValueSet)_
-* Mixins _(Extension, Instance, Profile)_
-* Parent _(Extension, Profile)_
 
-Specialized keywords, used only with one type of item include:
-
-* InstanceOf _(Instance)_
-* Usage _(Instance)_
-* Source _(Mapping)_
-* Target _(Mapping)_
-* Severity _(Invariant)_
-* XPath _(Invariant)_
-* Expression _(Invariant)_
-
-Each type of item has a different set of required and optional keywords. For example, to define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are recommended. The keyword `Mixins` is optional. The [FSH Language Reference](reference.html) contains a [complete list of keywords and their usage](reference.html#keywords).
+| Declaration \ Keyword                      | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+|-------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
+[Alias](#defining-aliases)            |     |             |       |        |            |       |        |        |          |       |            |
+[Code System](#defining-code-systems) |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
+[Extension](#defining-extensions)     |  O  |     O       |   O   |   O    |            |       |        |        |          |       |            |
+[Instance](#defining-instances)       |     |     O       |   O   |        |     R      |   O   |        |        |          |       |            |
+[Invariant](#defining-invariants)     |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
+[Mapping](#defining-mappings)         |  O  |     O       |   O   |        |            |       |   R    |   R    |          |       |            |
+[Profile](#defining-profiles)         |  O  |     O       |   O   |   R    |            |       |        |        |          |       |            |
+[Rule Set](#defining-rule-sets)       |     |             |       |        |            |       |        |        |          |       |            |
+[Value Set](#defining-value-sets)     |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
 
 #### Rules
 
@@ -230,7 +225,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   ```
 
   ```
-  * recorder only Reference(Practitioner | PractitionerRole)
+  * recorder only Reference(Practitioner or PractitionerRole)
   ```
 
 * **Flag rules** add bits of information about elements impacting how implementers should handle them. The flags are as [defined FHIR](http://hl7.org/fhir/R4/formats.html#table), except FSH uses `MS` for must-support and `SU` for summary. For example:
@@ -240,7 +235,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   ```
 
   ```
-  * identifier, identifier.system, identifier.value, name, name.family MS
+  * identifier and identifier.system and identifier.value and name and name.family MS
   ```
 
 * **Extension rules** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword.
@@ -415,7 +410,7 @@ In this section, we will walk through a realistic example of FSH, line by line.
 8   Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
 9   * extension contains EvidenceType named evidenceType 0..*
 10  * extension[evidenceType].valueCodeableConcept from CancerDiseaseStatusEvidenceTypeVS (required)
-11  * status, code, subject, effective[x], valueCodeableConcept MS
+11  * status and code and subject and effective[x] and valueCodeableConcept MS
 12  * bodySite 0..0
 13  * specimen 0..0
 14  * device 0..0
@@ -424,8 +419,8 @@ In this section, we will walk through a realistic example of FSH, line by line.
 17  * component 0..0
 18  * interpretation 0..1
 19  * subject 1..1
-20  * basedOn only Reference(ServiceRequest | MedicationRequest)
-21  * partOf only Reference(MedicationAdministration | MedicationStatement | Procedure)
+20  * basedOn only Reference(ServiceRequest or MedicationRequest)
+21  * partOf only Reference(MedicationAdministration or MedicationStatement or Procedure)
 22  * code = LNC#88040-1
 23  * subject only Reference(CancerPatient)
 24  * focus only Reference(CancerConditionParent)

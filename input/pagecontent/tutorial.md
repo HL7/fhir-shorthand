@@ -206,7 +206,7 @@ Now, add constraints and/or extensions to the Veterinarian profile:
 
 * In addition, slice the `identifier` array, making a license number required. The code system is http://terminology.hl7.org/CodeSystem/v2-0203 and the code is LN, for "License number".
 
-If you need help with this, you can reference the [Fixed Value Rules](reference.html#fixed-value-rules) and [Slicing Rules](reference.html#slicing-rules) sections of the specification. If you still need help, you can peek at the FSH files in the **FishExampleComplete** directory.
+If you need help with this, you can reference the [Fixed Value Rules](reference.html#assignment-rules) and [Slicing Rules](reference.html#slicing-rules) sections of the specification. If you still need help, you can peek at the FSH files in the **FishExampleComplete** directory.
 
 Run SUSHI again, and re-generate the IG.
 
