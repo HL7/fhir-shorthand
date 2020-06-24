@@ -148,7 +148,7 @@ The FishSpecies extension doesn't quite do its job yet, because we haven't speci
 * valueCodeableConcept from FishSpeciesValueSet (extensible)
 ```
 
-The first rule restricts the value[x] (a built-in element of every FHIR extension) to a CodeableConcept using the `only` keyword. The second binds it to a value set (yet to be defined) using the `from` keyword. The binding strength will be `extensible`.
+The first rule restricts the value[x] (a built-in element of every FHIR extension) to a CodeableConcept using the `only` keyword. The second binds it to a value set (yet to be defined) using the `from` keyword. The [binding strength](http://hl7.org/fhir/valueset-binding-strength.html) will be `extensible`, meaning the codes in the FishSpeciesValueSet must be used except when the value set is missing a specific fish species.
 
 To define FishSpeciesValueSet, add the following lines to the same file:
 

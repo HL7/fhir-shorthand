@@ -274,7 +274,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
       USCoreBirthsex named birthsex 0..1 MS
   ```
 
-* **Slicing rules** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference.html#structure-definition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
+* **Slicing rules** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference.html#structuredefinition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
 
   ```
   * component ^slicing.discriminator.type = #pattern
@@ -428,33 +428,33 @@ In this section, we will walk through a realistic example of FSH, line by line.
 26  * effective[x] only dateTime or Period
 27  * value[x] only CodeableConcept
 28  * valueCodeableConcept from ConditionStatusTrendVS (required)
-29 
+29  * ^status = #draft
+
 30  Extension: EvidenceType
 31  Title: "Evidence Type"
 32  Id:  mcode-evidence-type
 33  Description: "Categorization of the kind of evidence used as input to the clinical judgment."
 34  * value[x] only CodeableConcept
-35
-36  ValueSet:   ConditionStatusTrendVS
-37  Id: mcode-condition-status-trend-vs
-38  Title: "Condition Status Trend Value Set"
-39  Description:  "How patient's given disease, condition, or ability is trending."
-40  * SCT#260415000 "Not detected (qualifier)"
-41  * SCT#268910001 "Patient condition improved (finding)"
-42  * SCT#359746009 "Patient's condition stable (finding)"
-43  * SCT#271299001 "Patient's condition worsened (finding)"
-44  * SCT#709137006 "Patient condition undetermined (finding)"
-45  
-46  ValueSet: CancerDiseaseStatusEvidenceTypeVS
-47  Id: mcode-cancer-disease-status-evidence-type-vs
-48  Title: "Cancer Disease Status Evidence Type Value Set"
-49  Description:  "The type of evidence backing up the clinical determination of cancer progression."
-50  * SCT#363679005 "Imaging (procedure)"
-51  * SCT#252416005 "Histopathology test (procedure)"
-52  * SCT#711015009 "Assessment of symptom control (procedure)"
-53  * SCT#5880005   "Physical examination procedure (procedure)"
-54  * SCT#386344002 "Laboratory data interpretation (procedure)"
 
+35  ValueSet:   ConditionStatusTrendVS
+36  Id: mcode-condition-status-trend-vs
+37  Title: "Condition Status Trend Value Set"
+38  Description:  "How patient's given disease, condition, or ability is trending."
+39  * SCT#260415000 "Not detected (qualifier)"
+40  * SCT#268910001 "Patient condition improved (finding)"
+41  * SCT#359746009 "Patient's condition stable (finding)"
+42  * SCT#271299001 "Patient's condition worsened (finding)"
+43  * SCT#709137006 "Patient condition undetermined (finding)"
+
+44  ValueSet: CancerDiseaseStatusEvidenceTypeVS
+45  Id: mcode-cancer-disease-status-evidence-type-vs
+46  Title: "Cancer Disease Status Evidence Type Value Set"
+47  Description:  "The type of evidence backing up the clinical determination of cancer progression."
+48  * SCT#363679005 "Imaging (procedure)"
+49  * SCT#252416005 "Histopathology test (procedure)"
+50  * SCT#711015009 "Assessment of symptom control (procedure)"
+51  * SCT#5880005   "Physical examination procedure (procedure)"
+52  * SCT#386344002 "Laboratory data interpretation (procedure)"
 ```
 * Lines 1 and 2 defines aliases for the LOINC and SNOMED-CT code systems.
 * Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and according to FHIR, should be "[usable by machine processing applications such as code generation](http://www.hl7.org/fhir/structuredefinition.html#resource)".
@@ -466,22 +466,23 @@ In this section, we will walk through a realistic example of FSH, line by line.
 * Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 46._
 * Line 11 designates a list of elements (inherited from Observation) as must-support.
 * Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
-* Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources. The vertical bar denotes "or".
+* Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources.
 * Line 22 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1.
 * Lines 23 to 25 reduce an inherited choice of resource references down to a single resource or profile type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
 * Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
 * Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
-* Line 30 declares a  named EvidenceType.
+* Line 29 uses [caret syntax](reference.html#structuredefinition-escape-paths) to set the status attribute in the StructureDefinition produced for this profile.
+* Line 30 declares an extension named EvidenceType.
 * Line 31 gives the extension a human-readable title.
 * Line 32 assigns it an id.
 * Line 33 gives the extension a description that will appear on the extension's main page.
 * Line 34 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept.
-* Line 36 declares a value set named ConditionStatusTrendVS.
-* Line 37 gives the value set an id.
-* Line 38 provides a human readable title for the value set.
-* Line 39 gives the value set a description that will appear on the value set's main page.
-* Lines 40 to 44 define the codes that are members of the value set
-* Lines 46 to 54 create another value set, CancerDiseaseStatusEvidenceTypeVS, similar to the previous one.
+* Line 35 declares a value set named ConditionStatusTrendVS.
+* Line 36 gives the value set an id.
+* Line 37 provides a human readable title for the value set.
+* Line 38 gives the value set a description that will appear on the value set's main page.
+* Lines 39 to 43 define the codes that are members of the value set
+* Lines 44 to 52 create another value set, CancerDiseaseStatusEvidenceTypeVS, similar to the previous one.
 
 A few things to note about this example:
 

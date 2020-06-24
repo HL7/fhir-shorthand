@@ -17,7 +17,7 @@ The FSH specification, like other IGs, follows the [semantic versioning](https:/
 
 #### Formal Grammar
 
-[FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
+[FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/). If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed. The grammar is looser than the language since many things such as data type agreement are not enforced in the grammar.
 
 #### Reserved Words
 
@@ -31,11 +31,17 @@ The following words are reserved only when enclosed in parentheses (intervening 
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive). References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
 
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/datatypes.html#primitive): \r, \n, and \t.
+
 #### FSH Names
 
 FSH uses names to refer to items within the same [FSH tank](index.html#fsh-files-and-fsh-tanks). Names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
 Alias names may begin with `$`. Choosing alias names beginning with `$` allows for additional error checking.
+
+#### Identifiers
+
+Items in FSH may have an identifier, typically specified using the [`Id` keyword](#keywords). Each id must be unique within the scope of their item type in the FSH Tank, but are recommended to be unique across all types in the FSH Tank. For example, two Profiles with id “foo” cannot coexist, but it is possible to have a Profile with id “foo” and a ValueSet with id “foo” in the same FSH Tank.
 
 #### References to External FHIR Artifacts
 
@@ -294,19 +300,7 @@ To set the units of measure independently, a Quantity can be bound to a value se
 * {Quantity type} = {system}#{code} "{display text}"
 ```
 
-Although it appears the quantity itself is being set to a coded value, this expression sets only the units of measure. To make this more intuitive, FSH allows you to use the word `units`, as follows:
-
-```
-* {Quantity type} units = {system}#{code} "{display text}"
-```
-
-and for [binding](#binding-rules):
-
-```
-* {Quantity type} units from {value set} ({strength})
-```
-
->**Note:** Use of the word `units` is suggested for clarity, but is optional.
+Although it appears the quantity itself is being set to a coded value, this expression sets only the units of measure.
 
 **Examples:**
 
@@ -328,16 +322,10 @@ and for [binding](#binding-rules):
   * valueQuantity = UCUM#mm "millimeters"
   ```
 
-* Alternate syntax for the same operation (addition of the word `units`):
+* Bind a value set to a Quantity, constraining the units of that Quantity:
 
   ```
-  * valueQuantity units = UCUM#mm "millimeters"
-  ```
-
-* Bind a value set to the units of the same quantity (using alternate syntax):
-
-  ```
-  * valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units
+  * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
 
 ### Paths
@@ -475,7 +463,7 @@ In FSH, extensions are created using [extension rules](#extension-rules). These 
 
 #### Sliced Array Paths
 
-FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
+FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used. Note that slice names (like other [FSH names](#fsh-names)) cannot be purely numeric, so slice names cannot be confused with indices.
 
 To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
 
@@ -497,7 +485,7 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
   * component[RespiratoryScore][FiveMinuteScore].code = SCT#13323003 "Apgar score 7 (finding)"
   ```
 
-#### Structure Definition Escape Paths
+#### StructureDefinition Escape Paths
 
 FSH uses the caret (`^`) syntax to provide direct access to elements of an SD. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#keywords) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
 
@@ -765,7 +753,7 @@ FSH rules can be used to restrict the data type of an element. The FSH syntax to
   * {path} only {type1} or {type2} or {type3}...
   ```
 
-where the latter offers a choice of data type. The data type choices must always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced in an `only` rule by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself).
+where the latter offers a choice of data type. Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/profiling.html), the data type choices must always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced in an `only` rule by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself).
 
 Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices can be restricted in two ways: reducing the number or choices, or substituting a more restrictive data type or profile for one of the original choices.  
 
@@ -909,7 +897,7 @@ Flags are a set of information about the element that impacts how implementers h
 | D | D | Draft element |
 {: .grid }
 
-FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. These flags can be set using [caret syntax](#structure-definition-escape-paths), if needed.
+FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. If needed, these flags can be set using [caret syntax](#structuredefinition-escape-paths).
 
 The following syntax can be used to assigning flags:
 
@@ -1140,17 +1128,17 @@ FSH requires slice contents to be defined inline. The rule syntax for inline sli
       DiastolicBP 1..1
   * component[SystolicBP].code = LNC#8480-6 // Systolic blood pressure
   * component[SystolicBP].value[x] only Quantity
-  * component[SystolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
+  * component[SystolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
   * component[DiastolicBP].code = LNC#8462-4 // Diastolic blood pressure
   * component[DiastolicBP].value[x] only Quantity
-  * component[DiastolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
+  * component[DiastolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
   ```
 
 ##### Step 3. Specifying the Slicing Logic
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules]. In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
 
-In FSH, authors must specify the slicing logic parameters using [StructureDefinition escape (caret) syntax](#structure-definition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
+In FSH, authors must specify the slicing logic parameters using [StructureDefinition escape (caret) syntax](#structuredefinition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
 
 **Example:**
 
