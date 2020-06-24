@@ -702,7 +702,7 @@ As in FHIR, min and max are non-negative integers, and max can also be *, repres
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
-For convenience and compactness, cardinality rules can be combined with [flag assignment rules](#flag-assignment-rules) via the following grammar:
+For convenience and compactness, cardinality rules can be combined with [flag rules](#flag-rules) via the following grammar:
 
 ```
 * {path} {min}..{max} {flag1} {flag2} ...

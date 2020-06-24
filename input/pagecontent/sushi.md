@@ -321,7 +321,7 @@ This will download the latest version of the HL7 FHIR IG Publisher tool into the
 
 > **Note:** If you have never run the IG Publisher, you may need to install Jekyll first. See [Installing the IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) for details.
 
-> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory **/build/input-cache** (creating the directory if necessary.)
+> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://storage.googleapis.com/ig-build/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory **/build/input-cache** (creating the directory if necessary.)
 
 Now run the following command:
 
@@ -356,7 +356,7 @@ To take advantage of autobuild with SUSHI support, the entire FSH tank must be p
 ```
 Every time you make a new commit to the repository, on any branch, the SUSHI and the IG Publisher will run automatically.
 
-For testing purposes, it is useful to run the IG Publisher locally. If you are using the autobuild configuration, you need to manually [download the IG Publisher jar file](https://fhir.github.io/latest-ig-publisher/org.hl7.fhir.publisher.jar) and put it into the **/input-cache** directory:
+For testing purposes, it is useful to run the IG Publisher locally. If you are using the autobuild configuration, you need to manually [download the IG Publisher jar file](https://storage.googleapis.com/ig-build/org.hl7.fhir.publisher.jar) and put it into the **/input-cache** directory:
 
 ```
 {GitHub repository root}
