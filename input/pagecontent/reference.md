@@ -13,7 +13,13 @@ This chapter uses the following conventions:
 
 #### Versioning
 
-The FSH specification, like other IGs, follows the [semantic versioning](https://semver.org) convention (Major.Minor.Patch).
+The FSH specification, like other FHIR Implementation Guides (IGs), presents versions in terms of three integers, x.y.z, that indicate the sequence of releases. Comparing two releases 1 and 2, release 2 is later if and only if:
+
+* x2 > x1 OR
+* x2 = x1 and y2 > y1 OR
+* x2 = x1 and y2 = y1 and z2 > z1
+
+Like other HL7 FHIR Implementation Guides, the numbering of releases does not entirely follow the [semantic versioning convention](https://semver.org). Consistent with semantic versioning, an increment of z indicates a patch release containing minor updates and bug fixes, while maintaining backwards compatibility with the previous version. Increments in y indicates new or modified features, and potentially, non-backward-compatible changes (i.e., a minor or major release in semantic versioning). By HL7 convention, the major version number x typically does not increment until the release of a new balloted version.
 
 #### Formal Grammar
 
@@ -33,7 +39,7 @@ The primitive data types and value formats in FSH are identical to the [primitiv
 
 FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/datatypes.html#primitive): \r, \n, and \t.
 
-#### FSH Names
+#### Names
 
 FSH uses names to refer to items within the same [FSH tank](index.html#fsh-files-and-fsh-tanks). Names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
@@ -118,6 +124,17 @@ Using a normal string would require the following spacing to accomplish the same
 * This profile is not intended to support workflows where:
   * nothing happens"
 ```
+
+#### References
+
+FHIR resources contain [two types of references](https://www.hl7.org/fhir/references.html) to other resources:
+
+* Resource references
+* Canonical references
+
+FSH represents resource references using the syntax `Reference({resource})`. FSH will not accept the name of a resource where a Reference type is required; i.e., `Reference()` is required.
+
+Canonical references refer to a standard URL associated with a FHIR resource. For elements that require a canonical reference, FSH will accept a URL, `Canonical({name})` or `Canonical({id})`, where `name` and `id` refer to items defined in the same FSH Tank. Implementations shall interpret `Canonical()` as an instruction to construct the canonical URL for the referenced item using the IG's canonical URL. `Canonical()` therefore enables a user to change the IG’s canonical URL in a single place with no other changes needed to FSH definitions.
 
 #### Coded Data Types
 
@@ -463,7 +480,7 @@ In FSH, extensions are created using [extension rules](#extension-rules). These 
 
 #### Sliced Array Paths
 
-FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used. Note that slice names (like other [FSH names](#fsh-names)) cannot be purely numeric, so slice names cannot be confused with indices.
+FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used. Note that slice names (like other [FSH names](#names)) cannot be purely numeric, so slice names cannot be confused with indices.
 
 To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
 
