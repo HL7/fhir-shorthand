@@ -145,20 +145,7 @@ Keywords that declare new items (the `Profile` keyword in the previous example) 
 
 Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
-Each type of item has a different set of required (R) and optional (O) keywords, as shown in the following table. For example, a profile requires a `Parent`  and can have an `Id`, `Description`, and `Title`. The [FSH Language Reference](reference.html) contains a [complete list of keywords and their usage](reference.html#keywords).
-
-
-| Declaration \ Keyword                      | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
-|-------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
-[Alias](#defining-aliases)            |     |             |       |        |            |       |        |        |          |       |            |
-[Code System](#defining-code-systems) |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
-[Extension](#defining-extensions)     |  O  |     O       |   O   |   O    |            |       |        |        |          |       |            |
-[Instance](#defining-instances)       |     |     O       |   O   |        |     R      |   O   |        |        |          |       |            |
-[Invariant](#defining-invariants)     |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-[Mapping](#defining-mappings)         |  O  |     O       |   O   |        |            |       |   R    |   R    |          |       |            |
-[Profile](#defining-profiles)         |  O  |     O       |   O   |   R    |            |       |        |        |          |       |            |
-[Rule Set](#defining-rule-sets)       |     |             |       |        |            |       |        |        |          |       |            |
-[Value Set](#defining-value-sets)     |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
+Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#keywords).table.
 
 #### Rules
 

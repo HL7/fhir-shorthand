@@ -451,14 +451,14 @@ In FSH, extensions are created using [extension rules](#extension-rules). These 
 * Set the nested ombCategory extension, under the ethnicity extension in US Core:
 
   ```
-  * extension[USCoreEthnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"
+  * extension[USCoreEthnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2135-2 "Hispanic or Latino"
   ```
 
 * Set two values in the multiple-valued nested extension, detailed, under USCoreEthnicity extension:
 
   ```
-  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"
-  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
+  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RaceAndEthnicityCDC#2184-0 "Dominican"
+  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RaceAndEthnicityCDC#2148-5 "Mexican"
   ```
 
 #### Sliced Array Paths
@@ -1220,6 +1220,7 @@ The following table shows the relationship between declaration keywords and addi
 [Profile](#defining-profiles)         |  O  |     O       |   O   |   R    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)       |     |             |       |        |            |       |        |        |          |       |            |
 [Value Set](#defining-value-sets)     |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
+{: .grid }
 
 #### Defining Aliases
 
@@ -1231,11 +1232,7 @@ Alias definitions follow this syntax:
 Alias: {AliasName} = {url or oid}
 ```
 
-In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with a dollar sign ($).
-
-If you choose an alias name beginning with a dollar sign, then additional error checks can be carried out. If a rule involves a name beginning with `$`, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
-
-Another best practice is to choose alias names written in all capitals.
+In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with a dollar sign ($). If you choose an alias name beginning with a dollar sign, then additional error checks can be carried out. For example, if there is a rule `* extension contains $foo` and `$foo` is not defined as an alias, it can be detected, since `$foo` can only be an alias. However, if the rule uses `foo` rather than `$foo`, the intent to use an alias is not apparent. If `foo` is not defined as an alias, implementations will look through FHIR Core and dependent implementation guides for anything with the name or id `foo`, and if nothing is found, a new inline extension named `foo` will be created.
 
 **Examples:**
 
@@ -1244,7 +1241,7 @@ Another best practice is to choose alias names written in all capitals.
   ```
 
   ```
-  Alias: RACE = urn:oid:2.16.840.1.113883.6.238
+  Alias: RaceAndEthnicityCDC = urn:oid:2.16.840.1.113883.6.238
   ```
 
   ```
@@ -1348,8 +1345,8 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
   * name.given[1] = "Steve"
   * name.family = "Anyperson"
   * birthDate = 1960-04-25
-  * extension[us-core-race].extension[ombCategory].valueCoding = RACE#2106-3 "White"
-  * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RACE#21865 "Non Hispanic or Latino"
+  * extension[us-core-race].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2106-3 "White"
+  * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2186-5 "Non Hispanic or Latino"
   ```
 
 * Define an instance of US Core Practitioner, with name and NPI, meant to be inlined in a composition:
