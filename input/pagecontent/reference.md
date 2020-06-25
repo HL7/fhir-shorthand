@@ -17,28 +17,33 @@ The FSH specification, like other IGs, follows the [semantic versioning](https:/
 
 #### Formal Grammar
 
-[FSH has a formal grammar](https://github.com/FHIR/sushi/tree/master/antlr/src/main/antlr) defined in [ANTLR4](https://www.antlr.org/).
+[FSH has a formal grammar](#formal-grammar) defined in [ANTLR4](https://www.antlr.org/). If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed. The grammar is looser than the language since many things such as data type agreement are not enforced in the grammar.
 
+#### Reserved Words
 
-#### Keywords
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`.
 
-FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `|`, and `,`. 
-
-The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Mixins`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`.
+The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`, `Source`, `Target`.
 
 The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
 
 #### Primitives
 
-The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
+The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive). References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
 
-References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/datatypes.html#primitive): \r, \n, and \t.
 
-#### Names
+#### FSH Names
 
-Names in FSH follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". This guidance applies to Profile, Extension, ValueSet, and CodeSystem names.
+FSH uses names to refer to items within the same [FSH tank](index.html#fsh-files-and-fsh-tanks). Names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
-Alias names may begin with `$`. Choosing alias names beginning with `$` allows for additional error checking.
+Alias names may begin with `$`. Choosing alias names beginning with `$` allows for [additional error checking](#defining-aliases).
+
+#### Identifiers
+
+Items in FSH may have an identifier, typically specified using the [`Id` keyword](#defining-items). Each id must be unique within the scope of their item type in the FSH Tank, but are recommended to be unique across all types in the FSH Tank. For example, two Profiles with id “foo” cannot coexist, but it is possible to have a Profile with id “foo” and a ValueSet with id “foo” in the same FSH Tank.
+
+If no Id is provided, implementations may create an Id. It is recommended that the Id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the FHIR id datatype).
 
 #### References to External FHIR Artifacts
 
@@ -118,7 +123,7 @@ Using a normal string would require the following spacing to accomplish the same
 
 #### Coded Data Types
 
-The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. These data types can be bound to a value set or assigned a fixed code.  FSH provides special grammar for expressing codes and setting fixed coded values.
+The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. FSH provides special grammar for expressing codes and assigning coded values for these data types.
 
 ##### code
 
@@ -131,7 +136,7 @@ or
 ```
 #"{code}"
 ```
-In general, the first syntax is sufficient. Quotes are only required in the rare case of a code containing white space.
+In general, the first syntax is sufficient. Quotes are only required in the rare situation of a code containing white space.
 
 **Examples:**
 
@@ -175,7 +180,7 @@ For code systems that encode the version separately from the URL, the version ca
 
 While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR. An alternative is to set the `version` element of Coding (see examples).
 
-To set the less-common properties of a Coding, use a [fixed value rule](#fixed-value-rules) on that element.
+To set the less-common properties of a Coding, use an [assignment rule](#assignment-rules) on that element.
 
 **Examples:**
 
@@ -297,19 +302,7 @@ To set the units of measure independently, a Quantity can be bound to a value se
 * {Quantity type} = {system}#{code} "{display text}"
 ```
 
-Although it appears the quantity itself is being set to a coded value, this expression sets only the units of measure. To make this more intuitive, FSH allows you to use the word `units`, as follows:
-
-```
-* {Quantity type} units = {system}#{code} "{display text}"
-```
-
-and for [binding](#value-set-binding-rules):
-
-```
-* {Quantity type} units from {value set} ({strength})
-```
-
->**Note:** Use of the word `units` is suggested for clarity, but is optional.
+Although it appears the quantity itself is being set to a coded value, this expression sets only the units of measure.
 
 **Examples:**
 
@@ -331,16 +324,10 @@ and for [binding](#value-set-binding-rules):
   * valueQuantity = UCUM#mm "millimeters"
   ```
 
-* Alternate syntax for the same operation (addition of the word `units`):
+* Bind a value set to a Quantity, constraining the units of that Quantity:
 
   ```
-  * valueQuantity units = UCUM#mm "millimeters"
-  ```
-
-* Bind a value set to the units of the same quantity (using alternate syntax):
-
-  ```
-  * valueQuantity units from http://hl7.org/fhir/ValueSet/distance-units
+  * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
 
 ### Paths
@@ -351,7 +338,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * To refer to a nested element, such as the 'method.text' element in Observation
 * To address a particular item in a list or array
 * To refer to individual elements inside choice elements (e.g., onsetAge in onset[x])
-* To pick out an individual item within a multiple choice reference, such as Observation in Reference(Observation \| Condition)
+* To pick out an individual item within a multiple choice reference, such as Observation in Reference(Observation or Condition)
 * To refer to an individual slice within a sliced array, such as the SystolicBP component within a blood pressure
 * To set metadata elements in an SD, like 'active' and 'experimental'
 * To address properties of ElementDefinitions nested within an SD, such as 'maxLength' property of string-type elements
@@ -366,7 +353,7 @@ To refer to nested elements, the path lists the properties in order, separated b
 
 **Example:**
 
-* Observation has an element named method, and method has a text property.  Set the text property of an Observation's method to "Laparoscopy":
+* Observation has an element named method, and method has a text property. Assign "Laparoscopy"to the text property:
 
   ```
   * method.text = "Laparoscopy"
@@ -394,19 +381,14 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
 #### Reference Paths
 
-Frequently in FHIR, an element has a Reference that can reference different types of resources or profiles. To address a specific resource or profile among the choices, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
+Elements can offer a choice of reference types. To address a specific resource or profile among the choices, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
 
 **Example:**
 
-* Given an element named `performer` with an inherited choice type of Reference(Organization \| Practitioner), restrict the type of Practitioner to PrimaryCareProvider, assuming PrimaryCareProvider is a profile on Practitioner:
+* Given an element named `performer` with an inherited choice type of Reference(Organization or Practitioner), refer to the Practitioner:
 
   ```
-  * performer[Practitioner] only Reference(PrimaryCareProvider)
-  ```
-  The result of this rule is that the `performer` element can reference either a Practitioner resource that validates against the PrimaryCareProvider profile or an Organization resource. Because the path specifically calls out the Practitioner choice, the rule has no effect on the Reference(Organization) choice. Contrast that with the following rule, which eliminates the Reference(Organization) choice:
-
-  ```
-  * performer only Reference(PrimaryCareProvider)  
+  performer[Practitioner]
   ```
 
 #### Data Type Choice [x] Paths
@@ -415,13 +397,13 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
 **Example:**
 
-* Fix value[x] string value to "Hello World":
+* Assign value[x] string value to "Hello World":
 
   ```
   * valueString = "Hello World"
   ```
 
-* Fix the value[x] Reference (permitted in extensions) to an instance of the Patient resource:
+* Assign the value[x] Reference value to an instance of the Patient resource:
 
   ```
   * valueReference = Reference(EveAnyperson)
@@ -429,16 +411,16 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
 #### Profiled Type Choice Paths
 
-In some cases, a type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[` `]`) containing the profile's `name`, `id`, or `url`.
+In some cases, a type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[ ]`) containing the profile's `name`, `id`, or `url`.
 
 **Example:**
 
-* After constraining an address element to either a USAddress or a CanadianAddress, bind the address.state properties to a value set of US states and Canadian provinces:
+* After constraining an address element to be either a USAddress or a CanadianAddress, bind the address.state properties to value sets of US states and Canadian provinces:
 
   ```
   * address only USAddress or CanadianAddress
-  * address[USAddress].state from USStateValueSet (required)
-  * address[CanadianAddress].state from CanadianProvenceValueSet (required)
+  * address[USAddress].state from https://www.usps.com
+  * address[CanadianAddress].state from http://ehealthontario.ca/fhir/CodeSystem/province-state-codes
   ```
 
 #### Extension Paths
@@ -459,26 +441,26 @@ In FSH, extensions are created using [extension rules](#extension-rules). These 
 
 * Set the value of a nested extension in US Core Patient, indicating the given email address is a "direct" address:
 
-```
+  ```
   * telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct] = true
-```
+  ```
 
 * Set the nested ombCategory extension, under the ethnicity extension in US Core:
 
   ```
-  * extension[USCoreEthnicity].extension[ombCategory].valueCoding = RACE#2135-2 "Hispanic or Latino"
+  * extension[USCoreEthnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2135-2 "Hispanic or Latino"
   ```
 
 * Set two values in the multiple-valued nested extension, detailed, under USCoreEthnicity extension:
 
   ```
-  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RACE#2184-0 "Dominican"
-  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RACE#2148-5 "Mexican"
+  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RaceAndEthnicityCDC#2184-0 "Dominican"
+  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RaceAndEthnicityCDC#2148-5 "Mexican"
   ```
 
 #### Sliced Array Paths
 
-FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used.
+FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used. Note that slice names (like other [FSH names](#fsh-names)) cannot be purely numeric, so slice names cannot be confused with indices.
 
 To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
 
@@ -500,9 +482,9 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
   * component[RespiratoryScore][FiveMinuteScore].code = SCT#13323003 "Apgar score 7 (finding)"
   ```
 
-#### Structure Definition Escape Paths
+#### StructureDefinition Escape Paths
 
-FSH uses the caret (`^`) syntax to provide direct access to elements of an SD. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#keywords) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
+FSH uses the caret (`^`) syntax to provide direct access to elements of an SD. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#defining-items) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
 
 To set a value in the root-level attributes of an SD, use the following syntax:
 
@@ -514,6 +496,12 @@ To set values in ElementDefinitions, corresponding to the elements in the resour
 
 ```
 * {Element path} ^{ElementDefinition path} = {value}
+```
+
+A special case of the Element path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to an named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
+
+```
+* . ^{ElementDefinition path} = {value}
 ```
 
 **Examples:**
@@ -530,18 +518,6 @@ To set values in ElementDefinitions, corresponding to the elements in the resour
   * communication.language ^binding.description = "This binding is dictated by US FDA regulations."
   ```
 
-
-***
-Power-User Feature: The "Self" ElementDefinition
-
-A special case of the caret syntax is setting properties of the first element of the differential. This element always refers to the profile or stand-alone extension itself. Since the path to this element is essentially "here" or "myself", we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
-
-```
-* . ^{ElementDefinition path} = {value}
-```
-
-**Example:**
-
 * Provide a short description for an extension (defined in the "self" ElementDefinition):
 
   ```
@@ -552,92 +528,95 @@ A special case of the caret syntax is setting properties of the first element of
 
 ### Rules
 
+* For rules applicable to Value Sets, see [Defining Value Sets](#defining-value-sets).
+* For rules applicable to Code Systems, see [Defining Code Systems](#defining-code-systems).
+
 Rules are the mechanism for constraining a profile, defining an extension, creating slices, and more. All rules begin with an asterisk:
 
 ```
 * {rule statement}
 ```
 
-We have already sneakily introduced a few types of rules: the fixed value rule (assignment using `=`), the binding rule (using `from`), and the data type restriction rule (using `only`).
+We have already introduced a few types of rules: the assignment rule (using `=`), the binding rule (using `from`), and the data type restriction rule (using `only`).
 
-Here is a summary of the rules supported in FSH:
+The following table is a summary of the rules applicable to profiles and standalone extensions. Only the Assignment rule is applicable to instances. 
 
 | Rule Type | Syntax |
 | --- | --- |
-| Fixed value |`* {path} = {value}` <br/> `* {path} = {value} (exactly)` |
-| Value set binding |`* {path} from {valueSet} ({strength})`| 
-| Narrowing cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
-| Data type restriction | `* {path} only {type1} or {type2} or {type3}` |
-| Reference type restriction | `* {path} only Reference({type1} | {type2} | {type3})` |
-| Flag assignment | `* {path} {flag1} {flag2}` <br/> `* {path1}, {path2}, {path3}... {flag}` |
-| Standalone Extensions | `* {extension path} contains {ExtensionNameIdOrURL} named {extensionSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2} ...`
-| Inline Extensions | `* {extension path} contains {extensionSliceName} {card} {flags}`  <br/> `* {extension path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2} ...` |
-| Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
-| Invariants | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
+| Assignment |`* {path} = {value}` <br/> `* {path} = {value} (exactly)` |
+| Binding |`* {path} from {valueSet} ({strength})`|
+| Cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
+| Extension, inline | `* {extension path} contains {extensionSliceName} {card} {flags}`  <br/> `* {extension path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2} ...` |
+| Extension, standalone | `* {extension path} contains {ExtensionNameIdOrURL} named {extensionSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2} ...`
+| Flag | `* {path} {flag}` <br/> `* {path} {flag1} {flag2} ...` <br/> `* {path1} and {path2} and {path3} and ... {flag}` <br/> `* {path1} and {path2} and {path3} and ... {flag1} {flag2} ...` |
+| Invariant | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
 | Mapping | `* -> "{map}" "{comment}" {mime-type}` <br/> `* {path} -> "{map}" "{comment}" {mime-type}` |
+| Rule set | `* insert {ruleSetName}` |
+| Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
+| Type | `* {path} only {type}` <br/> `* {path} only {type1} or {type2} or {type3} or ...` <br/> `* {path} only Reference({type})`  <br/> `* {path} only Reference({type1} or {type2} or {type3} or ...)`|
 {: .grid }
 
-#### Fixed Value Rules
+#### Assignment Rules
 
-Fixed value assignments follow this syntax:
+Assignment rules follow this syntax:
 
 ```
 * {path} = {value}
 ```
 
-To assign a reference to another resource, use:
+The left side of this expression follows the [FSH path grammar](#paths). The data type on the right side must align with the data type of the final element in the path.
 
-```
-* {path} = Reference({resource instance})
-```
+Assignment rules have two different interpretations, depending on context:
 
-The left side of the expression follows the [FSH path grammar](#paths). The right side's data type must align with the data type of the final element in the path.
+* In an instance, an assignment rule fixes the value of the target element.
+* In a profile or extension, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. The pattern is considered "open" in the sense that the element in question may have additional content in addition to the prescribed value, such as additional codes in a CodeableConcept or an extension.
 
-**Note:** In profiles and extensions, fixed values represent the **minimum criteria** for conformance. Consider the following two statements:
-
-```
-* code = http://loinc.org#69548-6
-```
-
-```
-* code = http://loinc.org#69548-6 "Genetic variant assessment"
-```
-
-In the context of a **profile**, the first statement signifies an instance must have (1) the system http://loinc.org and (2) the code 69548-6 to pass validation. The second statement says that an instance must have (1) the system http://loinc.org, (2) the code 69548-6, **and (3)** the display text "Genetic variant assessment" to pass validation. Typically, only the system and code are important conformance criteria, so the first statement (without the display text) is preferred in a profiling context. In an **instance**, however, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
-
-***
-Power-User Feature: Forcing An Exact Match
-
-An additional syntax, applicable only to Profiles and Extensions, is:
+If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
 
 ```
 * {path} = {value} (exactly)
 ```
 
-The `exactly` option indicates that conformance to the profile requires a precise match to the specified value, **no more and no less**. Any additional extensions, ids, or additional array elements are specifically disallowed. The usual assignment, without `(exactly)`, allows any instance that fulfills the prescribed pattern to be considered conformant, **no less but possibly more**. For example, when assigning a fixed CodeableConcept in a profile, the typical simple assignment `=` allows additional codes in the Coding array. If you specify `(exactly)`, then one and only one Coding is allowed.
+Adding `exactly` indicates that conformance to the profile requires a precise match to the specified value, **no more and no less**. This syntax is valid only in the context of profiles and extensions.
 
-**Note:** The `(exactly)` modifier does not apply to instances.
+**Example:**
 
-***
-
-**Examples:**
-
-* Assignment of a code data type:
+* Consider the following assignment statements (assuming LNC is an alias for http://loinc.org):
 
   ```
-  * status = #arrived
+  * code = LNC#69548-6
   ```
-
-* Recommended style for assignment of a LOINC code in an instance of an Observation:
 
   ```
   * code = LNC#69548-6 "Genetic variant assessment"
   ```
 
-* Recommended style for assignment of a LOINC code in an Observation profile:
+  ```
+  * code = LNC#69548-6 (exactly)
+  ```
+
+  In the context of a **profile**, the first statement signifies an instance must have the system http://loinc.org and the code 69548-6 to pass validation. The second statement says that an instance must have the system http://loinc.org, the code 69548-6, **and** the display text "Genetic variant assessment" to pass validation. The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and **must not** have a display text, alternate codes, or extensions. Typically, only the system and code are important conformance criteria, so the first statement (without the display text) is preferred in a profiling context. In an **instance**, however, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
+
+  In summary, the recommended style for assignment of a LOINC code in an Observation **instance** is:
 
   ```
-  * code = LNC#69548-6  // Genetic variant assessment (display text in comment only!)
+  * code = LNC#69548-6 "Genetic variant assessment"
+  ```
+
+  The recommended style for assignment of a LOINC code in an Observation **profile** is:
+
+  ```
+  * code = LNC#69548-6  // Genetic variant assessment (display text in comment for convenience)
+  ```
+
+**Note:** The `(exactly)` modifier does not apply to instances.
+
+**Additional Examples:**
+
+* Assignment of a code data type:
+
+  ```
+  * status = #arrived
   ```
 
 * Assignment of a boolean:
@@ -658,14 +637,14 @@ The `exactly` option indicates that conformance to the profile requires a precis
   * valueQuantity = 36.5 'C'
   ```
 
-* Assignment of a reference type to another resource:
+* Assignment of a reference to another resource:
 
   ```
   * subject = Reference(EveAnyperson)
   ```
 
 
-#### Value Set Binding Rules
+#### Binding Rules
 
 Binding is the process of associating a coded element with a set of possible values. The syntax to bind a value set, or alter an inherited binding, uses the reserved word `from`:
 
@@ -717,7 +696,7 @@ As in FHIR, min and max are non-negative integers, and max can also be *, repres
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
-For convenience and compactness, cardinality rules can be combined with [flag assignment rules](#flag-assignment-rules) via the following grammar:
+For convenience and compactness, cardinality rules can be combined with [flag rules](#flag-rules) via the following grammar:
 
 ```
 * {path} {min}..{max} {flag1} {flag2} ...
@@ -753,120 +732,6 @@ For convenience and compactness, cardinality rules can be combined with [flag as
 
   ```
   * category ..1
-  ```
-
-#### Data Type Restriction Rules
-
-FSH rules can be used to restrict the data type of an element. The FSH syntax to restrict the type is:
-
-  ```
-  * {path} only {type}
-  ```
-
-  ```
-  * {path} only {type1} or {type2} or {type3}...
-  ```
-
-where the latter offers a choice of data type. The data type choices must always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced in an `only` rule by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself).
-
-Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices can be restricted in two ways: reducing the number or choices, or substituting a more restrictive data type or profile for one of the original choices.  
-
-**Examples:**
-
-* Restrict a Quantity type to SimpleQuantity:
-
-  ```
-  * valueQuantity only SimpleQuantity
-  ```
-
-* Condition.onset[x] is a choice of dateTime, Age, Period, Range or string. To restrict onset[x] to dateTime:
-
-  ```
-  * onset[x] only dateTime
-  ```
-
-* Restrict onset[x] to either Period or Range:
-
-  ```
-  * onset[x] only Period or Range
-  ```
-
-* Restrict onset[x] to Age, AgeRange, or DateRange, assuming AgeRange and DateRange are profiles of FHIR's Range datatype (thus permissible restrictions on Range):
-
-  ```
-  * onset[x] only Age or AgeRange or DateRange
-  ```
-
-#### Reference Type Restriction Rules
-
-Elements that refer to other resources often offer a choice of target resource types. For example, Condition.recorder has reference type choice Reference(Practitioner \| PractitionerRole \| Patient \| RelatedPerson). A reference type restriction rule can narrow these choices, using the following grammar:
-
-```
-* {path} only Reference({type1} | {type2} | {type3} ...)
-```
-
-> **Note:** The vertical bar within references represents logical 'or'.
-
-It is important to note that a reference can only be restricted to a compatible type. For example, the subject of [US Core Condition](http://hl7.org/fhir/us/core/StructureDefinition-us-core-condition.html), with type Reference(US Core Patient), cannot be restricted to Reference(Patient), because Patient is not a profile of US Core Patient.
-
-**Examples:**
-
-* Restrict recorder to a reference to any Practitioner:
-
-  ```
-  * recorder only Reference(Practitioner)
-  ```
-
-* Restrict recorder to either a Practitioner or a PractitionerRole:
-
-  ```
-  * recorder only Reference(Practitioner | PractitionerRole)
-  ```
-
-* Restrict recorder to `PrimaryCarePhysician` or `EmergencyRoomPhysician`, assuming these are both profiles on `Practitioner`:
-
-  ```
-  * recorder only Reference(PrimaryCarePhysician | EmergencyRoomPhysician)
-  ```
-
-#### Flag Assignment Rules
-
-Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
-
-| FHIR Flag | FSH Flag | Meaning |
-|------|-----|----|
-| S | MS  | Must Support |
-| &#931;  | SU  | Include in summary |
-| ?! | ?! | Modifier |
-| N | N | Normative element |
-| TU | TU | Trial use element |
-| D | D | Draft element |
-{: .grid }
-
-FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. These flags can be set using [caret syntax](#structure-definition-escape-paths), if needed.
-
-The following syntax can be used to assigning flags:
-
-```
-* {path} {flag1} {flag2} ...
-```
-
-```
-* {path1}, {path2}, {path3}... {flag}
-```
-
-**Examples:**
-
-* Declare communication to be MustSupport and Modifier:
-
-  ```
-  * communication MS ?!
-  ```
-
-* Declare a list of elements and nested elements to be MustSupport:
-
-  ```
-  * identifier, identifier.system, identifier.value, name, name.family MS
   ```
 
 #### Extension Rules
@@ -940,109 +805,45 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
     // etc...
   ```
 
-#### Slicing Rules
+#### Flag Rules
 
-Slicing is an advanced, but necessary, feature of FHIR. While future versions of FSH will aim to lower the learning curve, FSH version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
+Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
 
+| FHIR Flag | FSH Flag | Meaning |
+|------|-----|----|
+| S | MS  | Must Support |
+| &#931;  | SU  | Include in summary |
+| ?! | ?! | Modifier |
+| N | N | Normative element |
+| TU | TU | Trial use element |
+| D | D | Draft element |
+{: .grid }
 
-##### Step 1. Identifying the Slices
+FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. If needed, these flags can be set using [caret syntax](#structuredefinition-escape-paths).
 
-The first step in slicing is populating the array that is to be sliced, using the `contains` keyword. The following syntax is used:
-
-```
-* {array element path} contains
-       {sliceName1} {card1} {flags1} and
-       {sliceName2} {card2} {flags2} and
-       {sliceName3} {card3} {flags3} ...
-```
-
-In this pattern, the `{array element path}` is a path to the element that is to be sliced (and to which the slicing rules will applied in step 3). The `{card}` declaration is required, and `{flags}` are optional.
-
-Each slice will match or constrain the data type of the array it slices. In particular:
-
-* If an array is a one of the FHIR data types, each slice will be the same data type or a profile of it. For example, if an array of 'identifier' is sliced, then each slice will also be type 'identifier' or a profile of 'identifier'.
-* If the sliced array is a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints may be applied to the slices.
-* If the array to be sliced is a Reference, then each slice must be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation \| Condition), then each slice must either be Reference(Observation \| Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
-
-**Example:**
-
-* Slice the Observation.component array for blood pressure:
-
-  ```
-  * component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS
-  ```
-
-* Because FSH is white-space invariant, the previous example can be rewritten so the slices appear one-per-line for readability:
-
-  ```
-  * component contains
-        SystolicBP 1..1 and
-        DiastolicBP 1..1
-  ```
-
-###### Reslicing
-
-Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
+The following syntax can be used to assigning flags:
 
 ```
-* {array element path}[{sliceName}] contains {resliceName1} {card1} and {resliceName2} {card2} and ...
+* {path} {flag1} {flag2} ...
 ```
 
-**Example:**
-
-* Reslice the Apgar Respiration score for one-, five-, and ten-minute scores:
-
-  ```
-  * component[RespiratoryScore] contains
-      OneMinuteScore 0..1 and
-      FiveMinuteScore 0..1 and
-      TenMinuteScore 0..1
-  ```
-
-##### Step 2. Defining Slice Contents
-
-At minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
-
-FSH requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
-
 ```
-* {path to slice}.{subpath} {constraint}
+* {path1} and {path2} and {path3}... {flag}
 ```
 
 **Examples:**
 
-* Define SystolicBP and DiastolicBP slices inline:
+* Declare communication to be MustSupport and Modifier:
 
   ```
-  * component contains
-      SystolicBP 1..1 and
-      DiastolicBP 1..1
-  * component[SystolicBP].code = LNC#8480-6 // Systolic blood pressure
-  * component[SystolicBP].value[x] only Quantity
-  * component[SystolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
-  * component[DiastolicBP].code = LNC#8462-4 // Diastolic blood pressure
-  * component[DiastolicBP].value[x] only Quantity
-  * component[DiastolicBP].valueQuantity units = UCUM#mm[Hg] "mmHg"
+  * communication MS ?!
   ```
 
-##### Step 3. Specifying the Slicing Logic
-
-Slicing in FHIR requires authors to specify a [discriminator path, type, and rules]. In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
-
-In FSH, authors must specify the slicing logic parameters using [StructureDefinition escape (caret) syntax](#structure-definition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type 
-
-**Example:**
-
-* Provide slicing logic for slices on Observation.component that should be distinguished by their code:
+* Declare a list of elements and nested elements to be MustSupport:
 
   ```
-  * component ^slicing.discriminator.type = #pattern
-  * component ^slicing.discriminator.path = "code"
-  * component ^slicing.rules = #open
-  * component ^slicing.ordered = false   // can be omitted, since false is the default
-  * component ^slicing.description = "Slice based on the component.code pattern"
+  * identifier and identifier.system and identifier.value and name and name.family MS
   ```
-
 
 #### Invariant Rules
 
@@ -1116,23 +917,243 @@ In these rules, the `"{comment}"` string and `{mime-type}` code are optional. Th
 
 >**Note:** Unlike setting the mapping directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
+#### Rule Set Rules
+
+[Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. To use a rule set, an `insert` rule is used:
+
+```
+* insert {rule set name}
+```
+
+The rules in the named rule set are evaluated as if they were copied and pasted in the designated location. Rule sets can contain other rule sets, but circular dependencies are not allowed.
+
+Each rule in the rule set should be compatible with item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations should check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error should be emitted. It is up to implementations if other valid rules from the rule set are applied.
+
+**Example:**
+
+* Insert the rule set `MyMetadata` [defined here](#defining-rule-sets) into a profile:
+
+  ```
+  Profile: MyPatientProfile
+  Parent: Patient
+  * insert MyMetadata
+  * deceased[x] only deceasedBoolean
+  // More profile rules
+  ```
+
+  This is equivalent to the following:
+
+  ```
+  Profile: MyPatientProfile
+  Parent: Patient
+  * ^status = #draft
+  * ^experimental = true
+  * ^publisher = "Elbonian Medical Society"
+  * deceased[x] only deceasedBoolean
+  // More profile rules
+  ```
+
+* Use rule sets to define two different national profiles, both using a common clinical profile:
+
+  ```
+  Profile: USCoreBreastRadiologyObservationProfile
+  Parent: BreastRadiologyObservationProfile
+  * insert USObservationRuleSet
+  ```
+
+  ```
+  Profile: FranceBreastRadiologyObservationProfile
+  Parent: BreastRadiologyObservationProfile
+  * insert FranceObservationRuleSet
+  ```
+
+
+#### Slicing Rules
+
+Slicing is an advanced, but necessary, feature of FHIR. While future versions of FSH will aim to lower the learning curve, FSH version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
+
+##### Step 1. Identifying the Slices
+
+The first step in slicing is populating the array that is to be sliced, using the `contains` keyword. The following syntax is used:
+
+```
+* {array element path} contains
+       {sliceName1} {card1} {flags1} and
+       {sliceName2} {card2} {flags2} and
+       {sliceName3} {card3} {flags3} ...
+```
+
+In this pattern, the `{array element path}` is a path to the element that is to be sliced (and to which the slicing rules will applied in step 3). The `{card}` declaration is required, and `{flags}` are optional.
+
+Each slice will match or constrain the data type of the array it slices. In particular:
+
+* If an array is a one of the FHIR data types, each slice will be the same data type or a profile of it. For example, if an array of 'identifier' is sliced, then each slice will also be type 'identifier' or a profile of 'identifier'.
+* If the sliced array is a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints may be applied to the slices.
+* If the array to be sliced is a Reference, then each slice must be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice must either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
+
+**Example:**
+
+* Slice the Observation.component array for blood pressure:
+
+  ```
+  * component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS
+  ```
+
+* Because FSH is white-space invariant, the previous example can be rewritten so the slices appear one-per-line for readability:
+
+  ```
+  * component contains
+        SystolicBP 1..1 and
+        DiastolicBP 1..1
+  ```
+
+###### Reslicing
+
+Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
+
+```
+* {array element path}[{sliceName}] contains {resliceName1} {card1} and {resliceName2} {card2} and ...
+```
+
+**Example:**
+
+* Reslice the Apgar Respiration score for one-, five-, and ten-minute scores:
+
+  ```
+  * component[RespiratoryScore] contains
+      OneMinuteScore 0..1 and
+      FiveMinuteScore 0..1 and
+      TenMinuteScore 0..1
+  ```
+
+##### Step 2. Defining Slice Contents
+
+At minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
+
+FSH requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
+
+```
+* {path to slice}.{subpath} {constraint}
+```
+
+**Examples:**
+
+* Define SystolicBP and DiastolicBP slices inline:
+
+  ```
+  * component contains
+      SystolicBP 1..1 and
+      DiastolicBP 1..1
+  * component[SystolicBP].code = LNC#8480-6 // Systolic blood pressure
+  * component[SystolicBP].value[x] only Quantity
+  * component[SystolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
+  * component[DiastolicBP].code = LNC#8462-4 // Diastolic blood pressure
+  * component[DiastolicBP].value[x] only Quantity
+  * component[DiastolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
+  ```
+
+##### Step 3. Specifying the Slicing Logic
+
+Slicing in FHIR requires authors to specify a [discriminator path, type, and rules]. In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
+
+In FSH, authors must specify the slicing logic parameters using [StructureDefinition escape (caret) syntax](#structuredefinition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
+
+**Example:**
+
+* Provide slicing logic for slices on Observation.component that should be distinguished by their code:
+
+  ```
+  * component ^slicing.discriminator.type = #pattern
+  * component ^slicing.discriminator.path = "code"
+  * component ^slicing.rules = #open
+  * component ^slicing.ordered = false   // can be omitted, since false is the default
+  * component ^slicing.description = "Slice based on the component.code pattern"
+  ```
+
+#### Type Rules
+
+FSH rules can be used to restrict the data type of an element. The FSH syntax to restrict the type is:
+
+```
+* {path} only {type}
+```
+
+```
+* {path} only {type1} or {type2} or {type3}...
+```
+
+```
+* {path} only Reference({type})
+```
+
+```
+* {path} only Reference({type1} or {type2} or {type3} ...)
+```
+
+Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive data type or profile for one of the choices appearing in the parent profile or resource.
+
+Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/profiling.html), the data type(s) in a type rule must always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
+
+**Examples:**
+
+* Restrict a Quantity type to SimpleQuantity:
+
+  ```
+  * valueQuantity only SimpleQuantity
+  ```
+
+* Condition.onset[x] is a choice of dateTime, Age, Period, Range or string. To restrict onset[x] to dateTime:
+
+  ```
+  * onset[x] only dateTime
+  ```
+
+* Restrict onset[x] to either Period or Range:
+
+  ```
+  * onset[x] only Period or Range
+  ```
+
+* Restrict onset[x] to Age, AgeRange, or DateRange, assuming AgeRange and DateRange are profiles of FHIR's Range datatype (thus permissible restrictions on Range):
+
+  ```
+  * onset[x] only Age or AgeRange or DateRange
+  ```
+
+* Restrict Observation.performer to reference only a Practitioner:
+
+  ```
+  * performer only Reference(Practitioner)
+  ```
+
+* Restrict performer to either a Practitioner or a PractitionerRole:
+
+  ```
+  * performer only Reference(Practitioner or PractitionerRole)
+  ```
+
+* Restrict performer to PrimaryCarePhysician or EmergencyRoomPhysician (assuming these are profiles on Practitioner):
+
+  ```
+  * performer only Reference(PrimaryCarePhysician or EmergencyRoomPhysician)
+  ```
+
+* Restrict the Practitioner choice of performer to a PrimaryCarePhysician, without restricting other choices:
+
+  ```
+  * performer[Practitioner] only Reference(PrimaryCareProvider)
+  ```
+
+
 ### Defining Items
 
-This section shows how to define various items in FSH:
+This section explains how to define items in FSH. The general pattern used to define an item in FSH is:
 
-* [Aliases](#defining-aliases)
-* [Profiles](#defining-profiles)
-* [Extensions](#defining-extensions)
-* [Instances](#defining-instances)
-* [Value Sets](#defining-value-sets)
-* [Code Systems](#defining-code-systems)
-* [Mappings](#defining-mappings)
-* [Rule Sets](#defining-rule-sets)
-* [Invariants](#defining-invariants)
+* One declaration keyword statement
+* A number of additional keyword statements
+* A number of rules
 
-#### Keywords
-
-Keywords are used to make declarations that introduce new items, such as profiles and instances. For each item defined in FSH, a keyword section is first followed by a number of rules. The keyword statements themselves follow the syntax:
+Keyword statements follow the syntax:
 
 ```
 {Keyword}: {value}
@@ -1141,40 +1162,55 @@ Keywords are used to make declarations that introduce new items, such as profile
 For example:
 
 ```
-Profile: SecondaryCancerCondition
+Extension: TreatmentIntent
+Description: "The purpose of the treatment."
 ```
 
-```
-Description: "The intent of the treatment."
-```
+Declaration keywords, corresponding to the items defined by FSH, are as follows:
 
-For some keywords, values are **FSH names**. A name is any sequence of non-whitespace characters, used to refer to the item within the same [FSH tank](index.html#fsh-files-and-fsh-tanks). By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
-
-The use of individual keywords is explained in greater detail in the following sections. Here is a summary of keywords in FSH:
-
-| Keyword | Purpose | Data Type |
+| Declaration Keyword | Purpose | Data Type |
 |----------|---------|---------|
-| `Alias`| Defines an alias for a URL or OID | name or $name |
+| `Alias`| Declares an alias for a URL or OID | name or $name |
 | `CodeSystem` | Declares a new code system | name |
-| `Description` | Provides a human-readable description | string, markdown |
-| `Expression` | The FHIR path expression in an invariant | FHIRPath string |
 | `Extension` | Declares a new extension | name |
-| `Id` | An identifier for an item | id |
 | `Instance` | Declares a new instance | id |
-| `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Invariant` | Declares a new invariant | id |
 | `Mapping` | Declares a new mapping | id |
-| `Mixins` | Declares rule sets or profile rules to be included in a profile | name or names (comma separated) |
-| `Parent` | Specifies the base class for a profile or extension | name or url |
 | `Profile` | Declares a new profile | name |
-| `RuleSet` | Declares a set of rules that can be used as a mixin | id |
+| `RuleSet` | Declares a set of rules that can be reused | id |
+| `ValueSet` | Declares a new value set | name |
+{: .grid }
+
+Additional keywords are as follows:
+
+| Additional Keyword | Purpose | Data Type |
+|----------|---------|---------|
+| `Description` | Provides a human-readable description | string, markdown |
+| `Expression` | The FHIR path expression in an invariant | FHIRPath string |
+| `Id` | An identifier for an item | id |
+| `InstanceOf` | The profile or resource an instance instantiates | name |
+| `Parent` | Specifies the base class for a profile or extension | name or url |
 | `Severity` | error, warning, or guideline in invariant | code |
 | `Source` | The profile the mapping applies to | name |
 | `Target` | The standard being mapped to | uri |
 | `Title` | Short human-readable name | string |
-| `Usage` | Specifies how an instance is intended to be used in the IG | choice of `#example`, `#definition`, or `#inline` |
-| `ValueSet` | Declares a new value set | name |
+| `Usage` | Specifies how an instance is intended to be used in the IG | code (choice of `#example`, `#definition`, or `#inline`) |
 | `XPath` | the xpath in an invariant | XPath string |
+{: .grid }
+
+The following table shows the relationship between declaration keywords and additional keywords, with R = required, O = optional, blank = not allowed:
+
+| Declaration \ Keyword                      | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+|-------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
+[Alias](#defining-aliases)            |     |             |       |        |            |       |        |        |          |       |            |
+[Code System](#defining-code-systems) |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
+[Extension](#defining-extensions)     |  O  |     O       |   O   |   O    |            |       |        |        |          |       |            |
+[Instance](#defining-instances)       |     |     O       |   O   |        |     R      |   O   |        |        |          |       |            |
+[Invariant](#defining-invariants)     |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
+[Mapping](#defining-mappings)         |  O  |     O       |   O   |        |            |       |   R    |   R    |          |       |            |
+[Profile](#defining-profiles)         |  O  |     O       |   O   |   R    |            |       |        |        |          |       |            |
+[Rule Set](#defining-rule-sets)       |     |             |       |        |            |       |        |        |          |       |            |
+[Value Set](#defining-value-sets)     |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
 {: .grid }
 
 #### Defining Aliases
@@ -1187,11 +1223,13 @@ Alias definitions follow this syntax:
 Alias: {AliasName} = {url or oid}
 ```
 
-In contrast with other names in FSH (for profiles, extensions, etc.), aliases can begin with a dollar sign ($).
+Several things to note about aliases:
 
-If you choose an alias name beginning with a dollar sign, then additional error checks can be carried out. If a rule involves a name beginning with `$`, it can only be an alias. If there is no corresponding alias definition, an error can be signalled.
+* Aliases do not have additional keywords or rules.
+* Alias statements stand alone, and cannot be mixed into rule sets of other items.
+* Aliases are global within a FSH Tank.
 
-Another best practice is to choose alias names written in all capitals.
+In contrast with other names in FSH (for profiles, extensions, etc.), alias names can optionally begin with a dollar sign ($). If you define an alias with a leading $, you are protected against misspellings. For example, if you choose the alias name `$RaceAndEthnicityCDC` and accidentally type `$RaceEthnicityCDC`, implementations can easily detect there is no alias by that name. However, if the alias is `RaceAndEthnicityCDC` and the misspelling is `RaceEthnicityCDC`, implementations do not know an alias is intended, and will look through FHIR Core and all dependent implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
 
 **Examples:**
 
@@ -1200,7 +1238,7 @@ Another best practice is to choose alias names written in all capitals.
   ```
 
   ```
-  Alias: RACE = urn:oid:2.16.840.1.113883.6.238
+  Alias: $RaceAndEthnicityCDC = urn:oid:2.16.840.1.113883.6.238
   ```
 
   ```
@@ -1209,7 +1247,7 @@ Another best practice is to choose alias names written in all capitals.
 
 #### Defining Profiles
 
-To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` should be used. The keyword `Mixins` is optional.
+To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are optional.
 
 **Example:**
 
@@ -1227,7 +1265,7 @@ Any rules defined for the profiles would follow immediately after the keyword se
 
 #### Defining Extensions
 
-Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/extensibility.html#extension). 
+Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/extensibility.html#extension).
 
 > **Note:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
 
@@ -1282,7 +1320,7 @@ Defining extensions is similar to defining a profile, except that the parent of 
 
 Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL (or alias) if defined externally.
 
-Instances inherit structures and values from their StructureDefinition (i.e. fixed codes, extensions). Fixed value rules are used to set additional values.
+Instances inherit structures and values from their StructureDefinition (i.e. assigned codes, extensions). Assignment rules are used to set additional values.
 
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
@@ -1304,8 +1342,8 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
   * name.given[1] = "Steve"
   * name.family = "Anyperson"
   * birthDate = 1960-04-25
-  * extension[us-core-race].extension[ombCategory].valueCoding = RACE#2106-3 "White"
-  * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RACE#21865 "Non Hispanic or Latino"
+  * extension[us-core-race].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2106-3 "White"
+  * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2186-5 "Non Hispanic or Latino"
   ```
 
 * Define an instance of US Core Practitioner, with name and NPI, meant to be inlined in a composition:
@@ -1347,25 +1385,28 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 
 A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
 
-Value sets are defined using the keywords `ValueSet`, `Id`, `Title` and `Description`.
+Value sets are defined using the declarative keyword `ValueSet`, with optional keywords `Id`, `Title` and `Description`
 
-Codes must be taken from one or more terminology systems (also called code systems or vocabularies), and cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
+Codes must be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
 The contents of a value set are defined by a set of rules. There are four types of rules to populate a value set:
 
+> **Note:** In the syntax below, the word `include` is optional:
+
+
 | To include... | Syntax | Example |
 |-------|---------|----------|
-| A single code | `* {Coding}` | `* SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from a value set | `* codes from valueset {Id}` | `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | `* codes from system {Id}` | `* codes from system http://snomed.info/sct` |
-| Selected codes from a code system (filters are code system dependent) | `* codes from system {system} where {filter} and {filter} and ...` | `* codes from system SCT where concept is-a #254837009` |
+| A single code | `* include {Coding}` | `* include SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* SCT#961000205106 "Wearing street clothes, no shoes"`|
+| All codes from a value set | `* include codes from valueset {Id}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
+| All codes from a code system | `* include codes from system {Id}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
+| Selected codes from a code system (filters are code system dependent) | `* include codes from system {system} where {filter} and {filter} and ...` | `* include codes from system SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system SCT where concept is-a #254837009`|
 {: .grid }
 
 See [below](#filters) for discussion of filters.
 
 > **Note:** `{system}` can be a FSH name, alias or URL.
 
-Analogous rules can be used to leave out certain codes, with the addition of the word `exclude`:
+Analogous rules can be used to leave out certain codes, with the word `exclude` replacing the word `include`:
 
 | To exclude... | Syntax | Example |
 |-------|---------|----------|
@@ -1385,7 +1426,7 @@ Not all operators are valid for any code system. The `property` and `value` are 
 
 **Examples** 
 
-* Define an [extensional](https://www.hl7.org/fhir/valueset.html#int-ext)) value set:
+* Define a value set using [extensional](https://www.hl7.org/fhir/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
 
   ```
   ValueSet: BodyWeightPreconditionVS
@@ -1399,9 +1440,9 @@ Not all operators are valid for any code system. The `property` and `value` are 
 * Define a value set using [intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules:
 
   ```
-  * codes from system SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
-  * codes from system SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
-  * codes from system SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
+  * include codes from system SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
+  * include codes from system SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
+  * include codes from system SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
   * exclude codes from system SCT where concept is-a #450893003 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)"
   * exclude codes from system SCT where concept is-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)"
   * exclude codes from system SCT where concept is-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)"
@@ -1422,7 +1463,7 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 ```
 
 **Note:**
-* Do not include a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
+* Do not put a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
 * The definition of the term can be optionally provided as the second string following the code.
 
 **Example:** Define a code system for yoga poses.
@@ -1490,65 +1531,17 @@ RuleSet: {RuleSetName}
 // More rules
 ```
 
-A defined rule set can be applied to an item by using the keyword `Mixins`:
+A defined rule set can be applied to an item by using an [`insert` rule](#rule-set-rules).
 
-```
-Profile: MyPatientProfile
-Parent: Patient
-Mixins: {RuleSet1}, {RuleSet2}
-```
+**Example:**
 
-The rules from a rule set are applied **before** rules defined on the target itself. When multiple rule sets are included using the `Mixins` keyword, the rule set rules are applied in the order that the rule sets are listed.  Each rule set should be compatible with the target, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations should check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error should be emitted. It is up to implementations if other valid rules from the rule set are applied.
-
-**Examples:**
-
-* Define and using a mixin for metadata shared in all US Core Profiles:
+* Define a rule set for metadata to be used in multiple profiles:
 
   ```
-  RuleSet: USCoreMetadata
-  * ^version = "3.1.0"
-  * ^status = #active
-  * ^experimental = false
-  * ^publisher = "HL7 US Realm Steering Committee"
-  * ^contact.telecom.system = #url
-  * ^contact.telecom.value = "http://www.healthit.gov"
-  * ^jurisdiction.coding = COUNTRY#US "United States of America"
-
-  Profile: MyUSCorePatientProfile
-  Parent: Patient
-  Mixins: USCoreMetadata
-  * deceased[x] only deceasedBoolean
-  // More profile rules
-  ```
-
-  The `MyUSCorePatientProfile` defined above is equivalent to the following:
-
-  ```
-  Profile: MyUSCorePatientProfile
-  Parent: Patient
-  * ^version = "3.1.0"
-  * ^status = #active
-  * ^experimental = false
-  * ^publisher = "HL7 US Realm Steering Committee"
-  * ^contact.telecom.system = #url
-  * ^contact.telecom.value = "http://www.healthit.gov"
-  * ^jurisdiction.coding = COUNTRY#US "United States of America"
-  * deceased[x] only deceasedBoolean
-  // More profile rules
-  ```
-
-* Use mixins to define two different national profiles, both using a common clinical profile:
-
-  ```
-  Profile: USCoreBreastRadiologyProfile
-  Parent: BreastRadiologyProfile
-  Mixins:  USObservationRuleSet
-  ```
-
-  ```
-  Profile: FranceBreastRadiologyProfile
-  Parent: BreastRadiologyProfile
-  Mixins: FranceObservationRuleSet
+  RuleSet: MyMetadata
+  * ^status = #draft
+  * ^experimental = true
+  * ^publisher = "Elbonian Medical Society"
   ```
 
 #### Defining Invariants
@@ -1568,3 +1561,189 @@ Invariants are incorporated into a profile via `obeys` rules explained [above](#
   Severity:   #error
   XPath:      "f:given or f:family"
   ```
+
+### Formal Grammar
+
+The grammar of FSH described in [ANTLR4](https://www.antlr.org/):
+
+```
+grammar FSH;
+
+doc:                entity* EOF;
+entity:             alias | profile | extension | invariant | instance | valueSet | codeSystem | ruleSet | mapping;
+
+alias:              KW_ALIAS SEQUENCE EQUAL SEQUENCE;
+
+profile:            KW_PROFILE SEQUENCE sdMetadata+ sdRule*;
+extension:          KW_EXTENSION SEQUENCE sdMetadata* sdRule*;
+sdMetadata:         parent | id | title | description | mixins;
+sdRule:             cardRule | flagRule | valueSetRule | fixedValueRule | containsRule | onlyRule | obeysRule | caretValueRule;
+
+instance:           KW_INSTANCE SEQUENCE instanceMetadata* fixedValueRule*;
+instanceMetadata:   instanceOf | title | description | usage | mixins;
+
+invariant:          KW_INVARIANT SEQUENCE invariantMetadata+;
+invariantMetadata:  description | expression | xpath | severity;
+
+valueSet:           KW_VALUESET SEQUENCE vsMetadata* (caretValueRule | vsComponent)*;
+vsMetadata:         id | title | description;
+codeSystem:         KW_CODESYSTEM SEQUENCE csMetadata* (caretValueRule | concept)*;
+csMetadata:         id | title | description;
+
+ruleSet:            KW_RULESET SEQUENCE sdRule+;
+
+mapping:            KW_MAPPING SEQUENCE mappingMetadata* mappingRule*;
+mappingMetadata:    id | source | target | description | title;
+
+// METADATA FIELDS
+parent:             KW_PARENT SEQUENCE;
+id:                 KW_ID SEQUENCE;
+title:              KW_TITLE STRING;
+description:        KW_DESCRIPTION (STRING | MULTILINE_STRING);
+expression:         KW_EXPRESSION STRING;
+xpath:              KW_XPATH STRING;
+severity:           KW_SEVERITY CODE;
+instanceOf:         KW_INSTANCEOF SEQUENCE;
+usage:              KW_USAGE CODE;
+mixins:             KW_MIXINS (SEQUENCE | COMMA_DELIMITED_SEQUENCES);
+source:             KW_SOURCE SEQUENCE;
+target:             KW_TARGET STRING;
+
+
+// RULES
+cardRule:           STAR path CARD flag*;
+flagRule:           STAR (path | paths) flag+;
+valueSetRule:       STAR path KW_UNITS? KW_FROM SEQUENCE strength?;
+fixedValueRule:     STAR path KW_UNITS? EQUAL value KW_EXACTLY?;
+containsRule:       STAR path KW_CONTAINS item (KW_AND item)*;
+onlyRule:           STAR path KW_ONLY targetType (KW_OR targetType)*;
+obeysRule:          STAR path? KW_OBEYS SEQUENCE (KW_AND SEQUENCE)*;
+caretValueRule:     STAR path? caretPath EQUAL value;
+mappingRule:        STAR path? ARROW STRING STRING? CODE?;
+
+// VALUESET COMPONENTS
+vsComponent:        STAR KW_EXCLUDE? ( vsConceptComponent | vsFilterComponent );
+vsConceptComponent: code vsComponentFrom?
+                    | COMMA_DELIMITED_CODES vsComponentFrom;
+vsFilterComponent:  KW_CODES vsComponentFrom (KW_WHERE vsFilterList)?;
+vsComponentFrom:    KW_FROM (vsFromSystem (KW_AND vsFromValueset)? | vsFromValueset (KW_AND vsFromSystem)?);
+vsFromSystem:       KW_SYSTEM SEQUENCE;
+vsFromValueset:     KW_VSREFERENCE (SEQUENCE | COMMA_DELIMITED_SEQUENCES);
+vsFilterList:       (vsFilterDefinition KW_AND)* vsFilterDefinition;
+vsFilterDefinition: SEQUENCE vsFilterOperator vsFilterValue?;
+vsFilterOperator:   EQUAL | SEQUENCE;
+vsFilterValue:      code | KW_TRUE | KW_FALSE | REGEX | STRING;
+
+// MISC
+path:               SEQUENCE | KW_SYSTEM;
+paths:              COMMA_DELIMITED_SEQUENCES;
+caretPath:          CARET_SEQUENCE;
+flag:               KW_MOD | KW_MS | KW_SU | KW_TU | KW_NORMATIVE | KW_DRAFT;
+strength:           KW_EXAMPLE | KW_PREFERRED | KW_EXTENSIBLE | KW_REQUIRED;
+value:              SEQUENCE | STRING | MULTILINE_STRING | NUMBER | DATETIME | TIME | reference | code | quantity | ratio | bool ;
+item:               SEQUENCE (KW_NAMED SEQUENCE)? CARD flag*;
+code:               CODE STRING?;
+concept:            STAR code (STRING | MULTILINE_STRING)?;
+quantity:           NUMBER UNIT;
+ratio:              ratioPart COLON ratioPart;
+reference:          REFERENCE STRING?;
+ratioPart:          NUMBER | quantity;
+bool:               KW_TRUE | KW_FALSE;
+targetType:         SEQUENCE | reference;
+
+// KEYWORDS
+KW_ALIAS:           'Alias' WS* ':';
+KW_PROFILE:         'Profile' WS* ':';
+KW_EXTENSION:       'Extension' WS* ':';
+KW_INSTANCE:        'Instance' WS* ':';
+KW_INSTANCEOF:      'InstanceOf' WS* ':';
+KW_INVARIANT:       'Invariant' WS* ':';
+KW_VALUESET:        'ValueSet' WS* ':';
+KW_CODESYSTEM:      'CodeSystem' WS* ':';
+KW_RULESET:         'RuleSet' WS* ':';
+KW_MAPPING:         'Mapping' WS* ':';
+KW_MIXINS:          'Mixins' WS* ':';
+KW_PARENT:          'Parent' WS* ':';
+KW_ID:              'Id' WS* ':';
+KW_TITLE:           'Title' WS* ':';
+KW_DESCRIPTION:     'Description' WS* ':';
+KW_EXPRESSION:      'Expression' WS* ':';
+KW_XPATH:           'XPath' WS* ':';
+KW_SEVERITY:        'Severity' WS* ':';
+KW_USAGE:           'Usage' WS* ':';
+KW_SOURCE:          'Source' WS* ':';
+KW_TARGET:          'Target' WS* ':';
+KW_MOD:             '?!';
+KW_MS:              'MS';
+KW_SU:              'SU';
+KW_TU:              'TU';
+KW_NORMATIVE:       'N';
+KW_DRAFT:           'D';
+KW_FROM:            'from';
+KW_EXAMPLE:         '(' WS* 'example' WS* ')';
+KW_PREFERRED:       '(' WS* 'preferred' WS* ')';
+KW_EXTENSIBLE:      '(' WS* 'extensible' WS* ')';
+KW_REQUIRED:        '(' WS* 'required' WS* ')';
+KW_CONTAINS:        'contains';
+KW_NAMED:           'named';
+KW_AND:             'and';
+KW_ONLY:            'only';
+KW_OR:              'or';
+KW_OBEYS:           'obeys';
+KW_TRUE:            'true';
+KW_FALSE:           'false';
+KW_EXCLUDE:         'exclude';
+KW_CODES:           'codes';
+KW_WHERE:           'where';
+KW_VSREFERENCE:     'valueset';
+KW_SYSTEM:          'system';
+KW_UNITS:           'units';
+KW_EXACTLY:         '(' WS* 'exactly' WS* ')';
+
+// SYMBOLS
+EQUAL:              '=';
+STAR:               '*'  [0-9]*;
+COLON:              ':';
+COMMA:              ',';
+ARROW:              '->';
+
+// PATTERNS
+
+                 //  "    CHARS    "
+STRING:             '"' (~[\\"] | '\\"' | '\\\\')* '"';
+                 //  """ CHARS """
+MULTILINE_STRING:   '"""' .*? '"""';
+                 //  +/- ? DIGITS( .  DIGITS)?
+NUMBER:             [+\-]? [0-9]+('.' [0-9]+)?;
+                 //   '  UCUM UNIT   '
+UNIT:               '\'' (~[\\'])* '\'';
+                 // SYSTEM     #  SYSTEM
+CODE:               SEQUENCE? '#' (SEQUENCE | CONCEPT_STRING);
+CONCEPT_STRING:      '"' (NONWS_STR | '\\"' | '\\\\')+ (WS (NONWS_STR | '\\"' | '\\\\')+)* '"';
+                 //        YEAR         ( -   MONTH   ( -    DAY    ( T TIME )?)?)?
+DATETIME:           [0-9][0-9][0-9][0-9]('-'[0-9][0-9]('-'[0-9][0-9]('T' TIME)?)?)?;
+                 //    HOUR   ( :   MINUTE  ( :   SECOND  ( . MILLI )?)?)?( Z  |     +/-        HOUR   :  MINUTE   )?
+TIME:               [0-9][0-9](':'[0-9][0-9](':'[0-9][0-9]('.'[0-9]+)?)?)?('Z' | ('+' | '-')[0-9][0-9]':'[0-9][0-9])?;
+                 // DIGITS  ..  (DIGITS |  * )
+CARD:               ([0-9]+)? '..' ([0-9]+ | '*')?;
+                 //  Reference       (        ITEM         |         ITEM         )
+REFERENCE:          'Reference' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)* ')';
+                 //  ^  NON-WHITESPACE
+CARET_SEQUENCE:     '^' NONWS+;
+                 // '/' EXPRESSION '/'
+REGEX:              '/' ('\\/' | ~[*/\r\n])('\\/' | ~[/\r\n])* '/';
+COMMA_DELIMITED_CODES: (CODE (WS+ STRING)? WS* COMMA WS+)+ CODE (WS+ STRING)?;
+                        // (NON-WS  WS  ,   WS )+ NON-WS
+COMMA_DELIMITED_SEQUENCES: (SEQUENCE WS* COMMA WS*)+ SEQUENCE;
+                 // NON-WHITESPACE
+SEQUENCE:           NONWS+;
+// FRAGMENTS
+fragment WS: [ \t\r\n\f\u00A0];
+fragment NONWS: ~[ \t\r\n\f\u00A0];
+fragment NONWS_STR: ~[ \t\r\n\f\u00A0\\"];
+
+// IGNORED TOKENS
+WHITESPACE:         WS -> channel(HIDDEN);
+BLOCK_COMMENT:      '/*' .*? '*/' -> skip;
+LINE_COMMENT:       '//' .*? [\r\n] -> skip;
+```
