@@ -43,7 +43,7 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 
 #### Basics
 
-* **Grammar**: [FSH has a formal grammar](reference.html#formal-grammar) defined in [ANTLR4](https://www.antlr.org/).
+* **Grammar**: [FSH has a formal grammar](reference.html#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/).
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 * **Whitespace**: Repeated whitespace characters are equivalent to one whitespace character within FSH files, unless they are part of string literals. New lines are considered whitespace.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
@@ -83,7 +83,7 @@ For a FHIR `code` data type, the {system} is omitted. The display text is option
   http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
-* The same code, using the Snomed-CT alias defined above:
+* The same code, using the Snomed-CT alias `SCT`:
 
   ```
   SCT#363346000 "Malignant neoplastic disease (disorder)"
@@ -130,7 +130,7 @@ Title:    "Cancer Disease Status"
 Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
 ```
 
-Keywords that declare new items (like the `Profile` keyword in the previous example) must occur first in any set of keywords. There are nine declarative keywords in FSH:
+Keywords that declare new items (like the `Profile` keyword in the previous example) must occur first in any set of keywords. There are nine declarative [keywords in FSH](reference.html#defining-items):
 
 * Alias
 * CodeSystem
@@ -492,7 +492,7 @@ Some of the features for FSH and SUSHI under consideration include (in no partic
 
 * **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 
-* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance in FSH using `InstanceOf: CapabilityStatement`, but FSH does nothing to help populate that instance. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that create CapabilityStatements more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
+* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance ([download template](CapabilityStatementTemplate)) in FSH using `InstanceOf: CapabilityStatement`, but FSH does nothing to help populate that instance. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
 
 * **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain sub-items. While not suggesting that FSH adopt YAML, it is worth noting that a syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
 

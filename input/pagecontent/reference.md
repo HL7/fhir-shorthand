@@ -19,11 +19,23 @@ The FSH specification, like other FHIR Implementation Guides (IGs), presents ver
 * x2 = x1 and y2 > y1 OR
 * x2 = x1 and y2 = y1 and z2 > z1
 
-Like other HL7 FHIR Implementation Guides, the numbering of releases does not entirely follow the [semantic versioning convention](https://semver.org). Consistent with semantic versioning, an increment of z indicates a patch release containing minor updates and bug fixes, while maintaining backwards compatibility with the previous version. Increments in y indicates new or modified features, and potentially, non-backward-compatible changes (i.e., a minor or major release in semantic versioning). By HL7 convention, the major version number x typically does not increment until the release of a new balloted version.
+Like other HL7 FHIR IGs, the numbering of releases does not entirely follow the [semantic versioning convention](https://semver.org). Consistent with semantic versioning, an increment of z indicates a patch release containing minor updates and bug fixes, while maintaining backwards compatibility with the previous version. Increments in y indicates new or modified features, and potentially, non-backward-compatible changes (i.e., a minor or major release in semantic versioning). By HL7 convention, the major version number x typically does not increment until the release of a new balloted version.
+
+#### Dependency on FHIR Version
+
+FSH is not explicitly FHIR-version dependent, but implementations may be limited to certain versions of FHIR. FSH has been designed around FHIR R4 and compatibility to previous FHIR versions of FHIR has not been evaluated. FSH is future-proof in the sense that it depends primarily on normative parts of the FHIR specification (in particular, StructureDefinition). It is conceivable that future changes in FHIR could impact the FSH language specification, particularly the introduction of new FHIR data types and features.
+
+#### Projects and Files
+
+Content in one FSH project can be contained in one or more FSH files with **.fsh** extension. How content is divided among files is not meaningful in FSH, and all content can be considered pooled together for the purposes of FSH. It is up to implementations to define which **.fsh** files should be included in a given FSH project.
+
+#### Order of Items in Files
+
+The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. Items can appear in any order within **.fsh** files, and can be moved around within a file (or to other **.fsh** files) without affecting the interpretation of the content.
 
 #### Formal Grammar
 
-[FSH has a formal grammar](#formal-grammar) defined in [ANTLR4](https://www.antlr.org/). If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed. The grammar is looser than the language since many things such as data type agreement are not enforced in the grammar.
+[FSH has a formal grammar](#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/). If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed. The grammar is looser than the language since many things such as data type agreement are not enforced in the grammar.
 
 #### Reserved Words
 
@@ -41,27 +53,19 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 #### Names
 
-FSH uses names to refer to items within the same [FSH tank](index.html#fsh-files-and-fsh-tanks). Names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
+FSH uses names to reference items within the same FSH project. Names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
 Alias names may begin with `$`. Choosing alias names beginning with `$` allows for [additional error checking](#defining-aliases).
 
 #### Identifiers
 
-Items in FSH may have an identifier, typically specified using the [`Id` keyword](#defining-items). Each id must be unique within the scope of their item type in the FSH Tank, but are recommended to be unique across all types in the FSH Tank. For example, two Profiles with id “foo” cannot coexist, but it is possible to have a Profile with id “foo” and a ValueSet with id “foo” in the same FSH Tank.
+Items in FSH may have an identifier, typically specified using the [`Id` keyword](#defining-items). Each id must be unique within the scope of their item type in the FSH Project, but are recommended to be unique across all types in the FSH project. For example, two Profiles with id “foo” cannot coexist, but it is possible to have a Profile with id “foo” and a ValueSet with id “foo” in the same FSH Project.
 
 If no Id is provided, implementations may create an Id. It is recommended that the Id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the FHIR id datatype).
 
 #### References to External FHIR Artifacts
 
-FHIR resources, profiles, extensions, and value sets defined outside the [FSH tank](index.html#fsh-files-and-fsh-tanks) are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`. In cases where an IG defines a profile or extension matching an existing FHIR ID, use the canonical URL to refer to the FHIR resource.
-
-#### Files
-
-Content in one project can be contained in one or more files with **.fsh** extension. How content is divided among files is not meaningful in FSH, and all content can be considered pooled together for the purposes of FSH. It is up to implementations to define which **.fsh** files should be included in a given project.
-
-#### Order of Items in Files
-
-The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. Items can appear in any order within **.fsh** files, and can be moved around within a file (or to other **.fsh** files) without affecting the interpretation of the content.
+FHIR resources, profiles, extensions, and value sets defined outside the current FSH project are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`. In cases where an IG defines a profile or extension matching an existing FHIR ID, use the canonical URL to refer to the FHIR resource.
 
 #### Whitespace
 
@@ -140,7 +144,7 @@ FHIR resources contain [two types of references](https://www.hl7.org/fhir/refere
 
 FSH represents resource references using the syntax `Reference({resource})`. FSH will not accept the name of a resource where a Reference type is required; i.e., `Reference()` is required.
 
-Canonical references refer to a standard URL associated with a FHIR resource. For elements that require a canonical reference, FSH will accept a URL, `Canonical({name})` or `Canonical({id})`, where `name` and `id` refer to items defined in the same FSH Tank. Implementations shall interpret `Canonical()` as an instruction to construct the canonical URL for the referenced item using the IG's canonical URL. `Canonical()` therefore enables a user to change the IG’s canonical URL in a single place with no other changes needed to FSH definitions.
+Canonical references refer to a standard URL associated with a FHIR resource. For elements that require a canonical reference, FSH will accept a URL, `Canonical({name})` or `Canonical({id})`, where `name` and `id` refer to items defined in the same FSH project. Implementations shall interpret `Canonical()` as an instruction to construct the canonical URL for the referenced item using the IG's canonical URL. `Canonical()` therefore enables a user to change the IG’s canonical URL in a single place with no other changes needed to FSH definitions.
 
 #### Coded Data Types
 
@@ -249,7 +253,7 @@ To set the less-common properties of a Coding, use an [assignment rule](#assignm
   
 ##### CodeableConcept
 
-A CodeableConcept consists of an array of Codings, plus a text. Codings are expressed using the shorthand explained [directly above](#coding). The FSH for setting the first Coding in a CodeableConcept is:
+A CodeableConcept consists of an array of Codings, plus a text. Codings are expressed using the [shorthand notation for Coding](#coding). The FSH for setting the first Coding in a CodeableConcept is:
 
 ```
 * {CodeableConcept type} = {system}#{code} "{display text}"
@@ -591,8 +595,8 @@ The following table is a summary of the rules applicable to profiles, extensions
 | Contains (standalone extensions) | `* {extension path} contains {ExtensionNameIdOrURL} named {localSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {localSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {localSliceName2} {card2} {flags2} ...`
 | Contains (slicing) | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
 | Flag | `* {path} {flag}` <br/> `* {path} {flag1} {flag2} ...` <br/> `* {path1} and {path2} and {path3} and ... {flag}` <br/> `* {path1} and {path2} and {path3} and ... {flag1} {flag2} ...` |
-| Invariant | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
 | Insert | `* insert {ruleSetName}` |
+| Obeys | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
 | Type | `* {path} only {type}` <br/> `* {path} only {type1} or {type2} or {type3} or ...` <br/> `* {path} only Reference({type})` <br/> `* {path} only Reference({type1} or {type2} or {type3} or ...)`|
 {: .grid }
 
@@ -624,7 +628,7 @@ If conformance to a profile requires a precise match to the specified value (whi
 * {path} = {value} (exactly)
 ```
 
-Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. This syntax is valid only in the context of profiles and extensions.
+Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `exactly` is not the best option for interoperability because it creates very tight conformance criteria. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
 
 > **Note:** The `(exactly)` modifier does not apply to instances.
 
@@ -704,7 +708,7 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
 
   * The first statement fixes the system and code, leaving the display empty
   * The second statement fixes the system, code, and display text
-  * The third statement is illegal
+  * The third statement has the same meaning as the first statement
   
   In a profiling content, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
 
@@ -716,7 +720,7 @@ Binding is the process of associating a coded element with a set of possible val
 * {path} from {valueSet} ({strength})
 ```
 
-The value set can be the name of a value set defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) or the defining URL of an external value set in the core FHIR spec or in an IG that has been declared an external dependency.
+The value set can be the name of a value set defined in the same FSH project or the defining URL of an external value set in the core FHIR spec or in an IG that has been declared an external dependency.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
 
@@ -804,7 +808,7 @@ Extensions are created by adding elements to built-in extension arrays. Extensio
 
 Extensions are specified using the `contains` keyword. There are two types of extensions: standalone and inline:
 
-* Standalone extensions have independent SDs, and can be reused. They can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
+* Standalone extensions have independent SDs, and can be reused. They can be externally-defined, and referred to by their canonical URLs, or defined in the same FSH project using the `Extension` keyword, and referenced by their name or id.
 * Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
 
 The FSH syntax to specify a standalone extension(s) is:
@@ -855,7 +859,7 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
         GenderIdentityExtension named genderIdentity 0..1 MS
   ```
 
-* Add a standalone extension, defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks), to a bodySite attribute (second level extension):
+* Add a standalone extension, defined in the same FSH project, to a bodySite attribute (second level extension):
 
   ```
   * bodySite.extension contains Laterality 0..1
@@ -886,11 +890,13 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
 
 #### Contains Rules for Slicing
 
-Slicing is an advanced, but necessary, feature of FHIR. While future versions of FSH will aim to lower the learning curve, FSH version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
+Slicing is an advanced, but necessary, feature of FHIR. It is helpful to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator) before attempting slicing in FSH. 
+
+In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
 
 ##### Step 1. Identifying the Slices
 
-The first step in slicing is populating the array that is to be sliced, using the `contains` keyword. The following syntax is used:
+The first step in slicing is populating the array that is to be sliced, using the `contains` keyword. The syntax is very similar to [`contains` rules for inline extensions](#contains-rules-for-extensions):
 
 ```
 * {array element path} contains
@@ -1000,7 +1006,7 @@ Flags are a set of information about the element that impacts how implementers h
 | D | D | Draft element |
 {: .grid }
 
-FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. If needed, these flags can be set using [caret syntax](#structuredefinition-escape-paths).
+FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the presence of [invariants](#obeys-rules), and NE flags apply only to infrastructural elements in base resources. If needed, these flags can be set using [caret syntax](#structuredefinition-escape-paths).
 
 The following syntax can be used to assigning flags:
 
@@ -1024,44 +1030,6 @@ The following syntax can be used to assigning flags:
 
   ```
   * identifier and identifier.system and identifier.value and name and name.family MS
-  ```
-
-#### Invariant Rules
-
-[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The FSH grammars for applying invariants in profiles are as follows:
-
-```
-* obeys {invariant}
-```
-
-```
-* {path} obeys {invariant}
-```
-
-```
-* obeys {invariant1} and {invariant2} ...
-```
-
-```
-* {path} obeys {invariant1} and {invariant2} ...
-```
-
-The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
-
-The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-files-and-fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
-
-**Examples:**
-
-* Assign invariant to US Core Implantable Device (invariant applies to profile as a whole):
-
-  ```
-  * obeys us-core-9
-  ```
-
-* Assign invariant to Patient.name in US Core Patient:
-
-  ```
-  * name obeys us-core-8
   ```
 
 #### Insert Rules
@@ -1113,6 +1081,45 @@ Each rule in the rule set should be compatible with item where the rule set is i
   Parent: BreastRadiologyObservationProfile
   * insert FranceObservationRuleSet
   ```
+
+#### Obeys Rules
+
+[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The FSH grammars for applying invariants in profiles are as follows:
+
+```
+* obeys {invariant}
+```
+
+```
+* {path} obeys {invariant}
+```
+
+```
+* obeys {invariant1} and {invariant2} ...
+```
+
+```
+* {path} obeys {invariant1} and {invariant2} ...
+```
+
+The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
+
+The referenced invariant and its properties must be declared somewhere within the same FSH project, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
+
+**Examples:**
+
+* Assign invariant to US Core Implantable Device (invariant applies to profile as a whole):
+
+  ```
+  * obeys us-core-9
+  ```
+
+* Assign invariant to Patient.name in US Core Patient:
+
+  ```
+  * name obeys us-core-8
+  ```
+
 
 #### Type Rules
 
@@ -1244,22 +1251,23 @@ Additional keywords are as follows:
 
 > **Note:** Keywords are case-sensitive.
 
-The following table shows the relationship between declaration keywords and additional keywords: 
+The following table shows the relationship between declaration keywords and additional keywords.
 
-_R = required, O = optional, blank = not allowed, x = Id is in declaration not `Id` keyword_
+_R = required (must), S = should (optional but recommended), M = optional (may), blank = disallowed, x = Id is required but specified in the declaration_
 
-| Declaration \ Keyword                      | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+| Declaration \ Keyword               | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |-------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
 [Alias](#defining-aliases)            |     |             |       |        |            |       |        |        |          |       |            |
-[Code System](#defining-code-systems) |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
-[Extension](#defining-extensions)     |  O  |     O       |   O   |   O    |            |       |        |        |          |       |            |
-[Instance](#defining-instances)       |  x  |     O       |   O   |        |     R      |   O   |        |        |          |       |            |
+[Code System](#defining-code-systems) |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
+[Extension](#defining-extensions)     |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Instance](#defining-instances)       |  x  |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
 [Invariant](#defining-invariants)     |  x  |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-[Mapping](#defining-mappings)         |  x  |     O       |   O   |        |            |       |   R    |   R    |          |       |            |
-[Profile](#defining-profiles)         |  O  |     O       |   O   |   R    |            |       |        |        |          |       |            |
+[Mapping](#defining-mappings)         |  x  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
+[Profile](#defining-profiles)         |  O  |     S       |   S   |   R    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)       |  x  |             |       |        |            |       |        |        |          |       |            |
-[Value Set](#defining-value-sets)     |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
+[Value Set](#defining-value-sets)     |  O  |     S       |   S   |        |            |       |        |        |          |       |            |
 {: .grid }
+
 
 #### Defining Aliases
 
@@ -1275,7 +1283,7 @@ Several things to note about aliases:
 
 * Aliases do not permit additional keywords or rules.
 * Alias statements stand alone, and cannot be mixed into rule sets of other items.
-* Aliases are global within a FSH Tank.
+* Aliases are global within a FSH project.
 
 In contrast with other names in FSH (for profiles, extensions, etc.), alias names can optionally begin with a dollar sign ($). If you define an alias with a leading $, you are protected against misspellings. For example, if you choose the alias name `$RaceAndEthnicityCDC` and accidentally type `$RaceEthnicityCDC`, implementations can easily detect there is no alias by that name. However, if the alias is `RaceAndEthnicityCDC` and the misspelling is `RaceEthnicityCDC`, implementations do not know an alias is intended, and will look through FHIR Core and all dependent implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
 
@@ -1452,7 +1460,7 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 
 Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
 
-Invariants are incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
+Invariants are incorporated into a profile via [obeys rules](#obeys-rules).
 
 **Example:**
 
@@ -1646,9 +1654,32 @@ Not all operators are valid for any code system. The `property` and `value` are 
 
 > **Note:** Intensional and extensional forms can be used together in a single value set definition.
 
+### Appendix: Abbreviations
 
+| Abbreviation | Description |
+|-----|----|
+| ANTLR  | ANother Tool for Language Recognition
+| CQL | Clinical Quality Language
+| D  | Flag denoting draft status
+| FHIR  | Fast Healthcare Interoperability Resources
+| FSH   | FHIR Shorthand
+| IG | Implementation Guide
+| JSON   | JavaScript Object Notation
+| LNC | Common FSH alias for LOINC
+| LOINC | Logical Observation Identifiers Names and Codes
+| NPI   | National Provider Identifier (US)
+| N   |  Flag denoting normative element
+| MS  | Flag denoting a Must Support element
+|  OID   | Object Identifier
+| SCT | Common FSH alias for SNOMED Clinical Terms
+|  SD   | StructureDefinition
+|  SU  | Flag denoting "include in summary"
+|  TU  | Flag denoting trial use element
+| UCUM  | Unified Code for Units of Measure
+| URL    | Uniform Resource Locator
+| XML   | Extensible Markup Language
 
-### Formal Grammar
+### Appendix: Formal Grammar
 
 The grammar of FSH described in [ANTLR4](https://www.antlr.org/):
 
