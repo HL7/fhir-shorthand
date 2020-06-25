@@ -97,15 +97,11 @@ These comments can take up multiple lines.
 
 The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation.
 
-#### Multi-line Strings
+#### Multi-line String Alternative
 
-For convenience, FSH also supports multi-line strings, demarcated with three double quotation marks `"""`. This feature allows for authors to split text over multiple lines and retain consistent indentation in the FSH file. When processing multi-line strings, the following approach is followed:
+While line breaks are supported using conventional strings, FSH also supports slightly different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file.
 
-* If the first line or last line contains only whitespace (including newline), discard it.
-* If another line contains only whitespace, truncate it to zero characters.
-* For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
-
-For example, an author might use a multi-line string to write markdown so that the markdown can be indented inside the FSH:
+As an example, an author might use a multi-line string to write markdown so that the markdown is neatly indented:
 
 ```
 * ^purpose = """
@@ -117,7 +113,7 @@ For example, an author might use a multi-line string to write markdown so that t
   """
 ```
 
-Using a normal string would require the following spacing to accomplish the same markdown formatting:
+Using a single-quoted string requires the following spacing to accomplish the same markdown formatting:
 
 ```
 * ^purpose = "* This profile is intended to support workflows where:
@@ -126,6 +122,14 @@ Using a normal string would require the following spacing to accomplish the same
 * This profile is not intended to support workflows where:
   * nothing happens"
 ```
+
+The difference between these two approaches is that the latter obscures the fact that the first and fourth line are at the same indentation level, and makes it appear there are two rules because of the asterisk in the first column. The former approach allows the first line to be empty so the string is defined as a block, and allows the entire block to be indented, so visually, it does not appear a second rule is involved.
+
+When processing multi-line strings, the following approach is used:
+
+* If the first line or last line contains only whitespace (including newline), discard it.
+* If any other line contains only whitespace, truncate it to zero characters.
+* For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
 #### References
 
@@ -581,12 +585,12 @@ Assignment rules follow this syntax:
 * {path} = {value}
 ```
 
-The left side of this expression follows the [FSH path grammar](#paths). The data type on the right side must align with the data type of the final element in the path.
+The left side of this expression follows the [FSH path grammar](#paths). The data type on the right side must align with the data type of the final element in the path, and may be a complex data type (such as an address).
 
 Assignment rules have two different interpretations, depending on context:
 
 * In an instance, an assignment rule fixes the value of the target element.
-* In a profile or extension, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. The pattern is considered "open" in the sense that the element in question may have additional content in addition to the prescribed value, such as additional codes in a CodeableConcept or an extension.
+* In a profile or an extension, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. The pattern is considered "open" in the sense that the element in question may have additional content in addition to the prescribed value, such as additional codes in a CodeableConcept or an extension.
 
 If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
 
@@ -594,41 +598,11 @@ If conformance to a profile requires a precise match to the specified value (whi
 * {path} = {value} (exactly)
 ```
 
-Adding `exactly` indicates that conformance to the profile requires a precise match to the specified value, no more and no less. This syntax is valid only in the context of profiles and extensions.
-
-**Example:**
-
-* Consider the following assignment statements (assuming LNC is an alias for http://loinc.org):
-
-  ```
-  * code = LNC#69548-6
-  ```
-
-  ```
-  * code = LNC#69548-6 "Genetic variant assessment"
-  ```
-
-  ```
-  * code = LNC#69548-6 (exactly)
-  ```
-
-  In the context of a profile, the first statement signifies an instance must have the system http://loinc.org and the code 69548-6 to pass validation. The second statement says that an instance must have the system http://loinc.org, the code 69548-6, and the display text "Genetic variant assessment" to pass validation. The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and must not have a display text, alternate codes, or extensions. Typically, only the system and code are important conformance criteria, so the first statement (without the display text) is preferred in a profiling context. In an instance, however, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
-
-  In summary, the recommended style for assignment of a LOINC code in an Observation instance is:
-
-  ```
-  * code = LNC#69548-6 "Genetic variant assessment"
-  ```
-
-  The recommended style for assignment of a LOINC code in an Observation profile is:
-
-  ```
-  * code = LNC#69548-6  // Genetic variant assessment (display text in comment for convenience)
-  ```
+Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. This syntax is valid only in the context of profiles and extensions.
 
 > **Note:** The `(exactly)` modifier does not apply to instances.
 
-**Additional Examples:**
+**Examples:**
 
 * Assignment of a code data type:
 
@@ -657,9 +631,56 @@ Adding `exactly` indicates that conformance to the profile requires a precise ma
 * Assignment of a reference to another resource:
 
   ```
+  Instance: EveAnyperson
+  InstanceOf: Patient
+  Usage: #example
+  * name.given = "Eve"
+  * name.family = "Anyperson"
+
   * subject = Reference(EveAnyperson)
   ```
 
+* Assignment of an inline instance to a bundle (setting `Bundle.entry.resource`):
+
+  ```
+  Instance: AdamEveryperson
+  InstanceOf: Patient
+  Usage: #inline
+  * name.given = "Adam"
+  * name.family = "Everyperson"
+
+  Instance: AdamBundle
+  InstanceOf: Bundle
+  Usage: #example
+  * type = #collection
+  * entry.resource = AdamEveryperson
+  ```
+
+* Contrast the behavior of assignment statements in profiles and instances:
+
+  Assuming `code` is type CodeableConcept and LNC is an alias for http://loinc.org, consider the following three assignment statements:
+
+  ```
+  1. * code = LNC#69548-6
+
+  2. * code = LNC#69548-6 "Genetic variant assessment"
+
+  3. * code = LNC#69548-6 (exactly)
+  ```
+
+  In the context of a profile:
+
+  * The first statement signals that to pass validation, an instance must have the system http://loinc.org and the code 69548-6 (appearing in coding.code).
+  * The second statement says that an instance must have the system http://loinc.org, the code 69548-6, and the display text "Genetic variant assessment" to pass validation.
+  * The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and must not have a display text, alternate codes, or extensions.
+
+  In the context of an instance:
+
+  * The first statement fixes the system and code, leaving the display empty
+  * The second statement fixes the system, code, and display text
+  * The third statement is illegal
+  
+  In a profiling content, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
 
 #### Binding Rules
 
@@ -1214,6 +1235,8 @@ Additional keywords are as follows:
 | `Usage` | Specifies how an instance is intended to be used in the IG | code (choice of `#example`, `#definition`, or `#inline`) |
 | `XPath` | the xpath in an invariant | XPath string |
 {: .grid }
+
+> **Note:** Keywords are case-sensitive.
 
 The following table shows the relationship between declaration keywords and additional keywords, with R = required, O = optional, blank = not allowed:
 

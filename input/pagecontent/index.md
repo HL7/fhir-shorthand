@@ -112,7 +112,7 @@ Alias: UCUM = http://unitsofmeasure.org
 * valueQuantity = UCUM#mm "millimeters"
 ```
 
-#### Keywords
+#### Defining New Items
 
 Keywords are used to make declarations that introduce new items. A keyword statement follows the syntax:
 
@@ -145,6 +145,8 @@ Keywords that declare new items (like the `Profile` keyword in the previous exam
 Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
 Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#defining-items).table.
+
+> **Note:** Keywords are case-sensitive.
 
 #### Rules
 
