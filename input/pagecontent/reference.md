@@ -428,7 +428,7 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
 #### Profiled Type Choice Paths
 
-In some cases, a type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[ ]`) containing the profile's `name`, `id`, or `url`.
+In some cases, a data type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[ ]`) containing the profile's `name`, `id`, or `url`.
 
 **Example:**
 
@@ -594,7 +594,7 @@ If conformance to a profile requires a precise match to the specified value (whi
 * {path} = {value} (exactly)
 ```
 
-Adding `exactly` indicates that conformance to the profile requires a precise match to the specified value, **no more and no less**. This syntax is valid only in the context of profiles and extensions.
+Adding `exactly` indicates that conformance to the profile requires a precise match to the specified value, no more and no less. This syntax is valid only in the context of profiles and extensions.
 
 **Example:**
 
@@ -612,21 +612,21 @@ Adding `exactly` indicates that conformance to the profile requires a precise ma
   * code = LNC#69548-6 (exactly)
   ```
 
-  In the context of a **profile**, the first statement signifies an instance must have the system http://loinc.org and the code 69548-6 to pass validation. The second statement says that an instance must have the system http://loinc.org, the code 69548-6, **and** the display text "Genetic variant assessment" to pass validation. The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and **must not** have a display text, alternate codes, or extensions. Typically, only the system and code are important conformance criteria, so the first statement (without the display text) is preferred in a profiling context. In an **instance**, however, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
+  In the context of a profile, the first statement signifies an instance must have the system http://loinc.org and the code 69548-6 to pass validation. The second statement says that an instance must have the system http://loinc.org, the code 69548-6, and the display text "Genetic variant assessment" to pass validation. The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and must not have a display text, alternate codes, or extensions. Typically, only the system and code are important conformance criteria, so the first statement (without the display text) is preferred in a profiling context. In an instance, however, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
 
-  In summary, the recommended style for assignment of a LOINC code in an Observation **instance** is:
+  In summary, the recommended style for assignment of a LOINC code in an Observation instance is:
 
   ```
   * code = LNC#69548-6 "Genetic variant assessment"
   ```
 
-  The recommended style for assignment of a LOINC code in an Observation **profile** is:
+  The recommended style for assignment of a LOINC code in an Observation profile is:
 
   ```
   * code = LNC#69548-6  // Genetic variant assessment (display text in comment for convenience)
   ```
 
-**Note:** The `(exactly)` modifier does not apply to instances.
+> **Note:** The `(exactly)` modifier does not apply to instances.
 
 **Additional Examples:**
 
@@ -677,7 +677,7 @@ The following rules apply to binding in FSH:
 
 * If no binding strength is specified, the binding is assumed to be required.
 * When further constraining an existing binding, the binding strength can stay the same or be made tighter (e.g., replacing a preferred binding with extensible or required), but never loosened.
-* Constraining may leave the binding strength the same and change the value set instead. However, certain changes permitted in FSH may violate [FHIR profiling principles](http://hl7.org/fhir/R4/profiling.html#binding-strength). In particular, FHIR will permit a required value set to be replaced by another required value set only if the codes in the new value set are a subset of the codes in the original value set. For extensible bindings, the new value set can contain codes not in the existing value set, but additional codes **should not** have the same meaning as existing codes in the base value set.
+* Constraining may leave the binding strength the same and change the value set instead. However, certain changes permitted in FSH may violate [FHIR profiling principles](http://hl7.org/fhir/R4/profiling.html#binding-strength). In particular, FHIR will permit a required value set to be replaced by another required value set only if the codes in the new value set are a subset of the codes in the original value set. For extensible bindings, the new value set can contain codes not in the existing value set, but additional codes should not have the same meaning as existing codes in the base value set.
 
 **Examples:**
 
@@ -755,7 +755,7 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
 
 Extensions are created by adding elements to built-in 'extension' array elements. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/extensibility.html#extension)). Constraining extensions is discussed in [Defining Extensions](#defining-extensions). The same instructions apply to 'modifierExtension' arrays.
 
-Extensions are specified using the `contains` keyword. There are two types of extensions: **standalone** and **inline**:
+Extensions are specified using the `contains` keyword. There are two types of extensions: standalone and inline:
 
 * Standalone extensions have independent SDs, and can be reused. They can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
 * Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
@@ -1537,7 +1537,7 @@ In the example above, the target is another FHIR IG, but in many cases, the targ
 
 #### Defining Rule Sets
 
-Rule sets provide the ability to define rules and apply them ("mix in") to a compatible target. The rules are copied from the rule set at compile time. Profiles, extensions, and instances can have one or more rule sets applied to them. The same rule set can be used in multiple places. Rule sets can only be mixed into profiles and extensions.
+Rule sets provide the ability to define rules and apply them to a compatible target. The rules are copied from the rule set at compile time. Any item admitting rules can have one or more rule sets applied to them. The same rule set can be used in multiple places.
 
 Rule sets are defined by using the keyword `RuleSet`:
 
@@ -1548,7 +1548,7 @@ RuleSet: {RuleSetName}
 // More rules
 ```
 
-A defined rule set can be applied to an item by using an [`insert` rule](#rule-set-rules).
+Once defined, the rule set is applied to an item by using an [`insert` rule](#rule-set-rules).
 
 **Example:**
 
