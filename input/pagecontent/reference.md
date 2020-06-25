@@ -374,10 +374,10 @@ To refer to nested elements, the path lists the properties in order, separated b
 
 **Example:**
 
-* Observation has an element named method, and method has a text property. Assign "Laparoscopy"to the text property:
+* The path to the text sub-property of Observation.method:
 
   ```
-  * method.text = "Laparoscopy"
+  method.text
   ```
 
 #### Array Property Paths
@@ -388,25 +388,25 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
 **Examples:**
 
-* Set a Patient's first name's second given name to "Marie":
+* Path to a patient's second given name in the first name field:
 
   ```
-  * name[0].given[1] = "Marie"
+  name[0].given[1]
   ```
 
-* Equivalent expression, since the zero index is assumed when omitted:
+* Equivalent path expression, since the zero index is assumed when omitted:
 
   ```
-  * name.given[1] = "Marie"
+  name.given[1]
   ```
 
 #### Reference Paths
 
-Elements can offer a choice of reference types. To address a specific resource or profile among the choices, follow the path with square brackets (`[` `]`) containing the target type (or the profile's `name`, `id`, or `url`).
+Elements can offer a choice of reference types. To address a specific resource or profile among the choices, follow the path with square brackets (`[ ]`) containing the target type (or the profile's `name`, `id`, or `url`).
 
 **Example:**
 
-* Given an element named `performer` with an inherited choice type of Reference(Organization or Practitioner), refer to the Practitioner:
+* Given an element named `performer` with an inherited choice type of Reference(Organization or Practitioner), the path to the Practitioner:
 
   ```
   performer[Practitioner]
@@ -418,16 +418,16 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 
 **Example:**
 
-* Assign value[x] string value to "Hello World":
+* The path to the string data type of Observation.value[x]:
 
   ```
-  * valueString = "Hello World"
+  valueString
   ```
 
-* Assign the value[x] Reference value to an instance of the Patient resource:
+* The path to the Quantity within the SystolicBP component of the [Blood Pressure profile](https://www.hl7.org/fhir/bp.html):
 
   ```
-  * valueReference = Reference(EveAnyperson)
+  component[SystolicBP].valueQuantity	
   ```
 
 #### Profiled Type Choice Paths
@@ -436,47 +436,68 @@ In some cases, a data type may be constrained to a set of possible profiles. To 
 
 **Example:**
 
-* After constraining an address element to be either a USAddress or a CanadianAddress, bind the address.state properties to value sets of US states and Canadian provinces:
+* After constraining Patient.contact.address to be either a USAddress or a CanadianAddress (assuming these are profiles on Address), the paths to the respective `state` elements in the first contact:
 
   ```
-  * address only USAddress or CanadianAddress
-  * address[USAddress].state from https://www.usps.com
-  * address[CanadianAddress].state from http://ehealthontario.ca/fhir/CodeSystem/province-state-codes
+  contact[0].address[USAddress].state
+
+  contact[0].address[CanadianAddress].state
   ```
 
 #### Extension Paths
 
-FHIR provides for user customization through extensions. Extensions are added to resources by populating pre-existing arrays designated for this purpose. Most resources have extension and a modifierExtension arrays at the top level, inherited from [DomainResource](http://hl7.org/fhir/R4/domainresource.html) (exceptions include Bundle, Parameters, and Binary). Every element of a resource also has an extension array, inherited from [Element](https://www.hl7.org/fhir/element.html). These arrays contain elements of [data type Extension](https://www.hl7.org/fhir/extensibility.html#extension). Particular types of extensions are created by profiling Extension.
+Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays.
 
-In FSH, extensions are created using [extension rules](#extension-rules). These rules have the effect of adding the extension to the corresponding FHIR extension array (technically, by slicing that array). The extension is then referred to by its name or URL as a member of the extension array using square brackets, i.e., `extension[{name or URL}]`.
+Each extension has a URL and optional id. When placed in an extension array, a local slice name is assigned.
+
+The path to an extension is constructed by combining the path to the extension array with the local slice name in square brackets:
+
+```
+{path to extension array}[{localSliceName}]
+```
+
+Alternatively, the extension can be referred to by its id or canonical URL (or an alias for that URL) instead of the local slice name. Whether to use the local slice name, id, or canonical URL is a matter of user preference. For externally-defined extensions, the canonical URL can be easier to find than the slice name or id.
+
+> **Note:** The same path construction applies to `modifierExtension` arrays, with `modifierExtension` replacing `extension`.
 
 <!-- However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
 
 **Examples:**
 
-* Set the value of the birthsex extension in US Core Patient (assume USCoreBirthsex has been defined as an alias for the birthsex extension):
+* Path to the value of the birthsex extension in US Core Patient, whose local slice name is `birthsex`:
 
   ```
-  * extension[USCoreBirthsex].valueCode = #F
+  extension[birthsex].valueCode
   ```
 
-* Set the value of a nested extension in US Core Patient, indicating the given email address is a "direct" address:
+* Path to an extension on the telecom element of US Core Patient, assuming the extension is given the local slice name `directMailAddress`:
 
   ```
-  * telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct] = true
+  telecom.extension[directMailAddress]
   ```
 
-* Set the nested ombCategory extension, under the ethnicity extension in US Core:
+* Same as the previous example, but using the canonical URL for the direct mail extension:
 
   ```
-  * extension[USCoreEthnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2135-2 "Hispanic or Latino"
+  telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct]
   ```
 
-* Set two values in the multiple-valued nested extension, detailed, under USCoreEthnicity extension:
+* Same as the previous example, but using the id for the direct mail extension:
 
   ```
-  * extension[USCoreEthnicity].extension[detailed][0].valueCoding = RaceAndEthnicityCDC#2184-0 "Dominican"
-  * extension[USCoreEthnicity].extension[detailed][1].valueCoding = RaceAndEthnicityCDC#2148-5 "Mexican"
+  telecom.extension[us-core-direct]
+  ```
+
+* Path to the Coding data type of the value[x] in the nested extension `ombCategory` under the ethnicity extension in US Core, using the slice names of the extensions:
+
+  ```
+  extension[ethnicity].extension[ombCategory].valueCoding
+  ```
+
+* Path to the Coding value in second element in the nested extension array named `detailed`, under USCoreEthnicity extension:
+
+  ```
+  extension[ethnicity].extension[detailed][1].valueCoding
   ```
 
 #### Sliced Array Paths
@@ -487,95 +508,100 @@ To access a slice of a slice (i.e., _reslicing_), follow the first pair of brack
 
 **Examples:**
 
-* In an Observation profile representing Apgar score, with slices for RespiratoryScore, AppearanceScore, and others, fix the RespirationScore:
+* In an Observation profile representing Apgar score, with slices for RespiratoryScore, AppearanceScore, and others, path to the coded value of RespirationScore:
 
   ```
-  * component[RespiratoryScore].code = SCT#24388001 "Apgar score 5 (finding)"
+  component[RespiratoryScore].code
   ```
 
-* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores, set the OneMinuteScore and FiveMinuteScore sub-slices:
+* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores, the paths to the codes representing the OneMinuteScore and FiveMinuteScores:
 
   ```
-  * component[RespiratoryScore][OneMinuteScore].code = SCT#24388001 "Apgar score 5 (finding)"
-  ```
+  component[RespiratoryScore][OneMinuteScore].code
 
-  ```
-  * component[RespiratoryScore][FiveMinuteScore].code = SCT#13323003 "Apgar score 7 (finding)"
+  component[RespiratoryScore][FiveMinuteScore].code
   ```
 
 #### StructureDefinition Escape Paths
 
 FSH uses the caret (`^`) syntax to provide direct access to elements of an SD. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#defining-items) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
 
-To set a value in the root-level attributes of an SD, use the following syntax:
+For a path to an attribute of an SD, excluding the differential and snapshot, use the following syntax:
 
 ```
-* ^{StructureDefinition path} = {value}
+^{path within SD}
 ```
 
-To set values in ElementDefinitions, corresponding to the elements in the resource or slices of arrays, use this syntax:
+For a path to an attribute of an ElementDefinition within an SD, corresponding to the elements in the profiled resource, use this syntax:
 
 ```
-* {Element path} ^{ElementDefinition path} = {value}
+{path to element in profile} ^{path within ElementDefinition}
 ```
 
-A special case of the Element path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to an named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
+**Note:** There is a required space before the ^ character.
+
+A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to an named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
 
 ```
-* . ^{ElementDefinition path} = {value}
+. ^{path within ElementDefinition[0]}
 ```
 
 **Examples:**
 
-* In a profile definition, set the 'experimental' attribute in the SD for that profile:
+* In a profile definition, path to the 'experimental' attribute in the SD for that profile:
 
   ```
-  * ^experimental = false
+  ^experimental
   ```
 
-* In a profile of Patient, set the description attribute on the binding of communication.language:
+* In a profile of Patient, the path to binding.description in the ElementDefinition corresponding to communication.language:
 
   ```
-  * communication.language ^binding.description = "This binding is dictated by US FDA regulations."
+  communication.language ^binding.description
   ```
 
-* Provide a short description for an extension (defined in the "self" ElementDefinition):
+* The path to the short description of an extension (defined in the first ElementDefinition):
 
   ```
-  * . ^short = "US Core Race Extension"
+  * . ^short
   ```
 
 ***
 
-### Rules
+### Rules for Profiles, Extensions, and Instances
 
-* For rules applicable to Value Sets, see [Defining Value Sets](#defining-value-sets).
-* For rules applicable to Code Systems, see [Defining Code Systems](#defining-code-systems).
+> * For rules applicable to code systems, see [Defining Code Systems](#defining-code-systems)
+> * For rules applicable to mappings, see [Defining Mappings](#defining-mappings).
+> * For rules applicable to value sets, see [Defining Value Sets](#defining-value-sets).
 
-Rules are the mechanism for constraining a profile, defining an extension, creating slices, and more. All rules begin with an asterisk:
+Rules are the mechanism for setting cardinality, applying must-support flags, defining extensions, creating slices, and more. All rules begin with an asterisk:
 
 ```
 * {rule statement}
 ```
 
-We have already introduced a few types of rules: the assignment rule (using `=`), the binding rule (using `from`), and the data type restriction rule (using `only`).
-
-The following table is a summary of the rules applicable to profiles and standalone extensions. Only the Assignment rule is applicable to instances. 
+The following table is a summary of the rules applicable to profiles, extensions, and instances:
 
 | Rule Type | Syntax |
 | --- | --- |
 | Assignment |`* {path} = {value}` <br/> `* {path} = {value} (exactly)` |
 | Binding |`* {path} from {valueSet} ({strength})`|
 | Cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
-| Extension, inline | `* {extension path} contains {extensionSliceName} {card} {flags}`  <br/> `* {extension path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2} ...` |
-| Extension, standalone | `* {extension path} contains {ExtensionNameIdOrURL} named {extensionSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2} ...`
+| Contains (inline extensions)| `* {extension path} contains {localSliceName} {card} {flags}`  <br/> `* {extension path} contains {localSliceName1} {card1} {flags1} and {localSliceName2} {card2} {flags2} ...` |
+| Contains (standalone extensions) | `* {extension path} contains {ExtensionNameIdOrURL} named {localSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {localSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {localSliceName2} {card2} {flags2} ...`
+| Contains (slicing) | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
 | Flag | `* {path} {flag}` <br/> `* {path} {flag1} {flag2} ...` <br/> `* {path1} and {path2} and {path3} and ... {flag}` <br/> `* {path1} and {path2} and {path3} and ... {flag1} {flag2} ...` |
 | Invariant | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
-| Mapping | `* -> "{map}" "{comment}" {mime-type}` <br/> `* {path} -> "{map}" "{comment}" {mime-type}` |
-| Rule set | `* insert {ruleSetName}` |
-| Slicing | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
-| Type | `* {path} only {type}` <br/> `* {path} only {type1} or {type2} or {type3} or ...` <br/> `* {path} only Reference({type})`  <br/> `* {path} only Reference({type1} or {type2} or {type3} or ...)`|
+| Insert | `* insert {ruleSetName}` |
+| Type | `* {path} only {type}` <br/> `* {path} only {type1} or {type2} or {type3} or ...` <br/> `* {path} only Reference({type})` <br/> `* {path} only Reference({type1} or {type2} or {type3} or ...)`|
 {: .grid }
+
+**Notes:**
+
+* The Assignment rule is only type of rule applicable to instances
+* Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in rule sets
+
+In the following, we explain each of these rule types in detail.
 
 #### Assignment Rules
 
@@ -772,25 +798,39 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
   * category ..1
   ```
 
-#### Extension Rules
+#### Contains Rules for Extensions
 
-Extensions are created by adding elements to built-in 'extension' array elements. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/extensibility.html#extension)). Constraining extensions is discussed in [Defining Extensions](#defining-extensions). The same instructions apply to 'modifierExtension' arrays.
+Extensions are created by adding elements to built-in extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions). The same instructions apply to 'modifierExtension' arrays.
 
 Extensions are specified using the `contains` keyword. There are two types of extensions: standalone and inline:
 
 * Standalone extensions have independent SDs, and can be reused. They can be externally-defined, and referred to by their canonical URLs, or defined in the same [FSH tank](index.html#fsh-files-and-fsh-tanks) using the `Extension` keyword, and referenced by their name or id.
 * Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
 
-The FSH syntax to specify a standalone extension is:
+The FSH syntax to specify a standalone extension(s) is:
 
 ```
-* {extension element path} contains {ExtensionNameIdOrURL1} named {extensionSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {extensionSliceName2} {card2} {flags2}...
+* {extension element path} contains {ExtensionNameIdOrURL} named {localSliceName} {card} {flags}
 ```
 
-The FSH syntax to define an inline extension is:
+```
+* {extension element path} contains 
+    {ExtensionNameIdOrURL1} named {localSliceName1} {card1} {flags1} and 
+    {ExtensionNameIdOrURL2} named {localName2} {card2} {flags2} and
+    ...
+```
+
+The FSH syntax to define an inline extension(s) is:
 
 ```
-* {extension element path} contains {extensionSliceName1} {card1} {flags1} and {extensionSliceName2} {card2} {flags2}...
+* {extension element path} contains {localSliceName} {card} {flags}
+```
+
+```
+* {extension element path} contains
+    {localSliceName1} {card1} {flags1} and
+    {localSliceName2} {card2} {flags2} and
+    ...
 ```
 
 In both styles, the cardinality is required, and flags are optional. Adding an extension below the root level is achieved by giving the full path to the extension array to be sliced.
@@ -843,170 +883,8 @@ In both styles, the cardinality is required, and flags are optional. Adding an e
     // etc...
   ```
 
-#### Flag Rules
 
-Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
-
-| FHIR Flag | FSH Flag | Meaning |
-|------|-----|----|
-| S | MS  | Must Support |
-| &#931;  | SU  | Include in summary |
-| ?! | ?! | Modifier |
-| N | N | Normative element |
-| TU | TU | Trial use element |
-| D | D | Draft element |
-{: .grid }
-
-FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. If needed, these flags can be set using [caret syntax](#structuredefinition-escape-paths).
-
-The following syntax can be used to assigning flags:
-
-```
-* {path} {flag1} {flag2} ...
-```
-
-```
-* {path1} and {path2} and {path3}... {flag}
-```
-
-**Examples:**
-
-* Declare communication to be MustSupport and Modifier:
-
-  ```
-  * communication MS ?!
-  ```
-
-* Declare a list of elements and nested elements to be MustSupport:
-
-  ```
-  * identifier and identifier.system and identifier.value and name and name.family MS
-  ```
-
-#### Invariant Rules
-
-[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The FSH grammars for applying invariants in profiles are as follows:
-
-```
-* obeys {invariant}
-```
-
-```
-* {path} obeys {invariant}
-```
-
-```
-* obeys {invariant1} and {invariant2} ...
-```
-
-```
-* {path} obeys {invariant1} and {invariant2} ...
-```
-
-The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
-
-The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-files-and-fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
-
-**Examples:**
-
-* Assign invariant to US Core Implantable Device (invariant applies to profile as a whole):
-
-  ```
-  * obeys us-core-9
-  ```
-
-* Assign invariant to Patient.name in US Core Patient:
-
-  ```
-  * name obeys us-core-8
-  ```
-
-#### Mapping Rules
-
-[Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of SDs that can be provided to help implementers understand the content and use resources correctly. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
-
-In FSH, mapping rules are not included in the profile definition. They are included in a separate [Mapping definition](#defining-mappings) that provides additional context such as the higher level source and target. Within that definition mapping rules use the symbol `->` with the following grammar:
-
-```
-* -> "{map}" "{comment}" {mime-type}
-```
-
-```
-* {path} -> "{map}" "{comment}" {mime-type}
-```
-
-The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target.
-
-In these rules, the `"{comment}"` string and `{mime-type}` code are optional. The mime type code must conform to https://tools.ietf.org/html/bcp13 (FHIR value set https://www.hl7.org/fhir/valueset-mimetypes.html).
-
-**Examples:**
-
-* Map the entire profile to a Patient item in another specification:
-
-  ```
-  * -> "Patient" "This profile maps to Patient in Argonaut"
-  ```
-
-* Map the identifier.value element from one IG to another:
-
-  ```
-  * identifier.value -> "Patient.identifier.value"
-  ```
-
->**Note:** Unlike setting the mapping directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
-
-#### Rule Set Rules
-
-[Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. To use a rule set, an `insert` rule is used:
-
-```
-* insert {rule set name}
-```
-
-The rules in the named rule set are evaluated as if they were copied and pasted in the designated location. Rule sets can contain other rule sets, but circular dependencies are not allowed.
-
-Each rule in the rule set should be compatible with item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations should check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error should be emitted. It is up to implementations if other valid rules from the rule set are applied.
-
-**Example:**
-
-* Insert the rule set `MyMetadata` [defined here](#defining-rule-sets) into a profile:
-
-  ```
-  Profile: MyPatientProfile
-  Parent: Patient
-  * insert MyMetadata
-  * deceased[x] only deceasedBoolean
-  // More profile rules
-  ```
-
-  This is equivalent to the following:
-
-  ```
-  Profile: MyPatientProfile
-  Parent: Patient
-  * ^status = #draft
-  * ^experimental = true
-  * ^publisher = "Elbonian Medical Society"
-  * deceased[x] only deceasedBoolean
-  // More profile rules
-  ```
-
-* Use rule sets to define two different national profiles, both using a common clinical profile:
-
-  ```
-  Profile: USCoreBreastRadiologyObservationProfile
-  Parent: BreastRadiologyObservationProfile
-  * insert USObservationRuleSet
-  ```
-
-  ```
-  Profile: FranceBreastRadiologyObservationProfile
-  Parent: BreastRadiologyObservationProfile
-  * insert FranceObservationRuleSet
-  ```
-
-
-#### Slicing Rules
+#### Contains Rules for Slicing
 
 Slicing is an advanced, but necessary, feature of FHIR. While future versions of FSH will aim to lower the learning curve, FSH version 1.0 requires authors to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator). In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
 
@@ -1106,6 +984,134 @@ In FSH, authors must specify the slicing logic parameters using [StructureDefini
   * component ^slicing.rules = #open
   * component ^slicing.ordered = false   // can be omitted, since false is the default
   * component ^slicing.description = "Slice based on the component.code pattern"
+  ```
+
+#### Flag Rules
+
+Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
+
+| FHIR Flag | FSH Flag | Meaning |
+|------|-----|----|
+| S | MS  | Must Support |
+| &#931;  | SU  | Include in summary |
+| ?! | ?! | Modifier |
+| N | N | Normative element |
+| TU | TU | Trial use element |
+| D | D | Draft element |
+{: .grid }
+
+FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the actual inclusion of [invariants](#invariant-rules), and NE flags apply only to infrastructural elements in base resources. If needed, these flags can be set using [caret syntax](#structuredefinition-escape-paths).
+
+The following syntax can be used to assigning flags:
+
+```
+* {path} {flag1} {flag2} ...
+```
+
+```
+* {path1} and {path2} and {path3}... {flag}
+```
+
+**Examples:**
+
+* Declare communication to be MustSupport and Modifier:
+
+  ```
+  * communication MS ?!
+  ```
+
+* Declare a list of elements and nested elements to be MustSupport:
+
+  ```
+  * identifier and identifier.system and identifier.value and name and name.family MS
+  ```
+
+#### Invariant Rules
+
+[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The FSH grammars for applying invariants in profiles are as follows:
+
+```
+* obeys {invariant}
+```
+
+```
+* {path} obeys {invariant}
+```
+
+```
+* obeys {invariant1} and {invariant2} ...
+```
+
+```
+* {path} obeys {invariant1} and {invariant2} ...
+```
+
+The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
+
+The referenced invariant and its properties must be declared somewhere within the same [FSH tank](index.html#fsh-files-and-fsh-tanks), using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
+
+**Examples:**
+
+* Assign invariant to US Core Implantable Device (invariant applies to profile as a whole):
+
+  ```
+  * obeys us-core-9
+  ```
+
+* Assign invariant to Patient.name in US Core Patient:
+
+  ```
+  * name obeys us-core-8
+  ```
+
+#### Insert Rules
+
+[Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. To use a rule set, an `insert` rule is used:
+
+```
+* insert {rule set name}
+```
+
+The rules in the named rule set are evaluated as if they were copied and pasted in the designated location. Rule sets can contain other rule sets, but circular dependencies are not allowed.
+
+Each rule in the rule set should be compatible with item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations should check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error should be emitted. It is up to implementations if other valid rules from the rule set are applied.
+
+**Example:**
+
+* Insert the rule set `MyMetadata` [defined here](#defining-rule-sets) into a profile:
+
+  ```
+  Profile: MyPatientProfile
+  Parent: Patient
+  * insert MyMetadata
+  * deceased[x] only deceasedBoolean
+  // More profile rules
+  ```
+
+  This is equivalent to the following:
+
+  ```
+  Profile: MyPatientProfile
+  Parent: Patient
+  * ^status = #draft
+  * ^experimental = true
+  * ^publisher = "Elbonian Medical Society"
+  * deceased[x] only deceasedBoolean
+  // More profile rules
+  ```
+
+* Use rule sets to define two different national profiles, both using a common clinical profile:
+
+  ```
+  Profile: USCoreBreastRadiologyObservationProfile
+  Parent: BreastRadiologyObservationProfile
+  * insert USObservationRuleSet
+  ```
+
+  ```
+  Profile: FranceBreastRadiologyObservationProfile
+  Parent: BreastRadiologyObservationProfile
+  * insert FranceObservationRuleSet
   ```
 
 #### Type Rules
@@ -1238,18 +1244,20 @@ Additional keywords are as follows:
 
 > **Note:** Keywords are case-sensitive.
 
-The following table shows the relationship between declaration keywords and additional keywords, with R = required, O = optional, blank = not allowed:
+The following table shows the relationship between declaration keywords and additional keywords: 
+
+_R = required, O = optional, blank = not allowed, x = Id is in declaration not `Id` keyword_
 
 | Declaration \ Keyword                      | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |-------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
 [Alias](#defining-aliases)            |     |             |       |        |            |       |        |        |          |       |            |
 [Code System](#defining-code-systems) |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
 [Extension](#defining-extensions)     |  O  |     O       |   O   |   O    |            |       |        |        |          |       |            |
-[Instance](#defining-instances)       |     |     O       |   O   |        |     R      |   O   |        |        |          |       |            |
-[Invariant](#defining-invariants)     |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-[Mapping](#defining-mappings)         |  O  |     O       |   O   |        |            |       |   R    |   R    |          |       |            |
+[Instance](#defining-instances)       |  x  |     O       |   O   |        |     R      |   O   |        |        |          |       |            |
+[Invariant](#defining-invariants)     |  x  |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
+[Mapping](#defining-mappings)         |  x  |     O       |   O   |        |            |       |   R    |   R    |          |       |            |
 [Profile](#defining-profiles)         |  O  |     O       |   O   |   R    |            |       |        |        |          |       |            |
-[Rule Set](#defining-rule-sets)       |     |             |       |        |            |       |        |        |          |       |            |
+[Rule Set](#defining-rule-sets)       |  x  |             |       |        |            |       |        |        |          |       |            |
 [Value Set](#defining-value-sets)     |  O  |     O       |   O   |        |            |       |        |        |          |       |            |
 {: .grid }
 
@@ -1265,7 +1273,7 @@ Alias: {AliasName} = {url or oid}
 
 Several things to note about aliases:
 
-* Aliases do not have additional keywords or rules.
+* Aliases do not permit additional keywords or rules.
 * Alias statements stand alone, and cannot be mixed into rule sets of other items.
 * Aliases are global within a FSH Tank.
 
@@ -1285,23 +1293,42 @@ In contrast with other names in FSH (for profiles, extensions, etc.), alias name
   Alias: $ObsCat = http://terminology.hl7.org/CodeSystem/observation-category
   ```
 
-#### Defining Profiles
+#### Defining Code Systems
+It is sometimes necessary to define new codes inside an IG that are not drawn from an external code system (aka _local codes_). When defining local codes, you must define them in the context of a code system.
 
-To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are optional.
+> **Note:** Defining local codes is not generally recommended, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- at least temporarily -- as local codes.
 
-**Example:**
+Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
 
-* Define a profile for USCorePatient:
+
+```
+* include #{code} {display text string} {definition text string}
+```
+
+Similar to value set rules, the word `include` can be dropped for brevity, without changing meaning:
+
+```
+* #{code} {display text string} {definition text string}
+```
+
+**Note:**
+* Do not put a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
+* The definition of the term can be optionally provided as the second string following the code.
+
+**Example:** Define a code system for yoga poses.
 
   ```
-  Profile:        USCorePatient
-  Parent:         Patient
-  Id:             us-core-patient
-  Title:          "US Core Patient Profile"
-  Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
+  CodeSystem:  YogaCS
+  Title: "Yoga Code System."
+  Description:  "A brief vocabulary of yoga-related terms."
+  * #Sirsasana "Headstand" "An inverted asana, also called mudra in classical hatha yoga, involves standing on one's head."
+  * #Halasana "Plough Pose" "Halasana or Plough pose is an inverted asana in hatha yoga and modern yoga as exercise. Its variations include Karnapidasana with the knees by the ears, and Supta Konasana with the feet wide apart."
+  * #Matsyasana "Fish Pose"  "Matsyasana is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly considered a counterasana to Sarvangasana, or shoulder stand, specifically within the context of the Ashtanga Vinyasa Yoga Primary Series."
+  * #Bhujangasana "Cobra Pose" "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
   ```
 
-Any rules defined for the profiles would follow immediately after the keyword section.
+> **Note:** FSH does not currently support definition of relationships between local codes, such as parent-child (is-a) relationships.
+
 
 #### Defining Extensions
 
@@ -1421,6 +1448,134 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
   * stage.assessment = Reference(mCODETNMClinicalStageGroupExample01)
   ```
 
+#### Defining Invariants
+
+Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
+
+Invariants are incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
+
+**Example:**
+
+* Define an invariant found in US Core using FSH:
+
+  ```
+  Invariant:  us-core-8
+  Description: "Patient.name.given or Patient.name.family or both SHALL be present"
+  Expression: "family.exists() or given.exists()"
+  Severity:   #error
+  XPath:      "f:given or f:family"
+  ```
+
+#### Defining Mappings
+
+[Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
+
+To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are required and `Title` and `Description` are optional. Any number of [mapping rules](#mapping-rules) follow. The keywords are defined as follows:
+
+| Keyword | Usage | SD element |
+|-------|------------|--------------|
+| Mapping | Appears first and provides a unique name for the mapping | n/a |
+| Source | The name of the profile the mapping applies to | n/a |
+| Target | The URL, URI, or OID for the specification being mapped to | mapping.uri |
+| Id | An internal identifier for the target specification | mapping.identity |
+| Title | A human-readable name for the target specification | mapping.name  |
+| Description | Additional information such as version notes, issues, or scope limitations. | mapping.comment |
+
+The mappings themselves are declared in rules with the following syntax:
+
+```
+* -> "{map}" "{comment}" {mime-type}
+```
+
+```
+* {path} -> "{map}" "{comment}" {mime-type}
+```
+
+The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target.
+
+In these rules, the `"{comment}"` string and `{mime-type}` code are optional. The mime type code must conform to https://tools.ietf.org/html/bcp13 (FHIR value set https://www.hl7.org/fhir/valueset-mimetypes.html).
+
+Note that the right-hand side of mapping rules are strings. This follows directly from the mapping structures in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/elementdefinition.html) in FHIR. FHIR avoids assumptions about path grammar in the target, even if the target is FHIR.
+
+>**Note:** Unlike setting the mapping directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
+
+**Examples:**
+
+* Map the entire profile to a Patient item in another specification:
+
+  ```
+  * -> "Patient" "This profile maps to Patient in Argonaut"
+  ```
+
+* Map the identifier.value element from one IG to another:
+
+  ```
+  * identifier.value -> "Patient.identifier.value"
+  ```
+* Define a map between USCorePatient and Argonaut:
+  ```
+
+  Mapping:  USCorePatientToArgonaut
+  Source:   USCorePatient
+  Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
+  Title:    "Argonaut DSTU2"
+  Id:       argonaut-dq-dstu2
+  * -> "Patient"
+  * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
+  * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
+  * extension[USCoreBirthSexExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
+  * identifier -> "Patient.identifier"
+  * identifier.system -> "Patient.identifier.system"
+  * identifier.value -> "Patient.identifier.value"
+  ```
+
+#### Defining Profiles
+
+To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are optional.
+
+**Example:**
+
+* Define a profile for USCorePatient:
+
+  ```
+  Profile:        USCorePatient
+  Parent:         Patient
+  Id:             us-core-patient
+  Title:          "US Core Patient Profile"
+  Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
+  ```
+
+Any rules defined for the profiles would follow immediately after the keyword section.
+
+
+#### Defining Rule Sets
+
+Rule sets provide the ability to define rules and apply them to a compatible target. The rules are copied from the rule set at compile time. Any item admitting rules can have one or more rule sets applied to them. The same rule set can be used in multiple places.
+
+All types of rules can be used in rule sets.
+
+Rule sets are defined by using the keyword `RuleSet`:
+
+```
+RuleSet: {RuleSetName}
+* {rule1}
+* {rule2}
+// More rules
+```
+
+Once defined, the rule set is applied to an item by using an [`insert` rule](#rule-set-rules).
+
+**Example:**
+
+* Define a rule set for metadata to be used in multiple profiles:
+
+  ```
+  RuleSet: MyMetadata
+  * ^status = #draft
+  * ^experimental = true
+  * ^publisher = "Elbonian Medical Society"
+  ```
+
 #### Defining Value Sets
 
 A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
@@ -1491,116 +1646,7 @@ Not all operators are valid for any code system. The `property` and `value` are 
 
 > **Note:** Intensional and extensional forms can be used together in a single value set definition.
 
-#### Defining Code Systems
-It is sometimes necessary to define new codes inside an IG that are not drawn from an external code system (aka _local codes_). When defining local codes, you must define them in the context of a code system.
 
-> **Note:** Defining local codes is not generally recommended, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it may be necessary to define them -- at least temporarily -- as local codes.
-
-Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
-
-```
-* #{code} {display text string} {definition text string}
-```
-
-**Note:**
-* Do not put a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
-* The definition of the term can be optionally provided as the second string following the code.
-
-**Example:** Define a code system for yoga poses.
-
-  ```
-  CodeSystem:  YogaCS
-  Title: "Yoga Code System."
-  Description:  "A brief vocabulary of yoga-related terms."
-  * #Sirsasana "Headstand" "An inverted asana, also called mudra in classical hatha yoga, involves standing on one's head."
-  * #Halasana "Plough Pose" "Halasana or Plough pose is an inverted asana in hatha yoga and modern yoga as exercise. Its variations include Karnapidasana with the knees by the ears, and Supta Konasana with the feet wide apart."
-  * #Matsyasana "Fish Pose"  "Matsyasana is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly considered a counterasana to Sarvangasana, or shoulder stand, specifically within the context of the Ashtanga Vinyasa Yoga Primary Series."
-  * #Bhujangasana "Cobra Pose" "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
-  ```
-
-> **Note:** FSH does not currently support definition of relationships between local codes, such as parent-child (is-a) relationships.
-
-#### Defining Mappings
-
-[Mapping to other standards](https://www.hl7.org/fhir/mappings.html) is an optional part of an SD. These mappings are intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach.
-
-> **Note:** The informational mappings in SDs should not be confused with functional mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
-
-To create a mapping, the keywords `Mapping`, `Source`, `Target` and `Id` are required and `Title` and `Description` are optional. Any number of [mapping rules](#mapping-rules) follow. The keywords are defined as follows:
-
-| Keyword | Usage | SD element |
-|-------|------------|--------------|
-| Mapping | Appears first and provides a unique name for the mapping | n/a |
-| Source | The name of the profile the mapping applies to | n/a |
-| Target | The URL, URI, or OID for the specification being mapped to | mapping.uri |
-| Id | An internal identifier for the target specification | mapping.identity |
-| Title | A human-readable name for the target specification | mapping.name  |
-| Description | Additional information such as version notes, issues, or scope limitations. | mapping.comment |
-
-**Example:**
-
-* Define a map between USCorePatient and Argonaut
-  ```
-
-  Mapping:  USCorePatientToArgonaut
-  Source:   USCorePatient
-  Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
-  Title:    "Argonaut DSTU2"
-  Id:       argonaut-dq-dstu2
-  * -> "Patient"
-  * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]" 
-  * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
-  * extension[USCoreBirthSexExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
-  * identifier -> "Patient.identifier"
-  * identifier.system -> "Patient.identifier.system"
-  * identifier.value -> "Patient.identifier.value"
-  ```
-
-In the example above, the target is another FHIR IG, but in many cases, the target will not use FHIR. For this reason, the right-hand side of mapping statements is always a string, to allow the greatest flexibility. For the same reason, even though the target is FHIR in the example above, FSH cannot make any assumptions about how the individual target values work; thus the resource name "Patient" is included in the right-hand side values since this is how the mapping targets should be expressed in the SD.
-
-#### Defining Rule Sets
-
-Rule sets provide the ability to define rules and apply them to a compatible target. The rules are copied from the rule set at compile time. Any item admitting rules can have one or more rule sets applied to them. The same rule set can be used in multiple places.
-
-Rule sets are defined by using the keyword `RuleSet`:
-
-```
-RuleSet: {RuleSetName}
-* {rule1}
-* {rule2}
-// More rules
-```
-
-Once defined, the rule set is applied to an item by using an [`insert` rule](#rule-set-rules).
-
-**Example:**
-
-* Define a rule set for metadata to be used in multiple profiles:
-
-  ```
-  RuleSet: MyMetadata
-  * ^status = #draft
-  * ^experimental = true
-  * ^publisher = "Elbonian Medical Society"
-  ```
-
-#### Defining Invariants
-
-Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
-
-Invariants are incorporated into a profile via `obeys` rules explained [above](#invariant-rules).
-
-**Example:**
-
-* Define an invariant found in US Core using FSH:
-
-  ```
-  Invariant:  us-core-8
-  Description: "Patient.name.given or Patient.name.family or both SHALL be present"
-  Expression: "family.exists() or given.exists()"
-  Severity:   #error
-  XPath:      "f:given or f:family"
-  ```
 
 ### Formal Grammar
 

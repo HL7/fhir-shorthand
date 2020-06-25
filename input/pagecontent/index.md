@@ -144,7 +144,7 @@ Keywords that declare new items (like the `Profile` keyword in the previous exam
 
 Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
-Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#defining-items).table.
+Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#defining-items).
 
 > **Note:** Keywords are case-sensitive.
 
@@ -172,7 +172,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * status = #arrived
   ```
 
-* **Value set binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR's binding strengths](http://hl7.org/fhir/valueset-binding-strength.html) (example, preferred, extensible, or required). For example:
+* **Binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR's binding strengths](http://hl7.org/fhir/valueset-binding-strength.html) (example, preferred, extensible, or required). For example:
 
   ```
   * gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)
@@ -196,26 +196,6 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * note ..5
   ```
 
-* **Data type rules** restrict the type of value that can be used in an element. For example:
-
-  ```
-  * value[x] only CodeableConcept
-  ```
-
-  ```
-  * onset[x] only Period or Range
-  ```
-
-* **Reference type rules** restrict the type of resource that a Reference can refer to. For example:
-
-  ```
-  * recorder only Reference(Practitioner)
-  ```
-
-  ```
-  * recorder only Reference(Practitioner or PractitionerRole)
-  ```
-
 * **Flag rules** add bits of information about elements impacting how implementers should handle them. The flags are as [defined FHIR](http://hl7.org/fhir/R4/formats.html#table), except FSH uses `MS` for must-support and `SU` for summary. For example:
 
   ```
@@ -226,7 +206,25 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * identifier and identifier.system and identifier.value and name and name.family MS
   ```
 
-* **Extension rules** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword.
+* **Type rules** restrict the type of value that can be used in an element. For example:
+
+  ```
+  * value[x] only CodeableConcept
+  ```
+
+  ```
+  * onset[x] only Period or Range
+  ```
+
+  ```
+  * recorder only Reference(Practitioner)
+  ```
+
+  ```
+  * recorder only Reference(Practitioner or PractitionerRole)
+  ```
+
+* **Contains rules, for extensions** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword.
 
   Here are two examples of defining inline extensions, the first with a single extension, the second with multiple extensions.
 
@@ -262,7 +260,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
       USCoreBirthsex named birthsex 0..1 MS
   ```
 
-* **Slicing rules** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference.html#structuredefinition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
+* **Contains rules, for slicing** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference.html#structuredefinition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
 
   ```
   * component ^slicing.discriminator.type = #pattern
@@ -289,7 +287,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * component[DiastolicBP].valueQuantity = UCUM#mm[Hg]
   ```
 
-* **Invariant rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
+* **Obeys rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
 
   ```
   * obeys us-core-9  // invariant applies to entire profile
