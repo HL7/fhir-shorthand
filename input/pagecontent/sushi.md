@@ -53,13 +53,11 @@ $ sushi -h
 
 If the command outputs instructions on using SUSHI command line interface (CLI), you're ready to run SUSHI.
 
-Use `$ sushi -v` to display version of SUSHI. SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
+Use `$ sushi -v` to display the current version of SUSHI and the version of FSH specification supported by the current version of SUSHI. SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
 
 * MAJOR: A major release has significant new functionality and, potentially, grammar changes or other non-backward-compatible changes.
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
 * PATCH: Contains minor updates and bug fixes, while maintaining backwards compatibility within the major version.
-
-> **Note:** The version of SUSHI does not indicate the corresponding version of the FSH specification. The version of FSH supported by a given version of SUSHI is indicated in the release notes.
 
 For the most up-to-date information and latest releases of SUSHI, check the [release history and release notes](https://github.com/FHIR/sushi/releases).
 
