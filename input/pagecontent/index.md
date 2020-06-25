@@ -32,7 +32,7 @@ FSH was created in response to the need in the FHIR community for scalable, fast
 There are already several existing methods for IG creation: hand editing, using [Excel spreadsheets](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring), [Simplifier/Forge](https://fire.ly/products/simplifier-net/), and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com). Each of these methods have certain advantages as well as drawbacks:
 
 1. Hand-editing StructureDefinitions (SDs) is unwieldy, but authors get full control over every aspect of the resulting profiles and extensions.
-1. The spreadsheet method has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A significant downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, the content mixed with thousands of lines of formatting directives.
+1. The spreadsheet method has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A significant downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, with the content mixed with thousands of lines of formatting directives.
 1. Simplifier/Forge and Trifolia-on-FHIR provide graphical user interfaces that are very helpful guiding users through common tasks. However, making significant cross-cutting changes ([refactoring](https://resources.collab.net/agile-101/code-refactoring)) requires navigating through many screens. Currently these tools do not have advanced source code control features.
 
 Experience across many domains has shown that complex software projects are best approached with textual languages. As a language designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles. Because it is text-based, FSH brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
@@ -83,13 +83,13 @@ For a FHIR `code` data type, the {system} is omitted. The display text is option
   http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
-* The same code, using the Snomed-CT alias defined above: 
+* The same code, using the Snomed-CT alias defined above:
 
   ```
   SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
-This grammar can be used when assigning a coded value to an element whose data type is code, Coding, or CodeableConcept. FSH uses the `=` sign to express assignment. Assignment statements (and other [FSH rules](#rules)) always begin with an asterisk.
+The coded value grammar can be used when assigning a value to an element whose data type is code, Coding, CodeableConcept, or Quantity. FSH uses the `=` sign to express assignment:
 
 * To set the first Coding in a CodeableConcept:
 
@@ -120,7 +120,7 @@ Keywords are used to make declarations that introduce new items. A keyword state
 {Keyword}: {value or expression}
 ```
 
-Here's an example of keywords declaring a profile:
+Here's an example of using keywords to declare a profile:
 
 ```
 Profile:  CancerDiseaseStatus
@@ -130,7 +130,7 @@ Title:    "Cancer Disease Status"
 Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
 ```
 
-Keywords that declare new items (the `Profile` keyword in the previous example) must occur first in any set of keywords. There are nine declarative keywords in FSH:
+Keywords that declare new items (like the `Profile` keyword in the previous example) must occur first in any set of keywords. There are nine declarative keywords in FSH:
 
 * Alias
 * CodeSystem
@@ -144,11 +144,11 @@ Keywords that declare new items (the `Profile` keyword in the previous example) 
 
 Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
 
-Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#keywords).table.
+Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#defining-items).table.
 
 #### Rules
 
-The keyword section is followed by a number of rules. Rules are the mechanism for constraining a profile, defining an extension, creating slices, and more. All rules begin with an asterisk:
+The keyword section is followed by a number of rules. Rules are the mechanism for constraining a profile, defining an extension, creating slices, and more. All FSH rules begin with an asterisk:
 
 ```
 * {rule statement}
@@ -156,7 +156,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference.html#rules) are given in the [FSH Language reference](reference.html). Here is a summary:
 
-* **Fixed value (assignment) rules** are used to set constant values in profiles and instances. For example:
+* **Assignment rules** are used to set fixed values in instances and required patterns in profiles. For example:
 
   ```
   * bodySite.text = "Left ventricle"
@@ -359,12 +359,12 @@ A **FSH Tank** (2) refers to a directory structure, including subdirectories, th
 
 SUSHI can be used in two modes:
 
-* A [stand-alone mode](#sushi-stand-alone-mode) where SUSHI produces FHIR artifacts only.
+* A [standalone mode](#sushi-standalone-mode) where SUSHI produces FHIR artifacts only.
 * A [IG mode](#sushi-ig-mode) where SUSHI works together with the [HL7 FHIR IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation). The IG Publisher builds the human-readable web pages and bundles FHIR artifacts produced by SUSHI to produce an Implementation Guide.
 
-#### SUSHI Stand-Alone Mode
+#### SUSHI standalone Mode
 
-In the stand-alone mode, SUSHI runs independently of the IG Publisher. This is a good option to quickly check for errors when you are creating your FSH code, or if you are only interesting in creating FHIR artifacts without an IG. Creating FHIR artifacts with FSH and SUSHI in stand-alone mode involves the following steps:
+In the standalone mode, SUSHI runs independently of the IG Publisher. This is a good option to quickly check for errors when you are creating your FSH code, or if you are only interesting in creating FHIR artifacts without an IG. Creating FHIR artifacts with FSH and SUSHI in standalone mode involves the following steps:
 
 1. Populate a FSH Tank (2) with FSH files (1) containing your FSH definitions.
 2. Create a **[package.json](https://confluence.hl7.org/pages/viewpage.action?pageId=35718629#NPMPackageSpecification-Packagemanifest)** file (3).
@@ -394,27 +394,27 @@ In this section, we will walk through a realistic example of FSH, line by line.
 6   Id:       mcode-cancer-disease-status
 7   Title:    "Cancer Disease Status"
 8   Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
-9   * extension contains EvidenceType named evidenceType 0..*
-10  * extension[evidenceType].valueCodeableConcept from CancerDiseaseStatusEvidenceTypeVS (required)
-11  * status and code and subject and effective[x] and valueCodeableConcept MS
-12  * bodySite 0..0
-13  * specimen 0..0
-14  * device 0..0
-15  * referenceRange 0..0
-16  * hasMember 0..0
-17  * component 0..0
-18  * interpretation 0..1
-19  * subject 1..1
-20  * basedOn only Reference(ServiceRequest or MedicationRequest)
-21  * partOf only Reference(MedicationAdministration or MedicationStatement or Procedure)
-22  * code = LNC#88040-1
-23  * subject only Reference(CancerPatient)
-24  * focus only Reference(CancerConditionParent)
-25  * performer only Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner)
-26  * effective[x] only dateTime or Period
-27  * value[x] only CodeableConcept
-28  * valueCodeableConcept from ConditionStatusTrendVS (required)
-29  * ^status = #draft
+9   * ^status = #draft
+10  * extension contains EvidenceType named evidenceType 0..*
+11  * extension[evidenceType].valueCodeableConcept from CancerDiseaseStatusEvidenceTypeVS (required)
+12  * status and code and subject and effective[x] and valueCodeableConcept MS
+13  * bodySite 0..0
+14  * specimen 0..0
+15  * device 0..0
+16  * referenceRange 0..0
+17  * hasMember 0..0
+18  * component 0..0
+19  * interpretation 0..1
+20  * subject 1..1
+21  * basedOn only Reference(ServiceRequest or MedicationRequest)
+22  * partOf only Reference(MedicationAdministration or MedicationStatement or Procedure)
+23  * code = LNC#88040-1
+24  * subject only Reference(CancerPatient)
+25  * focus only Reference(CancerConditionParent)
+26  * performer only Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner)
+27  * effective[x] only dateTime or Period
+28  * value[x] only CodeableConcept
+29  * valueCodeableConcept from ConditionStatusTrendVS (required)
 
 30  Extension: EvidenceType
 31  Title: "Evidence Type"
@@ -448,16 +448,16 @@ In this section, we will walk through a realistic example of FSH, line by line.
 * Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
-* Line 9 is the start of the rule section of the profile. The first rule creates an extension using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
-* Line 10 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 46._
-* Line 11 designates a list of elements (inherited from Observation) as must-support.
-* Lines 12 to 19 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
-* Lines 20 and 21 restrict the choice of resource types for two elements that refer to other resources.
-* Line 22 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1.
-* Lines 23 to 25 reduce an inherited choice of resource references down to a single resource or profile type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
-* Line 26 and 27 restrict the data type for elements that offer a choice of data types in the base resource.
-* Line 28 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
-* Line 29 uses [caret syntax](reference.html#structuredefinition-escape-paths) to set the status attribute in the StructureDefinition produced for this profile.
+* Line 9 is the start of the rule section of the profile. It uses [caret syntax](reference.html#structuredefinition-escape-paths) to set the status attribute in the StructureDefinition produced for this profile.
+* Line 10 adds an extension to the profile using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
+* Line 11 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 46._
+* Line 12 designates a list of elements (inherited from Observation) as must-support.
+* Lines 13 to 20 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
+* Lines 21 and 22 restrict the choice of resource types for two elements that refer to other resources.
+* Line 23 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1.
+* Lines 24 to 26 reduce an inherited choice of resource references down to a single resource or profile type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
+* Line 27 and 28 restrict the data type for elements that offer a choice of data types in the base resource.
+* Line 29 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
 * Line 30 declares an extension named EvidenceType.
 * Line 31 gives the extension a human-readable title.
 * Line 32 assigns it an id.
