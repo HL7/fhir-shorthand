@@ -1,45 +1,69 @@
-This chapter describes the FHIR Shorthand (FSH) language in detail. It is intended as a reference manual, not a pedagogical document. 
+This chapter describes the FHIR Shorthand (FSH) language in detail. It is intended to be used as a reference manual, not a pedagogical document.
 
-This chapter uses the following conventions:
+This chapter uses an intuitive pseudo-grammar to illustrate the patterns used in FSH. (Readers interested in the formal grammar are referred to this [Appendix](#appendix-formal-grammar).) Syntatic patterns are presented first, followed by examples. The presentation uses the following conventions:
 
 | Style | Explanation | Example |
 |:----------|:------|:---------|
 | `Code` | Code fragments, such as commands, FSH statements, and syntax expressions  | `* status = #open` |
-| {curly braces} | An item to be substituted in a syntax pattern | `{codesystem}#{code}` |
+| `{curly braces}` | An item to be substituted in a syntax pattern | `{string}` |
+| `<data type>` | An element, or path to an element, of the given data type | `<CodeableConcept>`
+| _italics_ | An optional item in a syntax pattern | <code><i>"{string}"</i></code> |
+| ellipsis (...) | A repeated pattern that can continue | <code><i>{flag1} {flag2}</i>&nbsp;...</code>
 | **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
 
+
+<!--
+
+
+coded = Any element of type code, Coding, CodeableConcept, or Quantity
+flags = 
+
+|  Pattern | Meaning |
+|----|---|
+| {Resource} | An indication to a Resource, a name, id, or URL |
+
+-->
+
 ### FSH Foundations
 
-#### Versioning
+#### Projects
 
-The FSH specification, like other FHIR Implementation Guides (IGs), presents versions in terms of three integers, x.y.z, that indicate the sequence of releases. Comparing two releases 1 and 2, release 2 is later if and only if:
+The main organizing construct is a FSH project, sometimes called a "FSH Tank". Each project must have a canonical URL associated with it, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR IG.
 
-* x2 > x1 OR
-* x2 = x1 and y2 > y1 OR
-* x2 = x1 and y2 = y1 and z2 > z1
+#### Files
 
-Like other HL7 FHIR IGs, the numbering of releases does not entirely follow the [semantic versioning convention](https://semver.org). Consistent with semantic versioning, an increment of z indicates a patch release containing minor updates and bug fixes, while maintaining backwards compatibility with the previous version. Increments in y indicates new or modified features, and potentially, non-backward-compatible changes (i.e., a minor or major release in semantic versioning). By HL7 convention, the major version number x typically does not increment until the release of a new balloted version.
+Content in one FSH project is contained in one or more FSH files. FSH files use the **.fsh** extension. 
+
+The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. How items are divided among files is not meaningful in FSH, and items from all files in one project can be considered pooled together for the purposes of FSH. It is up to implementations to define the association between FSH files and FSH projects.
+
+Items can appear in any order within **.fsh** files, and can be moved around within a file (or to other **.fsh** files) without affecting the interpretation of the content.
 
 #### Dependency on FHIR Version
 
-FSH is not explicitly FHIR-version dependent, but implementations may be limited to certain versions of FHIR. FSH has been designed around FHIR R4 and compatibility to previous FHIR versions of FHIR has not been evaluated. FSH is future-proof in the sense that it depends primarily on normative parts of the FHIR specification (in particular, StructureDefinition). It is conceivable that future changes in FHIR could impact the FSH language specification, particularly the introduction of new FHIR data types and features.
+Each FSH project must declare the version of FHIR it depends upon. The form of this declaration is outside the scope of the FSH specification, and should be managed by implementations. The FSH specification is not explicitly FHIR-version dependent, but implementations may support particular version(s) of FHIR.
 
-#### Projects and Files
+The FSH language specification has been designed around FHIR R4. Compatibility with previous FHIR versions of FHIR has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types). It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces new data types.
 
-Content in one FSH project can be contained in one or more FSH files with **.fsh** extension. How content is divided among files is not meaningful in FSH, and all content can be considered pooled together for the purposes of FSH. It is up to implementations to define which **.fsh** files should be included in a given FSH project.
+#### Dependency on other IGs
 
-#### Order of Items in Files
+Dependencies between a FSH project and other IGs must be declared. The form of this declaration is outside the scope of the FSH language and should be managed by implementations. These are referred to as "external" IGs.
 
-The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. Items can appear in any order within **.fsh** files, and can be moved around within a file (or to other **.fsh** files) without affecting the interpretation of the content.
+#### Version Numbering
+
+The FSH specification, like other FHIR Implementation Guides (IGs), expresses versions in terms of three integers, x.y.z, indicating the sequence of releases. Release 2 is later than release 1 if x2 > x1 or (x2 = x1 and y2 > y1), or (x2 = x1 and y2 = y1 and z2 > z1). Implementations should indicate what version or versions of the FSH specification they implement.
+
+Like other HL7 FHIR IGs, the numbering of FSH releases does not entirely follow the [semantic versioning convention](https://semver.org). Consistent with semantic versioning, an increment of z indicates a patch release containing minor updates and bug fixes, while maintaining backwards compatibility with the previous version. Increments in y indicates new or modified features, and potentially, non-backward-compatible changes (i.e., a minor or major release in semantic versioning). By HL7 convention, the major version number x typically does not increment until the release of a new balloted version.
+
+### FSH Language Basics
 
 #### Formal Grammar
 
-[FSH has a formal grammar](#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/). If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed. The grammar is looser than the language since many things such as data type agreement are not enforced in the grammar.
+[FSH has a formal grammar](#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/). The grammar is looser than the language specification since many things, such as data type agreement, are not enforced by the grammar. If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
 #### Reserved Words
 
-FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`.
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
 The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `Profile`, `Extension`, `Instance`, `InstanceOf`, `Invariant`, `ValueSet`, `CodeSystem`, `RuleSet`, `Parent`, `Id`, `Title`, `Description`, `Expression`, `XPath`, `Severity`, `Usage`, `Source`, `Target`.
 
@@ -53,19 +77,36 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 #### Names
 
-FSH uses names to reference items within the same FSH project. Names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". By convention, names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
+FSH uses names to reference items within the same FSH project. FSH names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names must be between 1 and 255 characters, begin with an uppercase, and contain only letters, numbers, and "_". 
 
-Alias names may begin with `$`. Choosing alias names beginning with `$` allows for [additional error checking](#defining-aliases).
+By convention, item names should use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) should use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
+
+Alias names may begin with `$`. Choosing alias names beginning with `$` allows for additional error checking [see Defining Aliases](#defining-aliases).
 
 #### Identifiers
 
-Items in FSH may have an identifier, typically specified using the [`Id` keyword](#defining-items). Each id must be unique within the scope of their item type in the FSH Project, but are recommended to be unique across all types in the FSH project. For example, two Profiles with id “foo” cannot coexist, but it is possible to have a Profile with id “foo” and a ValueSet with id “foo” in the same FSH Project.
+Items in FSH may have an identifier (id), typically specified using the [`Id` keyword](#defining-items). Each id must be unique within the scope of their item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile with id “foo” and a ValueSet with id “foo” in the same FSH Project. However, to minimize potential confusion, it is recommended to use a unique id for every id-bearing item in a FSH project.
 
-If no Id is provided, implementations may create an Id. It is recommended that the Id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the FHIR id datatype).
+If no id is provided, implementations may create an id. It is recommended that the id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the FHIR id datatype).
 
-#### References to External FHIR Artifacts
+#### Indicating External FHIR Artifacts
 
-FHIR resources, profiles, extensions, and value sets defined outside the current FSH project are referred to by their canonical URIs. Base FHIR resources can also be referred to by their id, for example, `Patient` or `Observation`. In cases where an IG defines a profile or extension matching an existing FHIR ID, use the canonical URL to refer to the FHIR resource.
+External FHIR artifacts in core FHIR and external IGs can be referred to by their names, ids, or canonical URLs. Core FHIR resources can be referred to by their common names, for example, `Patient` or `Observation`. Other than core FHIR resources, the use of canonical URLs to refer to external resources is recommended, since this approach minimizes the chance of name collisions.
+
+#### Indicating Items within the FSH Project
+
+Internal FSH items can be referred to by their names, ids, or canonical URLs. The canonical URL is usually a poor choice for referring to an internal item because it is constructed using the base canonical URL of the IG, which is part of the IG publishing process, external to FSH. Using the name or id that appears in the item's [declaration statement](#defining-items) is recommended.
+
+#### Reference and Canonical Data Types
+
+FHIR resources contain [two types of references](https://www.hl7.org/fhir/references.html) to other resources:
+
+* Resource references
+* Canonical references
+
+FSH represents Resource references using the syntax `Reference({Resource})`. FSH will not accept a Resource where a Reference type is required; i.e., `Reference()` is required.
+
+Canonical references refer to the standard URL associated with a type of FHIR resource. For elements that require a canonical reference, FSH will accept a URL, `Canonical({name})` or `Canonical({id})`, where `name` and `id` refer to items defined in the same FSH project. Implementations are to interpret `Canonical()` as an instruction to construct the canonical URL for the referenced item using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the project’s canonical URL in a single place with no changes to FSH definitions.
 
 #### Whitespace
 
@@ -78,6 +119,7 @@ Parent:   CancerCondition
 ```
 
 is equivalent to:
+
 ```
              Profile:  
 SecondaryCancerCondition     Parent: CancerCondition
@@ -99,11 +141,11 @@ These comments can take up multiple lines.
 */
 ```
 
-The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation.
+The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation. Implementations are free to modify the grammar to allow retention of comments.
 
 #### Multi-line String Alternative
 
-While line breaks are supported using conventional strings, FSH also supports slightly different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file.
+While line breaks are supported using FHIR strings, FSH also supports slightly different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file.
 
 As an example, an author might use a multi-line string to write markdown so that the markdown is neatly indented:
 
@@ -134,17 +176,6 @@ When processing multi-line strings, the following approach is used:
 * If the first line or last line contains only whitespace (including newline), discard it.
 * If any other line contains only whitespace, truncate it to zero characters.
 * For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
-
-#### References
-
-FHIR resources contain [two types of references](https://www.hl7.org/fhir/references.html) to other resources:
-
-* Resource references
-* Canonical references
-
-FSH represents resource references using the syntax `Reference({resource})`. FSH will not accept the name of a resource where a Reference type is required; i.e., `Reference()` is required.
-
-Canonical references refer to a standard URL associated with a FHIR resource. For elements that require a canonical reference, FSH will accept a URL, `Canonical({name})` or `Canonical({id})`, where `name` and `id` refer to items defined in the same FSH project. Implementations shall interpret `Canonical()` as an instruction to construct the canonical URL for the referenced item using the IG's canonical URL. `Canonical()` therefore enables a user to change the IG’s canonical URL in a single place with no other changes needed to FSH definitions.
 
 #### Coded Data Types
 
@@ -191,21 +222,14 @@ In general, the first syntax is sufficient. Quotes are only required in the rare
 
 ##### Coding
 
-The FSH for a Coding value is:
+The FSH represents a Coding in the following ways:
 
-```
-{system}#{code} "{display text}"
-```
+<pre><code>{CodeSystem}#{code} <i>"{display string}"</i>
 
-For code systems that encode the version separately from the URL, the version can be specified as follows:
+{CodeSystem}|{version string}#{code} <i>"{display string}"</i></code></pre>
 
-```
-{system}|{version}#{code} "{display text}"
-```
 
-While `{system}` and `{code}` are required, `|{version}` and `"{display text}"` are optional. The `{system}` represents the controlled terminology that the code is taken from. It can be a URL, OID, or alias for a URL or OID (see [defining aliases](#defining-aliases)). The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR. An alternative is to set the `version` element of Coding (see examples).
-
-To set the less-common properties of a Coding, use an [assignment rule](#assignment-rules) on that element.
+As indicated by italics, the `"{display string}"` is optional. The `{CodeSystem}` is a reference to the controlled terminology that the code is taken from. This reference can be the name of a CodeSystem defined in the same FSH project, a URL, OID, or alias. The bar syntax for code system version is the same approach used in the `canonical` data type in FHIR. An alternative to the bar syntax is to set the `version` element of Coding (see examples). To set the less-common properties of a Coding, an [assignment rule](#assignment-rules) can be used on that element.
 
 **Examples:**
 
@@ -253,29 +277,23 @@ To set the less-common properties of a Coding, use an [assignment rule](#assignm
   
 ##### CodeableConcept
 
-A CodeableConcept consists of an array of Codings, plus a text. Codings are expressed using the [shorthand notation for Coding](#coding). The FSH for setting the first Coding in a CodeableConcept is:
+A CodeableConcept consists of an array of Codings. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
 
-```
-* {CodeableConcept type} = {system}#{code} "{display text}"
-```
+<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = {CodeSystem}#{code} <i>"{display string}"</i></code></pre>
 
-To set additional values, array indices are used. Indices are denoted by bracketed integers. The shorthand is:
+To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
 
-```
-* {CodeableConcept type}.coding[{i}] = {system}#{code} "{display text}"
-```
-
-FSH arrays are zero-based. If no array index is given, the index [0] is assumed (see [Array Property Paths](#array-property-paths) for more information).
+<pre><code>* &lt;CodeableConcept&gt; = {CodeSystem}#{code} <i>"{display string}"</i></code></pre>
 
 To set the top-level text of a CodeableConcept, the FSH expression is:
 
 ```
-* {CodeableConcept type}.text = {string}
+* <CodeableConcept>.text = {string}
 ```
 
 **Examples:**
 
-* To set the first Coding in Condition.code (a CodeableConcept type):
+* Set the first Coding in Condition.code (a CodeableConcept type):
 
   ```
   * code = SCT#363346000 "Malignant neoplastic disease (disorder)"
@@ -293,7 +311,7 @@ To set the top-level text of a CodeableConcept, the FSH expression is:
   * code.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
-* Adding a second value to the array of Codings:
+* Add a second value to the array of Codings:
 
   ```
   * code.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
@@ -305,12 +323,12 @@ To set the top-level text of a CodeableConcept, the FSH expression is:
   * code.text = "Diagnosis of malignant neoplasm left breast."
   ```
     
-##### Quantity
+##### Quantities
 
 FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes. The syntax is:
 
 ```
-* {Quantity type} = {number} '{valid UCUM unit}'
+* <Quantity> = {decimal or integer} '{UCUM unit}'
 ```
 
 This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org) (CQL).
@@ -318,16 +336,14 @@ This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org
 The value and units can also be set independently. To set the value of quantity value, the quantity `value` property can be set directly:
 
 ```
-* {Quantity type}.value = {number}
+* <Quantity>.value = {decimal or integer}
 ```
 
-To set the units of measure independently, a Quantity can be bound to a value set or assigned a coded value. The FSH is:
+To set the units of measure independently, a Quantity can be bound to a value set or assigned a coded value. The syntax is:
 
-```
-* {Quantity type} = {system}#{code} "{display text}"
-```
+<pre><code>* &lt;Quantity&gt; = {CodeSystem}#{code} <i>"{display string}"</i></code></pre>
 
-Although it appears the quantity itself is being set to a coded value, this expression sets only the units of measure.
+Although it appears the quantity itself is being set to a coded value, this expression sets the units of measure. It is a result of FHIR's definition of the Quantity data type.
 
 **Examples:**
 
@@ -431,7 +447,7 @@ Addressing a type from a choice of types replaces the `[x]` in the property name
 * The path to the Quantity within the SystolicBP component of the [Blood Pressure profile](https://www.hl7.org/fhir/bp.html):
 
   ```
-  component[SystolicBP].valueQuantity	
+  component[SystolicBP].valueQuantity
   ```
 
 #### Profiled Type Choice Paths
@@ -450,25 +466,23 @@ In some cases, a data type may be constrained to a set of possible profiles. To 
 
 #### Extension Paths
 
-Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays.
+Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions can be identified by that slice name, or the extension's URL.
 
-Each extension has a URL and optional id. When placed in an extension array, a local slice name is assigned.
-
-The path to an extension is constructed by combining the path to the extension array with the local slice name in square brackets:
+The path to an extension is constructed by combining the path to the extension array with a reference to the extension in square brackets:
 
 ```
-{path to extension array}[{localSliceName}]
+<Extension array>[{extension slice name or URL}]
 ```
 
-Alternatively, the extension can be referred to by its id or canonical URL (or an alias for that URL) instead of the local slice name. Whether to use the local slice name, id, or canonical URL is a matter of user preference. For externally-defined extensions, the canonical URL can be easier to find than the slice name or id.
+For locally-defined extensions, using the slice name is the simplest choice. For externally-defined extensions, the canonical URL can be easier to find than the slice name.
 
-> **Note:** The same path construction applies to `modifierExtension` arrays, with `modifierExtension` replacing `extension`.
+> **Note:** The same path construction applies to `modifierExtension` arrays; simply replace `extension` with `modifierExtension`.
 
 <!-- However, extensions being very common in FHIR, FSH supports a compact syntax for paths that involve extensions. The compact syntax drops `extension[ ]` or `modifierExtension[ ]` (similar to the way the `[0]` index can be dropped). The only time this is not allowed is when dropping these terms creates a naming conflict.-->
 
 **Examples:**
 
-* Path to the value of the birthsex extension in US Core Patient, whose local slice name is `birthsex`:
+* Path to the value of the birthsex extension in US Core Patient, whose local name is `birthsex`:
 
   ```
   extension[birthsex].valueCode
@@ -486,12 +500,6 @@ Alternatively, the extension can be referred to by its id or canonical URL (or a
   telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct]
   ```
 
-* Same as the previous example, but using the id for the direct mail extension:
-
-  ```
-  telecom.extension[us-core-direct]
-  ```
-
 * Path to the Coding data type of the value[x] in the nested extension `ombCategory` under the ethnicity extension in US Core, using the slice names of the extensions:
 
   ```
@@ -506,40 +514,42 @@ Alternatively, the extension can be referred to by its id or canonical URL (or a
 
 #### Sliced Array Paths
 
-FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[` `]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used. Note that slice names (like other [FSH names](#names)) cannot be purely numeric, so slice names cannot be confused with indices.
+FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets (`[ ]`) containing the slice name. Since slices are most often unordered, slice names rather than array indices should be used. Note that slice names (like other [FSH names](#names)) cannot be purely numerical, so slice names cannot be confused with indices.
 
-To access a slice of a slice (i.e., _reslicing_), follow the first pair of brackets with a second pair containing the resliced slice name.
+To access a slice of a slice (a resliced array), follow the first pair of brackets with a second pair containing the resliced slice name.
 
 **Examples:**
 
-* In an Observation profile representing Apgar score, with slices for RespiratoryScore, AppearanceScore, and others, path to the coded value of RespirationScore:
+* In an Observation profile representing Apgar score, with slices for respiratory score, appearance score, and others, path to the coded value of RespirationScore:
 
   ```
-  component[RespiratoryScore].code
+  component[respiratoryScore].code
   ```
 
-* If the Apgar RespiratoryScore is resliced to represent the one and five minute Apgar scores, the paths to the codes representing the OneMinuteScore and FiveMinuteScores:
+* If the respiratoryScore is resliced to represent the one and five minute Apgar scores, the paths to the codes representing the one minute and five minute scores are:
 
   ```
-  component[RespiratoryScore][OneMinuteScore].code
+  component[respiratoryScore][oneMinuteScore].code
 
-  component[RespiratoryScore][FiveMinuteScore].code
+  component[respiratoryScore][fiveMinuteScore].code
   ```
 
 #### StructureDefinition Escape Paths
 
 FSH uses the caret (`^`) syntax to provide direct access to elements of an SD. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#defining-items) or IG configuration files (i.e., elements other than name, id, title, description, url, publisher, fhirVersion, etc.). Examples of metadata elements in SDs that require the caret syntax include experimental, useContext, and abstract. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, slicing discriminator and rules, meaningWhenMissing, etc.).
 
-For a path to an attribute of an SD, excluding the differential and snapshot, use the following syntax:
+> **Note:** Caret syntax is only applicable to FSH items that have corresponding StructureDefintions, specifically, profiles and stand-alone extensions.
+
+For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
 ```
-^{path within SD}
+^<element of SD>
 ```
 
 For a path to an attribute of an ElementDefinition within an SD, corresponding to the elements in the profiled resource, use this syntax:
 
 ```
-{path to element in profile} ^{path within ElementDefinition}
+<element of Profile> ^<element of corresponding ElementDefinition>
 ```
 
 **Note:** There is a required space before the ^ character.
@@ -547,7 +557,7 @@ For a path to an attribute of an ElementDefinition within an SD, corresponding t
 A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to an named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
 
 ```
-. ^{path within ElementDefinition[0]}
+. ^<element of ElementDefinition[0]>
 ```
 
 **Examples:**
@@ -567,7 +577,7 @@ A special case of the ElementDefinition path is setting properties of the first 
 * The path to the short description of an extension (defined in the first ElementDefinition):
 
   ```
-  * . ^short
+  . ^short
   ```
 
 ***
@@ -588,22 +598,22 @@ The following table is a summary of the rules applicable to profiles, extensions
 
 | Rule Type | Syntax |
 | --- | --- |
-| Assignment |`* {path} = {value}` <br/> `* {path} = {value} (exactly)` |
-| Binding |`* {path} from {valueSet} ({strength})`|
-| Cardinality | `* {path} {min}..{max}` <br/>`* {path} {min}..` <br/>`* {path} ..{max}` |
-| Contains (inline extensions)| `* {extension path} contains {localSliceName} {card} {flags}`  <br/> `* {extension path} contains {localSliceName1} {card1} {flags1} and {localSliceName2} {card2} {flags2} ...` |
-| Contains (standalone extensions) | `* {extension path} contains {ExtensionNameIdOrURL} named {localSliceName} {card} {flags}` <br/>  `* {extension path} contains {ExtensionNameIdOrURL1} named {localSliceName1} {card1} {flags1} and {ExtensionNameIdOrURL2} named {localSliceName2} {card2} {flags2} ...`
-| Contains (slicing) | `* {array element path} contains {sliceName1} {card1} {flags1} and {sliceName2} {card2} {flags2}...` |
-| Flag | `* {path} {flag}` <br/> `* {path} {flag1} {flag2} ...` <br/> `* {path1} and {path2} and {path3} and ... {flag}` <br/> `* {path1} and {path2} and {path3} and ... {flag1} {flag2} ...` |
-| Insert | `* insert {ruleSetName}` |
-| Obeys | `* obeys {invariant}` <br/> `* {path} obeys {invariant}` <br/> `* obeys {invariant1} and {invariant2} ...` <br/> `* {path} obeys {invariant1} and {invariant2} ...` |
-| Type | `* {path} only {type}` <br/> `* {path} only {type1} or {type2} or {type3} or ...` <br/> `* {path} only Reference({type})` <br/> `* {path} only Reference({type1} or {type2} or {type3} or ...)`|
+| Assignment |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
+| Binding |`* <coded> from {ValueSet}` <br/> `* <coded> from {ValueSet} ({strength})`|
+| Cardinality | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
+| Contains (inline extensions)| <code>* &lt;Extension array&gt; contains {slice name} {card} <i>{flags}</i> </code>  <br/> <code>* &lt;Extension array&gt; contains {slice1 name} {card1} <i>{flags1}</i> and {slice2 name} {card2} <i>{flags2}</i> ...</code> |
+| Contains (standalone extensions) | <code>* &lt;Extension array&gt; contains {Extension} named {slice name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension array&gt; contains {Extension1} named {slice1 name} {card1} <i>{flags1}</i> and {Extension2} named {slice2 name} {card2} <i>{flags2}</i> ...</code>
+| Contains (slicing) | <code>* &lt;array&gt; contains {slice name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {slice1 name} {card1} <i>{flags1}</i> and {slice2 name} {card2} <i>{flags2}</i> ...</code>|
+| Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
+| Insert | `* insert {RuleSet name}` |
+| Obeys | `* obeys {invariant id}` <br/> `* obeys {invariant1 id} and {invariant2 id} ...` <br/> `* <element> obeys {invariant id}` <br/> `* <element> obeys {invariant1 id} and {invariant2 id} ...` |
+| Type | `* <element> only {type}` <br/> `* <element> only {type1} or {type2} or {type3} or ...` <br/> `* <element> only Reference({type})` <br/> `* <element> only Reference({type1} or {type2} or {type3} or ...)`|
 {: .grid }
 
 **Notes:**
 
 * The Assignment rule is only type of rule applicable to instances
-* Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in rule sets
+* Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in a rule set
 
 In the following, we explain each of these rule types in detail.
 
@@ -612,7 +622,7 @@ In the following, we explain each of these rule types in detail.
 Assignment rules follow this syntax:
 
 ```
-* {path} = {value}
+* <element> = {value}
 ```
 
 The left side of this expression follows the [FSH path grammar](#paths). The data type on the right side must align with the data type of the final element in the path, and may be a complex data type (such as an address).
@@ -625,10 +635,10 @@ Assignment rules have two different interpretations, depending on context:
 If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
 
 ```
-* {path} = {value} (exactly)
+* <element> = {value} (exactly)
 ```
 
-Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `exactly` is not the best option for interoperability because it creates very tight conformance criteria. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
+Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates very tight (potentially unnecessary) conformance criteria. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
 
 > **Note:** The `(exactly)` modifier does not apply to instances.
 
@@ -666,11 +676,13 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   Usage: #example
   * name.given = "Eve"
   * name.family = "Anyperson"
-
+  
+  // Use this instance in a profile
+  ...
   * subject = Reference(EveAnyperson)
   ```
 
-* Assignment of an inline instance to a bundle (setting `Bundle.entry.resource`):
+* Assignment of an inline instance to a Bundle:
 
   ```
   Instance: AdamEveryperson
@@ -679,6 +691,7 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   * name.given = "Adam"
   * name.family = "Everyperson"
 
+  // Create an example Bundle using this instance
   Instance: AdamBundle
   InstanceOf: Bundle
   Usage: #example
@@ -691,11 +704,11 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   Assuming `code` is type CodeableConcept and LNC is an alias for http://loinc.org, consider the following three assignment statements:
 
   ```
-  1. * code = LNC#69548-6
+  * code = LNC#69548-6
 
-  2. * code = LNC#69548-6 "Genetic variant assessment"
+  * code = LNC#69548-6 "Genetic variant assessment"
 
-  3. * code = LNC#69548-6 (exactly)
+  * code = LNC#69548-6 (exactly)
   ```
 
   In the context of a profile:
@@ -717,7 +730,9 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
 Binding is the process of associating a coded element with a set of possible values. The syntax to bind a value set, or alter an inherited binding, uses the reserved word `from`:
 
 ```
-* {path} from {valueSet} ({strength})
+* <coded> from {valueSet}   // defaults to required
+
+* <coded> from {valueSet} ({strength})
 ```
 
 The value set can be the name of a value set defined in the same FSH project or the defining URL of an external value set in the core FHIR spec or in an IG that has been declared an external dependency.
@@ -757,17 +772,23 @@ Cardinality rules constrain (narrow) the number of repetitions of an element. Ev
 To change the cardinality, the grammar is:
 
 ```
-* {path} {min}..{max}
+* <element> {min}..{max}
+
+* <element> {min}..   // leave max as-is
+
+* <element> ..{max}   // leave min as-is
 ```
 
-As in FHIR, min and max are non-negative integers, and max can also be *, representing unbounded. It is valid (and even encouraged) to include both the min and max, even if one of them remains the same as in the original cardinality. In this case, FSH processors (e.g., SUSHI) should only generate constraints for the changed values. FSH also supports one-sided cardinalities if the author wishes to omit an unconstrained min or max in the expression.
+As in FHIR, min and max are non-negative integers, and max can also be *, representing unbounded. It is valid to include both the min and max, even if one of them remains the same as in the original cardinality. In this case, FSH implementations should only generate constraints for the changed values.
 
 Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
 For convenience and compactness, cardinality rules can be combined with [flag rules](#flag-rules) via the following grammar:
 
 ```
-* {path} {min}..{max} {flag1} {flag2} ...
+* <element> {min}..{max} {flag}
+
+* <element> {min}..{max} {flag1} {flag2} ...
 ```
 
 **Examples:**
@@ -808,36 +829,29 @@ Extensions are created by adding elements to built-in extension arrays. Extensio
 
 Extensions are specified using the `contains` keyword. There are two types of extensions: standalone and inline:
 
-* Standalone extensions have independent SDs, and can be reused. They can be externally-defined, and referred to by their canonical URLs, or defined in the same FSH project using the `Extension` keyword, and referenced by their name or id.
+* Standalone extensions have independent SDs, and can be reused. They can be defined internally (in the same FSH project) or externally in FHIR core or a external IG. External standalone extensions can be referred to by their canonical URLs or their ids. Internal standalone extensions can be referred to by their FSH names or ids.
 * Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension. When defining an inline extension, it is typical to use additional rules (such as cardinality, data type and binding rules) to further define the extension.
 
-The FSH syntax to specify a standalone extension(s) is:
+The syntax to specify standalone extension(s) is:
 
-```
-* {extension element path} contains {ExtensionNameIdOrURL} named {localSliceName} {card} {flags}
-```
+<pre><code>* &lt;Extension array&gt; contains {Extension} named {slice name} {card} <i>{flags}</i>
 
-```
-* {extension element path} contains 
-    {ExtensionNameIdOrURL1} named {localSliceName1} {card1} {flags1} and 
-    {ExtensionNameIdOrURL2} named {localName2} {card2} {flags2} and
-    ...
-```
+* &lt;Extension array&gt; contains 
+    {Extension1} named {slice1 name} {card1} <i>{flags1}</i> and 
+    {Extension2} named {slice2 name} {card2} <i>{flags2}</i> and
+    {Extension3} named {slice3 name} {card3} <i>{flags3}</i> ...
+</code></pre>
 
-The FSH syntax to define an inline extension(s) is:
+The syntax to define inline extension(s) is:
 
-```
-* {extension element path} contains {localSliceName} {card} {flags}
-```
+<pre><code>* &lt;Extension array&gt; contains {slice name} {card} <i>{flags}</i>
 
-```
-* {extension element path} contains
-    {localSliceName1} {card1} {flags1} and
-    {localSliceName2} {card2} {flags2} and
-    ...
-```
+* &lt;Extension array&gt; contains 
+    {slice1 name} {card1} <i>{flags1}</i> and
+    {slice2 name} {card2} <i>{flags2}</i> and
+    {slice3 name} {card3} <i>{flags3}</i> ...</code></pre>
 
-In both styles, the cardinality is required, and flags are optional. Adding an extension below the root level is achieved by giving the full path to the extension array to be sliced.
+Note that the slice name and cardinality are required, and flags are optional.
 
 **Examples:**
 
@@ -898,14 +912,16 @@ In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) def
 
 The first step in slicing is populating the array that is to be sliced, using the `contains` keyword. The syntax is very similar to [`contains` rules for inline extensions](#contains-rules-for-extensions):
 
-```
-* {array element path} contains
-       {sliceName1} {card1} {flags1} and
-       {sliceName2} {card2} {flags2} and
-       {sliceName3} {card3} {flags3} ...
-```
+<pre><code>* &lt;array&gt; contains {slice name} {card} <i>{flags}</i>
 
-In this pattern, the `{array element path}` is a path to the element that is to be sliced (and to which the slicing rules will applied in step 3). The `{card}` declaration is required, and `{flags}` are optional.
+* &lt;array&gt; contains 
+    {slice1 name} {card1} <i>{flags1}</i> and 
+    {slice2 name} {card2} <i>{flags2}</i> and
+    {slice3 name} {card3} <i>{flags3}</i> ...
+</code></pre>
+
+
+In this pattern, `<array>` is a path to the element that is to be sliced (and to which the slicing rules will applied in step 3). The `{card}` declaration is required, and `{flags}` are optional.
 
 Each slice will match or constrain the data type of the array it slices. In particular:
 
@@ -933,9 +949,13 @@ Each slice will match or constrain the data type of the array it slices. In part
 
 Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
 
-```
-* {array element path}[{sliceName}] contains {resliceName1} {card1} and {resliceName2} {card2} and ...
-```
+<pre><code>* &lt;array[{slice name}]&gt; contains {reslice name} {card} <i>{flags}</i>
+
+* &lt;array[{slice name}]&gt; contains 
+    {reslice1 name} {card1} <i>{flags1}</i> and 
+    {reslice2 name} {card2} <i>{flags2}</i> and
+    {reslice3 name} {card3} <i>{flags3}</i> ...
+</code></pre>
 
 **Example:**
 
@@ -955,7 +975,7 @@ At minimum, each slice must be constrained such that it can be uniquely identifi
 FSH requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
 
 ```
-* {path to slice}.{subpath} {constraint}
+* <array>[{slice name}].<element> {constraint}
 ```
 
 **Examples:**
@@ -1011,11 +1031,13 @@ FHIR also defines I and NE flags, representing elements affected by constraints,
 The following syntax can be used to assigning flags:
 
 ```
-* {path} {flag1} {flag2} ...
-```
+* <element> {flag}
 
-```
-* {path1} and {path2} and {path3}... {flag}
+* <element> {flag1} {flag2} ...
+
+* <element1> and <element2> and <element3> ... {flag}
+
+* <element1> and <element2> and <element3> ... {flag1} {flag2} ...
 ```
 
 **Examples:**
@@ -1037,7 +1059,7 @@ The following syntax can be used to assigning flags:
 [Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. To use a rule set, an `insert` rule is used:
 
 ```
-* insert {rule set name}
+* insert {RuleSet name}
 ```
 
 The rules in the named rule set are evaluated as if they were copied and pasted in the designated location. Rule sets can contain other rule sets, but circular dependencies are not allowed.
@@ -1084,22 +1106,16 @@ Each rule in the rule set should be compatible with item where the rule set is i
 
 #### Obeys Rules
 
-[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The FSH grammars for applying invariants in profiles are as follows:
+[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath expressions](https://www.hl7.org/fhir/fhirpath.html). An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The syntax for applying invariants in profiles is:
 
 ```
-* obeys {invariant}
-```
+* obeys {Invariant id}
 
-```
-* {path} obeys {invariant}
-```
+* obeys {Invariant1 id} and {Invariant2 id} ...
 
-```
-* obeys {invariant1} and {invariant2} ...
-```
+* <element> obeys {Invariant id}
 
-```
-* {path} obeys {invariant1} and {invariant2} ...
+* <element> obeys {Invariant1 id} and {Invariant2 id} ...
 ```
 
 The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
@@ -1123,22 +1139,22 @@ The referenced invariant and its properties must be declared somewhere within th
 
 #### Type Rules
 
-FSH rules can be used to restrict the data type of an element. The FSH syntax to restrict the type is:
+FSH rules can be used to restrict the data type of an element. The syntax to restrict the type is:
 
 ```
-* {path} only {type}
-```
-
-```
-* {path} only {type1} or {type2} or {type3}...
+* <element> only {type}
 ```
 
 ```
-* {path} only Reference({type})
+* <element> only {type1} or {type2} or {type3}...
 ```
 
 ```
-* {path} only Reference({type1} or {type2} or {type3} ...)
+* <element> only Reference({type})
+```
+
+```
+* <element> only Reference({type1} or {type2} or {type3} ...)
 ```
 
 Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive data type or profile for one of the choices appearing in the parent profile or resource.
@@ -1245,7 +1261,7 @@ Additional keywords are as follows:
 | `Source` | The profile the mapping applies to | name |
 | `Target` | The standard being mapped to | uri |
 | `Title` | Short human-readable name | string |
-| `Usage` | Specifies how an instance is intended to be used in the IG | code (choice of `#example`, `#definition`, or `#inline`) |
+| `Usage` | Specifies how an instance is intended to be used in the IG | code |
 | `XPath` | the xpath in an invariant | XPath string |
 {: .grid }
 
@@ -1276,7 +1292,7 @@ Aliases allow the user to replace a lengthy url or oid with a short string. Alia
 Alias definitions follow this syntax:
 
 ```
-Alias: {AliasName} = {url or oid}
+Alias: {Alias name} = {url or oid}
 ```
 
 Several things to note about aliases:
@@ -1285,7 +1301,7 @@ Several things to note about aliases:
 * Alias statements stand alone, and cannot be mixed into rule sets of other items.
 * Aliases are global within a FSH project.
 
-In contrast with other names in FSH (for profiles, extensions, etc.), alias names can optionally begin with a dollar sign ($). If you define an alias with a leading $, you are protected against misspellings. For example, if you choose the alias name `$RaceAndEthnicityCDC` and accidentally type `$RaceEthnicityCDC`, implementations can easily detect there is no alias by that name. However, if the alias is `RaceAndEthnicityCDC` and the misspelling is `RaceEthnicityCDC`, implementations do not know an alias is intended, and will look through FHIR Core and all dependent implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
+In contrast with other names in FSH (for profiles, extensions, etc.), alias names can optionally begin with a dollar sign ($). If you define an alias with a leading $, you are protected against misspellings. For example, if you choose the alias name `$RaceAndEthnicityCDC` and accidentally type `$RaceEthnicityCDC`, implementations can easily detect there is no alias by that name. However, if the alias is `RaceAndEthnicityCDC` and the misspelling is `RaceEthnicityCDC`, implementations do not know an alias is intended, and will look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
 
 **Examples:**
 
@@ -1310,13 +1326,13 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 
 ```
-* include #{code} {display text string} {definition text string}
+* include #{code} {display string} {definition string}
 ```
 
-Similar to value set rules, the word `include` can be dropped for brevity, without changing meaning:
+Similar to [value sets](#defining-value-sets), the word `include` can be dropped for brevity, without changing the meaning:
 
 ```
-* #{code} {display text string} {definition text string}
+* #{code} {display string} {definition string}
 ```
 
 **Note:**
@@ -1403,6 +1419,7 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 * `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
 * `Usage: #inline` means the instance should not be instantiated as an independent resource, but appears as part of another instance (for example, in a composition or bundle).
 
+If `Usage` is unspecified, the default is `#example`.
 
 **Examples:**
 
@@ -1496,7 +1513,7 @@ The mappings themselves are declared in rules with the following syntax:
 ```
 
 ```
-* {path} -> "{map}" "{comment}" {mime-type}
+* <element> -> "{map}" "{comment}" {mime-type}
 ```
 
 The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target.
@@ -1571,7 +1588,7 @@ RuleSet: {RuleSetName}
 // More rules
 ```
 
-Once defined, the rule set is applied to an item by using an [`insert` rule](#rule-set-rules).
+Once defined, the rule set is applied to an item by using an [insert rule](#insert-rules).
 
 **Example:**
 
@@ -1600,23 +1617,23 @@ The contents of a value set are defined by a set of rules. There are four types 
 | To include... | Syntax | Example |
 |-------|---------|----------|
 | A single code | `* include {Coding}` | `* include SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* SCT#961000205106 "Wearing street clothes, no shoes"`|
-| All codes from a value set | `* include codes from valueset {Id}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
-| All codes from a code system | `* include codes from system {Id}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
-| Selected codes from a code system (filters are code system dependent) | `* include codes from system {system} where {filter} and {filter} and ...` | `* include codes from system SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system SCT where concept is-a #254837009`|
+| All codes from a value set | `* include codes from valueset {ValueSet}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
+| All codes from a code system | `* include codes from system {CodeSystem}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
+| Selected codes from a code system (filters are code system dependent) | `* include codes from system {CodeSystem} where {filter} and {filter} and ...` | `* include codes from system SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system SCT where concept is-a #254837009`|
 {: .grid }
 
 See [below](#filters) for discussion of filters.
 
-> **Note:** `{system}` can be a FSH name, alias or URL.
+> **Note:** `{CodeSystem}` can be a FSH name, alias or URL.
 
 Analogous rules can be used to leave out certain codes, with the word `exclude` replacing the word `include`:
 
 | To exclude... | Syntax | Example |
 |-------|---------|----------|
 | A single code | `* exclude {Coding}` | `* exclude SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from a value set | `* exclude codes from valueset {Id}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | `* exclude codes from system {Id}` | `* exclude codes from system http://snomed.info/sct` |
-| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {Id} where {filter}` | `* exclude codes from system SCT where concept is-a #254837009` |
+| All codes from a value set | `* exclude codes from valueset {ValueSet}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
+| All codes from a code system | `* exclude codes from system {CodeSystem}` | `* exclude codes from system http://snomed.info/sct` |
+| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {CodeSystem} where {filter}` | `* exclude codes from system SCT where concept is-a #254837009` |
 {: .grid }
 
 ##### Filters
@@ -1658,7 +1675,7 @@ Not all operators are valid for any code system. The `property` and `value` are 
 
 | Abbreviation | Description |
 |-----|----|
-| ANTLR  | ANother Tool for Language Recognition
+| ANTLR4  | ANother Tool for Language Recognition, version 4
 | CQL | Clinical Quality Language
 | D  | Flag denoting draft status
 | FHIR  | Fast Healthcare Interoperability Resources

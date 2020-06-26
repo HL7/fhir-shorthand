@@ -72,10 +72,14 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 FSH provides special grammar for expressing coded data types. The shorthand for a Coding is:
 
 ```
-{system}#{code} "{display text}"
+{CodeSystem}#{code}
+```
+or 
+```
+{CodeSystem}#{code} "{display string}"
 ```
 
-For a FHIR `code` data type, the {system} is omitted. The display text is optional but helps with readability. The `{system}` represents the controlled terminology that the code is taken from. Here are a few examples:
+For a FHIR `code` data type, `{CodeSystem}` is omitted. The display text is optional but helps with readability. The `{CodeSystem}` represents a reference to the controlled terminology that the code is taken from. Here are a few examples:
 
 * The code 363346000 from SNOMED-CT:
 
