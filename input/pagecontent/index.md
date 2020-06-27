@@ -10,9 +10,12 @@ In addition, the IG includes several downloads, including a [Quick Reference She
 This IG uses the following conventions:
 
 | Style | Explanation | Example |
-|:----------|:------|:---------|
+|:------------|:------|:---------|
 | `Code` | Code fragments, such as commands, FSH statements, and syntax expressions  | `* status = #open` |
-| {curly braces} | An item to be substituted in a syntax pattern | `{codesystem}#{code}` |
+| `{curly braces}` | An item to be substituted in a syntax expression | `{display string}` |
+| `<datatype>` | An element or path to an element with the given data type, to be substituted in the syntax expression | `<CodeableConcept>`
+| _italics_ | An optional item in a syntax expression | <code><i>"{string}"</i></code> |
+| ellipsis (...) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code>
 | **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
 
@@ -72,14 +75,14 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 FSH provides special grammar for expressing coded data types. The shorthand for a Coding is:
 
 ```
-{CodeSystem}#{code}
+{CodeSystem name|id|url}#{code}
 ```
 or 
 ```
-{CodeSystem}#{code} "{display string}"
+{CodeSystem name|id|url}#{code} "{display string}"
 ```
 
-For a FHIR `code` data type, `{CodeSystem}` is omitted. The display text is optional but helps with readability. The `{CodeSystem}` represents a reference to the controlled terminology that the code is taken from. Here are a few examples:
+For a FHIR `code` data type, `CodeSystem` is omitted. The display text is optional but helps with readability. The `CodeSystem` represents a reference to the controlled terminology that the code is taken from. Here are a few examples:
 
 * The code 363346000 from SNOMED-CT:
 
@@ -160,7 +163,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 * {rule statement}
 ```
 
-There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference.html#rules) are given in the [FSH Language reference](reference.html). Here is a summary:
+There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference.html#rules-for-profiles-extensions-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary:
 
 * **Assignment rules** are used to set fixed values in instances and required patterns in profiles. For example:
 
@@ -478,7 +481,7 @@ A few things to note about this example:
 
 * The order of the items (aliases, profile, value set, extension) doesn't matter. In FSH, you can refer to items defined before or after the current item. By convention, aliases appear at the beginning of a file.
 * The example assumes the items are all in one file, but they could be in separate files. The allocation of items to files is the author's choice.
-* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#paths).
+* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#fsh-paths).
 
 ### Future Considerations
 
@@ -496,7 +499,7 @@ Some of the features for FSH and SUSHI under consideration include (in no partic
 
 * **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 
-* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance ([download template](CapabilityStatementTemplate)) in FSH using `InstanceOf: CapabilityStatement`, but FSH does nothing to help populate that instance. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
+* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance ([download template](CapabilityStatementTemplate.fsh)) in FSH using `InstanceOf: CapabilityStatement`, but FSH does nothing to help populate that instance. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
 
 * **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain sub-items. While not suggesting that FSH adopt YAML, it is worth noting that a syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
 
