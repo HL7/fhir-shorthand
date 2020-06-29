@@ -149,7 +149,7 @@ Canonical references refer to the standard URL associated with a type of FHIR re
 
 #### Whitespace
 
-Repeated whitespace is not meaningful within FSH files (except within string literals). This:
+Repeated whitespace is not meaningful within FSH files (except within string literals). New lines are considered whitespace. This:
 
 ```
 Profile:  SecondaryCancerCondition
@@ -1225,13 +1225,13 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * onset[x] only Age or AgeRange or DateRange
   ```
 
-* Restrict Observation.performer to reference only a Practitioner:
+* Restrict Observation.performer (a choice of reference to Practitioner, PractitionerRole, Organization, CareTeam, Patient, or RelatedPerson) to allow only Practitioner:
 
   ```
   * performer only Reference(Practitioner)
   ```
 
-* Restrict performer to either a Practitioner or a PractitionerRole:
+* Restrict Observation.performer to either a Practitioner or a PractitionerRole:
 
   ```
   * performer only Reference(Practitioner or PractitionerRole)
@@ -1243,7 +1243,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * performer only Reference(PrimaryCarePhysician or EmergencyRoomPhysician)
   ```
 
-* Restrict the Practitioner choice of performer to a PrimaryCarePhysician, without restricting other choices:
+* Restrict the Practitioner choice of performer to a PrimaryCarePhysician, without restricting other choices. Because the path specifically calls out the Practitioner choice, the result is that performer can reference a Practitioner resource that validates against the PrimaryCareProvider profile or any of the other choices (PractitionerRole, Organization, CareTeam, Patient, and RelatedPerson):
 
   ```
   * performer[Practitioner] only Reference(PrimaryCareProvider)
