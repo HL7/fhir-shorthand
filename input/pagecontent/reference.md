@@ -1360,18 +1360,13 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 
 ```
-* include #{code} {display string} {definition string}
-```
-
-Similar to [value sets](#defining-value-sets), the word `include` can be dropped for brevity, without changing the meaning:
-
-```
 * #{code} {display string} {definition string}
 ```
 
-**Note:**
+**Notes:**
 * Do not put a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
 * The definition of the term can be optionally provided as the second string following the code.
+* Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
 
 **Example:** Define a code system for yoga poses.
 
@@ -1386,7 +1381,6 @@ Similar to [value sets](#defining-value-sets), the word `include` can be dropped
   ```
 
 > **Note:** FSH does not currently support definition of relationships between local codes, such as parent-child (is-a) relationships.
-
 
 #### Defining Extensions
 
@@ -1639,8 +1633,7 @@ Codes must be taken from one or more terminology systems (also called code syste
 
 The contents of a value set are defined by a set of rules. There are four types of rules to populate a value set:
 
-> **Note:** In the rules below, the word `include` is optional:
-
+> **Note:** In value set rules, the word `include` is optional.
 
 | To include... | Syntax | Example |
 |-------|---------|----------|
