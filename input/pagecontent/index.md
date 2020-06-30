@@ -298,9 +298,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
 
   ```
   * obeys us-core-9  // invariant applies to entire profile
-  ```  
 
-  ```
   * name obeys us-core-8  // invariant applies to the name element
   ```
 
@@ -309,36 +307,32 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly list the codes to be included and/or excluded, for example:
 
   ```
-  * SCT#54102005 "G1 grade (finding)"
+  * include SCT#54102005 "G1 grade (finding)"
+
+  * exclude SCT#12619005 "Tumor grade GX"
   ```
 
-  ```
-  * exclude SCT#12619005
-  ```
-
-  Because including codes is much more common than excluding codes, inclusion is implicit and exclusion is explicit in the rule grammar.
-
-  [Intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules are used when code membership in the value set is defined algorithmically, rather than listed explicitly. For example, to include all codes from a code system:
+  [Intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules are used when code membership in the value set is defined algorithmically. For example, to include all codes from a code system:
 
   ```
-  * codes from system RXNORM
+  * include codes from system RXNORM
   ```
 
   Similar rules can include or exclude all codes from another value set:
 
   ```
-  * codes from valueset ConditionStatusTrendVS
-  ```
+  * include codes from valueset ConditionStatusTrendVS
 
-  ```
-  * exclude codes from valueset ConditionStatusTrendVS
+  * exclude codes from valueset EndStageRenalDiseaseVS
   ```
 
   More complex intensional rules involving filters are also possible. These rules depend on relationships or properties defined in a specific code system. A rule for LOINC, for example, would not be applicable to SNOMED-CT. Here is an example of a SNOMED-CT intensional rule with a filter:
 
   ```
-  * codes from system SCT where concept is-a #123037004 "BodyStructure"
+  * include codes from system SCT where concept is-a #123037004 "BodyStructure"
   ```
+
+  > **Note:** Because including codes is much more common than excluding codes, for brevity, the word `include` optional in all value set rules.
 
 ### FSH in Practice
 
@@ -462,7 +456,8 @@ In this section, we will walk through a realistic example of FSH, line by line.
 * Lines 13 to 20 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
 * Lines 21 and 22 restrict the choice of resource types for two elements that refer to other resources.
 * Line 23 fixes the value of the code attribute to a specific LOINC code, using an alias for the code system defined on line 1.
-* Lines 24 to 26 reduce an inherited choice of resource references down to a single resource or profile type. Note that the references can be to external profiles (us-core-practitioner) or to profiles (not shown in the example) defined in the same FSH tank (CancerPatient, CancerConditionParent). Also note that an alias could have been used in place of the us-core-practitioner URL.
+* Lines 24 to 25 reduce an inherited choice of resource references down to specific profiles.
+* Line 26 is similar to lines 24 and 25, but the reference is to an external profile.
 * Line 27 and 28 restrict the data type for elements that offer a choice of data types in the base resource.
 * Line 29 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 36._
 * Line 30 declares an extension named EvidenceType.
