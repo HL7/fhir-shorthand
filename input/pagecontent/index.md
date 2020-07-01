@@ -482,7 +482,7 @@ A few things to note about this example:
 
 In this introduction, we presented an overview of FSH and SUSHI. Not all features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference.html). A complete description of SUSHI is found in the [SUSHI Users Guide](sushi.html).
 
-While this version of FSH and SUSHI are capable of producing sophisticated IGs, future versions may introduce additional features. Feature suggestions are welcome, and can be made [here](https://github.com/FHIR/sushi/issues).
+While this version of FSH has been shown capable of producing complex IGs, future versions may introduce additional features. Feature suggestions are welcome, and can be made [here](https://github.com/FHIR/sushi/issues).
 
 Some of the features for FSH and SUSHI under consideration include (in no particular order):
 
@@ -494,7 +494,7 @@ Some of the features for FSH and SUSHI under consideration include (in no partic
 
 * **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 
-* **Capability Statements:** Currently, you can create a CapabilityStatement as an instance ([download template](CapabilityStatementTemplate.fsh)) in FSH using `InstanceOf: CapabilityStatement`, but FSH does nothing to help populate that instance. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
+* **Capability Statements (and other conformance resources):** The FSH language supports creation of StructureDefinitions, and tools like SUSHI address creation of ImplementationGuide resources. However, these are not the only [conformance resources in FHIR](https://www.hl7.org/fhir/conformance-module.html). Others include CapabilityStatement, OperationDefinition, SearchParameter, and CompartmentDefinition. Currently, you can create any of these types as instances; for example, using `InstanceOf: CapabilityStatement`. To make this easier, we provide a [downloadable template](CapabilityStatementTemplate.fsh) for a CapabilityStatement. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
 
 * **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain sub-items. While not suggesting that FSH adopt YAML, it is worth noting that a syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
 
