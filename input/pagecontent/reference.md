@@ -134,7 +134,7 @@ If no id is provided by a FSH author, implementations may create an id. It is re
 
 FSH items within the same project can be referred to by their names or ids. Using the name or id in the item's [declaration statement](#defining-items) is recommended.
 
-External FHIR artifacts in FHIR core and external IGs can be referred to by name, id, or canonical URL. Referring to core FHIR resources by name, e.g., `Patient` or `Observation`, is recommended. For other external items, the use of canonical URLs is recommended, since this approach minimizes the chance of name collisions.
+External FHIR artifacts in FHIR core and external IGs can be referred to by name, id, or canonical URL. Referring to core FHIR resources by name, e.g., `Patient` or `Observation`, is recommended. For other external items, the use of canonical URLs is recommended, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal entity takes precedence, and external entity must be referred to by its canonical URL.
 
 #### Reference and Canonical Data Types
 
@@ -461,19 +461,33 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
 #### Reference Paths
 
-Elements can offer a choice of reference types. To address a specific resource or profile among the choices, follow the path with square brackets (`[ ]`) containing the target type (or the profile's `name`, `id`, or `url`).
+Elements can offer a choice of reference types. To address a specific resource or profile among the choices, follow the path with square brackets (`[ ]`) containing the target type (represented by a `name`, `id`, or `url`).
 
 **Example:**
 
-* Given an element named `performer` with an inherited choice type of Reference(Organization or Practitioner), the path to the Practitioner:
+* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/diagnosticreport.html), whose acceptable data types are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
 
   ```
   performer[Practitioner]
   ```
 
+* Path to the Reference(US Core Organization) option of the `performer` element in [US Core DiagnosticReport Lab](http://hl7.org/fhir/us/core/StructureDefinition-us-core-diagnosticreport-lab.html), using the canonical URL:
+
+  ```
+  performer[http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization]
+  ```
+
+* The same path, using the id of the US Core Organization profile instead of its canonical URL:
+
+  ```
+  performer[us-core-organization]
+  ```
+
 #### Data Type Choice [x] Paths
 
-Addressing a type from a choice of types replaces the `[x]` in the property name with the type name (while also capitalizing the first letter). This follows the approach used in FHIR JSON and XML serialization.
+FHIR represents a choice of data types using `foo[x]` notation. To address a single data type, replace the `[x]` with the data type name (also capitalizing the first letter). To illustrate, Condition.onset[x], with choices dateTime, Age, Period, Range or string would have paths onsetDateTime, onsetAge, onsetPeriod, etc. This follows the approach used in FHIR JSON and XML serialization and is customary in FHIR.
+
+> **Note:** foo[x] choices are NOT addressed as foo[boolean], foo[Quantity], etc.
 
 **Example:**
 
@@ -677,7 +691,7 @@ If conformance to a profile requires a precise match to the specified value (whi
 * <element> = {value} (exactly)
 ```
 
-Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates very tight (potentially unnecessary) conformance criteria. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
+Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
 
 > **Note:** The `(exactly)` modifier does not apply to instances.
 
@@ -707,7 +721,13 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   * valueQuantity = 36.5 'C'
   ```
 
-* Assignment of a reference to another resource:
+* Assignment of an instance of an example Patient resource, EveAnyperson, to Observation.subject:
+
+  ```
+  * subject = Reference(EveAnyperson)
+  ```
+
+  where, for example:
 
   ```
   Instance: EveAnyperson
@@ -715,13 +735,15 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   Usage: #example
   * name.given = "Eve"
   * name.family = "Anyperson"
-  
-  // Use this instance in a profile
-  ...
-  * subject = Reference(EveAnyperson)
   ```
 
-* Assignment of an inline instance to a Bundle:
+* Assignment of and inline instance, AdamEveryperson, to Bundle.entry.resource, whose data type is Resource (not Reference(Resource)):
+
+  ```
+  * entry.resource = AdamEveryperson
+  ```
+
+  where, for example:
 
   ```
   Instance: AdamEveryperson
@@ -729,14 +751,8 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   Usage: #inline
   * name.given = "Adam"
   * name.family = "Everyperson"
-
-  // Create an example Bundle using this instance
-  Instance: AdamBundle
-  InstanceOf: Bundle
-  Usage: #example
-  * type = #collection
-  * entry.resource = AdamEveryperson
   ```
+
 
 * Contrast the behavior of assignment statements in profiles and instances:
 
@@ -1295,7 +1311,7 @@ Additional keywords are as follows:
 | `Id` | An identifier for an item | id |
 | `InstanceOf` | The profile or resource an instance instantiates | name |
 | `Parent` | Specifies the base class for a profile or extension | name or url |
-| `Severity` | error, warning, or guideline in invariant | code |
+| `Severity` | whether violation of an invariant represents an error or a warning | code |
 | `Source` | The profile the mapping applies to | name |
 | `Target` | The standard being mapped to | uri |
 | `Title` | Short human-readable name | string |
@@ -1501,11 +1517,23 @@ If `Usage` is unspecified, the default is `#example`.
   * stage.assessment = Reference(mCODETNMClinicalStageGroupExample01)
   ```
 
+##### Defining Instances of Conformance Resources
+
+The FSH language is designed to support creation of StructureDefinitions (the underlying type for profiles and extensions), ValueSets and CodeSystems. Tools like [SUSHI](sushi.html) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/conformance-module.html) that can be involved with IG creation that FSH does not explicitly support. These include [CapabilityStatement](https://www.hl7.org/fhir/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/compartmentdefinition.html).
+
+These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The values of the CapabilityStatement are then set using assignment statements. Because CapabilityStatements can be very long, we provide a [downloadable template](CapabilityStatementTemplate.fsh) as a starting point.
+
 #### Defining Invariants
 
-Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. An invariant definition does not have any rules.
+Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules, and are incorporated into a profile via [obeys rules](#obeys-rules).
 
-Invariants are incorporated into a profile via [obeys rules](#obeys-rules).
+| Keyword | Usage | Corresponding element in ElementDefinition | Data Type | Required |
+|-------|------------|--------------|-------|----|
+| Invariant | Identifier for the invariant | constraint.key | id | yes |
+| Description | Human description of constraint | constraint.human | string or markdown  | yes |
+| Expression | FHIRPath expression of constraint | constraint.expression | FHIRPath string | no |
+| Severity | Either `#error` or `#warning`, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/valueset-constraint-severity.html) | constraint.severity | code | yes |
+| XPath | XPath expression of constraint | constraint.xpath | XPath string | no |
 
 **Example:**
 
