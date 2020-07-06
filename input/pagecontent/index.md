@@ -50,7 +50,6 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive).
 * **Whitespace**: Repeated whitespace characters are equivalent to one whitespace character within FSH files, unless they are part of string literals. New lines are considered whitespace.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
-* **Hash Sign**: A leading hash sign (#) (variously called the number sign, pound sign, or octothorp) is used in FSH to denote a code from a formal terminology.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
 
   ```
@@ -58,11 +57,21 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
   ```
 
 * **Escape Character**: FSH uses the backslash as the escape character in string literals. For example, use `\"` to embed a quotation mark in a string.
-* **Caret Character**: FSH uses the caret (also called circumflex) `^` to directly reference the definitional structure associated with an item. When defining a profile, caret syntax allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental from the FSH code that defines a profile:
+* **Caret Character**: FSH uses [caret syntax](reference.html#structuredefinition-escape-paths) to directly reference the definitional structure associated with an item. When defining a profile, the caret character `^` (also called circumflex) allows you to refer to elements in the SD. For example, to set the element StructureDefinition.experimental:
 
   ```
   * ^experimental = false
   ```
+
+  Another use of caret syntax is to specify slicing logic (in this case, slicing Observation.component):
+
+  ```
+  * component ^slicing.discriminator.type = #pattern
+  * component ^slicing.discriminator.path = "code"
+  * component ^slicing.rules = #open
+  * component ^slicing.description = "Slice based on the component.code pattern"
+  ```
+
 
 * **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and oids. Once defined anywhere in the FSH tank, the alias can be used anywhere the url or oid can be used. For example:
 
@@ -70,56 +79,37 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
   Alias: SCT = http://snomed.info/sct
   ```
 
-#### Coded Data Types
+* **Coded Data Types**: A leading hash sign (#) (*aka* number sign, pound sign, or octothorp) is used in FSH to denote a code taken from a formal terminology. FSH provides special grammar for expressing FHIR's coded data types (code, Coding, CodeableConcept, and Quantity):
 
-FSH provides special grammar for expressing coded data types. The shorthand for a Coding is:
+  <pre><code><i>{CodeSystem name|id|url}</i>#{code} <i>"{display string}"</i></code></pre>
 
-```
-{CodeSystem name|id|url}#{code}
-```
-or 
-```
-{CodeSystem name|id|url}#{code} "{display string}"
-```
+  Only the `#{code}` portion is used to specify a code. For a Coding or CodeableConcept, the `CodeSystem` represents a reference to the controlled terminology that the code is taken from. The `"{display string}"` is optional.
 
-For a FHIR `code` data type, `CodeSystem` is omitted. The display text is optional but helps with readability. The `CodeSystem` represents a reference to the controlled terminology that the code is taken from. Here are a few examples:
-
-* The code 363346000 from SNOMED-CT:
+  Here is SNOMED-CT code 363346000 in this syntax:
 
   ```
   http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
-* The same code, using the Snomed-CT alias `SCT`:
+  and here is the same code, using the alias `SCT` in place of http://snomed.info/sct:
 
   ```
   SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
-The coded value grammar can be used when assigning a value to an element whose data type is code, Coding, CodeableConcept, or Quantity. FSH uses the `=` sign to express assignment:
-
-* To set the first Coding in a CodeableConcept:
+  The code/Coding shorthand is frequently used in [assignment rules](reference.html#assignment-rules). FSH uses the `=` sign to express assignment. To set the bodySite in an instance of Condition:
 
   ```
   * bodySite = SCT#87878005 "Left cardiac ventricular structure"
   ```
-
-* To set the text of a CodeableConcept:
+ 
+  Another example is assigning the units of measure of a Quantity in a profile (using the alias UCUM for http://unitsofmeasure.org):
 
   ```
-  * bodySite.text = "Left ventricle"
+  * valueQuantity = UCUM#mm "millimeters"
   ```
 
-Quantity is another case of a coded data type. The code is interpreted as the units of measure of the quantity:
-
-```
-Alias: UCUM = http://unitsofmeasure.org
-...
-
-* valueQuantity = UCUM#mm "millimeters"
-```
-
-#### Defining New Items
+#### Defining Items in FSH
 
 Keywords are used to make declarations that introduce new items. A keyword statement follows the syntax:
 
@@ -149,7 +139,7 @@ Keywords that declare new items (like the `Profile` keyword in the previous exam
 * RuleSet
 * ValueSet
 
-Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a StructureDefinition.
+Note that not every type of FSH item has a direct FHIR equivalent. Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a SD.
 
 Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#defining-items).
 
@@ -163,7 +153,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 * {rule statement}
 ```
 
-There are approximately a dozen types of rules in FSH. The [formal syntax of rules](reference.html#rules-for-profiles-extensions-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary:
+The [formal syntax of rules](reference.html#rules-for-profiles-extensions-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary of some of the more important rules in FSH:
 
 * **Assignment rules** are used to set fixed values in instances and required patterns in profiles. For example:
 
@@ -203,6 +193,48 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * note ..5
   ```
 
+* **Contains rules** are used for extensions and slicing. Both cases involve specifying the type of elements that can appear arrays. 
+
+  Here are examples of defining inline extensions, the first with a nested extension, and the second with two top-level extensions:
+
+  ```
+  * bodySite.extension contains laterality 0..1
+  ```
+
+  ```
+  * extension contains
+      treatmentIntent 0..1 MS and
+      terminationReason 0..* MS
+  ```
+
+  A similar syntax is used for slicing, for example, to slice Observation.component into the components of blood pressure:
+
+  ```
+  * component contains
+      SystolicBP 1..1 and
+      DiastolicBP 1..1
+  ```
+
+  When incorporating an extension defined by FHIR, an external IG, or using FSH's `Extension` keyword, a modified syntax that assigns local name to the extension is used:
+
+  ```
+  // in the context of a profile on AllergyIntolerance
+  * extension contains
+      allergyintolerance-certainty named substanceCertainty 0..1 MS and
+      allergyintolerance-resolutionAge named resolutionAge 0..1 MS
+  ```
+
+  Typically, after defining an inline extension or slice, rules constraining the extension are required. In the blood pressure example, we assign the code for systolic and diastolic components,and restrict the data type to a Quantity with pressure units:
+
+  ```
+  * component[SystolicBP].code = http://loinc.org#8480-6 // Systolic blood pressure
+  * component[SystolicBP].value[x] only Quantity
+  * component[SystolicBP].valueQuantity = UCUM#mm[Hg]
+  * component[DiastolicBP].code = http://loinc.org#8462-4 // Diastolic blood pressure
+  * component[DiastolicBP].value[x] only Quantity
+  * component[DiastolicBP].valueQuantity = UCUM#mm[Hg]
+  ```
+
 * **Flag rules** add bits of information about elements impacting how implementers should handle them. The flags are as [defined FHIR](http://hl7.org/fhir/R4/formats.html#table), except FSH uses `MS` for must-support and `SU` for summary. For example:
 
   ```
@@ -213,7 +245,15 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * identifier and identifier.system and identifier.value and name and name.family MS
   ```
 
-* **Type rules** restrict the type of value that can be used in an element. For example:
+* **Obeys rules** associate elements with constraints represented as XPath or FHIRPath expressions. For example:
+
+  ```
+  * obeys us-core-9  // invariant applies to entire profile
+
+  * name obeys us-core-8  // invariant applies to the name element
+  ```
+
+* **Type rules** restrict the type of value that can be assigned to an element. For example:
 
   ```
   * value[x] only CodeableConcept
@@ -231,76 +271,6 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * recorder only Reference(Practitioner or PractitionerRole)
   ```
 
-* **Contains rules, for extensions** specify elements populating extensions arrays. Extensions can either be defined inline or standalone. Inline extensions do not have a separate StructureDefinition, but standalone extensions do. Standalone extensions include those defined by other IGs or extensions defined in the same FSH tank, using the `Extension` keyword.
-
-  Here are two examples of defining inline extensions, the first with a single extension, the second with multiple extensions.
-
-  ```
-  * bodySite.extension contains laterality 0..1
-  ```
-
-  ```
-  * extension contains
-      treatmentIntent 0..1 MS and
-      terminationReason 0..* MS
-  ```
-
-  Typically, after defining an inline extension, rules constraining the extension are required. In the first example, we can restrict the data type of value[x] and bind a value set:
-
-  ```
-  * bodySite.extension[laterality].value[x] only CodeableConcept
-  * bodySite.extension[laterality].valueCodeableConcept from LateralityVS (required)
-  ```
-
-  With standalone extensions, the main difference is that the grammar includes both the standalone name and the assigned local name. In this example, local names begin with a lower case letter, and standalone and external extension have capitalized (alias) names. This is a helpful convention, not part of the specification.
-
-  ```
-  // Aliases for convenience
-  Alias: USCoreRace = http://hl7.org/fhir/us/core/StructureDefinition/us-core-race
-  Alias: USCoreEthnicity = http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity
-  Alias: USCoreBirthsex = http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex
-
-  // Within a profile definition, include the external extensions with local names
-  * extension contains
-      USCoreRace named race 0..1 MS and
-      USCoreEthnicity named ethnicity 0..1 MS and
-      USCoreBirthsex named birthsex 0..1 MS
-  ```
-
-* **Contains rules, for slicing** specify the types of elements an array element can contain. Slicing requires setting of at least three parameters before the slice can be defined: the discriminator type and path, and slicing rules. [Caret syntax](reference.html#structuredefinition-escape-paths) is used to set these parameters directly in the StructureDefinition. Here is a typical "slicing rubric" for slicing Observation.component:
-
-  ```
-  * component ^slicing.discriminator.type = #pattern
-  * component ^slicing.discriminator.path = "code"
-  * component ^slicing.rules = #open
-  * component ^slicing.ordered = false   // can be omitted, since false is the default
-  * component ^slicing.description = "Slice based on the component.code pattern"  // optional
-  ```
-  Once the slicing rules have been established, the slice is created using the similar syntax as with extensions:
-
-  ```
-  * component contains
-      SystolicBP 1..1 and
-      DiastolicBP 1..1
-  ```
-  The elements of each slice must be constrained such that they can be uniquely identified via the discriminator. Other constraints may also be applied. Using the example above, each `component.code` should be constrained to satisfy the discriminator, and the values may also be constrained to indicate the type of value that is expected:
-
-  ```
-  * component[SystolicBP].code = http://loinc.org#8480-6 // Systolic blood pressure
-  * component[SystolicBP].value[x] only Quantity
-  * component[SystolicBP].valueQuantity = UCUM#mm[Hg]
-  * component[DiastolicBP].code = http://loinc.org#8462-4 // Diastolic blood pressure
-  * component[DiastolicBP].value[x] only Quantity
-  * component[DiastolicBP].valueQuantity = UCUM#mm[Hg]
-  ```
-
-* **Obeys rules** associate elements with XPath or FHIRPath constraints they must obey. For example:
-
-  ```
-  * obeys us-core-9  // invariant applies to entire profile
-
-  * name obeys us-core-8  // invariant applies to the name element
-  ```
 
 * **Value set rules** are used to include or exclude codes in value sets. These rules can be defined two ways:
 
@@ -332,7 +302,7 @@ There are approximately a dozen types of rules in FSH. The [formal syntax of rul
   * include codes from system SCT where concept is-a #123037004 "BodyStructure"
   ```
 
-  > **Note:** Because including codes is much more common than excluding codes, for brevity, the word `include` optional in all value set rules.
+  > **Note:** Because including codes is much more common than excluding codes, for brevity, the word `include` is optional in all value set rules.
 
 ### FSH in Practice
 
@@ -449,7 +419,7 @@ In this section, we will walk through a realistic example of FSH, line by line.
 * Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
-* Line 9 is the start of the rule section of the profile. It uses [caret syntax](reference.html#structuredefinition-escape-paths) to set the status attribute in the StructureDefinition produced for this profile.
+* Line 9 is the start of the rule section of the profile. It uses [caret syntax](reference.html#structuredefinition-escape-paths) to set the status attribute in the SD produced for this profile.
 * Line 10 adds an extension to the profile using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 30._
 * Line 11 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 46._
 * Line 12 designates a list of elements (inherited from Observation) as must-support.
@@ -486,15 +456,15 @@ While this version of FSH has been shown capable of producing complex IGs, futur
 
 Some of the features for FSH and SUSHI under consideration include (in no particular order):
 
-* **Round-Tripping** Currently there is no mature tool to translate existing FHIR artifacts into FSH. There is also a tool under development, [FSH Food](https://github.com/lantanagroup/fshfood), that converts StructureDefinitions into FSH.
+* **Importing SDs to FSH:** Currently there is no mature tool to translate existing FHIR artifacts such as SDs into FSH. It should be possible to round-trip between SDs in JSON or XML and FSH. There are two tools under development that convert SDs to FSH, [FSH Food](https://github.com/lantanagroup/fshfood) and GoFSH. 
 
-* **Web-Based SUSHI** The underlying architecture of SUSHI is compatible with future server-based deployment, potentially providing an interactive experience with FSH and SUSHI.
+* **Web-Based SUSHI:** The underlying architecture of SUSHI is compatible with future server-based deployment, potentially providing an interactive experience with FSH and SUSHI.
 
-* **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FSH will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices. We have nicknamed this “Ginsu Slicing” for the amazing 1980’s TV knife that slices through anything.
+* **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FSH will specify a set of algorithms that can be used to infer slicing discriminators based on the nature of the slices. We have nicknamed this capability “Ginsu Slicing” for the 1980’s TV infomercial knife that slices through anything.
 
 * **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 
-* **Capability Statements (and other conformance resources):** The FSH language supports creation of StructureDefinitions, and tools like SUSHI address creation of ImplementationGuide resources. However, these are not the only [conformance resources in FHIR](https://www.hl7.org/fhir/conformance-module.html). Others include CapabilityStatement, OperationDefinition, SearchParameter, and CompartmentDefinition. Currently, you can create any of these types as instances; for example, using `InstanceOf: CapabilityStatement`. To make this easier, we provide a [downloadable template](CapabilityStatementTemplate.fsh) for a CapabilityStatement. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
+* **Capability Statements (and other conformance resources):** The FSH language supports creation of SDs, and tools like SUSHI address creation of ImplementationGuide resources. However, these are not the only [conformance resources in FHIR](https://www.hl7.org/fhir/conformance-module.html). Others include CapabilityStatement, OperationDefinition, SearchParameter, and CompartmentDefinition. Currently, you can create any of these types as instances; for example, using `InstanceOf: CapabilityStatement`. To make this easier, we provide a [downloadable template](CapabilityStatementTemplate.fsh) for a CapabilityStatement. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
 
 * **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain sub-items. While not suggesting that FSH adopt YAML, it is worth noting that a syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
 
