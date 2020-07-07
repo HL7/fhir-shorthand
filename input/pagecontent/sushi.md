@@ -91,7 +91,7 @@ where options include:
 ```
 -o, --out <out>   the path to the output directory (default: /build)
 -h, --help        output usage information
--v, --version     output the version of SUSHI
+-v, --version     output the version of SUSHI and the version of FSH specification implemented
 -s, --snapshot    have SUSHI generate profile snapshots
 ```
 

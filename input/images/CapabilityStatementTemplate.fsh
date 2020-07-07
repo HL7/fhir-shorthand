@@ -8,7 +8,7 @@ Description: "CapabilityStatement profile that has all resources sliced for easy
 * version 1..1 MS
 * rest ^slicing.discriminator.type = #value
 * rest ^slicing.discriminator.path = "mode"
-* rest contains client 1..1 MS andserver 1..1 MS
+* rest contains client 1..1 MS and server 1..1 MS
 * rest[client].mode = #client
 * rest[client].resource ^slicing.discriminator.type = #value
 * rest[client].resource ^slicing.discriminator.path = "mode"
