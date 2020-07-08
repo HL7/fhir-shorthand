@@ -420,7 +420,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * Elements in a list or array by index
 * Individual data types of choice elements, such as `onsetAge` in onset[x]
 * Individual items within a multiple choice reference, such as Observation in `Reference(Observation or Condition)`
-* Individual slices within a sliced array, such as the `SystolicBP` component within blood pressure
+* Individual slices within a sliced array, such as the `systolicBP` component within blood pressure
 * Metadata elements in an SD, like `active` and `experimental`
 * Properties of ElementDefinitions nested within an SD, such as the `maxLength` property of string elements
 
@@ -428,7 +428,7 @@ In the following, the various types of path references are discussed.
 
 #### Top-Level Paths
 
-The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path does not include the known context. For example, when defining a profile on Observation, the path to Observation.code is denoted as `code`.
+The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path does not include the known context. For example, when defining a profile of Observation, the path to Observation.code is denoted as `code`.
 
 #### Nested Element Paths
 
@@ -510,7 +510,7 @@ FHIR represents a choice of data types using `foo[x]` notation. To address a sin
 
 #### Profiled Type Choice Paths
 
-In some cases, a data type may be constrained to a set of possible profiles. To address a specific profile on that type, follow the path with square brackets (`[ ]`) containing the profile's `name`, `id`, or `url`.
+In some cases, a data type may be constrained to a set of possible profiles. To address a specific profile of that type, follow the path with square brackets (`[ ]`) containing the profile's `name`, `id`, or `url`.
 
 **Example:**
 
@@ -578,25 +578,23 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 **Examples:**
 
-* Path to the coded value of the respiratoryScore component within an Observation profile representing an Apgar test:
+* Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
 
   ```
-  component[respiratoryScore].code
+  component[respirationScore].code
   ```
 
-* Paths to the codes representing the one minute and five minute respiratory scores, assuming the Apgar respiratory component has been resliced:
+* Paths to the codes representing the one minute and five minute respiration scores, assuming the Apgar respiration component has been resliced:
 
   ```
-  component[respiratoryScore][oneMinuteScore].code
+  component[respirationScore][oneMinuteScore].code
 
-  component[respiratoryScore][fiveMinuteScore].code
+  component[respirationScore][fiveMinuteScore].code
   ```
 
-#### StructureDefinition Escape Paths
+#### Caret Paths
 
-FSH uses the caret (`^`) syntax to provide direct access to elements of an SD. The caret syntax should be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of metadata elements in SDs that might require the caret syntax include `experimental`, `useContext`, and `abstract`. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., `short` description, slicing discriminator properties, `meaningWhenMissing`, etc.).
-
-> **Note:** Caret syntax is only applicable to FSH items that have corresponding StructureDefintions, specifically, profiles and stand-alone extensions.
+FSH uses the caret (`^`) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax should be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of metadata elements that might require the caret syntax include `experimental`, `useContext`, and `abstract` in StructureDefinitions, and `purpose` in ValueSet. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., `short`, `meaningWhenMissing`, [slicing discriminator properties](#step-3-specifying-the-slicing-logic), etc.).
 
 For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -612,7 +610,7 @@ For a path to an element of an ElementDefinition within an SD, use this syntax:
 
 **Note:** There is a required space before the ^ character.
 
-A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to an named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
+A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to a named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
 
 ```
 . ^<element of ElementDefinition[0]>
@@ -620,7 +618,7 @@ A special case of the ElementDefinition path is setting properties of the first 
 
 **Examples:**
 
-* In a profile definition, path to the 'experimental' attribute in the SD for that profile:
+* In a profile definition, path to the corresponding StructureDefinition.experimental attribute:
 
   ```
   ^experimental
@@ -687,7 +685,7 @@ The left side of this expression follows the [FSH path grammar](#fsh-paths). The
 
 Assignment rules have two different interpretations, depending on context:
 
-* In an instance, an assignment rule fixes the value of the target element.
+* In an instance, an assignment rule sets the value of the target element.
 * In a profile or extension, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. The pattern is considered "open" in the sense that the element in question may have additional content in addition to the prescribed value, such as additional codes in a CodeableConcept or an extension.
 
 If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
@@ -773,17 +771,17 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
 
   In the context of a profile:
 
-  * The first statement signals that to pass validation, an instance must have the system http://loinc.org and the code 69548-6 (appearing in coding.code).
-  * The second statement says that an instance must have the system http://loinc.org, the code 69548-6, and the display text "Genetic variant assessment" to pass validation.
-  * The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and must not have a display text, alternate codes, or extensions.
+  * The first statement signals that an instance must have the system http://loinc.org and the code 69548-6 to pass validation.
+  * The second statement says that an instance must have the system http://loinc.org, the code 69548-6, *and* the display text "Genetic variant assessment" to pass validation.
+  * The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and *must not have* a display text, additional codes, or extensions.
 
   In the context of an instance:
 
-  * The first statement fixes the system and code, leaving the display empty
-  * The second statement fixes the system, code, and display text
-  * The third statement has the same meaning as the first statement
+  * The first statement sets the system and code, leaving the display empty.
+  * The second statement sets the system, code, and display text.
+  * The third statement has the same meaning as the first statement.
   
-  In a profiling content, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
+  In a profiling context, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
 
 #### Binding Rules
 
@@ -885,7 +883,7 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
 
 #### Contains Rules for Extensions
 
-Extensions are created by adding elements to built-in extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions). The same instructions apply to 'modifierExtension' arrays.
+Extensions are created by adding elements to built-in extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
 
 Extensions are specified using the `contains` keyword. There are two types of extensions, standalone and inline:
 
@@ -913,9 +911,11 @@ The syntaxes to define inline extension(s) are:
 
 In these expressions, the names (`name`, `name1`, `name2`, etc.) are new names that the rule author creates. They should describe the extension in the context of the profile. These names are used to refer to that extension in later rules. By convention, the names should be [lower camelCase](https://wiki.c2.com/?CamelCase).
 
+> **Note:** Contains rules can also be applied to 'modifierExtension' arrays; simply replace `extension` with `modifierExtension`.
+
 **Examples:**
 
-* Add standalone FHIR extensions [`patient-disability`](http://hl7.org/fhir/R4/extension-patient-disability.html) and [`patient-genderIdentity`](http://hl7.org/fhir/StructureDefinition/patient-genderIdentity) to a profile on the Patient resource, at the top level using the canonical URLs for the extensions:
+* Add standalone FHIR extensions [`patient-disability`](http://hl7.org/fhir/R4/extension-patient-disability.html) and [`patient-genderIdentity`](http://hl7.org/fhir/StructureDefinition/patient-genderIdentity) to a profile of the Patient resource, at the top level using the canonical URLs for the extensions:
 
   ```
   * extension contains http://hl7.org/fhir/StructureDefinition/patient-disability named disability 0..1 MS and http://hl7.org/fhir/StructureDefinition/patient-genderIdentity named genderIdentity 0..1 MS
@@ -926,7 +926,8 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new names t
   ```
   * Alias: $Disability = http://hl7.org/fhir/StructureDefinition/patient-disability
   * Alias: $GenderIdentity = http://hl7.org/fhir/StructureDefinition/patient-genderIdentity
-    ...
+  
+  // intervening lines not shown
 
   * extension contains
         $Disability named disability 0..1 MS and
@@ -937,9 +938,8 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new names t
 
   ```
   * bodySite.extension contains Laterality named laterality 0..1
-    ...
 
-  // Definition of Laterality as a standalone extension
+  // intervening lines not shown
 
   Extension: Laterality
   Description: "Body side of a body location."
@@ -947,7 +947,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new names t
   * valueCodeableConcept from LateralityVS (required)
   ```
 
-* Add inline extensions to the stand-alone US Core Race extension:
+* Show how the inline extensions in [US Core Race](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) would be defined in FSH:
 
   ```
   * extension contains
@@ -960,7 +960,6 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new names t
   * extension[text].value[x] only string
   // etc.
   ```
-
 
 #### Contains Rules for Slicing
 
@@ -984,7 +983,7 @@ In this pattern, `<array>` is a path to the element that is to be sliced and to 
 
 Each slice will match or constrain the data type of the array it slices. In particular:
 
-* If an array is a one of the FHIR data types, each slice will be the same data type or a profile of it. For example, if an array of 'identifier' is sliced, then each slice will also be type 'identifier' or a profile of 'identifier'.
+* If an array is a one of the FHIR data types, each slice will be the same data type or a profile of it. For example, if Observation.identifier is sliced, each slice will have type Identifier or be constrained to a profile of the Identifier data type.
 * If the sliced array is a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints may be applied to the slices.
 * If the array to be sliced is a Reference, then each slice must be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice must either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
 
@@ -993,15 +992,15 @@ Each slice will match or constrain the data type of the array it slices. In part
 * Slice the Observation.component array for blood pressure:
 
   ```
-  * component contains SystolicBP 1..1 MS and DiastolicBP 1..1 MS
+  * component contains systolicBP 1..1 MS and diastolicBP 1..1 MS
   ```
 
 * Because FSH is white-space invariant, the previous example can be rewritten so the slices appear one-per-line for readability:
 
   ```
   * component contains
-        SystolicBP 1..1 MS and
-        DiastolicBP 1..1 MS
+      systolicBP 1..1 MS and
+      diastolicBP 1..1 MS
   ```
 
 ###### Reslicing
@@ -1035,35 +1034,34 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 ##### Step 2. Defining Slice Contents
 
-At minimum, each slice must be constrained such that it can be uniquely identified via the discriminator. For example, if the discriminator points to a "code" path that is a CodeableConcept, and it discriminates by "pattern", then each slice must have a constraint on "code" that uniquely distinguishes it from the other slices' codes. In addition to this minimum requirement, authors often place additional constraints on other aspects of each slice.
-
-FSH requires slice contents to be defined inline. The rule syntax for inline slices is the same as constraining any other path in a profile, but uses the [slice path syntax](#sliced-array-paths) in the path:
+The next step is to define the properties of each slice. FSH requires slice contents to be defined inline. The rule syntax is the same as constraining any other element, but the [slice path syntax](#sliced-array-paths) is used to specify the path:
 
 ```
 * <array>[{slice name}].<element> {constraint}
 ```
 
+The slice content rules must appear *after* the contains rule that creates the slices.
+
 **Examples:**
 
-* Define SystolicBP and DiastolicBP slices inline:
+* Define the content of the systolicBP and diastolicBP slices:
 
   ```
-  * component contains
-      SystolicBP 1..1 and
-      DiastolicBP 1..1
-  * component[SystolicBP].code = LNC#8480-6 // Systolic blood pressure
-  * component[SystolicBP].value[x] only Quantity
-  * component[SystolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
-  * component[DiastolicBP].code = LNC#8462-4 // Diastolic blood pressure
-  * component[DiastolicBP].value[x] only Quantity
-  * component[DiastolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
+  * component[systolicBP].code = LNC#8480-6 // Systolic blood pressure
+  * component[systolicBP].value[x] only Quantity
+  * component[systolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
+  * component[diastolicBP].code = LNC#8462-4 // Diastolic blood pressure
+  * component[diastolicBP].value[x] only Quantity
+  * component[diastolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
   ```
+
+At minimum, each slice must be constrained such that it can be uniquely identified via the discriminator (see Step 3). For example, if the discriminator path points to a "code" path that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain "code" using an assignment rule or binding rule that uniquely distinguishes it from the other slices' codes.
 
 ##### Step 3. Specifying the Slicing Logic
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
 
-The slicing logic parameters are specified using [StructureDefinition escape (caret) syntax](#structuredefinition-escape-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
+The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
 
 **Example:**
 
@@ -1091,9 +1089,9 @@ Flags are a set of information about the element that impacts how implementers h
 | D | D | Draft element |
 {: .grid }
 
-FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the presence of [invariants](#obeys-rules), and NE flags apply only to infrastructural elements in base resources. If needed, these flags can be set using [caret syntax](#structuredefinition-escape-paths).
+FHIR also defines I and NE flags, representing elements affected by constraints, and elements that cannot have extensions, respectively. These flags are not directly supported in flag syntax, since the I flag is determined by the presence of [invariants](#obeys-rules), and NE flags apply only to infrastructural elements in base resources.
 
-The following syntaxes can be used to assigning flags:
+The following syntaxes can be used to assign flags:
 
 ```
 * <element> {flag}
@@ -1107,10 +1105,10 @@ The following syntaxes can be used to assigning flags:
 
 **Examples:**
 
-* Declare communication to be MustSupport and Modifier:
+* Declare communication to be a MustSupport and Summary element:
 
   ```
-  * communication MS ?!
+  * communication MS SU
   ```
 
 * Declare a list of elements and nested elements to be MustSupport:
@@ -1337,9 +1335,9 @@ The following table shows the relationship between declaration keywords and addi
 [Instance](#defining-instances)       |  x  |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
 [Invariant](#defining-invariants)     |  x  |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
 [Mapping](#defining-mappings)         |  x  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
-[Profile](#defining-profiles)         |  O  |     S       |   S   |   R    |            |       |        |        |          |       |            |
+[Profile](#defining-profiles)         |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)       |     |             |       |        |            |       |        |        |          |       |            |
-[Value Set](#defining-value-sets)     |  O  |     S       |   S   |        |            |       |        |        |          |       |            |
+[Value Set](#defining-value-sets)     |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
 {: .grid }
 
 **KEY:**  R = required, S = suggested (optional but recommended), O = optional, blank = disallowed, x = Id is required but specified in the declaration statement
@@ -1401,40 +1399,41 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
   * #Bhujangasana "Cobra Pose" "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
   ```
 
-> **Note:** FSH does not currently support definition of relationships between local codes, such as parent-child (is-a) relationships.
+> **Note:** FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
 
 #### Defining Extensions
 
 Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension).
 
-> **Note:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
+All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a simple extension, the value[x] element should be constrained. To create a complex extension, the extension array of the extension must be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
+
+Since simple and complex extensions are mutually-exclusive, FSH implementations should set the value[x] cardinality to 0..0 if sub-extensions are specified, set extension cardinality to 0..0 if constraints are applied to value[x], and signal an error if value[x] and extensions are simultaneously specified.
 
 **Example:**
 
-* Define a simple (non-nested) extension for BirthSex, whose data type is `code`:
+* Show how the [US Core BirthSex extension](http://hl7.org/fhir/us/core/StructureDefinition-us-core-birthsex.html) (a simple extension) would be defined in FSH:
 
   ```
   Extension: USCoreBirthSexExtension
   Id:   us-core-birthsex
   Title:  "US Core Birth Sex Extension"
-  Description: "A code classifying the person's sex assigned at birth"
-  // publisher, contact, and other metadata here using caret (^) syntax (omitted)
+  Description: "A code classifying the person's sex assigned at birth as specified by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."
+  // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
   * value[x] only code
-  * valueCode from BirthSexValueSet (required)
+  * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
   ```
 
-* Define a complex extension (extension with nested extensions) for US Core Ethnicity:
+* Show how [US Core Ethnicity extension](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-ethnicity.html) (a complex extension with inline sub-extensions) would be defined in FSH:
 
   ```
   Extension:      USCoreEthnicityExtension
   Id:             us-core-ethnicity
   Title:          "US Core Ethnicity Extension"
-  Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. "
+  Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. The ethnicity codes used to represent these concepts are based upon the [CDC ethnicity and Ethnicity Code Set Version 1.0](http://www.cdc.gov/phin/resources/vocabulary/index.html) which includes over 900 concepts for representing race and ethnicity of which 43 reference ethnicity.  The ethnicity concepts are grouped by and pre-mapped to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."
   * extension contains
       ombCategory 0..1 MS and
       detailed 0..* and
       text 1..1 MS
-  // inline definition of sub-extensions
   * extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
   * extension[ombCategory].value[x] only Coding
   * extension[ombCategory].valueCoding from OmbEthnicityCategories (required)
@@ -1445,20 +1444,20 @@ Defining extensions is similar to defining a profile, except that the parent of 
   * extension[text].value[x] only string
   ```
 
-* Define an extension with an explicit parent, specializing the US Core Birth Sex extension:
+* Define an extension with an explicit parent, constraining the US Core Birth Sex extension for US states that do not recognize non-binary birth sex:
 
   ```
   Extension:      BinaryBirthSexExtension
   Parent:         USCoreBirthSexExtension
   Id:             binary-birthsex
   Title:          "Binary Birth Sex Extension"
-  Description:     "As of 2019, certain US states only allow M or F on birth certificates."
-  * valueCode from BinaryBirthSex (required)
+  Description:    "As of 2019, certain US states only allow M or F on birth certificates."
+  * valueCode from BinaryBirthSexValueSet (required)
   ```
 
 #### Defining Instances
 
-Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name of a profile defined in FSH, or a canonical URL (or alias) if defined externally.
+Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name, id, or url for any profile, resource, or complex data type defined internally or externally.
 
 Instances inherit structures and values from their StructureDefinition (i.e. assigned codes, extensions). Assignment rules are used to set additional values.
 
@@ -1480,7 +1479,6 @@ If `Usage` is unspecified, the default is `#example`.
   Title:   "Eve Anyperson"
   Usage:  #example
   * name.given = "Eve"
-  * name.given[1] = "Steve"
   * name.family = "Anyperson"
   * birthDate = 1960-04-25
   * extension[us-core-race].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2106-3 "White"
@@ -1494,10 +1492,10 @@ If `Usage` is unspecified, the default is `#example`.
   InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
   Title:  "Dr. David Anydoc"
   Usage:  #inline
-  * name[0].family = Anydoc
-  * name[0].given[0] = David
-  * name[0].suffix[0] = MD
-  * identifier[NPI].value = 8274017284
+  * name.family = "Anydoc"
+  * name.given = "David"
+  * name.suffix = "MD"
+  * identifier[NPI].value = "8274017284"
   ```
 
 * Define an instance of PrimaryCancerCondition, using many available features:
@@ -1508,7 +1506,6 @@ If `Usage` is unspecified, the default is `#example`.
   Description: "mCODE Example for Primary Cancer Condition"
   Usage: #example
   * id = "mCODEPrimaryCancerConditionExample01"
-  * meta.profile = "http://hl7.org/fhir/us/mcode/StructureDefinition/mcode-primary-cancer-condition"
   * clinicalStatus = $ClinStatus#active "Active"
   * verificationStatus = $VerStatus#confirmed "Confirmed"
   * code = SCT#254637007 "Non-small cell lung cancer (disorder)"
