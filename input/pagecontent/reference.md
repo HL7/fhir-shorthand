@@ -114,7 +114,7 @@ The following words are reserved only when enclosed in parentheses (intervening 
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings must be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors are NOT accepted. Left and right directional single quotes (U+2018 and U+2019) are also NOT accepted in contexts requiring a single quotation mark.
 
 #### Names
 
@@ -793,8 +793,6 @@ Binding is the process of associating a coded element with a set of possible val
 * <coded> from {ValueSet name|id|url}   // strength defaults to required
 ```
 
-The value set can be the name of a value set defined in the same FSH project or the defining URL of an external value set in the core FHIR spec or in an IG that has been declared an external dependency.
-
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
 
 The following rules apply to binding in FSH:
@@ -1199,7 +1197,6 @@ The referenced invariant and its properties must be declared somewhere within th
   * name obeys us-core-8
   ```
 
-
 #### Type Rules
 
 FSH rules can be used to restrict the data type of an element. The syntaxes to restrict the type are:
@@ -1532,10 +1529,11 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
 | Keyword | Usage | Corresponding element in ElementDefinition | Data Type | Required |
 |-------|------------|--------------|-------|----|
 | Invariant | Identifier for the invariant | constraint.key | id | yes |
-| Description | Human description of constraint | constraint.human | string or markdown  | yes |
+| Description | Human description of constraint | constraint.human | string  | yes |
 | Expression | FHIRPath expression of constraint | constraint.expression | FHIRPath string | no |
 | Severity | Either `#error` or `#warning`, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/R4/valueset-constraint-severity.html) | constraint.severity | code | yes |
 | XPath | XPath expression of constraint | constraint.xpath | XPath string | no |
+{: .grid }
 
 **Example:**
 
@@ -1553,7 +1551,7 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
 
 [Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
 
-To create a mapping, the keywords `Mapping`, `Source`, `Target` are required and `Title` and `Description` are optional.
+To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required, and `Title` and `Description` are optional.
 
 | Keyword | Usage | SD element |
 |-------|------------|--------------|
@@ -1563,6 +1561,7 @@ To create a mapping, the keywords `Mapping`, `Source`, `Target` are required and
 | Id | An internal identifier for the target specification | mapping.identity |
 | Title | A human-readable name for the target specification | mapping.name  |
 | Description | Additional information such as version notes, issues, or scope limitations. | mapping.comment |
+{: .grid }
 
 The mappings themselves are declared in rules with the following syntaxes:
 
@@ -1609,27 +1608,28 @@ The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to e
 
 #### Defining Profiles
 
-To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are optional.
+To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are optional. Rules defining the profile follow immediately after the keyword section.
 
 **Example:**
 
-* Define a profile for USCorePatient:
+* Define a profile for exposure to a pathogen:
 
   ```
-  Profile:        USCorePatient
-  Parent:         Patient
-  Id:             us-core-patient
-  Title:          "US Core Patient Profile"
-  Description:    "Defines constraints and extensions on the patient resource for the minimal set of data to query and retrieve patient demographic information."
+  Profile:        KnownExposureSetting
+  Parent:         Observation
+  Id:             known-exposure-setting
+  Title:          "Known Exposure Setting Profile"
+  Description:    "The setting where an individual was exposed to a contagion."
+  * code = LNC#81267-7 // Setting of exposure to illness
+  * value[x] only CodeableConcept
+  * valueCodeableConcept from https://loinc.org/vs/LL3991-8 (extensible)
   ```
-
-Rules defining the profile follow immediately after the keyword section.
 
 #### Defining Rule Sets
 
-Rule sets provide the ability to define rules and apply them to a compatible target. The rules are copied from the rule set at compile time. Any item admitting rules can have one or more rule sets applied to them. The same rule set can be used in multiple places.
+Rule sets provide the ability to define a group rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules must make sense where they are inserted. Once defined, a single rule set can be used in multiple places.
 
-All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. Circular dependencies are not allowed.
+All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
 
 Rule sets are defined by using the keyword `RuleSet`:
 
@@ -1640,7 +1640,6 @@ RuleSet: {name}
 // More rules
 ```
 
-Once defined, the rule set is applied to an item by using an [insert rule](#insert-rules).
 
 **Example:**
 
@@ -1655,7 +1654,7 @@ Once defined, the rule set is applied to an item by using an [insert rule](#inse
 
 #### Defining Value Sets
 
-A value set is a group of coded values representing acceptable values for a FHIR element whose data type is code, Coding, or CodeableConcept.
+A value set is a group of coded values representing acceptable values for a FHIR element whose data type is code, Coding, CodeableConcept, Quantity, string, or url.
 
 Value sets are defined using the declarative keyword `ValueSet`, with optional keywords `Id`, `Title` and `Description`.
 
@@ -1743,6 +1742,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 | UCUM  | Unified Code for Units of Measure
 | URL    | Uniform Resource Locator
 | XML   | Extensible Markup Language
+{: .grid }
 
 ### Appendix: Formal Grammar
 
