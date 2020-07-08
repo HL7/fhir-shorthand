@@ -1,4 +1,4 @@
-This chapter describes the FHIR Shorthand (FSH) language in detail. It is meant to be used as a reference, not a tutorial.
+This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended as a reference, not a tutorial.
 
 ### About this Guide
 This chapter uses syntax expressions to illustrate the FSH language. While there is a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
@@ -74,9 +74,9 @@ The main organizing construct is a FSH project, sometimes called a "FSH Tank". E
 
 #### Files
 
-Content in one FSH project is contained in one or more FSH files. FSH files use the **.fsh** extension. 
+Content in one FSH project may be contained in one or more FSH files (storage of FSH in a database is also possible). If stored in files, the files must use the **.fsh** extension. It is up to implementations to define the association between FSH files and FSH projects.
 
-The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. How items are divided among files is not meaningful in FSH, and items from all files in one project can be considered pooled together for the purposes of FSH. It is up to implementations to define the association between FSH files and FSH projects.
+The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. How items are divided among files is not meaningful in FSH, and items from all files in one project can be considered pooled together for the purposes of FSH.
 
 Items can appear in any order within **.fsh** files, and can be moved around within a file or to other **.fsh** files in the same project without affecting the interpretation of the content.
 
@@ -112,9 +112,9 @@ The following words are reserved only when enclosed in parentheses (intervening 
 
 #### Primitives
 
-The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/datatypes.html#primitive). References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
+The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to `code`, `id`, `oid`, etc. refer to the primitive datatypes defined in FHIR.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/datatypes.html#primitive): \r, \n, and \t.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t.
 
 #### Names
 
@@ -126,19 +126,19 @@ Alias names may begin with `$`. Choosing alias names beginning with `$` allows f
 
 #### Identifiers
 
-Items in FSH may have an identifier (id), typically specified using the [`Id` keyword](#defining-items). Each id must be unique within the scope of their item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is recommended to use a unique id for every item in a FSH project.
+Items in FSH may have an identifier (id), typically specified using the [`Id` keyword](#defining-items). Each id must be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is recommended to use a unique id for every item in a FSH project.
 
-If no id is provided by a FSH author, implementations may create an id. It is recommended that the id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the [FHIR id datatype](https://www.hl7.org/fhir/datatypes.html#primitive)).
+If no id is provided by a FSH author, implementations may create an id. It is recommended that the id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the [FHIR id datatype](https://www.hl7.org/fhir/R4/datatypes.html#primitive)).
 
 #### Referring to Other Items
 
-FSH items within the same project can be referred to by their names or ids, preferably, as given in their [declaration statement](#defining-items).
+FSH items within the same project can be referred to by their names or ids. Preferably, references should align with the name or id given in the [declaration statement](#defining-items).
 
 External FHIR artifacts in FHIR core and external IGs can be referred to by name, id, or canonical URL. Referring to core FHIR resources by name, e.g., `Patient` or `Observation`, is recommended. For other external items, the use of canonical URLs is recommended, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal entity takes precedence, and external entity must be referred to by its canonical URL.
 
 #### Reference and Canonical Data Types
 
-FHIR resources contain [two types of references](https://www.hl7.org/fhir/references.html) to other resources:
+FHIR resources contain [two types of references](https://www.hl7.org/fhir/R4/references.html) to other resources:
 
 * Resource references
 * Canonical references
@@ -149,22 +149,21 @@ Canonical references refer to the standard URL associated with a type of FHIR re
 
 #### Whitespace
 
-Repeated whitespace is not meaningful within FSH files (except within string literals). New lines are considered whitespace. This:
+Repeated whitespace is not meaningful within FSH files (except within string literals). New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
-Profile:  SecondaryCancerCondition
-Parent:   CancerCondition
-* focus only PrimaryCancerCondition
+* component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
 ```
 
-is equivalent to:
+can be reformatted as:
 
 ```
-             Profile:  
-SecondaryCancerCondition     Parent: CancerCondition
-
-         * focus only
-PrimaryCancerCondition
+* component contains
+    appearanceScore 0..3 and
+    pulseScore 0..3 and
+    grimaceScore 0..3 and
+    activityScore 0..3 and
+    respirationScore 0..3
 ```
 
 #### Comments
@@ -370,7 +369,7 @@ FSH provides a shorthand that allows quantities with units of measure to be spec
 * <Quantity> = {decimal} '{UCUM unit}'
 ```
 
-This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org) (CQL).
+This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org/02-authorsguide.html#quantities).
 
 The value and units can also be set independently. To set the value of quantity value, the quantity `value` property can be set directly:
 
@@ -382,7 +381,9 @@ To set the units of measure independently of the value, a Quantity can be bound 
 
 <pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
 
-Although it appears the quantity itself is being set to a coded value, this expression does in fact set the units of measure. This is a consequence of FHIR's definition of the Quantity data type.
+The `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
+
+> **Note:** Although this example appears to set the Quantity itself to a coded value, this expression does in fact set the units of measure. This is a consequence of FHIR's definition of Quantity *as* a coded data type, rather than *having* a coded data type to represent the Quantity's units of measure.
 
 **Examples:**
 
@@ -421,9 +422,13 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * Individual items within a multiple choice reference, such as Observation in `Reference(Observation or Condition)`
 * Individual slices within a sliced array, such as the `SystolicBP` component within blood pressure
 * Metadata elements in an SD, like `active` and `experimental`
-* Properties of ElementDefinitions nested within an SD, such as `maxLength` property of string elements
+* Properties of ElementDefinitions nested within an SD, such as the `maxLength` property of string elements
 
 In the following, the various types of path references are discussed.
+
+#### Top-Level Paths
+
+The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path does not include the known context. For example, when defining a profile on Observation, the path to Observation.code is denoted as `code`.
 
 #### Nested Element Paths
 
@@ -465,7 +470,7 @@ Elements can offer a choice of reference types. To address a specific resource o
 
 **Example:**
 
-* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/diagnosticreport.html), whose acceptable data types are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
+* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/R4/diagnosticreport.html), whose acceptable data types are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
 
   ```
   performer[Practitioner]
@@ -485,7 +490,7 @@ Elements can offer a choice of reference types. To address a specific resource o
 
 #### Data Type Choice [x] Paths
 
-FHIR represents a choice of data types using `foo[x]` notation. To address a single data type, replace the `[x]` with the data type name (also capitalizing the first letter). To illustrate, Condition.onset[x], with choices dateTime, Age, Period, Range or string would have paths onsetDateTime, onsetAge, onsetPeriod, etc. This follows the approach used in FHIR JSON and XML serialization and is customary in FHIR.
+FHIR represents a choice of data types using `foo[x]` notation. To address a single data type, replace the `[x]` with the data type name (also capitalizing the first letter). To illustrate, Condition.onset[x], with choices dateTime, Age, Period, Range or string would have paths onsetDateTime, onsetAge, onsetPeriod, etc. This follows [the approach used in FHIR](http://hl7.org/fhir/R4/formats.html#choice).
 
 > **Note:** foo[x] choices are NOT addressed as foo[boolean], foo[Quantity], etc.
 
@@ -497,10 +502,10 @@ FHIR represents a choice of data types using `foo[x]` notation. To address a sin
   valueString
   ```
 
-* The path to the Quantity within the SystolicBP component of the [Blood Pressure profile](https://www.hl7.org/fhir/bp.html):
+* The path to the dateTime data type within Condition.onset[x]:
 
   ```
-  component[SystolicBP].valueQuantity
+  onsetDateTime
   ```
 
 #### Profiled Type Choice Paths
@@ -541,13 +546,13 @@ For locally-defined extensions, using the slice name is the simplest choice. For
   extension[birthsex].valueCode
   ```
 
-* Path to an extension on the telecom element of US Core Patient, assuming the extension is given the local slice name `directMailAddress`:
+* Path to an extension on the telecom element of Patient, assuming the extension has been given the local slice name `directMailAddress`:
 
   ```
   telecom.extension[directMailAddress]
   ```
 
-* Same as the previous example, but using the canonical URL for the direct mail extension:
+* Same as the previous example, but using the canonical URL for the direct mail extension defined in US Core:
 
   ```
   telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct]
@@ -573,13 +578,13 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 **Examples:**
 
-* In an Observation profile representing Apgar score, with slices for respiratory score, appearance score, and others, path to the coded value of RespirationScore:
+* Path to the coded value of the respiratoryScore component within an Observation profile representing an Apgar test:
 
   ```
   component[respiratoryScore].code
   ```
 
-* If the respiratoryScore is resliced to represent the one and five minute Apgar scores, the paths to the codes representing the one minute and five minute scores are:
+* Paths to the codes representing the one minute and five minute respiratory scores, assuming the Apgar respiratory component has been resliced:
 
   ```
   component[respiratoryScore][oneMinuteScore].code
@@ -792,7 +797,7 @@ Binding is the process of associating a coded element with a set of possible val
 
 The value set can be the name of a value set defined in the same FSH project or the defining URL of an external value set in the core FHIR spec or in an IG that has been declared an external dependency.
 
-The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
+The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
 
 The following rules apply to binding in FSH:
 
@@ -836,7 +841,7 @@ To change the cardinality, the grammar is:
 
 As in FHIR, min and max are non-negative integers, and max can also be *, representing unbounded. It is valid to include both the min and max, even if one of them remains the same as in the original cardinality. In this case, FSH implementations should only generate constraints for the changed values.
 
-Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
+Cardinalities must follow [rules of FHIR profiling](https://www.hl7.org/fhir/R4/conformance-rules.html#cardinality), namely that the min and max cardinalities must stay within the constraints of the parent.
 
 For convenience and compactness, cardinality rules can be combined with [flag rules](#flag-rules) via the following grammar:
 
@@ -880,7 +885,7 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
 
 #### Contains Rules for Extensions
 
-Extensions are created by adding elements to built-in extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions). The same instructions apply to 'modifierExtension' arrays.
+Extensions are created by adding elements to built-in extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions). The same instructions apply to 'modifierExtension' arrays.
 
 Extensions are specified using the `contains` keyword. There are two types of extensions, standalone and inline:
 
@@ -1166,7 +1171,7 @@ Each rule in the rule set should be compatible with the item where the rule set 
 
 #### Obeys Rules
 
-[Invariants](https://www.hl7.org/fhir/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath](https://www.hl7.org/fhir/fhirpath.html) or [XPath](https://developer.mozilla.org/en-US/docs/Web/XPath) expressions. An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The syntax for applying invariants in profiles is:
+[Invariants](https://www.hl7.org/fhir/R4/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath](https://www.hl7.org/fhir/R4/fhirpath.html) or [XPath](https://developer.mozilla.org/en-US/docs/Web/XPath) expressions. An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The syntax for applying invariants in profiles is:
 
 ```
 * obeys {Invariant id}
@@ -1213,7 +1218,7 @@ FSH rules can be used to restrict the data type of an element. The syntaxes to r
 
 Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive data type or profile for one of the choices appearing in the parent profile or resource.
 
-Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/profiling.html), the data type(s) in a type rule must always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
+Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/R4/profiling.html), the data type(s) in a type rule must always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
 
 **Examples:**
 
@@ -1400,7 +1405,7 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 #### Defining Extensions
 
-Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/extensibility.html#extension).
+Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension).
 
 > **Note:** All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a complex extension, the extension array of the extension must be sliced (see example, below).
 
@@ -1519,7 +1524,7 @@ If `Usage` is unspecified, the default is `#example`.
 
 ##### Defining Instances of Conformance Resources
 
-The FSH language is designed to support creation of StructureDefinitions (the underlying type for profiles and extensions), ValueSets and CodeSystems. Tools like [SUSHI](sushi.html) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/conformance-module.html) that can be involved with IG creation that FSH does not explicitly support. These include [CapabilityStatement](https://www.hl7.org/fhir/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/compartmentdefinition.html).
+The FSH language is designed to support creation of StructureDefinitions (the underlying type for profiles and extensions), ValueSets and CodeSystems. Tools like [SUSHI](sushi.html) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) that can be involved with IG creation that FSH does not explicitly support. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
 
 These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The values of the CapabilityStatement are then set using assignment statements. Because CapabilityStatements can be very long, we provide a [downloadable template](CapabilityStatementTemplate.fsh) as a starting point.
 
@@ -1532,7 +1537,7 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
 | Invariant | Identifier for the invariant | constraint.key | id | yes |
 | Description | Human description of constraint | constraint.human | string or markdown  | yes |
 | Expression | FHIRPath expression of constraint | constraint.expression | FHIRPath string | no |
-| Severity | Either `#error` or `#warning`, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/valueset-constraint-severity.html) | constraint.severity | code | yes |
+| Severity | Either `#error` or `#warning`, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/R4/valueset-constraint-severity.html) | constraint.severity | code | yes |
 | XPath | XPath expression of constraint | constraint.xpath | XPath string | no |
 
 **Example:**
@@ -1549,7 +1554,7 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
 
 #### Defining Mappings
 
-[Mappings](https://www.hl7.org/fhir/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/structuremap.html).
+[Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
 
 To create a mapping, the keywords `Mapping`, `Source`, `Target` are required and `Title` and `Description` are optional.
 
@@ -1571,7 +1576,7 @@ The mappings themselves are declared in rules with the following syntaxes:
 
 The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target.
 
-The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code must come from FHIR's [MimeType value set](https://www.hl7.org/fhir/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
+The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/R4/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code must come from FHIR's [MimeType value set](https://www.hl7.org/fhir/R4/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
 
 >**Note:** Unlike setting the mapping.map directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
@@ -1653,9 +1658,9 @@ Once defined, the rule set is applied to an item by using an [insert rule](#inse
 
 #### Defining Value Sets
 
-A value set is a group of coded values, usually representing the acceptable values in a FHIR element whose data type is code, Coding, or CodeableConcept.
+A value set is a group of coded values representing acceptable values for a FHIR element whose data type is code, Coding, or CodeableConcept.
 
-Value sets are defined using the declarative keyword `ValueSet`, with optional keywords `Id`, `Title` and `Description`
+Value sets are defined using the declarative keyword `ValueSet`, with optional keywords `Id`, `Title` and `Description`.
 
 Codes must be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
@@ -1666,7 +1671,7 @@ The contents of a value set are defined by a set of rules. There are four types 
 | To include... | Syntax | Example |
 |-------|---------|----------|
 | A single code | `* include {Coding}` | `* include SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* SCT#961000205106 "Wearing street clothes, no shoes"`|
-| All codes from a value set | `* include codes from valueset {ValueSet name|id|url}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
+| All codes from another value set | `* include codes from valueset {ValueSet name|id|url}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
 | All codes from a code system | `* include codes from system {CodeSystem name|id|url}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
 | Selected codes from a code system (filters are code system dependent) | `* include codes from system {CodeSystem name|id|url} where {filter} and {filter} and ...` | `* include codes from system SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system SCT where concept is-a #254837009`|
 {: .grid }
@@ -1678,22 +1683,18 @@ Analogous rules can be used to leave out certain codes, with the word `exclude` 
 | To exclude... | Syntax | Example |
 |-------|---------|----------|
 | A single code | `* exclude {Coding}` | `* exclude SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from a value set | `* exclude codes from valueset {ValueSet name|id|url}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
+| All codes from another value set | `* exclude codes from valueset {ValueSet name|id|url}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | `* exclude codes from system {CodeSystem name|id|url}` | `* exclude codes from system http://snomed.info/sct` |
 | Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {CodeSystem name|id|url} where {filter}` | `* exclude codes from system SCT where concept is-a #254837009` |
 {: .grid }
 
 ##### Filters
 
-A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from [a value set](http://hl7.org/fhir/ValueSet/filter-operator) containing the values:
-
-`is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | exists`
-
-Not all operators are valid for any code system. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
+A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](http://hl7.org/fhir/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
 
 **Examples** 
 
-* Define a value set using [extensional](https://www.hl7.org/fhir/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
+* Define a value set using [extensional](https://www.hl7.org/fhir/R4/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
 
   ```
   ValueSet: BodyWeightPreconditionVS
@@ -1727,7 +1728,6 @@ Not all operators are valid for any code system. The `property` and `value` are 
 | Abbreviation | Description |
 |-----|----|
 | ANTLR4  | ANother Tool for Language Recognition, version 4
-| CQL | Clinical Quality Language
 | D  | Flag denoting draft status
 | FHIR  | Fast Healthcare Interoperability Resources
 | FSH   | FHIR Shorthand

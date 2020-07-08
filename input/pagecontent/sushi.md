@@ -1,5 +1,5 @@
 
-SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
+SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/R4/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
 
 This reference manual is a comprehensive guide to the command line interface, auxiliary files, and configurations needed to create an HL7 FHIR IG using SUSHI. It is targeted to people doing IG development using FSH. Familiarity with FHIR is helpful as the manual references various FHIR concepts (profiles, extensions, value sets, etc.)
 
@@ -97,7 +97,7 @@ where options include:
 
 The options are not order-sensitive.
 
-> Note: By default, SUSHI only generates the [profile differential](https://www.hl7.org/fhir/profiling.html#snapshot), leaving it to the IG Publisher to create the [profile snapshot](https://www.hl7.org/fhir/profiling.html#snapshot). This is the approach recommended by HL7 FHIR leadership. If authors prefer, the `-s` option can be used to cause SUSHI to generate the snapshot without having to run the IG Publisher.
+> Note: By default, SUSHI only generates the [profile differential](https://www.hl7.org/fhir/R4/profiling.html#snapshot), leaving it to the IG Publisher to create the [profile snapshot](https://www.hl7.org/fhir/R4/profiling.html#snapshot). This is the approach recommended by HL7 FHIR leadership. If authors prefer, the `-s` option can be used to cause SUSHI to generate the snapshot without having to run the IG Publisher.
 
 If you run SUSHI from the same directory where your .fsh files are located, and accept the defaults, the command can be shortened to:
 
@@ -165,7 +165,7 @@ While there are a variety of properties that can be used in the SUSHI configurat
 
 * For an example of a more extensive configuration file, see the [example configuration file](config.yaml).
 
-Most properties that can be used in the SUSHI configuration file come directly from the [Implementation Guide resource](https://www.hl7.org/fhir/implementationguide.html#resource). Below are properties that can be used in SUSHI configuration, and any differences between those properties and the FHIR source are highlighted.
+Most properties that can be used in the SUSHI configuration file come directly from the [Implementation Guide resource](https://www.hl7.org/fhir/R4/implementationguide.html#resource). Below are properties that can be used in SUSHI configuration, and any differences between those properties and the FHIR source are highlighted.
 
 | Property  | Corresponding IG element | Usage   |
 | :---------------------- | :-------------------------- |:---------|

@@ -114,7 +114,7 @@ Note that rules start with `*`. FSH expresses cardinality as, `{min}..{max}`, th
 
 ### Step 7: Create a Species Extension for FishPatient
 
-To specify the species of our aquatic patients, we'll need an [extension](https://www.hl7.org/fhir/extensibility.html#extension).
+To specify the species of our aquatic patients, we'll need an [extension](https://www.hl7.org/fhir/R4/extensibility.html#extension).
 
 We have a choice of whether to make the extension **inline** or **standalone**. Inline extensions do not result in a separate StructureDefinition, and cannot be reused in other profiles. Standalone extensions are the opposite: they have independent StructureDefinitions, and can be reused. For this example, let's make a standalone extension.
 
