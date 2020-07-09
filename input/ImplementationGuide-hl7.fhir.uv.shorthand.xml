@@ -40,7 +40,7 @@
       </page>
       <page>
         <nameUrl value="reference.html"/>
-        <title value="Language Reference (Normative)"/>
+        <title value="Language Reference (Formal Specification)"/>
         <generation value="markdown"/>
       </page>
       <page>

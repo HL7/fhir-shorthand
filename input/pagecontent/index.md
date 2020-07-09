@@ -11,12 +11,13 @@ This IG uses the following conventions:
 
 | Style | Explanation | Example |
 |:------------|:------|:---------|
-| `Code` | Code fragments, such as commands, FSH statements, and syntax expressions  | `* status = #open` |
+| `Code` | Code fragments, such as commands, FSH statements, and FSH syntax expressions  | `* status = #open` |
 | `{curly braces}` | An item to be substituted in a syntax expression | `{display string}` |
 | `<datatype>` | An element or path to an element with the given data type, to be substituted in the syntax expression | `<CodeableConcept>`
 | _italics_ | An optional item in a syntax expression | <code><i>"{string}"</i></code> |
 | ellipsis (...) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code>
 | **bold** | A directory path or file name | **example-1.fsh** |
+{: .grid }
 {: .grid }
 
 
