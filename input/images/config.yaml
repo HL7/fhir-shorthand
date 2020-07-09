@@ -27,7 +27,7 @@ fhirVersion: 4.0.1
 template: hl7.fhir.template#0.0.5
 
 # The following two lines correspond to items that used to be in
-# ig.ini but were recently moved to IG.definition.parameter. For
+# ig.ini but were moved to IG.definition.parameter. For
 # consistency within this file, the names are represented using
 # camelcase, but if authors use the formal parameter names, SUSHI
 # will recognize them as well. In either case, they'll be copied

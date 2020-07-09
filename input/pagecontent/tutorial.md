@@ -85,7 +85,7 @@ This will download the latest version of the HL7 FHIR IG Publisher tool into **.
 
 > **Note:** If you have never run the IG Publisher, you may need to install Jekyll first. See [Installing the IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) for details.
 
-> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://storage.googleapis.com/ig-build/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory **/FishExample/build/input-cache** (create the directory if necessary.)
+> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://github.com/HL7/fhir-ig-publisher/releases/latest/download/publisher.jar). When the file has downloaded, move it into the directory **/FishExample/build/input-cache** (create the directory if necessary.)
 
 Now run:
 
@@ -114,7 +114,7 @@ Note that rules start with `*`. FSH expresses cardinality as, `{min}..{max}`, th
 
 ### Step 7: Create a Species Extension for FishPatient
 
-To specify the species of our aquatic patients, we'll need an [extension](https://www.hl7.org/fhir/extensibility.html#extension).
+To specify the species of our aquatic patients, we'll need an [extension](https://www.hl7.org/fhir/R4/extensibility.html#extension).
 
 We have a choice of whether to make the extension **inline** or **standalone**. Inline extensions do not result in a separate StructureDefinition, and cannot be reused in other profiles. Standalone extensions are the opposite: they have independent StructureDefinitions, and can be reused. For this example, let's make a standalone extension.
 
@@ -206,7 +206,7 @@ Now, add constraints and/or extensions to the Veterinarian profile:
 
 * In addition, slice the `identifier` array, making a license number required. The code system is http://terminology.hl7.org/CodeSystem/v2-0203 and the code is LN, for "License number".
 
-If you need help with this, you can reference the [assignment rules](reference.html#assignment-rules) and [slicing rules](reference.html#slicing-rules) sections of the specification. If you still need help, you can peek at the FSH files in the **FishExampleComplete** directory.
+If you need help with this, you can reference the [assignment rules](reference.html#assignment-rules) and [slicing rules](reference.html#contains-rules-for-slicing) sections of the specification. If you still need help, you can peek at the FSH files in the **FishExampleComplete** directory.
 
 Run SUSHI again, and re-generate the IG.
 

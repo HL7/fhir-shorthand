@@ -1,5 +1,5 @@
 
-SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
+SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation of an interpreter/compiler for the FHIR Shorthand ("FSH" or "Shorthand") language. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/R4/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
 
 This reference manual is a comprehensive guide to the command line interface, auxiliary files, and configurations needed to create an HL7 FHIR IG using SUSHI. It is targeted to people doing IG development using FSH. Familiarity with FHIR is helpful as the manual references various FHIR concepts (profiles, extensions, value sets, etc.)
 
@@ -53,9 +53,7 @@ $ sushi -h
 
 If the command outputs instructions on using SUSHI command line interface (CLI), you're ready to run SUSHI.
 
-Use `$ sushi -v` to display version of SUSHI
-
-SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
+Use `$ sushi -v` to display the current version of SUSHI and the version of FSH specification supported by the current version of SUSHI. SUSHI follows the [semantic versioning](https://semver.org) convention (MAJOR.MINOR.PATCH):
 
 * MAJOR: A major release has significant new functionality and, potentially, grammar changes or other non-backward-compatible changes.
 * MINOR: Contains new or modified features, while maintaining backwards compatibility within the major version.
@@ -93,13 +91,13 @@ where options include:
 ```
 -o, --out <out>   the path to the output directory (default: /build)
 -h, --help        output usage information
--v, --version     output the version of SUSHI
+-v, --version     output the version of SUSHI and the version of FSH specification implemented
 -s, --snapshot    have SUSHI generate profile snapshots
 ```
 
 The options are not order-sensitive.
 
-> Note: By default, SUSHI only generates the [profile differential](https://www.hl7.org/fhir/profiling.html#snapshot), leaving it to the IG Publisher to create the [profile snapshot](https://www.hl7.org/fhir/profiling.html#snapshot). This is the approach recommended by HL7 FHIR leadership. If authors prefer, the `-s` option can be used to cause SUSHI to generate the snapshot without having to run the IG Publisher.
+> Note: By default, SUSHI only generates the [profile differential](https://www.hl7.org/fhir/R4/profiling.html#snapshot), leaving it to the IG Publisher to create the [profile snapshot](https://www.hl7.org/fhir/R4/profiling.html#snapshot). This is the approach recommended by HL7 FHIR leadership. If authors prefer, the `-s` option can be used to cause SUSHI to generate the snapshot without having to run the IG Publisher.
 
 If you run SUSHI from the same directory where your .fsh files are located, and accept the defaults, the command can be shortened to:
 
@@ -116,7 +114,7 @@ Here are some general tips on approaching debugging:
 * Eliminate parsing (syntax) errors first. Syntax error messages may include `extraneous input {x} expecting {y}`, `mismatched input {x} expecting {y}` and `no viable alternative at {x}`. These messages indicate that the line in question is not a valid FSH statement.
 * The order of keywords is not arbitrary. The declarations must start with the type of item you are creating (e.g., Profile, Instance, ValueSet).
 * The order of rules usually doesn't matter, but there are exceptions. Slices and extensions must be created before they are constrained.
-* A common error is `No element found at path`. This means that although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there are no spelling errors, the element names in the path are correct, and you are using the [path grammar](reference.html#paths) correctly.
+* A common error is `No element found at path`. This means that although the overall grammar of the statement is correct, SUSHI could not find the FHIR element you are referring to in the rule. Make sure there are no spelling errors, the element names in the path are correct, and you are using the [path grammar](reference.html#fsh-paths) correctly.
 * If you are getting an error you can't resolve, you can ask for help on the [#shorthand chat channel](https://chat.fhir.org/#narrow/stream/215610-shorthand).
 
 ### IG Development
@@ -167,7 +165,7 @@ While there are a variety of properties that can be used in the SUSHI configurat
 
 * For an example of a more extensive configuration file, see the [example configuration file](config.yaml).
 
-Most properties that can be used in the SUSHI configuration file come directly from the [Implementation Guide resource](https://www.hl7.org/fhir/implementationguide.html#resource). Below are properties that can be used in SUSHI configuration, and any differences between those properties and the FHIR source are highlighted.
+Most properties that can be used in the SUSHI configuration file come directly from the [Implementation Guide resource](https://www.hl7.org/fhir/R4/implementationguide.html#resource). Below are properties that can be used in SUSHI configuration, and any differences between those properties and the FHIR source are highlighted.
 
 | Property  | Corresponding IG element | Usage   |
 | :---------------------- | :-------------------------- |:---------|
@@ -249,8 +247,8 @@ Populate your project as follows:
 * **ignoreWarnings.txt**: If present, this file can be used to suppress specific QA warnings and information messages during the FHIR IG publication process.
 * The **/images** subdirectory: Put anything that is not a page in the IG, such as images, spreadsheets or zip files, in the **images** subdirectory. These files will be copied into the build and can be referenced by user-provided pages or menus.
 * **menu.xml**: If present and no `menu` property is specified in **config.yaml**, this file will be used for the IG's main menu layout.
-* The **/pagecontent** subdirectory, put either markup (.xml) or markdown (.md) files with the narrative content of your IG:
-  * **index.xml\|md**: If the `indexPageContent` property is not specified in **config.yaml**, this file provides the content for the IG's main page.
+* The **/pagecontent** subdirectory, put either markup (.xml) or markdown (.md) files with the narrative content of your IG. These files are the sources for the html pages that accompany the automatically-generated pages of your IG. The header and footer of these pages are automatically generated, so your content should not include these elements. Any number of pages can be added. In addition to stand-alone pages, you can provide additional text for generated artifact pages. The naming of these files is significant:
+  * **index.xml\|md**: This file provides the content for the IG's main page, unless the `indexPageContent` property is specified in **config.yaml**, in which case this file should not exist. Providing an index file is strongly recommended over inlining the content in **config.yaml**.
   * **N\_pagename.xml\|md**: If present, these files will be generated as individual pages in the IG. The leading integer (N) determines the order of the pages in the table of contents. These numbers are stripped and do not appear in the actual page URLs.
   * **{artifact-file-name}-intro.xml\|md**: If present, the contents of the file will be placed on the relevant page _before_ the artifact's definition.
   * **{artifact-file-name}-notes.xml\|md**: If present, the contents of the file will be placed on the relevant page _after_ the artifact's definition.
@@ -321,7 +319,7 @@ This will download the latest version of the HL7 FHIR IG Publisher tool into the
 
 > **Note:** If you have never run the IG Publisher, you may need to install Jekyll first. See [Installing the IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) for details.
 
-> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://storage.googleapis.com/ig-build/org.hl7.fhir.publisher.jar). When the file has downloaded, move it into the directory **/build/input-cache** (creating the directory if necessary.)
+> **Note:** If you are blocked by a firewall, or if for any reason `_updatePublisher` fails to execute, download the current IG Publisher jar file [here](https://github.com/HL7/fhir-ig-publisher/releases/latest/download/publisher.jar). When the file has downloaded, move it into the directory **/build/input-cache** (creating the directory if necessary.)
 
 Now run the following command:
 
