@@ -51,7 +51,7 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 |--------|--------|---------|
 | `{Coding}`  | Instance of a Coding | `SCT#961000205106 "Wearing street clothes, no shoes"` |
 | `<CodeableConcept>`  | An element or path to an element whose data type is CodeableConcept |  `category`  |
-|  `<coded>` | An element or path to an element that has one of the coded data types (`code`, `Coding`, `CodeableConcept` or `Quantity`) | `status` |
+| `<bindable>` | An element or path to an element whose data type allows it to be bound to a value set | `code` |
 | `{flag}`  | One of the valid [FSH flags](#flag-rules) |  `MS` |
 | `{flags}` | A sequence of 1 or more flags, separated by whitespace | `MS SU TU` |
 | `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
@@ -138,14 +138,11 @@ External FHIR artifacts in FHIR core and external IGs can be referred to by name
 
 #### Reference and Canonical Data Types
 
-FHIR resources contain [two types of references](https://www.hl7.org/fhir/R4/references.html) to other resources:
+FHIR resources contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
 
-* Resource references
-* Canonical references
+FSH represents Resource references using the syntax `Reference({Resource  name|id|url})`. For elements that require a Reference data type, `Reference()` cannot be omitted.
 
-FSH represents Resource references using the syntax `Reference({Resource  name|id|url})`. Where the type is Reference, `Reference()` is required.
-
-Canonical references refer to the standard URL associated with a type of FHIR resource. For elements that require a canonical reference, FSH will accept a URL, or an expression in the form `Canonical({name|id})` where `name` and `id` refer to items defined in the same FSH project. Implementations are to interpret `Canonical()` as an instruction to construct the canonical URL for the referenced item using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the project’s canonical URL in a single place with no changes to FSH definitions.
+Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name|id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
 #### Whitespace
 
@@ -363,27 +360,28 @@ To set the top-level text of a CodeableConcept, the FSH expression is:
     
 ##### Representing `Quantity` Data Type
 
-FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes. The syntax is:
+FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes. The syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org/02-authorsguide.html#quantities):
 
 ```
-* <Quantity> = {decimal} '{UCUM unit}'
+* <Quantity> = {decimal} '{UCUM code}'
 ```
 
-This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org/02-authorsguide.html#quantities).
-
-The value and units can also be set independently. To set the value of quantity value, the quantity `value` property can be set directly:
+The value and units can also be set independently. To assign a value, use the `value` property:
 
 ```
 * <Quantity>.value = {decimal}
 ```
 
-To set the units of measure independently of the value, a Quantity can be bound to a value set or assigned a coded value. The syntax is:
+The units of measure can either be assigned a coded value or bound to a value set:
 
-<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
+<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i>
 
-The `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
+* &lt;Quantity&gt; from {ValueSet name|id|url}
+</code></pre>
 
-> **Note:** Although this example appears to set the Quantity itself to a coded value, this expression does in fact set the units of measure. This is a consequence of FHIR's definition of Quantity *as* a coded data type, rather than *having* a coded data type to represent the Quantity's units of measure.
+In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
+
+> **Note:** The ability to assign a coded value or bind a value set to a Quantity is a consequence of FHIR's definition of Quantity *as* a coded data type, rather than *having* a coded data type to represent the units of measure.
 
 **Examples:**
 
@@ -417,9 +415,8 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 
 * Top-level elements such as the `code` element in Observation
 * Nested elements, such as the `method.text` element in Observation
-* Elements in a list or array by index
+* Elements in a list or array
 * Individual data types of choice elements, such as `onsetAge` in onset[x]
-* Individual items within a multiple choice reference, such as Observation in `Reference(Observation or Condition)`
 * Individual slices within a sliced array, such as the `systolicBP` component within blood pressure
 * Metadata elements in an SD, like `active` and `experimental`
 * Properties of ElementDefinitions nested within an SD, such as the `maxLength` property of string elements
@@ -506,20 +503,6 @@ FHIR represents a choice of data types using `foo[x]` notation. To address a sin
 
   ```
   onsetDateTime
-  ```
-
-#### Profiled Type Choice Paths
-
-In some cases, a data type may be constrained to a set of possible profiles. To address a specific profile of that type, follow the path with square brackets (`[ ]`) containing the profile's `name`, `id`, or `url`.
-
-**Example:**
-
-* After constraining Patient.contact.address to be either a USAddress or a CanadianAddress (assuming these are profiles on Address), the paths to the respective `state` elements in the first contact:
-
-  ```
-  contact[0].address[USAddress].state
-
-  contact[0].address[CanadianAddress].state
   ```
 
 #### Extension Paths
@@ -655,7 +638,7 @@ The following table is a summary of the rules applicable to profiles, extensions
 | Rule Type | Syntax |
 | --- | --- |
 | Assignment |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
-| Binding |`* <coded> from {ValueSet name|id|url}` <br/> `* <coded> from {ValueSet name|id|url} ({strength})`|
+| Binding |`* <bindable> from {ValueSet name|id|url}` <br/> `* <bindable> from {ValueSet name|id|url} ({strength})`|
 | Cardinality | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
 | Contains (for inline extensions)| <code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i> </code>  <br/> <code>* &lt;Extension&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code> |
 | Contains (for standalone extensions) | <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
@@ -787,19 +770,17 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
 
 Binding is the process of associating a coded element with a set of possible values. The syntaxes to bind a value set, or alter an inherited binding, use the reserved word `from`:
 
-```
-* <coded> from {ValueSet name|id|url} ({strength})
+<pre><code>* &lt;bindable&gt; from {ValueSet name|id|url} <i>({strength})</i></code></pre>
 
-* <coded> from {ValueSet name|id|url}   // strength defaults to required
-```
+The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1).
 
-The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required.
+The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required. If strength is not specified, a required binding is assumed.
 
-The following rules apply to binding in FSH:
+The [binding rules defined in FHIR](https://www.hl7.org/fhir/R4/profiling.html#binding) are applicable to FSH. In particular:
 
-* If no binding strength is specified, a required binding is assumed.
-* When further constraining an existing binding, the binding strength can stay the same or be made tighter (e.g., replacing a preferred binding with extensible or required), but never loosened.
-* Constraining may leave the binding strength the same and change the value set instead. However, certain changes permitted in FSH may violate [FHIR profiling principles](http://hl7.org/fhir/R4/profiling.html#binding-strength). In particular, FHIR will permit a required value set to be replaced by another required value set only if the codes in the new value set are a subset of the codes in the original value set. For extensible bindings, the new value set can contain codes not in the existing value set, but additional codes should not have the same meaning as existing codes in the base value set.
+* When constraining an existing binding, the binding strength can only stay the same or be strengthened (e.g., a preferred binding can be replaced with an extensible or required binding).
+* A required value set can be replaced by another required value set if the codes in the new value set are a subset of the codes in the original value set.
+* For extensible bindings, the new value set can contain codes not in the existing value set, but additional codes should not have meanings covered by codes in the base value set.
 
 **Examples:**
 
@@ -1518,9 +1499,11 @@ If `Usage` is unspecified, the default is `#example`.
 
 ##### Defining Instances of Conformance Resources
 
-The FSH language is designed to support creation of StructureDefinitions (the underlying type for profiles and extensions), ValueSets and CodeSystems. Tools like [SUSHI](sushi.html) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) that can be involved with IG creation that FSH does not explicitly support. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
+The FSH language is designed to support creation of StructureDefinitions for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](sushi.html) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
 
-These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The values of the CapabilityStatement are then set using assignment statements. Because CapabilityStatements can be very long, we provide a [downloadable template](CapabilityStatementTemplate.fsh) as a starting point.
+These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The CapabilityStatement is populated using assignment statements. 
+
+<!--Because CapabilityStatements can be lengthy, we provide a [downloadable template](CapabilityStatementTemplate.fsh) as a starting point.-->
 
 #### Defining Invariants
 
@@ -1589,9 +1572,10 @@ The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to e
   ```
   * identifier.value -> "Patient.identifier.value"
   ```
-* Define a map between USCorePatient and Argonaut:
-  ```
 
+* Define a map between USCorePatient and Argonaut:
+
+  ```
   Mapping:  USCorePatientToArgonaut
   Source:   USCorePatient
   Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
@@ -1759,23 +1743,28 @@ alias:              KW_ALIAS SEQUENCE EQUAL SEQUENCE;
 profile:            KW_PROFILE SEQUENCE sdMetadata+ sdRule*;
 extension:          KW_EXTENSION SEQUENCE sdMetadata* sdRule*;
 sdMetadata:         parent | id | title | description | mixins;
-sdRule:             cardRule | flagRule | valueSetRule | fixedValueRule | containsRule | onlyRule | obeysRule | caretValueRule;
+sdRule:             cardRule | flagRule | valueSetRule | fixedValueRule | containsRule | onlyRule | obeysRule | caretValueRule | insertRule;
 
-instance:           KW_INSTANCE SEQUENCE instanceMetadata* fixedValueRule*;
+instance:           KW_INSTANCE SEQUENCE instanceMetadata* instanceRule*;
 instanceMetadata:   instanceOf | title | description | usage | mixins;
+instanceRule:       fixedValueRule | insertRule;
 
 invariant:          KW_INVARIANT SEQUENCE invariantMetadata+;
 invariantMetadata:  description | expression | xpath | severity;
 
-valueSet:           KW_VALUESET SEQUENCE vsMetadata* (caretValueRule | vsComponent)*;
+valueSet:           KW_VALUESET SEQUENCE vsMetadata* vsRule*;
 vsMetadata:         id | title | description;
-codeSystem:         KW_CODESYSTEM SEQUENCE csMetadata* (caretValueRule | concept)*;
+vsRule:             vsComponent | caretValueRule | insertRule;
+codeSystem:         KW_CODESYSTEM SEQUENCE csMetadata* csRule*;
 csMetadata:         id | title | description;
+csRule:             concept | caretValueRule | insertRule;
 
-ruleSet:            KW_RULESET SEQUENCE sdRule+;
+ruleSet:            KW_RULESET SEQUENCE ruleSetRule+;
+ruleSetRule:        sdRule | concept | vsComponent;
 
-mapping:            KW_MAPPING SEQUENCE mappingMetadata* mappingRule*;
+mapping:            KW_MAPPING SEQUENCE mappingMetadata* mappingEntityRule*;
 mappingMetadata:    id | source | target | description | title;
+mappingEntityRule:  mappingRule | insertRule;
 
 // METADATA FIELDS
 parent:             KW_PARENT SEQUENCE;
@@ -1787,14 +1776,14 @@ xpath:              KW_XPATH STRING;
 severity:           KW_SEVERITY CODE;
 instanceOf:         KW_INSTANCEOF SEQUENCE;
 usage:              KW_USAGE CODE;
-mixins:             KW_MIXINS (SEQUENCE | COMMA_DELIMITED_SEQUENCES);
+mixins:             KW_MIXINS ((SEQUENCE KW_AND)* SEQUENCE | COMMA_DELIMITED_SEQUENCES);
 source:             KW_SOURCE SEQUENCE;
 target:             KW_TARGET STRING;
 
 
 // RULES
 cardRule:           STAR path CARD flag*;
-flagRule:           STAR (path | paths) flag+;
+flagRule:           STAR ((path KW_AND)* path | paths) flag+;
 valueSetRule:       STAR path KW_UNITS? KW_FROM SEQUENCE strength?;
 fixedValueRule:     STAR path KW_UNITS? EQUAL value KW_EXACTLY?;
 containsRule:       STAR path KW_CONTAINS item (KW_AND item)*;
@@ -1802,15 +1791,17 @@ onlyRule:           STAR path KW_ONLY targetType (KW_OR targetType)*;
 obeysRule:          STAR path? KW_OBEYS SEQUENCE (KW_AND SEQUENCE)*;
 caretValueRule:     STAR path? caretPath EQUAL value;
 mappingRule:        STAR path? ARROW STRING STRING? CODE?;
+insertRule:         STAR KW_INSERT SEQUENCE;
 
 // VALUESET COMPONENTS
-vsComponent:        STAR KW_EXCLUDE? ( vsConceptComponent | vsFilterComponent );
+vsComponent:        STAR ( KW_INCLUDE | KW_EXCLUDE )? ( vsConceptComponent | vsFilterComponent );
 vsConceptComponent: code vsComponentFrom?
+                    | (code KW_AND)+ code vsComponentFrom
                     | COMMA_DELIMITED_CODES vsComponentFrom;
 vsFilterComponent:  KW_CODES vsComponentFrom (KW_WHERE vsFilterList)?;
 vsComponentFrom:    KW_FROM (vsFromSystem (KW_AND vsFromValueset)? | vsFromValueset (KW_AND vsFromSystem)?);
 vsFromSystem:       KW_SYSTEM SEQUENCE;
-vsFromValueset:     KW_VSREFERENCE (SEQUENCE | COMMA_DELIMITED_SEQUENCES);
+vsFromValueset:     KW_VSREFERENCE ((SEQUENCE KW_AND)* SEQUENCE | COMMA_DELIMITED_SEQUENCES);
 vsFilterList:       (vsFilterDefinition KW_AND)* vsFilterDefinition;
 vsFilterDefinition: SEQUENCE vsFilterOperator vsFilterValue?;
 vsFilterOperator:   EQUAL | SEQUENCE;
@@ -1828,7 +1819,7 @@ code:               CODE STRING?;
 concept:            STAR code (STRING | MULTILINE_STRING)?;
 quantity:           NUMBER UNIT;
 ratio:              ratioPart COLON ratioPart;
-reference:          REFERENCE STRING?;
+reference:          (OR_REFERENCE | PIPE_REFERENCE) STRING?;
 ratioPart:          NUMBER | quantity;
 bool:               KW_TRUE | KW_FALSE;
 targetType:         SEQUENCE | reference;
@@ -1874,6 +1865,7 @@ KW_OR:              'or';
 KW_OBEYS:           'obeys';
 KW_TRUE:            'true';
 KW_FALSE:           'false';
+KW_INCLUDE:         'include';
 KW_EXCLUDE:         'exclude';
 KW_CODES:           'codes';
 KW_WHERE:           'where';
@@ -1881,6 +1873,7 @@ KW_VSREFERENCE:     'valueset';
 KW_SYSTEM:          'system';
 KW_UNITS:           'units';
 KW_EXACTLY:         '(' WS* 'exactly' WS* ')';
+KW_INSERT:          'insert';
 
 // SYMBOLS
 EQUAL:              '=';
@@ -1892,7 +1885,7 @@ ARROW:              '->';
 // PATTERNS
 
                  //  "    CHARS    "
-STRING:             '"' (~[\\"] | '\\"' | '\\\\')* '"';
+STRING:             '"' (~[\\"] | '\\r' | '\\n' | '\\t' | '\\"' | '\\\\')* '"';
                  //  """ CHARS """
 MULTILINE_STRING:   '"""' .*? '"""';
                  //  +/- ? DIGITS( .  DIGITS)?
@@ -1909,7 +1902,8 @@ TIME:               [0-9][0-9](':'[0-9][0-9](':'[0-9][0-9]('.'[0-9]+)?)?)?('Z' |
                  // DIGITS  ..  (DIGITS |  * )
 CARD:               ([0-9]+)? '..' ([0-9]+ | '*')?;
                  //  Reference       (        ITEM         |         ITEM         )
-REFERENCE:          'Reference' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)* ')';
+OR_REFERENCE:       'Reference' WS* '(' WS* SEQUENCE WS* (WS 'or' WS+ SEQUENCE WS*)* ')';
+PIPE_REFERENCE:          'Reference' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)* ')';
                  //  ^  NON-WHITESPACE
 CARET_SEQUENCE:     '^' NONWS+;
                  // '/' EXPRESSION '/'
