@@ -970,7 +970,7 @@ Each slice will match or constrain the data type of the array it slices. In part
 * If the sliced array is a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints may be applied to the slices.
 * If the array to be sliced is a Reference, then each slice must be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice must either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
 
-**Example:**
+**Examples:**
 
 * Slice the Observation.component array for blood pressure:
 
@@ -1112,7 +1112,7 @@ The rules in the named rule set are interpreted as if they were copied and paste
 
 Each rule in the rule set should be compatible with the item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations should check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error should be emitted. It is up to implementations if other valid rules from the rule set are applied.
 
-**Example:**
+**Examples:**
 
 * Insert the rule set named [RuleSet1](#defining-rule-sets) into a profile:
 
@@ -1396,7 +1396,7 @@ All extensions have the same structure, but extensions can either have a value (
 
 Since simple and complex extensions are mutually-exclusive, FSH implementations should set the value[x] cardinality to 0..0 if sub-extensions are specified, set extension cardinality to 0..0 if constraints are applied to value[x], and signal an error if value[x] and extensions are simultaneously specified.
 
-**Example:**
+**Examples:**
 
 * Show how the [US Core BirthSex extension](http://hl7.org/fhir/us/core/StructureDefinition-us-core-birthsex.html) (a simple extension) would be defined in FSH:
 
