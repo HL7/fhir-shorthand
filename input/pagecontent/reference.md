@@ -461,7 +461,7 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
 #### Reference Paths
 
-Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure | Observation). To address a specific resource or profile among the choices, the path to the element appends the target data type (represented by a name, id, or url) enclosed in square brackets.
+Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure \| Observation). To address a specific resource or profile among the choices, the path to the element appends the target data type (represented by a name, id, or url) enclosed in square brackets.
 
 > **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that has data type Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
 
@@ -518,7 +518,7 @@ Extension arrays are found at the root level of every resource, nested inside ev
 The path to an extension is constructed by combining the path to the extension array with a reference to the extension in square brackets:
 
 ```
-<Extension>[{extension slice name or URL}]
+<Extension>[{extension slice name|id|URL}]
 ```
 
 For locally-defined extensions, using the slice name is the simplest choice. For externally-defined extensions, the canonical URL can be easier to find than the slice name.
@@ -670,21 +670,6 @@ Assignment rules follow this syntax:
 
 The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side must align with the data type of the final element in the path, and may be a complex data type (such as an address).
 
-Assignment rules have two different interpretations, depending on context:
-
-* In an instance, an assignment rule sets the value of the target element.
-* In a profile or extension, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. The pattern is considered "open" in the sense that the element in question may have additional content in addition to the prescribed value, such as additional codes in a CodeableConcept or an extension.
-
-If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
-
-```
-* <element> = {value} (exactly)
-```
-
-Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
-
-> **Note:** The `(exactly)` modifier does not apply to instances.
-
 **Examples:**
 
 * Assignment of a code data type:
@@ -705,43 +690,22 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   * onsetDateTime = "2019-04-02"
   ```
 
-* Assignment of a quantity with single quotes indicating UCUM units:
+##### Assignments in Instances versus Profiles or Extensions
 
-  ```
-  * valueQuantity = 36.5 'C'
-  ```
+Assignment rules have two different interpretations, depending on context:
 
-* Assignment of a reference to an example of a Patient resource, EveAnyperson, to Observation.subject:
+* In an instance, an assignment rule sets the value of the target element.
+* In a profile or extension, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. The pattern is considered "open" in the sense that the element in question may have additional content in addition to the prescribed value, such as additional codes in a CodeableConcept or an extension.
 
-  ```
-  * subject = Reference(EveAnyperson)
-  ```
+If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
 
-  where, for example:
+```
+* <element> = {value} (exactly)
+```
 
-  ```
-  Instance: EveAnyperson
-  InstanceOf: Patient
-  Usage: #example
-  * name.given = "Eve"
-  * name.family = "Anyperson"
-  ```
+Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
 
-* Assignment of an inline instance, AdamEveryperson, to Bundle.entry.resource, whose data type is Resource (not Reference(Resource)):
-
-  ```
-  * entry.resource = AdamEveryperson
-  ```
-
-  where, for example:
-
-  ```
-  Instance: AdamEveryperson
-  InstanceOf: Patient
-  Usage: #inline
-  * name.given = "Adam"
-  * name.family = "Everyperson"
-  ```
+> **Note:** The `(exactly)` modifier does not apply to instances.
 
 
 * Contrast the behavior of assignment statements in profiles and instances:
@@ -769,6 +733,145 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
   * The third statement has the same meaning as the first statement.
   
   In a profiling context, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
+
+
+##### Assignments with the CodeableConcept Data Type
+
+A CodeableConcept consists of an array of Codings. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
+
+<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
+
+To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
+
+<pre><code>* &lt;CodeableConcept&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
+
+To set the top-level text of a CodeableConcept, the FSH expression is:
+
+```
+* <CodeableConcept>.text = "{string}"
+```
+
+**Examples:**
+
+* Set the first Coding in Condition.code (a CodeableConcept type):
+
+  ```
+  * code = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  ```
+    
+* An equivalent representation, using explicit array index on the coding array:
+
+  ```
+  * code.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  ```
+    
+* Another equivalent representation, using the shorthand that allows dropping the [0] index:
+
+  ```
+  * code.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  ```
+    
+* Add a second value to the array of Codings:
+
+  ```
+  * code.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
+  ```
+    
+* Set the top-level text of Condition.code:
+
+  ```
+  * code.text = "Diagnosis of malignant neoplasm left breast."
+  ```
+
+##### Assignments with the Quantity Data Type
+
+FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes:
+
+```
+* <Quantity> = {decimal} '{UCUM code}'
+```
+
+The value and units can also be set independently. To assign a value, use the Quantity.value property:
+
+```
+* <Quantity>.value = {decimal}
+```
+
+The units of measure can either be assigned a coded value or bound to a value set:
+
+<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i>
+
+* &lt;Quantity&gt; from {ValueSet name|id|url}
+</code></pre>
+
+In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
+
+> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type, rather than representing the units of measure using a Coding.
+
+**Examples:**
+
+* Set the valueQuantity of an Observation to 55 millimeters using UCUM units:
+
+  ```
+  * valueQuantity = 55.0 'mm'
+  ```
+
+* Set the numerical value of Observation.valueQuantity to 55.0 without setting the units:
+
+  ```
+  * valueQuantity.value = 55.0
+  ```
+  
+* Set the units of the same valueQuantity to millimeters, without setting the value (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
+
+  ```
+  * valueQuantity = UCUM#mm "millimeters"
+  ```
+
+* Bind a value set to a Quantity, constraining the units of that Quantity:
+
+  ```
+  * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
+  ```
+
+
+
+##### Assignments Involving References
+
+**Examples:**
+
+* Assignment of a reference to an example of a Patient resource, EveAnyperson, to Observation.subject:
+
+  ```
+  * subject = Reference(EveAnyperson)
+  ```
+
+  where, for example:
+
+  ```
+  Instance: EveAnyperson
+  InstanceOf: Patient
+  Usage: #example
+  * name.given = "Eve"
+  * name.family = "Anyperson"
+  ```
+
+* Contrast the previous example to an assignment of an inline instance in Bundle.entry.resource, whose data type is Resource (not Reference(Resource)):
+
+  ```
+  * entry.resource = AdamEveryperson
+  ```
+
+  where, for example:
+
+  ```
+  Instance: AdamEveryperson
+  InstanceOf: Patient
+  Usage: #inline
+  * name.given = "Adam"
+  * name.family = "Everyperson"
+  ```
+
 
 #### Binding Rules
 
