@@ -13,6 +13,7 @@ Syntax expressions uses the following conventions:
 | _italics_ | An optional item in a syntax expression | <code><i>"{string}"</i></code> |
 | ellipsis (...) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code>
 | **bold** | A directory path or file name | **example-1.fsh** |
+| vertical bar | A choice of items or data types in the syntax | `name|id|url` |
 {: .grid }
 
 
@@ -534,7 +535,7 @@ The following table is a summary of the rules applicable to profiles, extensions
 | Contains (for slicing) | <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
 | Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
 | Insert | `* insert {RuleSet name}` |
-| Obeys | `* obeys {Invariant id}` <br/> `* obeys {invariant1 id} and {invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {invariant1 id} and {invariant2 id} ...` |
+| Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
 | Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 {: .grid }
 
@@ -1316,11 +1317,11 @@ Additional keywords are as follows:
 
 | Additional Keyword | Purpose | Data Type |
 |----------|---------|---------|
-| `Description` | Provides a human-readable description | string, markdown |
+| `Description` | Provides a human-readable description | string or Pmarkdown |
 | `Expression` | The FHIR path expression in an invariant | FHIRPath string |
 | `Id` | An identifier for an item | id |
-| `InstanceOf` | The profile or resource an instance instantiates | name |
-| `Parent` | Specifies the base class for a profile or extension | name or url |
+| `InstanceOf` | The profile or resource an instance instantiates | name or id or url |
+| `Parent` | Specifies the base class for a profile or extension | name or id or url |
 | `Severity` | whether violation of an invariant represents an error or a warning | code |
 | `Source` | The profile the mapping applies to | name |
 | `Target` | The standard being mapped to | uri |
@@ -1573,7 +1574,7 @@ To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required
 | Keyword | Usage | SD element |
 |-------|------------|--------------|
 | Mapping | Appears first and provides a unique name for the mapping | n/a |
-| Source | The name of the profile the mapping applies to | n/a |
+| Source | The name or id of the profile the mapping applies to | n/a |
 | Target | The URL, URI, or OID for the specification being mapped to | mapping.uri |
 | Id | An internal identifier for the target specification | mapping.identity |
 | Title | A human-readable name for the target specification | mapping.name  |
