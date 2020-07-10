@@ -1,7 +1,7 @@
 This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended as a reference, not a tutorial.
 
 ### About this Guide
-This chapter uses syntax expressions to illustrate the FSH language. While there is a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
+This guide uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
 
 Syntax expressions uses the following conventions:
 
@@ -70,13 +70,15 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 
 #### Projects
 
-The main organizing construct is a FSH project, sometimes called a "FSH Tank". Each project must have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR IG.
+The main organizing construct is a FSH project (sometimes called a "[FSH Tank](sushi.html#sushi-inputs)"). Each project must have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR IG.
 
 #### Files
 
-Content in one FSH project may be contained in one or more FSH files (storage of FSH in a database is also possible). If stored in files, the files must use the **.fsh** extension. It is up to implementations to define the association between FSH files and FSH projects.
+Content in one FSH project may be contained in one or more FSH files. Files must use the **.fsh** extension. It is up to implementations to define the association between FSH files and FSH projects.
 
-The items defined by FSH are: Aliases, Profiles, Extensions, Instances, Value Sets, Code Systems, Mappings, Rule Sets, and Invariants. How items are divided among files is not meaningful in FSH, and items from all files in one project can be considered pooled together for the purposes of FSH.
+> **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
+
+The items defined by FSH are: [Aliases](#defining-aliases), [Profiles](#defining-profiles), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), and [Invariants](#defining-invariants). How items are divided among files is not meaningful in FSH, and items from all files in one project can be considered pooled together for the purposes of FSH.
 
 Items can appear in any order within **.fsh** files, and can be moved around within a file or to other **.fsh** files in the same project without affecting the interpretation of the content.
 
@@ -140,7 +142,7 @@ External FHIR artifacts in FHIR core and external IGs can be referred to by name
 
 FHIR resources contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
 
-FSH represents Resource references using the syntax `Reference({Resource  name|id|url})`. For elements that require a Reference data type, `Reference()` cannot be omitted.
+FSH represents Resource references using the syntax `Reference({Resource name|id|url})`. For elements that require a Reference data type, `Reference()` cannot be omitted.
 
 Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name|id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
@@ -178,56 +180,31 @@ These comments can take up multiple lines.
 
 The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation. Implementations are free to modify the grammar to allow retention of comments.
 
-#### Multi-line String Alternative
+#### Codes and Codings
 
-While line breaks are supported using normal strings, FSH also supports different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file.
-
-As an example, an author might use a multi-line string to write markdown so that the markdown is neatly indented:
-
-```
-* ^purpose = """
-    * This profile is intended to support workflows where:
-      * this happens; or
-      * that happens
-    * This profile is not intended to support workflows where:
-      * nothing happens
-  """
-```
-
-Using a single-quoted string requires the following spacing to accomplish the same markdown formatting:
-
-```
-* ^purpose = "* This profile is intended to support workflows where:
-  * this happens; or
-  * that happens
-* This profile is not intended to support workflows where:
-  * nothing happens"
-```
-
-The difference between these two approaches is that the latter obscures the fact that the first and fourth line are at the same indentation level, and makes it appear there are two rules because of the asterisk in the first column. The former approach allows the first line to be empty so the string is defined as a block, and allows the entire block to be indented, so visually, it does not appear a second rule is involved.
-
-When processing multi-line strings, the following approach is used:
-
-* If the first line or last line contains only whitespace (including newline), discard it.
-* If any other line contains only whitespace, truncate it to zero characters.
-* For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
-
-#### Coded Data Types
-
-The four "coded" types in FHIR are code, Coding, CodeableConcept, and Quantity. FSH provides special grammar for expressing codes and assigning coded values for these data types.
-
-##### Representing the code Data Type
-
-Codes are denoted with `#` sign. The FSH syntax is:
+FSH provides special grammar for expressing codes and Codings. Codes are denoted with `#` sign. The FSH syntax is:
 
 ```
 #{code}
 ```
+
 or 
+
 ```
 #"{code}"
 ```
-In general, the first syntax is sufficient. Quotes are only required in the rare situation of a code containing white space.
+
+In general, the first syntax is sufficient. Quotes are only required when a code contains white space.
+
+FSH represents Codings in the following ways:
+
+<pre><code>{CodeSystem name|id|url}#{code} <i>"{display string}"</i>
+
+{CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
+
+As [indicated by italics](#about-this-guide), the `"{display string}"` is optional. `CodeSystem` represents the controlled terminology that the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. An alternative to the bar syntax is to set the version element of Coding directly (see examples). To set the less-common properties of a Coding, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+
+This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
 **Examples:**
 
@@ -243,30 +220,11 @@ In general, the first syntax is sufficient. Quotes are only required in the rare
   #<=
   ```
 
-* Express a code with white space:
+* A code containing white space:
 
   ```
   #"VL 1-1, 18-65_1.2.2"
   ```
-
-* Assign the code "female" to the gender of a Patient:
-
-  ```
-  * gender = #female
-  ```
-
-##### Representing the Coding Data Type
-
-FSH represents a Coding in the following ways:
-
-<pre><code>{CodeSystem name|id|url}#{code} <i>"{display string}"</i>
-
-{CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
-
-
-As [indicated by italics](#about-this-guide), the `"{display string}"` is optional. `CodeSystem` represents the controlled terminology that the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. An alternative to the bar syntax is to set the version element of Coding directly (see examples). To set the less-common properties of a Coding, [assignment rules](#assignment-rules) can be used.
-
-**Examples:**
 
 * A Coding from SNOMED-CT:
 
@@ -291,130 +249,55 @@ As [indicated by italics](#about-this-guide), the `"{display string}"` is option
   ```
   http://hl7.org/fhir/CodeSystem/example-supplement|201801103#chol-mmol
   ```
-  
-* As an alternative to the bar syntax for version, set the code system version of a Coding datatype (myCoding) directly:
-
-  ```
-  * myCoding.version = "201801103"
-  ```
-
-* Set the userSelected property of myCoding (one of the lesser-used attributes of Codings):
-
-  ```
-  * myCoding.userSelected = true
-  ```
-  
-* In an instance of a Signature, set Signature.type:
-
-  ```
-  * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
-  ```
-  
-##### Representing the CodeableConcept Data Type
-
-A CodeableConcept consists of an array of Codings. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
-
-<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
-
-To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
-
-<pre><code>* &lt;CodeableConcept&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
-
-To set the top-level text of a CodeableConcept, the FSH expression is:
-
-```
-* <CodeableConcept>.text = "{string}"
-```
-
-**Examples:**
-
-* Set the first Coding in Condition.code (a CodeableConcept type):
-
-  ```
-  * code = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  ```
     
-* An equivalent representation, using explicit array index on the coding array:
+#### Quantities
 
-  ```
-  * code.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  ```
-    
-* Another equivalent representation, using the shorthand that allows dropping the [0] index:
-
-  ```
-  * code.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  ```
-    
-* Add a second value to the array of Codings:
-
-  ```
-  * code.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
-  ```
-    
-* Set the top-level text of Condition.code:
-
-  ```
-  * code.text = "Diagnosis of malignant neoplasm left breast."
-  ```
-    
-##### Representing the Quantity Data Type
-
-FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes. The syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org/02-authorsguide.html#quantities):
+FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes. This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org/02-authorsguide.html#quantities):
 
 ```
-* <Quantity> = {decimal} '{UCUM code}'
+{decimal} '{UCUM code}'
 ```
 
-The value and units can also be set independently. To assign a value, use the Quantity.value property:
+The value and units can also be expressed independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+
+#### Triple-Quoted Strings
+
+While line breaks are supported using normal strings, FSH also supports different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file. As an example, an author might use a triple-quote string to write markdown so that the markdown is neatly indented:
 
 ```
-* <Quantity>.value = {decimal}
+* ^purpose = """
+    * This profile is intended to support workflows where:
+      * this happens; or
+      * that happens
+    * This profile is not intended to support workflows where:
+      * nothing happens
+  """
 ```
 
-The units of measure can either be assigned a coded value or bound to a value set:
+Using a single-quoted string requires the following spacing to accomplish the same markdown formatting:
 
-<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i>
+```
+* ^purpose = "* This profile is intended to support workflows where:
+  * this happens; or
+  * that happens
+* This profile is not intended to support workflows where:
+  * nothing happens"
+```
 
-* &lt;Quantity&gt; from {ValueSet name|id|url}
-</code></pre>
+The difference between these two approaches is that the latter obscures the fact that the first and fourth line are at the same indentation level, and makes it appear there are two rules because of the asterisk in the first column. The former approach allows the first line to be empty so the string is defined as a block, and allows the entire block to be indented, so visually, it does not appear a second rule is involved. Using triple-quoted strings is entirely a matter of preference.
 
-In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
+When processing triple-quote strings, the following approach is used:
 
-> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type, rather than representing the units of measure using a Coding.
-
-**Examples:**
-
-* Set the valueQuantity of an Observation to 55 millimeters using UCUM units:
-
-  ```
-  * valueQuantity = 55.0 'mm'
-  ```
-
-* Set the numerical value of Observation.valueQuantity to 55.0 without setting the units:
-
-  ```
-  * valueQuantity.value = 55.0
-  ```
-  
-* Set the units of the same valueQuantity to millimeters, without setting the value (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
-
-  ```
-  * valueQuantity = UCUM#mm "millimeters"
-  ```
-
-* Bind a value set to a Quantity, constraining the units of that Quantity:
-
-  ```
-  * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
-  ```
+* If the first line or last line contains only whitespace (including newline), discard it.
+* If any other line contains only whitespace, truncate it to zero characters.
+* For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
 ### FSH Paths
 
 FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Here are examples of things paths can refer to:
 
 * Top-level elements such as Observation.code
-* Nested elements, such as Observation.method.text 
+* Nested elements, such as Observation.method.text
 * Elements in a list or array, such as Patient.name
 * Individual data types of choice elements, such as onsetAge in onset[x]
 * Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
@@ -668,7 +551,50 @@ Assignment rules follow this syntax:
 * <element> = {value}
 ```
 
-The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side must align with the data type of the final element in the path, and may be a complex data type (such as an address).
+The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side must align with the data type of the final element in the path, and may be a primitive or complex data type or a resource reference.
+
+Assignment rules have two different interpretations, depending on context:
+
+* In an *instance*, an assignment rule sets the value of the target element.
+* In a *profile or extension*, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. By default, the pattern is considered "open" in the sense that the element in question may have content in addition to the prescribed value, such as alternative codes in a CodeableConcept or an extension.
+
+If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
+
+```
+* <element> = {value} (exactly)
+```
+
+Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
+
+> **Note:** The `(exactly)` modifier does not apply to instances.
+
+Consider the interpretation of the following assignment statements in instances and profile, assuming the code element is a CodeableConcept and LNC is an alias for http://loinc.org:
+
+  ```
+  * code = LNC#69548-6
+
+  * code = LNC#69548-6 "Genetic variant assessment"
+
+  * code = LNC#69548-6 (exactly)
+  ```
+
+In the context of an instance:
+
+* The first statement sets the system and code, leaving the display empty.
+* The second statement sets the system, code, and display text.
+* The third statement has the same meaning as the first statement.
+
+In the context of a profile:
+
+* The first statement signals that an instance must have the system http://loinc.org and the code 69548-6 to pass validation.
+* The second statement says that an instance must have the system http://loinc.org, the code 69548-6, *and* the display text "Genetic variant assessment" to pass validation.
+* The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and *must not have* a display text, additional codes, or extensions.
+  
+In a profiling context, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
+
+In the following, we give details and examples of assignments involving various data types.
+
+##### Assignments with Primitive Data Types
 
 **Examples:**
 
@@ -690,50 +616,43 @@ The left side of this expression follows the [FSH path grammar](#fsh-paths). The
   * onsetDateTime = "2019-04-02"
   ```
 
-##### Assignments in Instances versus Profiles or Extensions
-
-Assignment rules have two different interpretations, depending on context:
-
-* In an instance, an assignment rule sets the value of the target element.
-* In a profile or extension, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. The pattern is considered "open" in the sense that the element in question may have additional content in addition to the prescribed value, such as additional codes in a CodeableConcept or an extension.
-
-If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
-
-```
-* <element> = {value} (exactly)
-```
-
-Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
-
-> **Note:** The `(exactly)` modifier does not apply to instances.
-
-
-* Contrast the behavior of assignment statements in profiles and instances:
-
-  Assuming the `code` element is type CodeableConcept and LNC is an alias for http://loinc.org, consider the following three assignment statements:
+* Assignment of a dateTime:
 
   ```
-  * code = LNC#69548-6
-
-  * code = LNC#69548-6 "Genetic variant assessment"
-
-  * code = LNC#69548-6 (exactly)
+  * recordedDate = "2013-06-08T09:57:34.2112Z"
   ```
 
-  In the context of a profile:
+##### Assignments with the Coding Data Type
 
-  * The first statement signals that an instance must have the system http://loinc.org and the code 69548-6 to pass validation.
-  * The second statement says that an instance must have the system http://loinc.org, the code 69548-6, *and* the display text "Genetic variant assessment" to pass validation.
-  * The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and *must not have* a display text, additional codes, or extensions.
+FSH provides a shortcut for setting several of the most common properties of a Coding simultaneously, namely, system, version, code, and display. The syntax is:
 
-  In the context of an instance:
+<pre><code>&lt;Coding&gt; = {CodeSystem name|id|url}<i>|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
 
-  * The first statement sets the system and code, leaving the display empty.
-  * The second statement sets the system, code, and display text.
-  * The third statement has the same meaning as the first statement.
+**Examples:**
+
+* Assign a Coding that includes an explicit code system version:
+
+  ```
+  myCoding = http://hl7.org/fhir/CodeSystem/example-supplement|201801103#chol-mmol
+  ```
+
+* As an alternative to the bar syntax for version, set the code system version only:
+
+  ```
+  * myCoding.version = "201801103"
+  ```
+
+* Set the userSelected property of a Coding (one of the lesser-used attributes of Codings):
+
+  ```
+  * myCoding.userSelected = true
+  ```
   
-  In a profiling context, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
+* In an instance of a Signature, set Signature.type (a Coding data type):
 
+  ```
+  * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
+  ```
 
 ##### Assignments with the CodeableConcept Data Type
 
@@ -806,7 +725,7 @@ The units of measure can either be assigned a coded value or bound to a value se
 
 In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
 
-> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type, rather than representing the units of measure using a Coding.
+> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type, rather than using a Coding to represent the units of measure.
 
 **Examples:**
 
@@ -834,13 +753,27 @@ In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to 
   * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
 
+##### Assignments Involving Instances
 
+Resource instances can refer to other resource instances. The referred resources can either exist independently or be contained inline in the DomainResource.contained array. Less commonly, the value of an element can be a resource, rather than a reference to a resource.
 
-##### Assignments Involving References
+A resource reference is assigned using this grammar:
+
+```
+* <Reference> = Reference({Resource id|url})
+```
+
+For assignment of a resource to the value of an element directly:
+
+```
+* <Resource> = {Resource id|url}
+```
+
+As [recommended in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the URL is the preferred way to reference an instance for the resource types on which it is defined. One advantage is that the URL may include a version. For an internal FSH-defined instance, referring to an instance by its id (as defined in the `Instance` declaration) is more typical (see examples).
 
 **Examples:**
 
-* Assignment of a reference to an example of a Patient resource, EveAnyperson, to Observation.subject:
+* Assignment of a reference to an example of a Patient resource to Observation.subject:
 
   ```
   * subject = Reference(EveAnyperson)
@@ -849,29 +782,18 @@ In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to 
   where, for example:
 
   ```
-  Instance: EveAnyperson
+  Instance: EveAnyperson   // this is the id of the example instance
   InstanceOf: Patient
   Usage: #example
   * name.given = "Eve"
   * name.family = "Anyperson"
   ```
 
-* Contrast the previous example to an assignment of an inline instance in Bundle.entry.resource, whose data type is Resource (not Reference(Resource)):
+* Assignment of the same instance in Bundle.entry.resource, whose data type is Resource (not Reference(Resource)):
 
   ```
-  * entry.resource = AdamEveryperson
+  * entry[0].resource = EveAnyperson
   ```
-
-  where, for example:
-
-  ```
-  Instance: AdamEveryperson
-  InstanceOf: Patient
-  Usage: #inline
-  * name.given = "Adam"
-  * name.family = "Everyperson"
-  ```
-
 
 #### Binding Rules
 
