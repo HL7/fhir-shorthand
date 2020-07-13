@@ -203,7 +203,7 @@ FSH represents Codings in the following ways:
 
 {CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
 
-As [indicated by italics](#about-this-guide), the `"{display string}"` is optional. `CodeSystem` represents the controlled terminology that the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. An alternative to the bar syntax is to set the version element of Coding directly (see examples). To set the less-common properties of a Coding, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by italics](#about-this-guide), the `"{display string}"` is optional. `CodeSystem` represents the controlled terminology that the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -552,7 +552,7 @@ Assignment rules follow this syntax:
 * <element> = {value}
 ```
 
-The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side must align with the data type of the final element in the path, and may be a primitive or complex data type or a resource reference.
+The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side must align with the data type of the final element in the path.
 
 Assignment rules have two different interpretations, depending on context:
 
