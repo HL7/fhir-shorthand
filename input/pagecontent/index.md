@@ -1,7 +1,7 @@
 This implementation guide includes the following chapters:
 
 1. [FHIR Shorthand Overview](index.html) (this chapter) -- Introduction to FSH and SUSHI _(informative content)_.
-1. [FHIR Shorthand Tutorial](tutorial.html) -- A step-by-step hands-on introduction to producing an Implementation Guide (IG) with FHIR Shorthand and SUSHI _(informative content)_.
+1. [FHIR Shorthand Tutorials](tutorial.html) -- A step-by-step hands-on introduction to producing an Implementation Guide (IG) with FHIR Shorthand and SUSHI _(informative content)_.
 1. [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(formal content)_.
 1. [SUSHI User Guide](sushi.html) -- A guide to producing an IG from FSH files using SUSHI compiler and the HL7 IG Publishing tool _(informative content)_.
 
@@ -322,7 +322,7 @@ A **FSH Tank** (2) refers to a directory structure, including subdirectories, th
 
 #### SUSHI
 
-[SUSHI](sushi.html) (an acronym for "**S**USHI **U**nshortens **SH**orthand **I**nputs") (4) is a reference implementation of a FSH compiler that translates FSH into FHIR artifacts such as profiles, extensions, and value sets. SUSHI is installed on your own computer and runs locally from the command line. Installing SUSHI is described [here](sushi.html#installation).
+[SUSHI](https://fshschool.org/docs/sushi/) (an acronym for "**S**USHI **U**nshortens **SH**orthand **I**nputs") (4) is a reference implementation of a FSH compiler that translates FSH into FHIR artifacts such as profiles, extensions, and value sets. SUSHI is installed on your own computer and runs locally from the command line. Installing SUSHI is described [here](https://fshschool.org/docs/sushi/installation/).
 
 SUSHI can be used in two modes:
 
@@ -334,7 +334,7 @@ SUSHI can be used in two modes:
 In the standalone mode, SUSHI runs independently of the IG Publisher. This is a good option to quickly check for errors when you are creating your FSH code, or if you are only interesting in creating FHIR artifacts without an IG. Creating FHIR artifacts with FSH and SUSHI in standalone mode involves the following steps:
 
 1. Populate a FSH Tank (2) with FSH files (1) containing your FSH definitions.
-2. Create a **[config.yaml](sushi.html#configuration-file)** file (3).
+2. Create a **[config.yaml](https://fshschool.org/docs/sushi/configuration/)** file (3).
 3. Run SUSHI (4). After SUSHI runs, a new directory (named **/build** by default) appears in the FSH Tank. This directory contains FHIR artifacts (5) such as profiles, extensions, value sets, and instances.
 
 #### SUSHI IG Mode
@@ -342,11 +342,11 @@ In the standalone mode, SUSHI runs independently of the IG Publisher. This is a 
 Creating an IG with FSH and SUSHI involves the following steps:
 
 1. Create FSH definitions in FSH files (1) in a directory (FSH Tank) named **/fsh** (2).
-2. Create a **[config.yaml](sushi.html#configuration-file)** file (3).
+2. Create a **[config.yaml](https://fshschool.org/docs/sushi/configuration/)** file (3).
 3. Provide additional inputs for the IG, including static pages, images, navigation menu configurations (6).
 4. Run the IG Publisher (7). The IG Publisher will detect the ./fsh directory (2) and run SUSHI (4) to produce FHIR Artifacts (5) before running the remaining IG publishing steps (8), to produce the IG (9).
 
-For more information on both of these modes of using SUSHI, see [the SUSHI Users Guide](sushi.html).
+For more information on both of these modes of using SUSHI, see [the SUSHI Documentation](https://fshschool.org/docs/sushi/).
 
 ### FSH Line-by-Line Walkthrough
 
