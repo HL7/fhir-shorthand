@@ -1317,7 +1317,7 @@ Additional keywords are as follows:
 
 | Additional Keyword | Purpose | Data Type |
 |----------|---------|---------|
-| `Description` | Provides a human-readable description | string or Pmarkdown |
+| `Description` | Provides a human-readable description | string or markdown |
 | `Expression` | The FHIR path expression in an invariant | FHIRPath string |
 | `Id` | An identifier for an item | id |
 | `InstanceOf` | The profile or resource an instance instantiates | name or id or url |
