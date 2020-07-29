@@ -35,7 +35,7 @@
       </page>
       <page>
         <nameUrl value="tutorial.html"/>
-        <title value="Tutorial (Informative)"/>
+        <title value="Tutorials"/>
         <generation value="markdown"/>
       </page>
       <page>
@@ -45,7 +45,7 @@
       </page>
       <page>
         <nameUrl value="sushi.html"/>
-        <title value="SUSHI (Informative)"/>
+        <title value="SUSHI"/>
         <generation value="markdown"/>
       </page>
     </page>
