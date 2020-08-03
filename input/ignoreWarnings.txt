@@ -1,4 +1,1 @@
 == Suppressed Messages ==
-
-# The following code systems are external and not supported by terminology server
-Code System URI 'http://www.ama-assn.org/go/cpt' is unknown so the code cannot be validated
