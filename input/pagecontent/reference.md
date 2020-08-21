@@ -960,9 +960,9 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
 
   ```
   * extension contains
-        ombCategory 0..5 MS
-        detailed 0..*
-        text 1..1 MS
+      ombCategory 0..5 MS and
+      detailed 0..* and 
+      text 1..1 MS
   // rules defining the inline extensions would typically follow:
   * extension[ombCategory].value[x] only Coding
   * extension[ombCategory].valueCoding from http://hl7.org/fhir/us/core/ValueSet/omb-race-category (required)
