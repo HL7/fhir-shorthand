@@ -189,7 +189,7 @@ All rules in FSH begin with an asterisk (`*`) symbol followed by at least one sp
 
 In most cases, the order of rules within an item does not matter. However, there are some situations where FSH requires rules to appear in a certain order. One example is in [slicing](#contains-rules-for-slicing), where a slice MUST first be defined by a `contains` rule before the slice is constrained. Implementations MUST enforce rule-order requirements where they are specified in FSH.
 
-Where there are no explicit strictures on rule ordering, users MAY list rules in any order. Implementations MAY process rules in any convenient order. One exception to arbitrary processing order are [`insert` rules](#insert-rules). `Insert` rules logically MUST be processed before other rules, since their function is to expand into another set of rules.
+Where there are no explicit strictures on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could carry ordering constraints.
 
 It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
 
