@@ -187,7 +187,7 @@ The formal grammar for FSH discards all comments during import; they are not ret
 
 All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
 
-In most cases, the order of rules within an item does not matter. However, there are some situations where FSH requires rules to appear in a certain order. One example is in [slicing](#contains-rules-for-slicing), where a slice MUST first be defined by a `contains` rule before the slice is constrained. Implementations MUST enforce rule-order requirements where they are specified in FSH.
+In most cases, the order of rules within an item does not matter. However, there are some situations where FSH requires rules to appear in a certain order. One example is in [slicing](#contains-rules-for-slicing), where a slice MUST be defined by a `contains` rule prior to other rules that constrain the slice. Implementations MUST enforce rule-order requirements where they are specified in FSH.
 
 Where there are no explicit strictures on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could carry ordering constraints.
 
