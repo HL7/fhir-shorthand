@@ -469,7 +469,7 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-3-specifying-the-slicing-logic)).
+FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specifying-the-slicing-logic)).
 
 For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -976,21 +976,41 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
 
 Slicing is an advanced, but necessary, feature of FHIR. It is helpful to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator) before attempting slicing in FSH.
 
-In FSH, slicing is addressed in three steps: (1) identifying the slices, (2) defining each slice's contents, and (3) specifying the slicing logic.
+In FSH, slicing is addressed in three steps: (1) specifying the slicing logic, (2) identifying the slices, and (3) defining each slice's contents.
 
-##### Step 1. Identifying the Slices
+> **Note:** The rules from step (2) MUST occur before the rules in step (3).
 
-The first step in slicing is to populate the array that is to be sliced, using the `contains` keyword. The syntaxes are very similar to [contains rules for inline extensions](#contains-rules-for-extensions):
+##### Step 1. Specifying the Slicing Logic
+
+Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
+
+The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
+
+**Example:**
+
+* Provide slicing logic for slices on Observation.component that are be distinguished by their code:
+
+  ```
+  * component ^slicing.discriminator.type = #pattern
+  * component ^slicing.discriminator.path = "code"
+  * component ^slicing.rules = #open
+  * component ^slicing.ordered = false   // can be omitted, since false is the default
+  * component ^slicing.description = "Slice based on the component.code pattern"
+  ```
+
+##### Step 2. Identifying the Slices
+
+The second step in slicing is to populate the array that is to be sliced, using the `contains` keyword. The syntaxes are very similar to [contains rules for inline extensions](#contains-rules-for-extensions):
 
 <pre><code>* &lt;array&gt; contains {name} {card} <i>{flags}</i>
 
-* &lt;array&gt; contains 
+* &lt;array&gt; contains
     {name1} {card1} <i>{flags1}</i> and
     {name2} {card2} <i>{flags2}</i> and
     {name3} {card3} <i>{flags3}</i> ...
 </code></pre>
 
-In this pattern, `<array>` is a path to the element that is to be sliced and to which the slicing rules will applied in step 3. The names (`name`, `name1`, etc.) are created by the rule author to describe the slice in the context of the profile. These names are used to refer to the slice in later rules. By convention, the slice names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
+In this pattern, `<array>` is a path to the element that is to be sliced and to which the slicing rules defined in step (1) will applied. The names (`name`, `name1`, etc.) are created by the rule author to describe the slice in the context of the profile. These names are used to refer to the slice in later rules. By convention, the slice names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
 
 Each slice will match or constrain the data type of the array it slices. In particular:
 
@@ -1020,8 +1040,8 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 <pre><code>* &lt;array[{slice name}]&gt; contains {name} {card} <i>{flags}</i>
 
-* &lt;array[{slice name}]&gt; contains 
-    {name1} {card1} <i>{flags1}</i> and 
+* &lt;array[{slice name}]&gt; contains
+    {name1} {card1} <i>{flags1}</i> and
     {name2} {card2} <i>{flags2}</i> and
     {name3} {card3} <i>{flags3}</i> ...
 </code></pre>
@@ -1043,9 +1063,9 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
       tenMinuteScore 0..1
   ```
 
-##### Step 2. Defining Slice Contents
+##### Step 3. Defining Slice Contents
 
-The next step is to define the properties of each slice. FSH requires slice contents to be defined inline. The rule syntax is the same as constraining any other element, but the [slice path syntax](#sliced-array-paths) is used to specify the path:
+The final step is to define the properties of each slice. FSH requires slice contents to be defined inline. The rule syntax is the same as constraining any other element, but the [slice path syntax](#sliced-array-paths) is used to specify the path:
 
 ```
 * <array>[{slice name}].<element> {constraint}
@@ -1066,25 +1086,7 @@ The slice content rules MUST appear *after* the contains rule that creates the s
   * component[diastolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
   ```
 
-At minimum, each slice MUST be constrained such that it can be uniquely identified via the discriminator (see Step 3). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
-
-##### Step 3. Specifying the Slicing Logic
-
-Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
-
-The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
-
-**Example:**
-
-* Provide slicing logic for slices on Observation.component that are be distinguished by their code:
-
-  ```
-  * component ^slicing.discriminator.type = #pattern
-  * component ^slicing.discriminator.path = "code"
-  * component ^slicing.rules = #open
-  * component ^slicing.ordered = false   // can be omitted, since false is the default
-  * component ^slicing.description = "Slice based on the component.code pattern"
-  ```
+At minimum, each slice MUST be constrained such that it can be uniquely identified via the discriminator (see Step 1). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
 
 #### Flag Rules
 
@@ -1335,7 +1337,6 @@ Additional keywords are as follows:
 > **Note:** Keywords are case-sensitive.
 
 The following table shows the relationship between declaration keywords and additional keywords.
-
 
 | Declaration \ Keyword               | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |-------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
