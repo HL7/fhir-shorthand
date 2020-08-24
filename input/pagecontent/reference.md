@@ -187,9 +187,25 @@ The formal grammar for FSH discards all comments during import; they are not ret
 
 All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
 
-In most cases, the order of rules within an item does not matter. However, there are some situations where FSH requires rules to appear in a certain order. One example is in [slicing](#contains-rules-for-slicing), where a slice MUST be defined by a `contains` rule prior to other rules that constrain the slice. Implementations MUST enforce rule-order requirements where they are specified in FSH.
+In most cases, the order of rules within an item does not matter. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
 
-Where there are no explicit strictures on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could carry ordering constraints.
+Order dependencies can also arise in setting properties of a choice element (an element involving FHIR's `[x]` syntax). For example, this order is problematic:
+
+```
+* value[x].unit 0..0
+* value[x] only Quantity
+```
+
+but this order is fine:
+
+```
+* value[x] only Quantity
+* value[x].unit 0..0
+```
+
+The difference is that in the first approach, value[x] is not yet known to be restricted to only a Quantity, so `value[x].unit` is ambiguous. In the second approach, value[x] is known to be a Quantity, so `value[x].unit` is unambiguous.
+
+In cases where there are no explicit strictures on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could carry ordering constraints.
 
 It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
 
