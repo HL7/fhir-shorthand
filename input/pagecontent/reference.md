@@ -469,7 +469,7 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specifying-the-slicing-logic)).
+FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
 For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -976,11 +976,11 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
 
 Slicing is an advanced, but necessary, feature of FHIR. It is helpful to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator) before attempting slicing in FSH.
 
-In FSH, slicing is addressed in three steps: (1) specifying the slicing logic, (2) identifying the slices, and (3) defining each slice's contents.
+In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) identify the slices, and (3) define each slice's contents.
 
 > **Note:** The rules from step (2) MUST occur before the rules in step (3).
 
-##### Step 1. Specifying the Slicing Logic
+##### Step 1. Specify the Slicing Logic
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
 
@@ -998,7 +998,7 @@ The slicing logic parameters are specified using [caret paths](#caret-paths). Th
   * component ^slicing.description = "Slice based on the component.code pattern"
   ```
 
-##### Step 2. Identifying the Slices
+##### Step 2. Identify the Slices
 
 The second step in slicing is to populate the array that is to be sliced, using the `contains` keyword. The syntaxes are very similar to [contains rules for inline extensions](#contains-rules-for-extensions):
 
@@ -1063,7 +1063,7 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
       tenMinuteScore 0..1
   ```
 
-##### Step 3. Defining Slice Contents
+##### Step 3. Define the Slice Contents
 
 The final step is to define the properties of each slice. FSH requires slice contents to be defined inline. The rule syntax is the same as constraining any other element, but the [slice path syntax](#sliced-array-paths) is used to specify the path:
 
