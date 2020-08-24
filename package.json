@@ -1,6 +1,6 @@
 {
   "name": "hl7.fhir.uv.shorthand",
-  "version": "0.13.0",
+  "version": "1.0.0",
   "canonical": "http://hl7.org/fhir/uv/shorthand",
   "url": "http://hl7.org/fhir/uv/shorthand",
   "title": "FHIR Shorthand (FSH)",
@@ -11,7 +11,10 @@
     "SUSHI",
     "FSH",
     "Shorthand",
-    "Fish"
+    "Fish",
+    "Implementation Guide",
+    "Profiling",
+    "Profile"
   ],
   "language": "en",
   "author": "HL7 FHIR Infrastructure WG",

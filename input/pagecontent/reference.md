@@ -183,6 +183,16 @@ These comments can take up multiple lines.
 
 The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation. Implementations are free to modify the grammar to allow retention of comments.
 
+#### Rules and Rule Order
+
+All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
+
+In most cases, the order of rules within an item does not matter. However, there are some situations where FSH requires rules to appear in a certain order. One example is in [slicing](#contains-rules-for-slicing), where a slice MUST first be defined by a `contains` rule before the slice is constrained. Implementations MUST enforce rule-order requirements where they are specified in FSH.
+
+Where there are no explicit strictures on rule ordering, users MAY list rules in any order. Implementations MAY process rules in any convenient order. One exception to arbitrary processing order are [`insert` rules](#insert-rules). `Insert` rules logically MUST be processed before other rules, since their function is to expand into another set of rules.
+
+It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
+
 #### Codes and Codings
 
 FSH provides special grammar for expressing codes and Codings. Codes are denoted with `#` sign. The FSH syntax is:
@@ -191,7 +201,7 @@ FSH provides special grammar for expressing codes and Codings. Codes are denoted
 #{code}
 ```
 
-or 
+or
 
 ```
 #"{code}"
@@ -963,7 +973,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   ```
   * extension contains
       ombCategory 0..5 MS and
-      detailed 0..* and 
+      detailed 0..* and
       text 1..1 MS
   // rules defining the inline extensions would typically follow:
   * extension[ombCategory].value[x] only Coding
@@ -976,9 +986,9 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
 
 Slicing is an advanced, but necessary, feature of FHIR. It is helpful to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator) before attempting slicing in FSH.
 
-In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) identify the slices, and (3) define each slice's contents.
+In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) define the slices, and (3) constrain each slice's contents.
 
-> **Note:** The rules from step (2) MUST occur before the rules in step (3).
+> **Note:** The rules from each step MUST be sequentially ordered, i.e., step (1) slicing logic rules before step (2) slice definition rules before step (3) slice content rules.
 
 ##### Step 1. Specify the Slicing Logic
 
@@ -998,7 +1008,7 @@ The slicing logic parameters are specified using [caret paths](#caret-paths). Th
   * component ^slicing.description = "Slice based on the component.code pattern"
   ```
 
-##### Step 2. Identify the Slices
+##### Step 2. Define the Slices
 
 The second step in slicing is to populate the array that is to be sliced, using the `contains` keyword. The syntaxes are very similar to [contains rules for inline extensions](#contains-rules-for-extensions):
 
@@ -1063,7 +1073,7 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
       tenMinuteScore 0..1
   ```
 
-##### Step 3. Define the Slice Contents
+##### Step 3. Constraint the Slice Contents
 
 The final step is to define the properties of each slice. FSH requires slice contents to be defined inline. The rule syntax is the same as constraining any other element, but the [slice path syntax](#sliced-array-paths) is used to specify the path:
 
@@ -1075,7 +1085,7 @@ The slice content rules MUST appear *after* the contains rule that creates the s
 
 **Examples:**
 
-* Define the content of the systolicBP and diastolicBP slices:
+* Constrain the content of the systolicBP and diastolicBP slices:
 
   ```
   * component[systolicBP].code = LNC#8480-6 // Systolic blood pressure

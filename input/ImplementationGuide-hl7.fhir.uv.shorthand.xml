@@ -2,7 +2,7 @@
 <ImplementationGuide xmlns="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hl7.org/fhir ../input-cache/schemas-r5/fhir-single.xsd">
   <id value="hl7.fhir.uv.shorthand"/>
   <url value="http://hl7.org/fhir/uv/shorthand/ImplementationGuide/hl7.fhir.uv.shorthand"/>
-  <version value="0.13.0"/>
+  <version value="1.0.0"/>
   <name value="FHIRShorthand"/>
   <title value="FHIR Shorthand"/>
   <status value="draft"/>
@@ -19,6 +19,7 @@
     <coding>
       <system value="http://unstats.un.org/unsd/methods/m49/m49.htm"/>
       <code value="001"/>
+      <display value="World"/>
     </coding>
   </jurisdiction>
   <packageId value="hl7.fhir.uv.shorthand"/>

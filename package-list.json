@@ -11,6 +11,16 @@
      "current" : true
     }, 
     {
+      "version": "1.0.0",
+      "date": "2020-09-01",
+      "fhirversion": "4.0.1",
+      "desc": "FHIR Shorthand STU 1, version 1.0.0",
+      "path": "http://hl7.org/fhir/uv/shorthand/STU1",
+      "status": "trial-use",
+      "sequence": "STU 1",
+      "current": true
+    },
+    {
       "version": "0.13.0",
       "fhirversion": "4.0.1",
       "date": "2020-04-07",
