@@ -28,17 +28,17 @@ This IG uses the following conventions:
 
 ### Relationships to Other Standards, Tools, and Guidelines
 
-There are already several existing methods for IG creation: hand editing, using [Excel spreadsheets](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring), [Simplifier/Forge](https://fire.ly/products/simplifier-net/), and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com). Each of these methods have certain advantages as well as drawbacks:
+There are already several existing methods for IG creation. Each of these methods have certain advantages as well as drawbacks:
 
-1. Hand-editing StructureDefinitions (SDs) is unwieldy, but authors get full control over every aspect of the resulting profiles and extensions.
-1. The spreadsheet method has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A significant downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, with the content mixed with formatting directives.
-1. Simplifier/Forge and Trifolia-on-FHIR provide graphical interfaces that help guide users through common tasks. The potential downside is the need to navigate multiple screens visit different items and make cross-cutting changes.
+1. Hand-editing the conformance artifacts such as StructureDefinitions and ValueSet resources is unwieldy, but authors get full control over every aspect of the resulting FHIR profiles and definitions.
+1. The [Excel spreadsheet method](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A significant downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, with the content mixed with formatting directives.
+1. [Simplifier/Forge](https://fire.ly/products/simplifier-net/) and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com) provide graphical and form-based interfaces that help guide users through common tasks. The potential downside is the need to navigate multiple screens visit different items and make cross-cutting changes.
 
-Because it is a (proposed) HL7 FHIR standard, a variety of tooling can be built around FSH. The most notable tool currently is [SUSHI](https://fshschool.org/docs/sushi/), a reference implementation for transforming FSH into FHIR artifacts that are directly integrated with the [HL7 FHIR Implementation Guide Publishing tool](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation). SUSHI has a number of features to seamlessly go from FSH to an IG.
+As a language designed for the job of profiling and IG creation, FSH unique among these methods. It provides a fast, scalable, and user-friendly path to IG creation and maintenance. Because it is text-based, FSH brings a degree of editing agility not found in graphical tools (including cutting and pasting, global search and replace, spell checking, etc.) Because it is a HL7 FHIR standard, tooling can be built around FSH with confidence in its stability and continuity. The most notable FSH tool currently is [SUSHI](https://fshschool.org/docs/sushi/), a reference implementation for transforming FSH into FHIR artifacts that are directly integrated with the [HL7 FHIR Implementation Guide Publishing tool](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation). SUSHI has a number of features to seamlessly go from FSH to an IG.
 
 ### Ballot Status
 
-This Implementation Guide has been balloted as STU with the intention to go normative in a subsequent ballot cycle.
+This Implementation Guide has been balloted as Standard for Trial Use (STU) with the intention to go normative in a subsequent ballot cycle.
 
 ### Authors and Contributors
 

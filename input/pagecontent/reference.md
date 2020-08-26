@@ -73,7 +73,7 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 
 #### Projects
 
-The main organizing construct is a FSH project (sometimes called a "[FSH Tank](https://fshschool.org/docs/sushi/project/#simple-fsh-projects)"). Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR IG.
+The main organizing construct is a FSH project (sometimes called a "[FSH Tank](https://fshschool.org/docs/sushi/project/#simple-fsh-projects)"). Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
 
 #### Files
 
