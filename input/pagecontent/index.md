@@ -44,10 +44,10 @@ This Implementation Guide has been balloted as STU with the intention to go norm
 
 | Role | Name | Organization | Contact |
 |----|----|----|----|
-| Author |  Mark A. Kramer | MITRE Corporation | mkramer@mitre.org |
+| Author | Mark A. Kramer | MITRE Corporation | mkramer@mitre.org |
 | Author | Chris Moesel | MITRE Corporation | cmoesel@mitre.org |
-| Contributor | Nick Freiter | MITRE Corporation | nfreiter@mitre.org |
 | Contributor | Julia K. Afeltra | MITRE Corporation | jafeltra@mitre.org |
+| Contributor | Nick Freiter | MITRE Corporation | nfreiter@mitre.org |
 | Contributor | Mint N. Thompson | MITRE Corporation | mathompson@mitre.org |
 | FHIR Infrastructure Co-chair | Rick Geimer | Lantana Consulting Group | rick.geimer@lantanagroup.com |
 | FHIR Infrastructure Co-chair | Josh Mandel | SMART Health IT | jmandel@gmail.com |
