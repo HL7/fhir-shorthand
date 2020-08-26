@@ -2,8 +2,8 @@ This chapter contains the formal specification of the FHIR Shorthand (FSH) langu
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
-### About this Guide
-This guide uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
+### About the Specification
+The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
 
 Syntax expressions uses the following conventions:
 
@@ -231,7 +231,7 @@ FSH represents Codings in the following ways:
 
 {CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
 
-As [indicated by italics](#about-this-guide), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by italics](#about-the-specification), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -1878,13 +1878,14 @@ paths:              COMMA_DELIMITED_SEQUENCES;
 caretPath:          CARET_SEQUENCE;
 flag:               KW_MOD | KW_MS | KW_SU | KW_TU | KW_NORMATIVE | KW_DRAFT;
 strength:           KW_EXAMPLE | KW_PREFERRED | KW_EXTENSIBLE | KW_REQUIRED;
-value:              SEQUENCE | STRING | MULTILINE_STRING | NUMBER | DATETIME | TIME | reference | code | quantity | ratio | bool ;
+value:              SEQUENCE | STRING | MULTILINE_STRING | NUMBER | DATETIME | TIME | reference | canonical | code | quantity | ratio | bool ;
 item:               SEQUENCE (KW_NAMED SEQUENCE)? CARD flag*;
 code:               CODE STRING?;
 concept:            STAR code (STRING | MULTILINE_STRING)?;
 quantity:           NUMBER UNIT;
 ratio:              ratioPart COLON ratioPart;
 reference:          (OR_REFERENCE | PIPE_REFERENCE) STRING?;
+canonical:          CANONICAL;
 ratioPart:          NUMBER | quantity;
 bool:               KW_TRUE | KW_FALSE;
 targetType:         SEQUENCE | reference;
@@ -1969,6 +1970,8 @@ CARD:               ([0-9]+)? '..' ([0-9]+ | '*')?;
                  //  Reference       (        ITEM         |         ITEM         )
 OR_REFERENCE:       'Reference' WS* '(' WS* SEQUENCE WS* (WS 'or' WS+ SEQUENCE WS*)* ')';
 PIPE_REFERENCE:          'Reference' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)* ')';
+                 // Canonical(Item)
+CANONICAL:         'Canonical' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)? ')';
                  //  ^  NON-WHITESPACE
 CARET_SEQUENCE:     '^' NONWS+;
                  // '/' EXPRESSION '/'
