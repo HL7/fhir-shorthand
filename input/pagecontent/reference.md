@@ -119,7 +119,7 @@ The following words are reserved only when enclosed in parentheses (intervening 
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to code, id, oid, etc. refer to the primitive datatypes defined in FHIR.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings SHOULD be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors MAY be accepted by certain implementations. Left and right directional single quotes (U+2018 and U+2019) also MAY accepted in contexts requiring a single quotation mark.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark.
 
 #### Names
 
