@@ -26,22 +26,22 @@
   <fhirVersion value="4.0.1"/>
   <definition>
     <page>
+      <page>
+        <nameUrl value="index.html"/>
+        <title value="FHIR Shorthand"/>
+        <generation value="markdown"/>
+      </page>
       <nameUrl value="toc.html"/>
       <title value="Table of Contents"/>
       <generation value="html"/>
       <page>
-        <nameUrl value="index.html"/>
-        <title value="FHIR Shorthand (Informative)"/>
-        <generation value="markdown"/>
-      </page>
-      <page>
-        <nameUrl value="tutorial.html"/>
-        <title value="Tutorials"/>
+        <nameUrl value="overview.html"/>
+        <title value="Overview"/>
         <generation value="markdown"/>
       </page>
       <page>
         <nameUrl value="reference.html"/>
-        <title value="Language Reference (Formal Specification)"/>
+        <title value="Language Reference"/>
         <generation value="markdown"/>
       </page>
       <page>

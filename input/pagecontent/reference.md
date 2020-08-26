@@ -2,8 +2,8 @@ This chapter contains the formal specification of the FHIR Shorthand (FSH) langu
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
-### About this Guide
-This guide uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
+### About the Specification
+The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
 
 Syntax expressions uses the following conventions:
 
@@ -73,7 +73,7 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 
 #### Projects
 
-The main organizing construct is a FSH project (sometimes called a "[FSH Tank](https://fshschool.org/docs/sushi/project/#simple-fsh-projects)"). Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR IG.
+The main organizing construct is a FSH project (sometimes called a "[FSH Tank](https://fshschool.org/docs/sushi/project/#simple-fsh-projects)"). Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
 
 #### Files
 
@@ -119,7 +119,7 @@ The following words are reserved only when enclosed in parentheses (intervening 
 
 The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to code, id, oid, etc. refer to the primitive datatypes defined in FHIR.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings SHOULD be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors MAY be accepted by certain implementations. Left and right directional single quotes (U+2018 and U+2019) also MAY accepted in contexts requiring a single quotation mark.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark.
 
 #### Names
 
@@ -137,15 +137,15 @@ If no id is provided by a FSH author, implementations MAY create an id. It is RE
 
 #### Referring to Other Items
 
-FSH items within the same project can be referred to by their names or ids. Preferably, references align with the name or id given in the [declaration statement](#defining-items).
+FSH allows internal and external items to be referred to by name, id, or canonical URL.  
 
-External FHIR artifacts in FHIR core and external IGs can be referred to by name, id, or canonical URL. It is good practice to refer to core FHIR resources by name, e.g., `Patient` or `Observation`. For other external items, it is good practice to use of canonical URLs, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal entity takes precedence, and external entity MUST be referred to by its canonical URL.
+A FSH item within the same project SHOULD be referred to by the name or id given in the item's [declaration statement](#defining-items). Core FHIR resources SHOULD be referred to by name, e.g., `Patient` or `Observation`. Items from external IGs and extensions, profiles, code systems, and value sets in core FHIR SHOULD be referred to by their canonical URLs, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal item takes precedence, and external item MUST be referred to by its canonical URL.
 
 #### Reference and Canonical Data Types
 
-FHIR resources contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
+FHIR resources can contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
 
-FSH represents Resource references using the syntax `Reference({Resource name|id|url})`. For elements that require a Reference data type, `Reference()` cannot be omitted.
+FSH represents Resource references using the syntax `Reference({Resource name|id|url})`. For elements that require a Reference data type, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
 
 Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name|id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
@@ -185,27 +185,27 @@ The formal grammar for FSH discards all comments during import; they are not ret
 
 #### Rules and Rule Order
 
-All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
+All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space. Rules SHALL be interpreted logically in a top-down manner.
 
-In most cases, the order of rules within an item does not matter. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
+In most cases, the order of rules is flexible. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
 
-Order dependencies can also arise in setting properties of a choice element (an element involving FHIR's `[x]` syntax). For example, this order is problematic:
+Logical order dependencies can also arise. For example, in setting properties of a choice element (an element involving FHIR's `[x]` syntax), this order is problematic:
 
 ```
 * value[x].unit 0..0
 * value[x] only Quantity
 ```
 
-but this order is fine:
+but this order is acceptable:
 
 ```
 * value[x] only Quantity
 * value[x].unit 0..0
 ```
 
-The difference is that in the first approach, value[x] is not yet known to be restricted to only a Quantity, so `value[x].unit` is ambiguous. In the second approach, value[x] is known to be a Quantity, so `value[x].unit` is unambiguous.
+In the first approach, `value[x]` is not yet known to be restricted to a Quantity, so `value[x].unit` is ambiguous. In the second approach, `value[x]` is known to be a Quantity, so `value[x].unit` is unambiguous.
 
-In cases where there are no explicit strictures on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could carry ordering constraints.
+In cases with no explicit or logical restrictions on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could have order constraints or logical ordering requirements.
 
 It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
 
@@ -231,7 +231,7 @@ FSH represents Codings in the following ways:
 
 {CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
 
-As [indicated by italics](#about-this-guide), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology that the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by italics](#about-the-specification), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -313,7 +313,7 @@ Using a single-quoted string requires the following spacing to accomplish the sa
   * nothing happens"
 ```
 
-The difference between these two approaches is that the latter obscures the fact that the first and fourth line are at the same indentation level, and makes it appear there are two rules because of the asterisk in the first column. The former approach allows the first line to be empty so the string is defined as a block, and allows the entire block to be indented, so visually, it does not appear a second rule is involved. Using triple-quoted strings is entirely a matter of preference.
+The difference between these two approaches is that the latter obscures the fact that the first and fourth line are at the same indentation level, and makes it appear there are two rules because of the asterisk in the first column. The former approach allows the first line to be empty so the string is defined as a block, and allows the entire block to be indented, so visually, it does not appear a second rule is involved (because of the asterisk in the first column). Using triple-quoted strings is entirely a matter of preference.
 
 When processing triple-quote strings, the following approach is used:
 
@@ -327,7 +327,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 
 * Top-level elements such as Observation.code
 * Nested elements, such as Observation.method.text
-* Elements in a list or array, such as Patient.name
+* Elements in a list or array, such as Patient.name[2]
 * Individual data types of choice elements, such as onsetAge in onset[x]
 * Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
 * Elements in an SD, like active and experimental
@@ -337,7 +337,7 @@ In the following, the various types of path references are discussed.
 
 #### Top-Level Paths
 
-The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path does not include the resource name. For example, when defining a profile of Observation, the path to Observation.code is denoted as `code`.
+The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path MUST NOT include the resource name. For example, when defining a profile of Observation, the path to Observation.code is just `code`.
 
 #### Nested Element Paths
 
@@ -411,13 +411,13 @@ FHIR represents an element with a choice of data types using the style foo[x]. F
   valueString
   ```
 
-* The path to the Reference(Substance | Medication) choice of Medication.ingredient.item[x]:
+* The path to the Reference data type choice of Medication.ingredient.item[x]:
 
   ```
   ingredient.itemReference
   ```
 
-* The path to the Substance choice in the example above:
+* Given that the itemReference has further choices Reference(Substance) or Reference(Medication), the path to the Reference(Substance) choice:
 
   ```
   ingredient.itemReference[Substance]
@@ -1878,13 +1878,14 @@ paths:              COMMA_DELIMITED_SEQUENCES;
 caretPath:          CARET_SEQUENCE;
 flag:               KW_MOD | KW_MS | KW_SU | KW_TU | KW_NORMATIVE | KW_DRAFT;
 strength:           KW_EXAMPLE | KW_PREFERRED | KW_EXTENSIBLE | KW_REQUIRED;
-value:              SEQUENCE | STRING | MULTILINE_STRING | NUMBER | DATETIME | TIME | reference | code | quantity | ratio | bool ;
+value:              SEQUENCE | STRING | MULTILINE_STRING | NUMBER | DATETIME | TIME | reference | canonical | code | quantity | ratio | bool ;
 item:               SEQUENCE (KW_NAMED SEQUENCE)? CARD flag*;
 code:               CODE STRING?;
 concept:            STAR code (STRING | MULTILINE_STRING)?;
 quantity:           NUMBER UNIT;
 ratio:              ratioPart COLON ratioPart;
 reference:          (OR_REFERENCE | PIPE_REFERENCE) STRING?;
+canonical:          CANONICAL;
 ratioPart:          NUMBER | quantity;
 bool:               KW_TRUE | KW_FALSE;
 targetType:         SEQUENCE | reference;
@@ -1969,6 +1970,8 @@ CARD:               ([0-9]+)? '..' ([0-9]+ | '*')?;
                  //  Reference       (        ITEM         |         ITEM         )
 OR_REFERENCE:       'Reference' WS* '(' WS* SEQUENCE WS* (WS 'or' WS+ SEQUENCE WS*)* ')';
 PIPE_REFERENCE:          'Reference' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)* ')';
+                 // Canonical(Item)
+CANONICAL:         'Canonical' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)? ')';
                  //  ^  NON-WHITESPACE
 CARET_SEQUENCE:     '^' NONWS+;
                  // '/' EXPRESSION '/'
