@@ -2,7 +2,7 @@ FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts i
 
 The FHIR Shorthand (FSH) implementation guide includes the following information:
 
-1. [FHIR Shorthand Overview](index.html) -- Introduction to FSH and SUSHI (the reference implementation of a FSH compiler) _(informative content)_.
+1. [FHIR Shorthand Overview](overview.html) -- Introduction to FSH and SUSHI (the reference implementation of a FSH compiler) _(informative content)_.
 1. [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(formal content)_.
 1. A [Quick Reference Sheet](FSHQuickReference.pdf) under the Downloads menu.
 
@@ -30,7 +30,7 @@ This IG uses the following conventions:
 
 There are already several existing methods for IG creation. Each of these methods have certain advantages as well as drawbacks:
 
-1. Hand-editing the conformance artifacts such as StructureDefinitions and ValueSet resources is unwieldy, but authors get full control over every aspect of the resulting FHIR profiles and definitions.
+1. Hand-editing FHIR conformance artifacts such as StructureDefinition and ValueSet resources is unwieldy, but authors get full control over every aspect of the resulting FHIR profiles and definitions.
 1. The [Excel spreadsheet method](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, with the content mixed with formatting directives.
 1. [Simplifier/Forge](https://fire.ly/products/simplifier-net/) and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com) provide graphical and form-based interfaces that help guide users through common profiling tasks. The potential downside is the need to navigate multiple screens visit different items and make cross-cutting changes.
 
@@ -120,3 +120,6 @@ and
 David Winters.
 
 The authors apologize if they have omitted any contributor from this list.
+
+**[Continue to Overview ->](overview.html)**
+
