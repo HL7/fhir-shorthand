@@ -271,7 +271,7 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-and-in
 
 ### FSH in Practice
 
-This section presents an overview of how the FSH language is put into practice. The descriptions in this section refer to the numbers in the following figure:
+This section presents an overview of how the FSH language is put into practice using [SUSHI](https://fshschool.org). The descriptions here are subject to change and represent the functionality in SUSHI as of the STU 1 publication date. The discussion in this section refers to the numbers in the following figure:
 
 <img src="Workflow.png" alt="Overall FSH Workflow" width="800px" style="float:none; margin: 0px 0px 0px 0px;" />
 
