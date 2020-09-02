@@ -961,8 +961,8 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
 * The same statement, using aliases and whitespace flexibility for better readability:
 
   ```
-  * Alias: $Disability = http://hl7.org/fhir/StructureDefinition/patient-disability
-  * Alias: $GenderIdentity = http://hl7.org/fhir/StructureDefinition/patient-genderIdentity
+  Alias: $Disability = http://hl7.org/fhir/StructureDefinition/patient-disability
+  Alias: $GenderIdentity = http://hl7.org/fhir/StructureDefinition/patient-genderIdentity
   
   // intervening lines not shown
 
