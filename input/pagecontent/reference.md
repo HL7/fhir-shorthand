@@ -1508,7 +1508,7 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
 * `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
-* `Usage: #inline` means the instance should not be instantiated as an independent resource, but will appear as part of another instance (for example, as a [contained resource](https://www.hl7.org/fhir/references.html#contained) or in a [Composition](https://www.hl7.org/fhir/composition.html) or [Bundle](https://www.hl7.org/fhir/bundle.html)).
+* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array.
 
 If `Usage` is unspecified, the default is `#example`.
 
@@ -1541,13 +1541,13 @@ If `Usage` is unspecified, the default is `#example`.
   * identifier[NPI].value = "8274017284"
   ```
 
-  This instance would be incorporated into a Composition with a statement such as:
+  This instance would be incorporated into a DomainResource with a statement such as:
 
   ```
-  *  section[0].entry[1] = Reference(DrDavidAnydoc)
+  *  contained[0] = DrDavidAnydoc
   ```
 
-* Define a Patient instance, and then inline that instance into a Condition as a contained resource:
+* Define an `#inline` Patient instance, and then use that instance in a Condition resource, inlining it as a contained resource:
 
   ```
   Instance: EveAnyperson
