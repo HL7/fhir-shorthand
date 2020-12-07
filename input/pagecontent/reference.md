@@ -1508,7 +1508,7 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
 * `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
-* `Usage: #inline` means the instance should not be instantiated as an independent resource, but appears as part of another instance (for example, in a composition or bundle).
+* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array.
 
 If `Usage` is unspecified, the default is `#example`.
 
@@ -1539,6 +1539,63 @@ If `Usage` is unspecified, the default is `#example`.
   * name.given = "David"
   * name.suffix = "MD"
   * identifier[NPI].value = "8274017284"
+  ```
+
+  This instance would be incorporated into a DomainResource with a statement such as:
+
+  ```
+  *  contained[0] = DrDavidAnydoc
+  ```
+
+* Define an `#inline` Patient instance, and then use that instance in a Condition resource, inlining it as a contained resource:
+
+  ```
+  Instance: EveAnyperson
+  InstanceOf: Patient
+  Usage: #inline // #inline means this instance should not be exported as a separate example
+  * name.given[0] = "Eve"
+  * name.family = "Anyperson"
+
+  Instance: EvesCondition
+  InstanceOf: Condition
+  Usage: #example
+  Description: "An example that uses contained"
+  * contained[0] = EveAnyperson // this inlines EveAnyperson definition here
+  * code = http://foo.org#bar
+  * subject = Reference(EveAnyperson) // this automatically creates the relative reference correctly
+  ```
+  This results in:
+
+  ```json
+  {
+    "resourceType": "Condition",
+    "id": "EvesCondition",
+    "contained": [
+      {
+        "resourceType": "Patient",
+        "id": "EveAnyperson",
+        "name": [
+          {
+            "given": [
+              "Eve"
+            ],
+            "family": "Anyperson"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "coding": [
+        {
+          "code": "bar",
+          "system": "http://foo.org"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "#EveAnyperson"
+    }
+  }
   ```
 
 * Define an instance of PrimaryCancerCondition, using many available features:
