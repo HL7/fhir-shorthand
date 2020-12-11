@@ -1265,13 +1265,16 @@ The following syntaxes can be used to assign flags:
 
 [Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. An insert rule is used to add a rule set:
 
-```
-* insert {RuleSet name}
-```
+<pre><code>* insert {RuleSet name}<i>{parameters}</i>
+</code></pre>
 
 The rules in the named rule set are interpreted as if they were copied and pasted in the designated location.
 
 Each rule in the rule set should be compatible with the item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations SHOULD check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error SHOULD be emitted. It is up to implementations if other valid rules from the rule set are applied.
+
+When providing a list of parameter values, enclose the list with parentheses `()` and separate values with a comma `,`. If you need to put literal `)` or `,` characters in your list of values, escape them with a backslash: `\)` and `\,`, respectively.
+
+The values given for the parameters are substituted into the rule set definition in order to create the rules that will be applied. The number of values provided must match the number of parameters specified in the rule set definition. Blank space that separates the rule set name from the start of the parameter value list is optional. Blank space on either side of a parameter value is removed before the value is applied to the rule set definition.
 
 **Examples:**
 
@@ -1310,6 +1313,45 @@ Each rule in the rule set should be compatible with the item where the rule set 
   Parent: BreastRadiologyObservationProfile
   * insert FranceObservationRuleSet
   ```
+
+* Insert the rule set named [RuleSet2](#defining-rule-sets) into a profile:
+
+  ```
+  Profile: MyObservationProfile
+  Parent: Observation
+  * insert RuleSet2 (3, boolean or integer)
+  ```
+
+  This is equivalent to the following:
+
+  ```
+  Profile: MyObservationProfile
+  Parent: Observation
+  * note 0..3
+  * value[x] only boolean or integer
+  * extension[MyExtension].value[x] only boolean or integer
+  ```
+
+  The original insert rule could also be formatted without a space between the rule set name and parameter list:
+
+  ```
+  Profile: MyObservationProfile
+  Parent: Observation
+  * insert RuleSet2(3, boolean or integer)
+  ```
+
+  The original insert rule could also be formatted with each parameter on a separate line, which is useful when parameter values are lengthy:
+
+  ```
+  Profile: MyObservationProfile
+  Parent: Observation
+  * insert RuleSet2 (
+    3,
+    boolean or integer
+  )
+  ```
+
+  Both of these formatting variations will produce the same result as the original example.
 
 #### Obeys Rules
 
@@ -1842,17 +1884,18 @@ Rule sets provide the ability to define a group rules as an independent entity. 
 
 All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
 
+Rule sets can also specify one or more parameters as part of their definition. Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. Enclose a parameter name in curly braces `{}` in the rule definitions to indicate a place where the parameter value should be substituted. Spaces are allowed inside the curly braces: `{value}` and `{ value }` are both valid substitution sequences for a parameter named `value`. A parameter value may be substituted more than once in the rule set definition.
+
 Rule sets are defined by using the keyword `RuleSet`:
 
-```
-RuleSet: {name}
+<pre><code>RuleSet: {name} <i>{parameters}</i>
 {rule1}
 {rule2}
 // More rules
-```
+</code></pre>
 
 
-**Example:**
+**Examples:**
 
 * Define a rule set for metadata to be used in multiple profiles:
 
@@ -1861,6 +1904,15 @@ RuleSet: {name}
   * ^status = #draft
   * ^experimental = true
   * ^publisher = "Elbonian Medical Society"
+  ```
+
+* Define a rule set with parameters:
+
+  ```
+  RuleSet: RuleSet2 (noteMax, valueTypes)
+  * note 0..{noteMax}
+  * value[x] only { valueTypes }
+  * extension[MyExtension].value[x] only { valueTypes }
   ```
 
 #### Defining Value Sets
@@ -1959,11 +2011,14 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 
 The grammar of FSH described in [ANTLR4](https://www.antlr.org/):
 
+#### Parser Grammar
 ```
 grammar FSH;
 
+options { tokenVocab = FSHLexer; }
+
 doc:                entity* EOF;
-entity:             alias | profile | extension | invariant | instance | valueSet | codeSystem | ruleSet | mapping;
+entity:             alias | profile | extension | invariant | instance | valueSet | codeSystem | ruleSet | paramRuleSet | mapping;
 
 alias:              KW_ALIAS SEQUENCE EQUAL SEQUENCE;
 
@@ -1988,6 +2043,18 @@ csRule:             concept | caretValueRule | insertRule;
 
 ruleSet:            KW_RULESET SEQUENCE ruleSetRule+;
 ruleSetRule:        sdRule | concept | vsComponent;
+
+paramRuleSet:       KW_RULESET SEQUENCE PARAMETER_DEF_LIST paramRuleSetContent;
+paramRuleSetContent:   STAR
+                    ~(KW_PROFILE
+                    | KW_ALIAS
+                    | KW_EXTENSION
+                    | KW_INSTANCE
+                    | KW_INVARIANT
+                    | KW_VALUESET
+                    | KW_CODESYSTEM
+                    | KW_RULESET
+                    | KW_MAPPING)*;
 
 mapping:            KW_MAPPING SEQUENCE mappingMetadata* mappingEntityRule*;
 mappingMetadata:    id | source | target | description | title;
@@ -2018,7 +2085,7 @@ onlyRule:           STAR path KW_ONLY targetType (KW_OR targetType)*;
 obeysRule:          STAR path? KW_OBEYS SEQUENCE (KW_AND SEQUENCE)*;
 caretValueRule:     STAR path? caretPath EQUAL value;
 mappingRule:        STAR path? ARROW STRING STRING? CODE?;
-insertRule:         STAR KW_INSERT SEQUENCE;
+insertRule:         STAR KW_INSERT RULESET_REFERENCE;
 
 // VALUESET COMPONENTS
 vsComponent:        STAR ( KW_INCLUDE | KW_EXCLUDE )? ( vsConceptComponent | vsFilterComponent );
@@ -2044,13 +2111,18 @@ value:              SEQUENCE | STRING | MULTILINE_STRING | NUMBER | DATETIME | T
 item:               SEQUENCE (KW_NAMED SEQUENCE)? CARD flag*;
 code:               CODE STRING?;
 concept:            STAR code (STRING | MULTILINE_STRING)?;
-quantity:           NUMBER UNIT;
+quantity:           NUMBER UNIT STRING?;
 ratio:              ratioPart COLON ratioPart;
 reference:          (OR_REFERENCE | PIPE_REFERENCE) STRING?;
 canonical:          CANONICAL;
 ratioPart:          NUMBER | quantity;
 bool:               KW_TRUE | KW_FALSE;
 targetType:         SEQUENCE | reference;
+```
+
+#### Lexer Grammar
+```
+lexer grammar FSHLexer;
 
 // KEYWORDS
 KW_ALIAS:           'Alias' WS* ':';
@@ -2101,7 +2173,7 @@ KW_VSREFERENCE:     'valueset';
 KW_SYSTEM:          'system';
 KW_UNITS:           'units';
 KW_EXACTLY:         '(' WS* 'exactly' WS* ')';
-KW_INSERT:          'insert';
+KW_INSERT:          'insert' -> pushMode(INSERT_RULE);
 
 // SYMBOLS
 EQUAL:              '=';
@@ -2114,35 +2186,60 @@ ARROW:              '->';
 
                  //  "    CHARS    "
 STRING:             '"' (~[\\"] | '\\r' | '\\n' | '\\t' | '\\"' | '\\\\')* '"';
+
                  //  """ CHARS """
 MULTILINE_STRING:   '"""' .*? '"""';
+
                  //  +/- ? DIGITS( .  DIGITS)?
 NUMBER:             [+\-]? [0-9]+('.' [0-9]+)?;
+
                  //   '  UCUM UNIT   '
 UNIT:               '\'' (~[\\'])* '\'';
+
                  // SYSTEM     #  SYSTEM
 CODE:               SEQUENCE? '#' (SEQUENCE | CONCEPT_STRING);
+
+
 CONCEPT_STRING:      '"' (NONWS_STR | '\\"' | '\\\\')+ (WS (NONWS_STR | '\\"' | '\\\\')+)* '"';
+
                  //        YEAR         ( -   MONTH   ( -    DAY    ( T TIME )?)?)?
 DATETIME:           [0-9][0-9][0-9][0-9]('-'[0-9][0-9]('-'[0-9][0-9]('T' TIME)?)?)?;
+
                  //    HOUR   ( :   MINUTE  ( :   SECOND  ( . MILLI )?)?)?( Z  |     +/-        HOUR   :  MINUTE   )?
 TIME:               [0-9][0-9](':'[0-9][0-9](':'[0-9][0-9]('.'[0-9]+)?)?)?('Z' | ('+' | '-')[0-9][0-9]':'[0-9][0-9])?;
+
                  // DIGITS  ..  (DIGITS |  * )
 CARD:               ([0-9]+)? '..' ([0-9]+ | '*')?;
+
                  //  Reference       (        ITEM         |         ITEM         )
 OR_REFERENCE:       'Reference' WS* '(' WS* SEQUENCE WS* (WS 'or' WS+ SEQUENCE WS*)* ')';
 PIPE_REFERENCE:          'Reference' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)* ')';
+
                  // Canonical(Item)
 CANONICAL:         'Canonical' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)? ')';
+
                  //  ^  NON-WHITESPACE
 CARET_SEQUENCE:     '^' NONWS+;
+
                  // '/' EXPRESSION '/'
 REGEX:              '/' ('\\/' | ~[*/\r\n])('\\/' | ~[/\r\n])* '/';
+
+
 COMMA_DELIMITED_CODES: (CODE (WS+ STRING)? WS* COMMA WS+)+ CODE (WS+ STRING)?;
+
+PARAMETER_DEF_LIST: '(' (SEQUENCE WS* COMMA WS*)* SEQUENCE ')';
+
+
                         // (NON-WS  WS  ,   WS )+ NON-WS
 COMMA_DELIMITED_SEQUENCES: (SEQUENCE WS* COMMA WS*)+ SEQUENCE;
+
+// BLOCK_COMMENT must precede SEQUENCE so that a block comment without whitespace does not become a SEQUENCE
+BLOCK_COMMENT:      '/*' .*? '*/' -> skip;
                  // NON-WHITESPACE
 SEQUENCE:           NONWS+;
+
+
+
 // FRAGMENTS
 fragment WS: [ \t\r\n\f\u00A0];
 fragment NONWS: ~[ \t\r\n\f\u00A0];
@@ -2150,6 +2247,8 @@ fragment NONWS_STR: ~[ \t\r\n\f\u00A0\\"];
 
 // IGNORED TOKENS
 WHITESPACE:         WS -> channel(HIDDEN);
-BLOCK_COMMENT:      '/*' .*? '*/' -> skip;
 LINE_COMMENT:       '//' .*? [\r\n] -> skip;
+
+mode INSERT_RULE;
+RULESET_REFERENCE:      WS* NONWS+ (WS* ('(' ('\\)' | '\\\\' | ~[)])+ ')'))? -> popMode;
 ```
