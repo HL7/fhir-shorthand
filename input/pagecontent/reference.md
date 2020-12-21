@@ -281,13 +281,27 @@ This syntax is also used with CodeableConcepts (see [Assignments with the Codeab
     
 #### Quantities
 
-FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes. This syntax is borrowed from the [Clinical Quality Language](https://cql.hl7.org/02-authorsguide.html#quantities):
+FSH provides a shorthand that allows three aspects of a Quantity to be set simultaneously:
 
-```
-{decimal} '{UCUM code}'
-```
+* The numerical quantity (`Quantity.value`)
+* The units of measure (`Quantity.code`)
+* Optionally, the human-readable displayed units (`Quantity.unit`) 
 
-The value and units can also be expressed independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+The grammar is:
+
+<pre><code>{decimal} '{UCUM code}' <i>"{display}"</i></code></pre>
+
+This shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`).
+
+When the units are not UCUM, the value and units can be set independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+
+Example:
+
+* Express a weight in pounds, displaying "lb":
+
+  ```
+  155.0 '[lb_av]' "lb"
+  ```
 
 #### Triple-Quoted Strings
 
@@ -733,13 +747,11 @@ To set the top-level text of a CodeableConcept, the FSH expression is:
 
 ##### Assignments with the Quantity Data Type
 
-FSH provides a shorthand that allows quantities with units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes:
+FSH provides a shorthand that allows quantities, units of measure, and display string for the units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes:
 
-```
-* <Quantity> = {decimal} '{UCUM code}'
-```
+<pre><code>&lt;Quantity&gt; = {decimal} '{UCUM code}' <i>"{units display string}"</i></code></pre>
 
-The value and units can also be set independently. To assign a value, use the Quantity.value property:
+For other code systems, the value and units can also be set independently. To assign a value, use the Quantity.value property:
 
 ```
 * <Quantity>.value = {decimal}
@@ -747,7 +759,7 @@ The value and units can also be set independently. To assign a value, use the Qu
 
 The units of measure can either be assigned a coded value or bound to a value set:
 
-<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i>
+<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{units display string}"</i>
 
 * &lt;Quantity&gt; from {ValueSet name|id|url}
 </code></pre>
