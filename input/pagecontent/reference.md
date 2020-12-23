@@ -675,8 +675,7 @@ A FHIR Coding has five attributes (system, version, code, display, and userSelec
 
 The only required part of this statement is the code (including the # sign), although it is rare to have a Coding without a code system. The version string cannot appear without a code system.
 
-Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if there is an existing Coding with a display string, and there is a new assignment rule without a display string, the result has no display string.
-
+Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if a Coding has a value that includes a display string, and a new assignment is made that replaces the system and code but has no display string, then result is a Coding without a display string.
 
 **Examples:**
 
@@ -707,32 +706,36 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
 * Examples involving replacement of an existing value:
 
   ```
+  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding = ICD10#C80.1
+  //
+  // Result (because the second assignment replaces the first assignment): 
+  //   myCoding.system is ICD10
+  //   myCoding.code is C80.1
+  //   myCoding.display does not exist
+  //   myCoding.version does not exist
+  ```
+
+  ```
   * myCoding.userSelected = true
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  // Result: 
-  //   myCoding.system = SCT
-  //   myCoding.code = 363346000
-  //   myCoding.display = "Malignant neoplastic disease (disorder)"
+  //
+  // Result (because the second rule replaces the entire existing value):
+  //   myCoding.system is SCT
+  //   myCoding.code is 363346000
+  //   myCoding.display is "Malignant neoplastic disease (disorder)"
   //   myCoding.userSelected does not exist
   ```
 
   ```
-  * code = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  * myCoding.userSelected = true
-  // Result: 
-  //   myCoding.system = SCT
-  //   myCoding.code = 363346000
-  //   myCoding.display = "Malignant neoplastic disease (disorder)"
-  //   myCoding.userSelected is true
-  ```
-
-  ```
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  * myCoding = ICD10#C80.1
-  // Result: 
-  //   myCoding.system = ICD10
-  //   myCoding.code = C80.1
-  //   myCoding.display does not exist
+  * myCoding.userSelected = true
+  //
+  // Result (because the second rule only replaces the userSelected property): 
+  //   myCoding.system is SCT
+  //   myCoding.code is 363346000
+  //   myCoding.display is "Malignant neoplastic disease (disorder)"
+  //   myCoding.userSelected is true
   ```
 
 ##### Assignments with the CodeableConcept Data Type
@@ -794,10 +797,11 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
   * myCodeableConcept.coding[0].userSelected = true
   * myCodeableConcept.text = "Some value"
   * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  // Result: 
-  //   myCodeableConcept.coding[0].system = SCT
-  //   myCodeableConcept.coding[0].code = 363346000
-  //   myCodeableConcept.coding[0].display = "Malignant neoplastic disease (disorder)"
+  //
+  // Result (because the third rule replaces the entire existing value): 
+  //   myCodeableConcept.coding[0].system is SCT
+  //   myCodeableConcept.coding[0].code is 363346000
+  //   myCodeableConcept.coding[0].display is "Malignant neoplastic disease (disorder)"
   //   myCodeableConcept.coding[0].userSelected does not exist
   //   myCodeableConcept.text does not exist
   ```
@@ -806,7 +810,8 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
   * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCodeableConcept.coding[0].userSelected = true
   * myCodeableConcept.text = "Some value"
-  // Result: 
+  //
+  // Result (because the second and third rules only replace specific elements): 
   //   myCodeableConcept.coding[0].system = SCT
   //   myCodeableConcept.coding[0].code = 363346000
   //   myCodeableConcept.coding[0].display = "Malignant neoplastic disease (disorder)"
@@ -866,18 +871,37 @@ A Quantity can also be bound to a value set:
 * Examples involving replacement of an existing value:
 
   ```
-  * valueQuantity.value = 55.0
-  * valueQuantity.text = "Some value"
-  * valueQuantity = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  // Result: 
-  //   valueQuantity.coding[0].system = SCT
-  //   valueQuantity.coding[0].code = 363346000
-  //   valueQuantity.coding[0].display = "Malignant neoplastic disease (disorder)"
-  //   valueQuantity.coding[0].userSelected does not exist
-  //   valueQuantity.text does not exist
+  * valueQuantity.unit = "millimeters"
+  * valueQuantity = 55.0 'mm'
+  //
+  // Result (because the second rule replaces the entire existing value): 
+  //   valueQuantity.value is 55.0
+  //   valueQuantity.system is UCUM
+  //   valueQuantity.code is mm
+  //   valueQuantity.unit does not exist
   ```
 
+  ```
+  * valueQuantity = 55.0 'mm'
+  * valueQuantity.unit = "millimeters"
+  //
+  // Result (because the second rule only affects the unit element): 
+  //   valueQuantity.value is 55.0
+  //   valueQuantity.system is UCUM
+  //   valueQuantity.code is mm
+  //   valueQuantity.unit is "millimeters"
+  ```
 
+  ```
+  * valueQuantity.value = 55.0
+  * valueQuantity = UCUM#mm "millimeters"
+  //
+  // Result (because the second rule only sets the units of measure): 
+  //   valueQuantity.value is 55.0
+  //   valueQuantity.system is UCUM
+  //   valueQuantity.code is mm
+  //   valueQuantity.unit is "millimeters"
+  ```
 
 ##### Assignments Involving Instances
 
