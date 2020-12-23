@@ -594,7 +594,9 @@ Assignment rules follow this syntax:
 * <element> = {value}
 ```
 
-The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side MUST align with the data type of the final element in the path.
+The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side MUST align with the data type of the final element in the path. An assignment replaces any existing value assigned to the element.
+
+##### Assignments in Instances versus Profiles
 
 Assignment rules have two different interpretations, depending on context:
 
@@ -667,9 +669,14 @@ In the following, we give details and examples of assignments involving various 
 
 ##### Assignments with the Coding Data Type
 
-FSH provides a shortcut for setting several of the most common properties of a Coding simultaneously, namely, system, version, code, and display. The syntax is:
+A FHIR Coding has five attributes (system, version, code, display, and userSelected). The first four of these can be set with a single assignment statement. The syntax is:
 
-<pre><code>&lt;Coding&gt; = {CodeSystem name|id|url}<i>|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+<pre><code>&lt;Coding&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+
+The only required part of this statement is the code (including the # sign), although it is rare to have a Coding without a code system. The version string cannot appear without a code system.
+
+Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if there is an existing Coding with a display string, and there is a new assignment rule without a display string, the result has no display string.
+
 
 **Examples:**
 
@@ -697,52 +704,114 @@ FSH provides a shortcut for setting several of the most common properties of a C
   * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
   ```
 
+* Examples involving replacement of an existing value:
+
+  ```
+  * myCoding.userSelected = true
+  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  // Result: 
+  //   myCoding.system = SCT
+  //   myCoding.code = 363346000
+  //   myCoding.display = "Malignant neoplastic disease (disorder)"
+  //   myCoding.userSelected does not exist
+  ```
+
+  ```
+  * code = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding.userSelected = true
+  // Result: 
+  //   myCoding.system = SCT
+  //   myCoding.code = 363346000
+  //   myCoding.display = "Malignant neoplastic disease (disorder)"
+  //   myCoding.userSelected is true
+  ```
+
+  ```
+  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding = ICD10#C80.1
+  // Result: 
+  //   myCoding.system = ICD10
+  //   myCoding.code = C80.1
+  //   myCoding.display does not exist
+  ```
+
 ##### Assignments with the CodeableConcept Data Type
 
-A CodeableConcept consists of an array of Codings. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
+A CodeableConcept consists of an array of Codings and a text. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
 
-<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
+<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+
+This is precisely like setting a Coding, as discussed directly above.
 
 To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
 
-<pre><code>* &lt;CodeableConcept&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
+<pre><code>* &lt;CodeableConcept&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
 
-To set the top-level text of a CodeableConcept, the FSH expression is:
+Whenever the shortcut rule is applied, the value on the right side **entirely replaces** any previous value of the CodeableConcept on the left side. This includes clearing the value of `CodeableConcept.text`.
+
+Assignment rules can be used to set any part of a CodeableConcept. For example, to set the top-level text of a CodeableConcept, the FSH expression is:
 
 ```
 * <CodeableConcept>.text = "{string}"
 ```
 
+
 **Examples:**
 
-* Set the first Coding in Condition.code (a CodeableConcept type):
+* Set the first Coding myCodeableConcept:
 
   ```
-  * code = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * An equivalent representation, using explicit array index on the coding array:
 
   ```
-  * code.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * Another equivalent representation, using the shorthand that allows dropping the [0] index:
 
   ```
-  * code.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * Add a second value to the array of Codings:
 
   ```
-  * code.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
+  * myCodeableConcept.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
   ```
     
 * Set the top-level text of Condition.code:
 
   ```
-  * code.text = "Diagnosis of malignant neoplasm left breast."
+  * myCodeableConcept.text = "Diagnosis of malignant neoplasm left breast."
+  ```
+
+* Examples involving replacement of an existing value:
+
+  ```
+  * myCodeableConcept.coding[0].userSelected = true
+  * myCodeableConcept.text = "Some value"
+  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  // Result: 
+  //   myCodeableConcept.coding[0].system = SCT
+  //   myCodeableConcept.coding[0].code = 363346000
+  //   myCodeableConcept.coding[0].display = "Malignant neoplastic disease (disorder)"
+  //   myCodeableConcept.coding[0].userSelected does not exist
+  //   myCodeableConcept.text does not exist
+  ```
+
+  ```
+  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding[0].userSelected = true
+  * myCodeableConcept.text = "Some value"
+  // Result: 
+  //   myCodeableConcept.coding[0].system = SCT
+  //   myCodeableConcept.coding[0].code = 363346000
+  //   myCodeableConcept.coding[0].display = "Malignant neoplastic disease (disorder)"
+  //   myCodeableConcept.coding[0].userSelected is true
+  //   myCodeableConcept.text is "Some value"
   ```
 
 ##### Assignments with the Quantity Data Type
@@ -757,16 +826,16 @@ For other code systems, the value and units can also be set independently. To as
 * <Quantity>.value = {decimal}
 ```
 
-The units of measure can either be assigned a coded value or bound to a value set:
+The units of measure can be set by assigning a coded value to a Quantity:
 
-<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{units display string}"</i>
+<pre><code>* &lt;Quantity&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{units display string}"</i></code></pre>
 
-* &lt;Quantity&gt; from {ValueSet name|id|url}
+A Quantity can also be bound to a value set:
+
+<pre><code>* &lt;Quantity&gt; from {ValueSet name|id|url}
 </code></pre>
 
-In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
-
-> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type, rather than using a Coding to represent the units of measure.
+> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type (probably not the greatest idea in the world).
 
 **Examples:**
 
@@ -793,6 +862,22 @@ In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to 
   ```
   * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
+
+* Examples involving replacement of an existing value:
+
+  ```
+  * valueQuantity.value = 55.0
+  * valueQuantity.text = "Some value"
+  * valueQuantity = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  // Result: 
+  //   valueQuantity.coding[0].system = SCT
+  //   valueQuantity.coding[0].code = 363346000
+  //   valueQuantity.coding[0].display = "Malignant neoplastic disease (disorder)"
+  //   valueQuantity.coding[0].userSelected does not exist
+  //   valueQuantity.text does not exist
+  ```
+
+
 
 ##### Assignments Involving Instances
 
