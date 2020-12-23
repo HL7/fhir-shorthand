@@ -703,34 +703,39 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
   * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
   ```
 
-* Examples involving replacement of an existing value:
+* What happens when a second assignment replaces an existing value:
 
   ```
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding = ICD10#C80.1
-  //
-  // Result (because the second assignment replaces the first assignment): 
+  
+  // Result:
   //   myCoding.system is ICD10
   //   myCoding.code is C80.1
   //   myCoding.display does not exist
   //   myCoding.version does not exist
   ```
 
+* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
+
   ```
   * myCoding.userSelected = true
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  //
+  
   // Result (because the second rule replaces the entire existing value):
   //   myCoding.system is SCT
   //   myCoding.code is 363346000
   //   myCoding.display is "Malignant neoplastic disease (disorder)"
-  //   myCoding.userSelected does not exist
+  //   !!! myCoding.userSelected does not exist !!!
+  
   ```
+
+* The correct way to approach the previous example:
 
   ```
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding.userSelected = true
-  //
+  
   // Result (because the second rule only replaces the userSelected property): 
   //   myCoding.system is SCT
   //   myCoding.code is 363346000
@@ -750,7 +755,7 @@ To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
 
 <pre><code>* &lt;CodeableConcept&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
 
-Whenever the shortcut rule is applied, the value on the right side **entirely replaces** any previous value of the CodeableConcept on the left side. This includes clearing the value of `CodeableConcept.text`.
+Whenever the shortcut rule is applied, the value on the right side **entirely replaces** any previous value of the CodeableConcept on the left side. This includes clearing any previous value of `CodeableConcept.text`.
 
 Assignment rules can be used to set any part of a CodeableConcept. For example, to set the top-level text of a CodeableConcept, the FSH expression is:
 
@@ -785,32 +790,34 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
   * myCodeableConcept.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
   ```
     
-* Set the top-level text of Condition.code:
+* Set the top-level text:
 
   ```
   * myCodeableConcept.text = "Diagnosis of malignant neoplasm left breast."
   ```
 
-* Examples involving replacement of an existing value:
+* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
 
   ```
   * myCodeableConcept.coding[0].userSelected = true
-  * myCodeableConcept.text = "Some value"
+  * myCodeableConcept.text = "Metastatic Cancer"
   * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  //
-  // Result (because the third rule replaces the entire existing value): 
+  
+  // Result (because the third rule replaces the entire existing value of myCodeableConcept): 
   //   myCodeableConcept.coding[0].system is SCT
   //   myCodeableConcept.coding[0].code is 363346000
   //   myCodeableConcept.coding[0].display is "Malignant neoplastic disease (disorder)"
-  //   myCodeableConcept.coding[0].userSelected does not exist
-  //   myCodeableConcept.text does not exist
+  //   !!! myCodeableConcept.coding[0].userSelected does not exist !!!
+  //   !!! myCodeableConcept.text does not exist !!!
   ```
+
+* The correct way to approach the previous example:
 
   ```
   * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCodeableConcept.coding[0].userSelected = true
-  * myCodeableConcept.text = "Some value"
-  //
+  * myCodeableConcept.text = "Metastatic Cancer"
+  
   // Result (because the second and third rules only replace specific elements): 
   //   myCodeableConcept.coding[0].system = SCT
   //   myCodeableConcept.coding[0].code = 363346000
@@ -868,23 +875,25 @@ A Quantity can also be bound to a value set:
   * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
 
-* Examples involving replacement of an existing value:
+* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
 
   ```
   * valueQuantity.unit = "millimeters"
   * valueQuantity = 55.0 'mm'
-  //
+  
   // Result (because the second rule replaces the entire existing value): 
   //   valueQuantity.value is 55.0
   //   valueQuantity.system is UCUM
   //   valueQuantity.code is mm
-  //   valueQuantity.unit does not exist
+  //   !!! valueQuantity.unit does not exist !!!
   ```
+
+* The correct way to approach the previous example:
 
   ```
   * valueQuantity = 55.0 'mm'
   * valueQuantity.unit = "millimeters"
-  //
+  
   // Result (because the second rule only affects the unit element): 
   //   valueQuantity.value is 55.0
   //   valueQuantity.system is UCUM
@@ -892,10 +901,12 @@ A Quantity can also be bound to a value set:
   //   valueQuantity.unit is "millimeters"
   ```
 
+* Another correct way to approach this example:
+
   ```
   * valueQuantity.value = 55.0
   * valueQuantity = UCUM#mm "millimeters"
-  //
+  
   // Result (because the second rule only sets the units of measure): 
   //   valueQuantity.value is 55.0
   //   valueQuantity.system is UCUM
@@ -903,7 +914,7 @@ A Quantity can also be bound to a value set:
   //   valueQuantity.unit is "millimeters"
   ```
 
-##### Assignments Involving Instances
+##### Assignments Involving References
 
 Resource instances can refer to other resource instances. The referred resources can either exist independently or be contained inline in the DomainResource.contained array. Less commonly, the value of an element can be a resource, rather than a reference to a resource.
 
@@ -1041,12 +1052,12 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
 
 #### Contains Rules for Extensions
 
-Extensions are created by adding elements to built-in extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
+Extensions are created by adding elements to extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
 
 Extensions are specified using the `contains` keyword. There are two types of extensions, standalone and inline:
 
-* Standalone extensions have their own SDs, and can be reused. They can be defined internally (in the same FSH project), or externally in core FHIR or an external IG.
-* Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension.
+* Standalone extensions have their own SDs, and can be reused. They can be defined internally (in the same FSH project), or externally in core FHIR or an external IG. Only standalone extensions can be used directly in profiles.
+* Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions can only be used to specify sub-extensions in a complex (nested) extension.
 
 The syntaxes to specify standalone extension(s) are:
 
@@ -1105,7 +1116,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   * valueCodeableConcept from LateralityVS (required)
   ```
 
-* Show how the inline extensions defined in [US Core Race](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) would be defined using FSH:
+* Show how the inline extensions defined in the [US Core Race](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) extension would be defined using FSH:
 
   ```
   * extension contains
