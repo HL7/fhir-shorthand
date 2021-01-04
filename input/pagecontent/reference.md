@@ -594,7 +594,9 @@ Assignment rules follow this syntax:
 * <element> = {value}
 ```
 
-The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side MUST align with the data type of the final element in the path.
+The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side MUST align with the data type of the final element in the path. An assignment replaces any existing value assigned to the element.
+
+##### Assignments in Instances versus Profiles
 
 Assignment rules have two different interpretations, depending on context:
 
@@ -667,9 +669,13 @@ In the following, we give details and examples of assignments involving various 
 
 ##### Assignments with the Coding Data Type
 
-FSH provides a shortcut for setting several of the most common properties of a Coding simultaneously, namely, system, version, code, and display. The syntax is:
+A FHIR Coding has five attributes (system, version, code, display, and userSelected). The first four of these can be set with a single assignment statement. The syntax is:
 
-<pre><code>&lt;Coding&gt; = {CodeSystem name|id|url}<i>|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+<pre><code>&lt;Coding&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+
+The only required part of this statement is the code (including the # sign), although it is rare to have a Coding without a code system. The version string cannot appear without a code system.
+
+Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if a Coding has a value that includes a display string, and a new assignment is made that replaces the system and code but has no display string, then result is a Coding without a display string.
 
 **Examples:**
 
@@ -697,52 +703,127 @@ FSH provides a shortcut for setting several of the most common properties of a C
   * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
   ```
 
+* What happens when a second assignment replaces an existing value:
+
+  ```
+  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding = ICD10#C80.1
+  
+  // Result:
+  //   myCoding.system is ICD10
+  //   myCoding.code is C80.1
+  //   myCoding.display does not exist
+  //   myCoding.version does not exist
+  ```
+
+* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
+
+  ```
+  * myCoding.userSelected = true
+  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  
+  // Result (because the second rule replaces the entire existing value):
+  //   myCoding.system is SCT
+  //   myCoding.code is 363346000
+  //   myCoding.display is "Malignant neoplastic disease (disorder)"
+  //   !!! myCoding.userSelected does not exist !!!
+  
+  ```
+
+* The correct way to approach the previous example:
+
+  ```
+  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding.userSelected = true
+  
+  // Result (because the second rule only replaces the userSelected property): 
+  //   myCoding.system is SCT
+  //   myCoding.code is 363346000
+  //   myCoding.display is "Malignant neoplastic disease (disorder)"
+  //   myCoding.userSelected is true
+  ```
+
 ##### Assignments with the CodeableConcept Data Type
 
-A CodeableConcept consists of an array of Codings. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
+A CodeableConcept consists of an array of Codings and a text. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
 
-<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
+<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+
+This is precisely like setting a Coding, as discussed directly above.
 
 To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
 
-<pre><code>* &lt;CodeableConcept&gt; = {CodeSystem name|id|url}#{code} <i>"{display string}"</i></code></pre>
+<pre><code>* &lt;CodeableConcept&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
 
-To set the top-level text of a CodeableConcept, the FSH expression is:
+Whenever the shortcut rule is applied, the value on the right side **entirely replaces** any previous value of the CodeableConcept on the left side. This includes clearing any previous value of `CodeableConcept.text`.
+
+Assignment rules can be used to set any part of a CodeableConcept. For example, to set the top-level text of a CodeableConcept, the FSH expression is:
 
 ```
 * <CodeableConcept>.text = "{string}"
 ```
 
+
 **Examples:**
 
-* Set the first Coding in Condition.code (a CodeableConcept type):
+* Set the first Coding myCodeableConcept:
 
   ```
-  * code = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * An equivalent representation, using explicit array index on the coding array:
 
   ```
-  * code.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * Another equivalent representation, using the shorthand that allows dropping the [0] index:
 
   ```
-  * code.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * Add a second value to the array of Codings:
 
   ```
-  * code.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
+  * myCodeableConcept.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
   ```
     
-* Set the top-level text of Condition.code:
+* Set the top-level text:
 
   ```
-  * code.text = "Diagnosis of malignant neoplasm left breast."
+  * myCodeableConcept.text = "Diagnosis of malignant neoplasm left breast."
+  ```
+
+* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
+
+  ```
+  * myCodeableConcept.coding[0].userSelected = true
+  * myCodeableConcept.text = "Metastatic Cancer"
+  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  
+  // Result (because the third rule replaces the entire existing value of myCodeableConcept): 
+  //   myCodeableConcept.coding[0].system is SCT
+  //   myCodeableConcept.coding[0].code is 363346000
+  //   myCodeableConcept.coding[0].display is "Malignant neoplastic disease (disorder)"
+  //   !!! myCodeableConcept.coding[0].userSelected does not exist !!!
+  //   !!! myCodeableConcept.text does not exist !!!
+  ```
+
+* The correct way to approach the previous example:
+
+  ```
+  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding[0].userSelected = true
+  * myCodeableConcept.text = "Metastatic Cancer"
+  
+  // Result (because the second and third rules only replace specific elements): 
+  //   myCodeableConcept.coding[0].system = SCT
+  //   myCodeableConcept.coding[0].code = 363346000
+  //   myCodeableConcept.coding[0].display = "Malignant neoplastic disease (disorder)"
+  //   myCodeableConcept.coding[0].userSelected is true
+  //   myCodeableConcept.text is "Some value"
   ```
 
 ##### Assignments with the Quantity Data Type
@@ -757,16 +838,16 @@ For other code systems, the value and units can also be set independently. To as
 * <Quantity>.value = {decimal}
 ```
 
-The units of measure can either be assigned a coded value or bound to a value set:
+The units of measure can be set by assigning a coded value to a Quantity:
 
-<pre><code>* &lt;Quantity&gt; = {CodeSystem name|id|url}#{code} <i>"{units display string}"</i>
+<pre><code>* &lt;Quantity&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{units display string}"</i></code></pre>
 
-* &lt;Quantity&gt; from {ValueSet name|id|url}
+A Quantity can also be bound to a value set:
+
+<pre><code>* &lt;Quantity&gt; from {ValueSet name|id|url}
 </code></pre>
 
-In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to Quantity.code, and `display string` to Quantity.unit.
-
-> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type, rather than using a Coding to represent the units of measure.
+> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type (probably not the greatest idea in the world).
 
 **Examples:**
 
@@ -794,7 +875,46 @@ In the first expression, `CodeSystem` corresponds to Quantity.system, `code` to 
   * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
 
-##### Assignments Involving Instances
+* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
+
+  ```
+  * valueQuantity.unit = "millimeters"
+  * valueQuantity = 55.0 'mm'
+  
+  // Result (because the second rule replaces the entire existing value): 
+  //   valueQuantity.value is 55.0
+  //   valueQuantity.system is UCUM
+  //   valueQuantity.code is mm
+  //   !!! valueQuantity.unit does not exist !!!
+  ```
+
+* The correct way to approach the previous example:
+
+  ```
+  * valueQuantity = 55.0 'mm'
+  * valueQuantity.unit = "millimeters"
+  
+  // Result (because the second rule only affects the unit element): 
+  //   valueQuantity.value is 55.0
+  //   valueQuantity.system is UCUM
+  //   valueQuantity.code is mm
+  //   valueQuantity.unit is "millimeters"
+  ```
+
+* Another correct way to approach this example:
+
+  ```
+  * valueQuantity.value = 55.0
+  * valueQuantity = UCUM#mm "millimeters"
+  
+  // Result (because the second rule only sets the units of measure): 
+  //   valueQuantity.value is 55.0
+  //   valueQuantity.system is UCUM
+  //   valueQuantity.code is mm
+  //   valueQuantity.unit is "millimeters"
+  ```
+
+##### Assignments Involving References
 
 Resource instances can refer to other resource instances. The referred resources can either exist independently or be contained inline in the DomainResource.contained array. Less commonly, the value of an element can be a resource, rather than a reference to a resource.
 
@@ -932,12 +1052,12 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
 
 #### Contains Rules for Extensions
 
-Extensions are created by adding elements to built-in extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
+Extensions are created by adding elements to extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
 
 Extensions are specified using the `contains` keyword. There are two types of extensions, standalone and inline:
 
-* Standalone extensions have their own SDs, and can be reused. They can be defined internally (in the same FSH project), or externally in core FHIR or an external IG.
-* Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions are typically used to specify sub-extensions in a complex (nested) extension.
+* Standalone extensions have their own SDs, and can be reused. They can be defined internally (in the same FSH project), or externally in core FHIR or an external IG. Only standalone extensions can be used directly in profiles.
+* Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions can only be used to specify sub-extensions in a complex (nested) extension.
 
 The syntaxes to specify standalone extension(s) are:
 
@@ -996,7 +1116,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   * valueCodeableConcept from LateralityVS (required)
   ```
 
-* Show how the inline extensions defined in [US Core Race](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) would be defined using FSH:
+* Show how the inline extensions defined in the [US Core Race](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) extension would be defined using FSH:
 
   ```
   * extension contains
