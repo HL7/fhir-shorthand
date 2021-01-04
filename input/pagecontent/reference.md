@@ -755,7 +755,7 @@ To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
 
 <pre><code>* &lt;CodeableConcept&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
 
-Whenever the shortcut rule is applied, the value on the right side **entirely replaces** any previous value of the CodeableConcept on the left side. This includes clearing any previous value of `CodeableConcept.text`.
+Whenever the shortcut rule is applied, the value on the right side **entirely replaces** any previous value of the CodeableConcept on the left side. Any previous value(s) in the CodeableConcept are cleared.
 
 Assignment rules can be used to set any part of a CodeableConcept. For example, to set the top-level text of a CodeableConcept, the FSH expression is:
 
@@ -796,34 +796,27 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
   * myCodeableConcept.text = "Diagnosis of malignant neoplasm left breast."
   ```
 
-* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
+* Example of **incorrect** ordering rules that leads to loss of a previously-assigned value, because the third assignment clears the existing value of myCodeableConcept before apply new values:
 
   ```
   * myCodeableConcept.coding[0].userSelected = true
   * myCodeableConcept.text = "Metastatic Cancer"
   * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  
-  // Result (because the third rule replaces the entire existing value of myCodeableConcept): 
-  //   myCodeableConcept.coding[0].system is SCT
-  //   myCodeableConcept.coding[0].code is 363346000
-  //   myCodeableConcept.coding[0].display is "Malignant neoplastic disease (disorder)"
-  //   !!! myCodeableConcept.coding[0].userSelected does not exist !!!
-  //   !!! myCodeableConcept.text does not exist !!!
   ```
+  The result is:
+  
+  * coding[0].system is http://snomed.info/sct
+  * coding[0].code is "363346000"
+  * display is "Malignant neoplastic disease (disorder)"
+  * coding[0].userSelected **has no value**
+  * text **has no value**
 
-* The correct way to approach the previous example:
+* The correct way to approach the previous example is to set the values of userSelected and text **after** setting the coding, since those assignments only change the specific subelements on the left side of those assignments:
 
   ```
   * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCodeableConcept.coding[0].userSelected = true
   * myCodeableConcept.text = "Metastatic Cancer"
-  
-  // Result (because the second and third rules only replace specific elements): 
-  //   myCodeableConcept.coding[0].system = SCT
-  //   myCodeableConcept.coding[0].code = 363346000
-  //   myCodeableConcept.coding[0].display = "Malignant neoplastic disease (disorder)"
-  //   myCodeableConcept.coding[0].userSelected is true
-  //   myCodeableConcept.text is "Some value"
   ```
 
 ##### Assignments with the Quantity Data Type
@@ -875,43 +868,36 @@ A Quantity can also be bound to a value set:
   * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
 
-* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
+* Example of how **incorrect** ordering of rules can result in the loss of a previously assigned value:
 
   ```
   * valueQuantity.unit = "millimeters"
   * valueQuantity = 55.0 'mm'
-  
-  // Result (because the second rule replaces the entire existing value): 
-  //   valueQuantity.value is 55.0
-  //   valueQuantity.system is UCUM
-  //   valueQuantity.code is mm
-  //   !!! valueQuantity.unit does not exist !!!
   ```
+  Because the second rule clears valueQuantity before applying the specified values, the result is:
 
-* The correct way to approach the previous example:
+  * value is 55.0
+  * system is http://unitsofmeasure.org
+  * code is "mm"
+  * unit **has no value**
+
+* The correct way to approach the previous example is to change the order of rules:
 
   ```
   * valueQuantity = 55.0 'mm'
   * valueQuantity.unit = "millimeters"
-  
-  // Result (because the second rule only affects the unit element): 
-  //   valueQuantity.value is 55.0
-  //   valueQuantity.system is UCUM
-  //   valueQuantity.code is mm
-  //   valueQuantity.unit is "millimeters"
   ```
+  Because the second rule only affects valueQuantity.unit, the result is:
+  * value is `55.0`
+  * system is `http://unitsofmeasure.org`
+  * code is `mm`
+  * unit is `"millimeters"`
 
-* Another correct way to approach this example:
+* Another correct way to approach this example (with the same result):
 
   ```
-  * valueQuantity.value = 55.0
   * valueQuantity = UCUM#mm "millimeters"
-  
-  // Result (because the second rule only sets the units of measure): 
-  //   valueQuantity.value is 55.0
-  //   valueQuantity.system is UCUM
-  //   valueQuantity.code is mm
-  //   valueQuantity.unit is "millimeters"
+  * valueQuantity.value = 55.0
   ```
 
 ##### Assignments Involving References
