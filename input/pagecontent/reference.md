@@ -675,7 +675,7 @@ A FHIR Coding has five attributes (system, version, code, display, and userSelec
 
 The only required part of this statement is the code (including the # sign), although it is rare to have a Coding without a code system. The version string cannot appear without a code system.
 
-Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if a Coding has a value that includes a display string, and a new assignment is made that replaces the system and code but has no display string, then result is a Coding without a display string.
+Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if a Coding has a value that includes a display string, and a subsequent assignment replaces the system and code but has no display string, the result is a Coding without a display string.
 
 **Examples:**
 
@@ -712,8 +712,8 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
   // Result:
   //   myCoding.system is ICD10
   //   myCoding.code is C80.1
-  //   myCoding.display does not exist
-  //   myCoding.version does not exist
+  //   myCoding.display has no value
+  //   myCoding.version has no value
   ```
 
 * How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
@@ -726,7 +726,7 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
   //   myCoding.system is SCT
   //   myCoding.code is 363346000
   //   myCoding.display is "Malignant neoplastic disease (disorder)"
-  //   !!! myCoding.userSelected does not exist !!!
+  //   !!! myCoding.userSelected has no value !!!
   
   ```
 
@@ -847,7 +847,7 @@ A Quantity can also be bound to a value set:
 <pre><code>* &lt;Quantity&gt; from {ValueSet name|id|url}
 </code></pre>
 
-> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR's definition of Quantity as a coded data type (probably not the greatest idea in the world).
+> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR oddly treating Quantity as a coded data type.
 
 **Examples:**
 
