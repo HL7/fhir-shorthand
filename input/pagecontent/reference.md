@@ -703,44 +703,36 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
   * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
   ```
 
-* What happens when a second assignment replaces an existing value:
+* Example of what happens when a second assignment replaces an existing value:
 
   ```
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding = ICD10#C80.1
-  
-  // Result:
-  //   myCoding.system is ICD10
-  //   myCoding.code is C80.1
-  //   myCoding.display has no value
-  //   myCoding.version has no value
   ```
+  Because the second assignment pre-clears the previous value of myCoding, the result is:
 
-* How incorrectly ordering rules can lead to unexpected loss of a previously assigned value:
+  * myCoding.system is http://hl7.org/fhir/sid/icd-10-cm (assuming the ICD10 alias maps to this URL)
+  * myCoding.code is "C80.1"
+  * myCoding.display **has no value**
+  * myCoding.version **has no value**
+
+* Example of how **incorrectly** ordered rules can lead to loss of a previously-assigned value, because myCoding is cleared as part of the second assignment:
 
   ```
   * myCoding.userSelected = true
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
-  
-  // Result (because the second rule replaces the entire existing value):
-  //   myCoding.system is SCT
-  //   myCoding.code is 363346000
-  //   myCoding.display is "Malignant neoplastic disease (disorder)"
-  //   !!! myCoding.userSelected has no value !!!
-  
   ```
+  The result is:
+  * system is http://snomed.info/sct
+  * code is "363346000"
+  * display is "Malignant neoplastic disease (disorder)"
+  * userSelected **has no value**
 
-* The correct way to approach the previous example:
+* The correct way to approach the previous example is to reverse the order of the assignments:
 
   ```
   * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding.userSelected = true
-  
-  // Result (because the second rule only replaces the userSelected property): 
-  //   myCoding.system is SCT
-  //   myCoding.code is 363346000
-  //   myCoding.display is "Malignant neoplastic disease (disorder)"
-  //   myCoding.userSelected is true
   ```
 
 ##### Assignments with the CodeableConcept Data Type
@@ -796,7 +788,7 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
   * myCodeableConcept.text = "Diagnosis of malignant neoplasm left breast."
   ```
 
-* Example of **incorrect** ordering rules that leads to loss of a previously-assigned value, because the third assignment clears the existing value of myCodeableConcept before apply new values:
+* Example of **incorrect** ordering rules that leads to loss of a previously-assigned value, because the last assignment pre-clears the existing value of myCodeableConcept before apply new values:
 
   ```
   * myCodeableConcept.coding[0].userSelected = true
@@ -874,26 +866,21 @@ A Quantity can also be bound to a value set:
   * valueQuantity.unit = "millimeters"
   * valueQuantity = 55.0 'mm'
   ```
-  Because the second rule clears valueQuantity before applying the specified values, the result is:
+  Because the second rule pre-clears valueQuantity before applying the specified values, the result is:
 
   * value is 55.0
   * system is http://unitsofmeasure.org
   * code is "mm"
   * unit **has no value**
 
-* The correct way to approach the previous example is to change the order of rules:
+* The correct way to approach the previous example, so unit has the desired value, is simply to reverse the order of rules:
 
   ```
   * valueQuantity = 55.0 'mm'
   * valueQuantity.unit = "millimeters"
   ```
-  Because the second rule only affects valueQuantity.unit, the result is:
-  * value is `55.0`
-  * system is `http://unitsofmeasure.org`
-  * code is `mm`
-  * unit is `"millimeters"`
 
-* Another correct way to approach this example (with the same result):
+* Another correct way to approach this example (with the same result) is:
 
   ```
   * valueQuantity = UCUM#mm "millimeters"
