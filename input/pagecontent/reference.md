@@ -1272,13 +1272,17 @@ The rules in the named rule set are interpreted as if they were copied and paste
 
 Each rule in the rule set should be compatible with the item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations SHOULD check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error SHOULD be emitted. It is up to implementations if other valid rules from the rule set are applied.
 
-When providing a list of parameter values, enclose the list with parentheses `()` and separate values with a comma `,`. If you need to put literal `)` or `,` characters in your list of values, escape them with a backslash: `\)` and `\,`, respectively.
+##### Inserting Simple Rule Sets
 
-The values given for the parameters are substituted into the rule set definition in order to create the rules that will be applied. The number of values provided must match the number of parameters specified in the rule set definition. Blank space that separates the rule set name from the start of the parameter value list is optional. Blank space on either side of a parameter value is removed before the value is applied to the rule set definition.
+Insert a simple rule set by using the name of the rule set:
+
+```
+* insert {RuleSet name}
+```
 
 **Examples:**
 
-* Insert the rule set named [RuleSet1](#defining-rule-sets) into a profile:
+* Insert the rule set named [RuleSet1](#simple-rule-sets) into a profile:
 
   ```
   Profile: MyPatientProfile
@@ -1314,7 +1318,21 @@ The values given for the parameters are substituted into the rule set definition
   * insert FranceObservationRuleSet
   ```
 
-* Insert the rule set named [RuleSet2](#defining-rule-sets) into a profile:
+##### Inserting Parameterized Rule Sets
+
+Insert a parameterized rule set by using the rule set name and a list of parameters:
+
+```
+* insert {RuleSet name}{parameters}
+```
+
+When providing a list of parameter values, enclose the list with parentheses `()` and separate values with a comma `,`. If you need to put literal `)` or `,` characters in your list of values, escape them with a backslash: `\)` and `\,`, respectively.
+
+The values given for the parameters are substituted into the rule set definition in order to create the rules that will be applied. The number of values provided must match the number of parameters specified in the rule set definition. Blank space that separates the rule set name from the start of the parameter value list is optional. Blank space on either side of a parameter value is removed before the value is applied to the rule set definition.
+
+**Examples:**
+
+* Insert the rule set named [RuleSet2](#parameterized-rule-sets) into a profile:
 
   ```
   Profile: MyObservationProfile
@@ -1884,18 +1902,18 @@ Rule sets provide the ability to define a group rules as an independent entity. 
 
 All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
 
-Rule sets can also specify one or more parameters as part of their definition. Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. Enclose a parameter name in curly braces `{}` in the rule definitions to indicate a place where the parameter value should be substituted. Spaces are allowed inside the curly braces: `{value}` and `{ value }` are both valid substitution sequences for a parameter named `value`. A parameter value may be substituted more than once in the rule set definition.
+##### Simple Rule Sets
 
-Rule sets are defined by using the keyword `RuleSet`:
+Simple rule sets are defined by using the keyword `RuleSet` and do not include parameters:
 
-<pre><code>RuleSet: {name} <i>{parameters}</i>
+```
+RuleSet: {name}
 {rule1}
 {rule2}
 // More rules
-</code></pre>
+```
 
-
-**Examples:**
+**Example:**
 
 * Define a rule set for metadata to be used in multiple profiles:
 
@@ -1906,6 +1924,21 @@ Rule sets are defined by using the keyword `RuleSet`:
   * ^publisher = "Elbonian Medical Society"
   ```
 
+##### Parameterized Rule Sets
+
+Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
+
+```
+RuleSet: {name}{parameters}
+{rule1}
+{rule2}
+// More rules
+```
+
+Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. Enclose a parameter name in curly braces `{}` in the rule definitions to indicate a place where the parameter value should be substituted. Spaces are allowed inside the curly braces: `{value}` and `{ value }` are both valid substitution sequences for a parameter named `value`. A parameter value may be substituted more than once in the rule set definition.
+
+**Examples:**
+
 * Define a rule set with parameters:
 
   ```
@@ -1913,6 +1946,15 @@ Rule sets are defined by using the keyword `RuleSet`:
   * note 0..{noteMax}
   * value[x] only { valueTypes }
   * extension[MyExtension].value[x] only { valueTypes }
+  ```
+
+* Equivalent to above, but with different use of blank space:
+
+  ```
+  RuleSet: RuleSet2( noteMax , valueTypes )
+  * note 0..{noteMax}
+  * value[x] only {valueTypes}
+  * extension[MyExtension].value[x] only {valueTypes}
   ```
 
 #### Defining Value Sets
@@ -2041,10 +2083,10 @@ codeSystem:         KW_CODESYSTEM SEQUENCE csMetadata* csRule*;
 csMetadata:         id | title | description;
 csRule:             concept | caretValueRule | insertRule;
 
-ruleSet:            KW_RULESET SEQUENCE ruleSetRule+;
+ruleSet:            KW_RULESET RULESET_REFERENCE ruleSetRule+;
 ruleSetRule:        sdRule | concept | vsComponent;
 
-paramRuleSet:       KW_RULESET SEQUENCE PARAMETER_DEF_LIST paramRuleSetContent;
+paramRuleSet:       KW_RULESET PARAM_RULESET_REFERENCE paramRuleSetContent;
 paramRuleSetContent:   STAR
                     ~(KW_PROFILE
                     | KW_ALIAS
@@ -2085,7 +2127,7 @@ onlyRule:           STAR path KW_ONLY targetType (KW_OR targetType)*;
 obeysRule:          STAR path? KW_OBEYS SEQUENCE (KW_AND SEQUENCE)*;
 caretValueRule:     STAR path? caretPath EQUAL value;
 mappingRule:        STAR path? ARROW STRING STRING? CODE?;
-insertRule:         STAR KW_INSERT RULESET_REFERENCE;
+insertRule:         STAR KW_INSERT (RULESET_REFERENCE | PARAM_RULESET_REFERENCE);
 
 // VALUESET COMPONENTS
 vsComponent:        STAR ( KW_INCLUDE | KW_EXCLUDE )? ( vsConceptComponent | vsFilterComponent );
@@ -2133,7 +2175,7 @@ KW_INSTANCEOF:      'InstanceOf' WS* ':';
 KW_INVARIANT:       'Invariant' WS* ':';
 KW_VALUESET:        'ValueSet' WS* ':';
 KW_CODESYSTEM:      'CodeSystem' WS* ':';
-KW_RULESET:         'RuleSet' WS* ':';
+KW_RULESET:         'RuleSet' WS* ':' -> pushMode(RULESET_OR_INSERT);
 KW_MAPPING:         'Mapping' WS* ':';
 KW_MIXINS:          'Mixins' WS* ':';
 KW_PARENT:          'Parent' WS* ':';
@@ -2173,7 +2215,7 @@ KW_VSREFERENCE:     'valueset';
 KW_SYSTEM:          'system';
 KW_UNITS:           'units';
 KW_EXACTLY:         '(' WS* 'exactly' WS* ')';
-KW_INSERT:          'insert' -> pushMode(INSERT_RULE);
+KW_INSERT:          'insert' -> pushMode(RULESET_OR_INSERT);
 
 // SYMBOLS
 EQUAL:              '=';
@@ -2249,6 +2291,7 @@ fragment NONWS_STR: ~[ \t\r\n\f\u00A0\\"];
 WHITESPACE:         WS -> channel(HIDDEN);
 LINE_COMMENT:       '//' .*? [\r\n] -> skip;
 
-mode INSERT_RULE;
-RULESET_REFERENCE:      WS* NONWS+ (WS* ('(' ('\\)' | '\\\\' | ~[)])+ ')'))? -> popMode;
+mode RULESET_OR_INSERT;
+PARAM_RULESET_REFERENCE:      WS* NONWS+ (WS* ('(' ('\\)' | '\\\\' | ~[)])+ ')')) -> popMode;
+RULESET_REFERENCE:            WS* NONWS+ -> popMode;
 ```
