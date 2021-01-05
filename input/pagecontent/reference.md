@@ -1330,6 +1330,8 @@ When providing a list of parameter values, enclose the list with parentheses `()
 
 The values given for the parameters are substituted into the rule set definition in order to create the rules that will be applied. The number of values provided must match the number of parameters specified in the rule set definition. Blank space that separates the rule set name from the start of the parameter value list is optional. Blank space on either side of a parameter value is removed before the value is applied to the rule set definition.
 
+Any FSH syntax errors that arise as a result of the value substitution are handled the same way as FSH syntax errors in the declaration of a rule set without parameters. The value substitution is performed without checking the types of the values being substituted or the semantic validity of the resulting rules. Any invalid rules resulting from inserting a parameterized rule set will be detected at the same time as invalid rules resulting from inserting a simple rule set.
+
 **Examples:**
 
 * Insert the rule set named [RuleSet2](#parameterized-rule-sets) into a profile:
