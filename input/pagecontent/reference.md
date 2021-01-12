@@ -336,7 +336,7 @@ When processing triple-quote strings, the following approach is used:
 * For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
 #### Array Indexing
-Individual elements in an array are accessed with square brackets and an array index, with the index being placed between `[` and `]`. Arrays are referenced using 0-based indecies, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc.
+Individual elements in an array are accessed with square brackets and an array index, with the index being placed between `[` and `]`. Arrays are referenced using 0-based indicies, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc.
 
 Example of array indexing:
 ```
@@ -369,7 +369,7 @@ Example: The two code blocks are equivalent
 * name[1].family = “Doe”
 ```
 
-FSH also allows for soft and numeric indecies to be used interchangeably within a soft-indexing sequence, so long as any numeric indecies included do not break with the soft indexing sequence.
+FSH also allows for soft and numeric indicies to be used interchangeably within a soft-indexing sequence, so long as any numeric indicies included do not break with the soft indexing sequence.
 
 Example:
 
