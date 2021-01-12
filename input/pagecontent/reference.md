@@ -335,6 +335,51 @@ When processing triple-quote strings, the following approach is used:
 * If any other line contains only whitespace, truncate it to zero characters.
 * For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
+#### Array Indexing
+Individual elements in an array are accessed with square brackets and an array index, with the index being placed between `[` and `]`. Arrays are referenced using 0-based indecies, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc.
+
+Example of array indexing:
+```
+name[0].given = “Johnny”
+```
+
+When referencing the first element of an array, the bracket notation can be omitted as an index of `[0]` is assumed:
+
+```
+name.given = “Johnny”
+```
+
+##### Soft Indexing
+
+Array elements can also be referenced using soft indexes. In soft indexing sequences, `+` is used to increment the last referenced index by 1, while `=` is used to reference the same index that was last referenced. 
+
+Example: The two code blocks are equivalent 
+
+```
+* name[+].given = “Johnny”
+* name[=].family = “Appleseed”
+* name[+].given = “John”
+* name[=].family = “Doe”
+```
+
+```
+* name[0].given = “Johnny”
+* name[0].family = “Appleseed”
+* name[1].given = “John”
+* name[1].family = “Doe”
+```
+
+FSH also allows for soft and numeric indecies to be used interchangeably within a soft-indexing sequence, so long as any numeric indecies included do not break with the soft indexing sequence.
+
+Example:
+
+```
+* name[0].given = “Johnny
+* name[=].family = “Appleseed”
+* name[+].given = “John”
+* name[1].family = “Doe”
+```
+
 ### FSH Paths
 
 FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Here are examples of things paths can refer to:
