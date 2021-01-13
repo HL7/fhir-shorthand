@@ -336,7 +336,7 @@ When processing triple-quote strings, the following approach is used:
 * For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
 #### Array Indexing
-Individual elements in an array are accessed with square brackets and an array index, with the index being placed between `[` and `]`. Arrays are referenced using 0-based indicies, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc.
+Individual elements in an array are accessed with square brackets and an array index, with the index being placed between `[` and `]`. Arrays are referenced using 0-based indices, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc.
 
 Example of array indexing:
 ```
@@ -351,7 +351,7 @@ name.given = “Johnny”
 
 ##### Soft Indexing
 
-Array elements can also be referenced using soft indexes. In soft indexing sequences, `+` is used to increment the last referenced index by 1, while `=` is used to reference the same index that was last referenced. 
+Array elements can also be referenced using soft indexing. In soft indexing sequences, `+` is used to increment the last referenced index by 1, while `=` is used to reference the same index that was last referenced. 
 
 Example: The two code blocks are equivalent 
 
@@ -369,7 +369,7 @@ Example: The two code blocks are equivalent
 * name[1].family = “Doe”
 ```
 
-FSH also allows for soft and numeric indicies to be used interchangeably within a soft-indexing sequence, so long as any numeric indicies included do not break with the soft indexing sequence.
+FSH also allows for soft and numeric indices to be used interchangeably within a soft-indexing sequence, so long as any numeric indices included do not break with the soft indexing sequence.
 
 Example:
 
