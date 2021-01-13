@@ -2046,7 +2046,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 
 ### Appendix: Formal Grammar
 
-The grammar of FSH described in [ANTLR4](https://www.antlr.org/):
+The grammar of FSH described in [ANTLR4](https://www.antlr.org/).
 
 #### Parser Grammar
 ```
