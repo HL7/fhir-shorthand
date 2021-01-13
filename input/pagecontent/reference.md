@@ -1265,14 +1265,14 @@ The following syntaxes can be used to assign flags:
 
 [Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. An insert rule is used to add a rule set:
 
-<pre><code>* insert {RuleSet name}<i>{parameters}</i>
+<pre><code>* insert {RuleSet name}<i>({parameters})</i>
 </code></pre>
 
 The rules in the named rule set are interpreted as if they were copied and pasted in the designated location.
 
 Each rule in the rule set should be compatible with the item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations SHOULD check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error SHOULD be emitted. It is up to implementations if other valid rules from the rule set are applied.
 
-##### Inserting Simple Rule Sets
+##### Inserting Simple (Non-Parameterized) Rule Sets
 
 Insert a simple rule set by using the name of the rule set:
 
@@ -1304,7 +1304,7 @@ Insert a simple rule set by using the name of the rule set:
   // More profile rules
   ```
 
-* Use rule sets to define two different national profiles, both using a common clinical profile:
+* Use rule sets to define two different national profiles, using a common clinical profile:
 
   ```
   Profile: USCoreBreastRadiologyObservationProfile
@@ -1320,58 +1320,47 @@ Insert a simple rule set by using the name of the rule set:
 
 ##### Inserting Parameterized Rule Sets
 
-Insert a parameterized rule set by using the rule set name and a list of parameters:
+To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
-```
-* insert {RuleSet name}{parameters}
-```
+<pre><code>* insert {RuleSet name}({value1}<i>, {value2}, {value3}...</i>)
+</code></pre>
 
-When providing a list of parameter values, enclose the list with parentheses `()` and separate values with a comma `,`. If you need to put literal `)` or `,` characters in your list of values, escape them with a backslash: `\)` and `\,`, respectively.
+As indicated, the list of values is enclosed with parentheses `()` and separated by commas `,`. If you need to put literal `)` or `,` characters inside values, escape them with a backslash: `\)` and `\,`, respectively. White space separating values is optional, and removed before the value is applied to the rule set definition.
 
-The values given for the parameters are substituted into the rule set definition in order to create the rules that will be applied. The number of values provided must match the number of parameters specified in the rule set definition. Blank space that separates the rule set name from the start of the parameter value list is optional. Blank space on either side of a parameter value is removed before the value is applied to the rule set definition.
+The values provided are substituted into the named rule set to create the rules that will be applied. The number of values provided must match the number of parameters specified in the rule set definition.
 
 Any FSH syntax errors that arise as a result of the value substitution are handled the same way as FSH syntax errors in the declaration of a rule set without parameters. The value substitution is performed without checking the types of the values being substituted or the semantic validity of the resulting rules. Any invalid rules resulting from inserting a parameterized rule set will be detected at the same time as invalid rules resulting from inserting a simple rule set.
 
 **Examples:**
 
-* Insert the rule set named [RuleSet2](#parameterized-rule-sets) into a profile:
+* Insert the parameterized rule set, RuleSet2, into MyObservationProfile:
+
+  ```
+  RuleSet: RuleSet2 (noteMax, valueTypes)
+  * note 0..{noteMax}
+  * value[x] only {valueTypes}
+  * extension[MyExtension].value[x] only {valueTypes}
+  ```
 
   ```
   Profile: MyObservationProfile
   Parent: Observation
+  // some rules
   * insert RuleSet2 (3, boolean or integer)
+  // more rules
   ```
 
-  This is equivalent to the following:
+  This is equivalent to:
 
   ```
   Profile: MyObservationProfile
   Parent: Observation
+  // some rules
   * note 0..3
   * value[x] only boolean or integer
   * extension[MyExtension].value[x] only boolean or integer
+  // more rules
   ```
-
-  The original insert rule could also be formatted without a space between the rule set name and parameter list:
-
-  ```
-  Profile: MyObservationProfile
-  Parent: Observation
-  * insert RuleSet2(3, boolean or integer)
-  ```
-
-  The original insert rule could also be formatted with each parameter on a separate line, which is useful when parameter values are lengthy:
-
-  ```
-  Profile: MyObservationProfile
-  Parent: Observation
-  * insert RuleSet2 (
-    3,
-    boolean or integer
-  )
-  ```
-
-  Both of these formatting variations will produce the same result as the original example.
 
 #### Obeys Rules
 
@@ -1930,34 +1919,38 @@ RuleSet: {name}
 
 Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
 
-```
-RuleSet: {name}{parameters}
+<pre><code>RuleSet: {name}({parameter1}<i>, {parameter2}, {parameter3}...</i>)
 {rule1}
 {rule2}
 // More rules
-```
+</code></pre>
 
-Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. Enclose a parameter name in curly braces `{}` in the rule definitions to indicate a place where the parameter value should be substituted. Spaces are allowed inside the curly braces: `{value}` and `{ value }` are both valid substitution sequences for a parameter named `value`. A parameter value may be substituted more than once in the rule set definition.
+Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. Enclose a parameter name in curly braces `{}` in the rule definitions to indicate a place where the parameter value should be substituted. Spaces are allowed inside the curly braces: `{value}` and `{ value }` are both valid substitution sequences for a parameter named `value`. A parameter may occur more than once in the rule set definition.
 
-**Examples:**
+**Example:**
 
 * Define a rule set with parameters:
 
   ```
   RuleSet: RuleSet2 (noteMax, valueTypes)
   * note 0..{noteMax}
-  * value[x] only { valueTypes }
-  * extension[MyExtension].value[x] only { valueTypes }
-  ```
-
-* Equivalent to above, but with different use of blank space:
-
-  ```
-  RuleSet: RuleSet2( noteMax , valueTypes )
-  * note 0..{noteMax}
   * value[x] only {valueTypes}
   * extension[MyExtension].value[x] only {valueTypes}
   ```
+
+  The RuleSet could also be formatted with each parameter on a separate line, which is useful when parameter values are lengthy:
+
+  ```
+  Profile: MyObservationProfile
+  Parent: Observation
+  * insert RuleSet2 (
+    3,
+    boolean or integer
+  )
+  ```
+
+  Both of these formatting variations will produce the same result as the original example.
+
 
 #### Defining Value Sets
 
