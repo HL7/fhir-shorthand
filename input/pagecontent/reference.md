@@ -427,7 +427,6 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
   * rest.resource[=].interaction[+].code = #update
   ```
 
-
 ### FSH Paths
 
 FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Here are examples of things paths can refer to:
