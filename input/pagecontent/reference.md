@@ -354,15 +354,18 @@ When referencing the first element of an array, the bracket notation can be omit
 * name[1].given = "Richard"
 ```
 
+Arrays with missing elements (gaps in the sequence of indices) are not allowed. 
+
+
 ##### Soft Indexing
 
 Array elements can also be referenced using soft indexing. In soft indexing sequences, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numeric indexes to be mixed.
 
-Soft indexing is useful when populating long array, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle, Questionnaire and CapabilityStatement have arrays may contain scores of items. Managing their indices can become quite tedious and error prone when adding or removing items in the middle of a list.
+Soft indexing is useful when populating long array, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle and CapabilityStatement have arrays may contain scores of items. Managing indexes can become quite tedious and error prone when adding or removing items in the middle of a long list.
 
 Another use case for soft indexing involves [parameterized rule sets](#parameterized-rule-sets). Rule sets provide a way to avoid repeating the same pattern of rules when populating an array ([see example](#parameterized-rule-sets)).
 
-For nested arrays, several sequences of soft indexes can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` is at index [0]. (An analogy is a keyboard where the Enter key advances to the next line and simultaneously returns to the first character on the next line.)
+For nested arrays, several sequences of soft indexes can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` is at index [0]. (An analogy is using a keyboard's Enter key to advance to a new line that initially has no characters.)
 
 
 **Examples:**
