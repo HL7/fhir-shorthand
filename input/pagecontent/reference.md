@@ -335,6 +335,99 @@ When processing triple-quote strings, the following approach is used:
 * If any other line contains only whitespace, truncate it to zero characters.
 * For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
+#### Array Indexing
+
+##### Numerical Indexing
+
+Individual elements in an array are accessed with square brackets and an integer array index, with the index being placed between `[` and `]`. Arrays are referenced using 0-based indices, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc.
+
+Example of array indexing:
+```
+* name[0].given = "John"
+* name[1].given = "Richard"
+```
+
+When referencing the first element of an array, the bracket notation can be omitted as an index of `[0]` is assumed:
+
+```
+* name.given = "John"
+* name[1].given = "Richard"
+```
+
+##### Soft Indexing
+
+Array elements can also be referenced using soft indexing. In soft indexing sequences, `+` is used to increment the last referenced index of an array by 1, while `=` is used to reference the same index that was last referenced.
+
+Soft indexing is useful when populating long arrays. For example, if an numerically-indexed array has 25 items, and you need to insert a new item at the fifth position, you have to renumber 20 items. Soft indexing allows items to be inserted, deleted, or moved, without updating any array indexes.
+
+The other use case for soft indexing is in [rule sets](#defining-rule-sets). Instead of referring to a particular numerical index, the rule can more generally refer to the same `=` or next `+` array element, allowing reuse of the same rule in different contexts.
+
+FSH also allows for soft and numeric indices to be mixed, provided the numeric indices included do not break with the soft indexing sequence.
+
+For nested arrays, several sequences of soft indexes can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another.
+
+**Examples:**
+
+* The following two code blocks are equivalent:
+
+  ```
+  * name[0].given = "John"
+  * name[0].family = "Doe"
+  * name[1].given = "Richard"
+  * name[1].family = "Roe"
+  ```
+
+  ```
+  * name[+].given = "John"
+  * name[=].family = "Doe"
+  * name[+].given = "Richard"
+  * name[=].family = "Roe"
+  ```
+
+* Adding a second given name to each name, the following two code blocks are equivalent:
+
+  ```
+  * name[0].given[0] = "John"
+  * name[0].given[1] = "David"
+  * name[0].family = "Doe"
+  * name[1].given[0] = "Richard"
+  * name[1].given[1] = "Michael"
+  * name[1].family = "Roe"
+  ```
+
+  ```
+  * name[+].given[+] = "John"
+  * name[+].given[+] = "David"
+  * name[=].family = "Doe"
+  * name[+].given[+] = "Richard"
+  * name[=].given[+] = "Michael"
+  * name[=].family = "Roe"
+  ```
+  Note that the fourth line refers to the first element in `name[1].given`, a different array than `name[0].given`, populated in the first two lines.
+
+* Another example involving nested arrays:
+
+  ```
+  * rest.resource[0].type = #Organization
+  * rest.resource[0].interaction[0].code = #create
+  * rest.resource[0].interaction[1].code = #update
+  * rest.resource[0].interaction[2].code = #delete
+  * rest.resource[1].type = #Condition
+  * rest.resource[1].interaction[0].code = #create
+  * rest.resource[1].interaction[1].code = #update
+  ```
+
+  ```
+  * rest.resource[+].type = #Organization
+  * rest.resource[=].interaction[+].code = #create
+  * rest.resource[=].interaction[+].code = #update
+  * rest.resource[=].interaction[+].code = #delete
+  * rest.resource[+].type = #Condition
+  * rest.resource[=].interaction[+].code = #create
+  * rest.resource[=].interaction[+].code = #update
+  ```
+
+
 ### FSH Paths
 
 FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Here are examples of things paths can refer to:
