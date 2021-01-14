@@ -356,56 +356,64 @@ When referencing the first element of an array, the bracket notation can be omit
 
 ##### Soft Indexing
 
-Array elements can also be referenced using soft indexing. In soft indexing sequences, `+` is used to increment the last referenced index of an array by 1, while `=` is used to reference the same index that was last referenced.
+Array elements can also be referenced using soft indexing. In soft indexing sequences, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numeric indexes to be mixed.
 
-Soft indexing is useful when populating long arrays. For example, if an numerically-indexed array has 25 items, and you need to insert a new item at the fifth position, you have to renumber 20 items. Soft indexing allows items to be inserted, deleted, or moved, without updating any array indexes.
+Soft indexing is useful when populating long array, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle, Questionnaire and CapabilityStatement have arrays may contain scores of items. Managing their indices can become quite tedious and error prone when adding or removing items in the middle of a list.
 
-The other use case for soft indexing is in [rule sets](#defining-rule-sets). Instead of referring to a particular numerical index, the rule can more generally refer to the same `=` or next `+` array element, allowing reuse of the same rule in different contexts.
+Another use case for soft indexing involves [parameterized rule sets](#parameterized-rule-sets). Rule sets provide a way to avoid repeating the same pattern of rules when populating an array ([see example](#parameterized-rule-sets)).
 
-FSH also allows for soft and numeric indices to be mixed, provided the numeric indices included do not break with the soft indexing sequence.
+For nested arrays, several sequences of soft indexes can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` is at index [0]. (An analogy is a keyboard where the Enter key advances to the next line and simultaneously returns to the first character on the next line.)
 
-For nested arrays, several sequences of soft indexes can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another.
 
 **Examples:**
 
-* The following two code blocks are equivalent:
+* Assign multiple names in an instance of a Patient, first using numerical indices, then using soft indices:
 
   ```
-  * name[0].given = "John"
-  * name[0].family = "Doe"
-  * name[1].given = "Richard"
-  * name[1].family = "Roe"
+  * name[0].given = "Robert"
+  * name[0].family = "Smith"
+  * name[1].given = "Rob"
+  * name[1].family = "Smith"
+  * name[2].given = "Bob"
+  * name[2].family = "Smith"
   ```
 
   ```
-  * name[+].given = "John"
-  * name[=].family = "Doe"
-  * name[+].given = "Richard"
-  * name[=].family = "Roe"
+  * name[+].given = "Robert"
+  * name[=].family = "Smith"
+  * name[+].given = "Rob"
+  * name[=].family = "Smith"
+  * name[+].given = "Bob"
+  * name[=].family = "Smith"
   ```
 
-* Adding a second given name to each name, the following two code blocks are equivalent:
+* Add second given (middle) name to the example above, and write equivalent rules using soft indexing:
 
   ```
-  * name[0].given[0] = "John"
+  * name[0].given[0] = "Robert"
   * name[0].given[1] = "David"
-  * name[0].family = "Doe"
-  * name[1].given[0] = "Richard"
-  * name[1].given[1] = "Michael"
-  * name[1].family = "Roe"
+  * name[0].family = "Smith"
+  * name[1].given[0] = "Rob"
+  * name[1].given[1] = "Dave"
+  * name[1].family = "Smith"
+  * name[2].given[0] = "Bob"
+  * name[2].given[1] = "Davey"
+  * name[2].family = "Smith"
   ```
 
   ```
-  * name[+].given[+] = "John"
+  * name[+].given[+] = "Robert"
   * name[+].given[+] = "David"
-  * name[=].family = "Doe"
-  * name[+].given[+] = "Richard"
-  * name[=].given[+] = "Michael"
-  * name[=].family = "Roe"
+  * name[=].family = "Smith"
+  * name[+].given[+] = "Rob"
+  * name[=].given[+] = "Dave"
+  * name[=].family = "Smith"
+  * name[+].given[+] = "Bob"
+  * name[=].given[+] = "Davey"
+  * name[=].family = "Smith"
   ```
-  Note that the fourth line refers to the first element in `name[1].given`, a different array than `name[0].given`, populated in the first two lines.
 
-* Another example involving nested arrays:
+* Another example of soft indexing, typical of a CapabilityStatement:
 
   ```
   * rest.resource[0].type = #Organization
@@ -1414,7 +1422,7 @@ Insert a simple rule set by using the name of the rule set:
 
 To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
-<pre><code>* insert {RuleSet name}({value1}<i>, {value2}, {value3}...</i>)
+<pre><code>* insert {RuleSet name}(value1<i>, value2, value3...</i>)
 </code></pre>
 
 As indicated, the list of values is enclosed with parentheses `()` and separated by commas `,`. If you need to put literal `)` or `,` characters inside values, escape them with a backslash: `\)` and `\,`, respectively. White space separating values is optional, and removed before the value is applied to the rule set definition.
@@ -1425,32 +1433,36 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
 
 **Examples:**
 
-* Insert the parameterized rule set, RuleSet2, into MyObservationProfile:
+* Use the parameterized rule set, Name, to populate an instance of Patient with multiple names (note that the curly brackets in this example are literal, not syntax expressions):
 
   ```
-  RuleSet: RuleSet2 (noteMax, valueTypes)
-  * note 0..{noteMax}
-  * value[x] only {valueTypes}
-  * extension[MyExtension].value[x] only {valueTypes}
+  RuleSet: Name(first, last)
+  * name[+].given = "{first}"
+  * name[=].family = "{last}"
   ```
 
   ```
-  Profile: MyObservationProfile
-  Parent: Observation
+  Instance: MrSmith
+  InstanceOf: Patient
   // some rules
-  * insert RuleSet2 (3, boolean or integer)
+  * insert Name(Robert, Smith)
+  * insert Name(Rob, Smith)
+  * insert Name(Bob, Smith)
   // more rules
   ```
 
-  This is equivalent to:
+  When the rule set is expanded, this is equivalent to:
 
   ```
-  Profile: MyObservationProfile
-  Parent: Observation
+  Instance: MrSmith
+  InstanceOf: Patient
   // some rules
-  * note 0..3
-  * value[x] only boolean or integer
-  * extension[MyExtension].value[x] only boolean or integer
+  * name[0].given = "Robert"
+  * name[0].family = "Smith"
+  * name[1].given = "Rob"
+  * name[1].family = "Smith"
+  * name[2].given = "Bob"
+  * name[2].family = "Smith"
   // more rules
   ```
 
@@ -2017,32 +2029,47 @@ Rule sets can also specify one or more parameters as part of their definition. P
 // More rules
 </code></pre>
 
-Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. Enclose a parameter name in curly braces `{}` in the rule definitions to indicate a place where the parameter value should be substituted. Spaces are allowed inside the curly braces: `{value}` and `{ value }` are both valid substitution sequences for a parameter named `value`. A parameter may occur more than once in the rule set definition.
+Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. In the rules, the places where substitutions should occur are indicated by enclosing a parameter name in curly braces `{}`. Spaces are allowed inside the curly braces: `{parameter1}` and `{ parameter1 }` are both valid substitution sequences for a parameter named `parameter1`. A parameter may occur more than once in the rule set definition.
 
 **Example:**
 
-* Define a rule set with parameters:
+* Define a rule set that contains the syntax for setting the context of an extension. This example also demonstrates the use of [soft indexing](#soft-indexing). Note that the curly brackets in this example are literal, not syntax expressions:
 
   ```
-  RuleSet: RuleSet2 (noteMax, valueTypes)
-  * note 0..{noteMax}
-  * value[x] only {valueTypes}
-  * extension[MyExtension].value[x] only {valueTypes}
+  RuleSet: SetContext(path)
+  * ^context[+].type = #element
+  * ^context[=].expression = "{path}"
   ```
 
-  The RuleSet could also be formatted with each parameter on a separate line, which is useful when parameter values are lengthy:
+  This rule set can be applied to indicate an extension can only be applied to certain resources, for example:
 
   ```
-  Profile: MyObservationProfile
-  Parent: Observation
-  * insert RuleSet2 (
-    3,
-    boolean or integer
-  )
+  * insert SetContext(Procedure)
+  * insert SetContext(MedicationRequest)
+  * insert SetContext(MedicationAdministration)
   ```
 
-  Both of these formatting variations will produce the same result as the original example.
+  When the rule set is expanded, it translates to:
 
+  ```
+  * ^context[+].type = #element
+  * ^context[=].expression = "Procedure"
+  * ^context[+].type = #element
+  * ^context[=].expression = "MedicationRequest"
+  * ^context[+].type = #element
+  * ^context[=].expression = "MedicationAdministration"
+  ```
+
+  Interpreting the soft indices, this is equivalent to:
+
+   ```
+  * ^context[0].type = #element
+  * ^context[0].expression = "Procedure"
+  * ^context[1].type = #element
+  * ^context[1].expression = "MedicationRequest"
+  * ^context[2].type = #element
+  * ^context[2].expression = "MedicationAdministration"
+  ``` 
 
 #### Defining Value Sets
 
