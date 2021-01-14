@@ -4411,9 +4411,9 @@ Modifier extensions SHALL NOT change the meaning of any elements on Resource or 
           <xs:documentation xml:lang="en">0.13.0</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="1.0.1">
+      <xs:enumeration value="1.1.0">
         <xs:annotation>
-          <xs:documentation xml:lang="en">1.0.1</xs:documentation>
+          <xs:documentation xml:lang="en">1.1.0</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="1.0.2">
