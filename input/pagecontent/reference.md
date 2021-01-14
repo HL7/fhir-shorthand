@@ -668,7 +668,7 @@ The following table is a summary of the rules applicable to profiles, extensions
 | Contains (for standalone extensions) | <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
 | Contains (for slicing) | <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
 | Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
-| Insert | `* insert {RuleSet name}` |
+| Insert | <code>* insert {RuleSet name}<i>({parameters})</i></code> |
 | Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
 | Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 {: .grid }
