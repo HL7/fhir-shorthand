@@ -2080,7 +2080,7 @@ Each parameter represents a value that can be substituted into the rules when th
   RuleSet: Question(linkId, text, type, repeats)
   * item[+].linkId = "{linkId}"
   * item[=].text = "{text}"
-  * item[=].type = #{code}
+  * item[=].type = #{type}
   * item[=].repeats = {repeats}
   ```
 
