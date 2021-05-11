@@ -151,7 +151,7 @@ Canonical references refer to the standard URL associated with FHIR items. For e
 
 #### Whitespace
 
-Repeated whitespace is not meaningful within FSH files (except within string literals). New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning within FSH files when used for [indenting rules](#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful within FSH files. New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -208,6 +208,132 @@ In the first approach, `value[x]` is not yet known to be restricted to a Quantit
 In cases with no explicit or logical restrictions on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could have order constraints or logical ordering requirements.
 
 It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
+
+#### Indented Rules
+
+Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule is obtained by prepending the path from the rule above. For example:
+```
+* name 1..1
+  * family 1..1
+```
+is equivalent to:
+```
+* name 1..1
+* name.family 1..1
+```
+In this case, the first rule sets the "context" of `name` for any subsequent indented rules. Since the second rule is indented below the first, the `name` context is prepended to resolve the full path, `name.family`.
+
+Note that [path rules](#path-rules) can be used to set a path as context for subsequent rules, without applying any rules at that path. If in the above example, only `name.family`, but not `name`, was meant to be constrained, the rules could be specified as:
+```
+* name
+  * family 1..1
+```
+The following restrictions apply to indentation:
+* Regardless of indent, all rules must start on their own line.
+* Rules cannot be preceded by non-whitespace characters on a line.
+* Rules can only be indented in increments of two spaces.
+* A rule cannot be indented below a rule which has no path. For example, the following is an error:
+  
+  ```
+  * obeys inv-1
+    * family 1..1
+  ```
+* Similarly, a rule which has no path cannot be indented. For example, the following is also an error:
+  
+  ```
+  * name 1..1
+    * obeys inv-1
+  ```
+
+**Examples:**
+* Multiple levels of indentation can be used to set a path as context for a subsequent rule:
+  
+  ```
+  * name MS
+    * family MS
+      * id MS
+  ```
+
+  is equivalent to:
+
+  ```
+  * name MS
+  * name.family MS
+  * name.family.id MS
+  ```
+
+* Indentation can be used to set a path as context for multiple subsequent rules:
+  
+  ```
+  * name MS
+    * family MS
+    * given MS
+  ```
+
+  is equivalent to:
+
+  ```
+  * name MS
+  * name.family MS
+  * name.given MS
+  ```
+
+* The level of indentation can be reduced to indicate that a rule should not use the context of the preceeding rule:
+
+  ```
+  * item[0]
+    * linkId = "title"
+    * type = #display
+    * item[0]
+      * linkId = "uniquearv_number"
+      * type = #string
+    * item[1]
+      * linkId = "personal_info"
+      * type = #group
+  * status = #active
+  ```
+
+  is equivalent to:
+
+  ```
+  * item[0].linkId = "title"
+  * item[0].type = #display
+  * item[0].item[0].linkId = "uniquearv_number"
+  * item[0].item[0].type = #string
+  * item[0].item[1].linkId = "personal_info"
+  * item[0].item[1].type = #group
+  * status = #active
+  ```
+
+* When multiple paths are specified in an indented rule, context is applied to all paths:
+
+  ```
+  * name
+    * family and given MS
+  ```
+
+  is equivalent to:
+
+  ```
+  * name.family and name.given MS
+  ```
+
+* When multiple paths are specified in a rule that sets context for subsequent rules, the last path is used as context:
+
+  ```
+  * birthDate and name MS
+    * family 1..1
+  ```
+
+  is equivalent to:
+
+  ```
+  * birthDate and name MS
+  * name.family 1..1
+  ```
+
+
+
 
 #### Codes and Codings
 
@@ -437,6 +563,28 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
   * rest.resource[=].interaction[+].code = #create
   * rest.resource[=].interaction[+].code = #update
   ```
+
+* When soft indexing is combined with [indentation](#indented-rules), and a rule containing `[+]` is used to set the context of subsequent rules, that `[+]` is only used to set context on the first rule which follows the rule containing `[+]`. On subsequent rules beyond the first, the `[+]` is replace with `[=]`:
+
+  ```
+  * item[+]
+    * linkId = "title"
+    * type = #display
+  ```
+
+  is **not** equivalent to:
+
+  ```
+  * item[+].linkId = "title"
+  * item[+].type = #display
+  ```
+
+  but is instead equivalent to:
+
+  ```
+  * item[+].linkId = "title"
+  * item[=].type = #display
+  ``` 
 
 ### FSH Paths
 
@@ -682,6 +830,7 @@ The following table is a summary of the rules applicable to profiles, extensions
 | Insert | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
 | Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
 | Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
+| Path | `* <element>`|
 {: .grid }
 
 **Notes:**
@@ -1569,6 +1718,25 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
+#### Path Rules
+
+Path rules are only used to set the context for subsequent [indented rules](#indented-rules)
+
+```
+* <element>
+```
+
+A path rule has no impact on the element it refers to. The only purpose of the path rule is to set context.
+
+**Examples:**
+
+* Set a context of `name` for subsequent rules:
+
+  ```
+  * name
+    * given MS
+    * family MS
+  ```
 
 ### Defining Items
 
@@ -1996,7 +2164,7 @@ To define a profile, the keywords `Profile` and `Parent` are required, and `Id`,
 
 #### Defining Rule Sets
 
-Rule sets provide the ability to define a group rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places.
+Rule sets provide the ability to define a group rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. If rules within a rule set are [indented](#indented-rules), the full paths are resolved from the indentation before the rule set is applied. Therefore, the indentation used in the rule set will not have any meaning in the target.
 
 All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
 
