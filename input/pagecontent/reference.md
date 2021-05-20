@@ -612,7 +612,7 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
+FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)). This syntax is also used to set additional properties of a concept defined in a CodeSystem, such as concept.designation.
 
 For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -634,6 +634,12 @@ A special case of the ElementDefinition path is setting properties of the first 
 . ^<element of ElementDefinition[0]>
 ```
 
+For a path to a code within a code system, use this syntax:
+
+```
+<code in CodeSystem> ^<element of corresponding concept>
+```
+
 **Examples:**
 
 * In a profile definition, path to the corresponding StructureDefinition.experimental attribute:
@@ -652,6 +658,18 @@ A special case of the ElementDefinition path is setting properties of the first 
 
   ```
   . ^short
+  ```
+
+* The path to the designation value of a concept:
+
+  ```
+  #SomeCode ^designation[0].value
+  ```
+
+* The path to the property code of a concept within a hierarchy:
+
+  ```
+  #SomeCode #ContainedCode ^property[0].code
   ```
 
 ***
@@ -1682,13 +1700,23 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 * #{code} "{display string}" "{definition string}"
 ```
 
+Codes that are contained within other codes can also be defined. The result is a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
+
+
+```
+* #{existing code} #{code} "{display string}" "{definition string}"
+```
+
 **Notes:**
 
 * There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
 * The definition of the term, provided as the second string following the code, is RECOMMENDED.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
+* When defining hierarchical codes, a code must be defined before it can be used to specify a hierarchy.
 
-**Example:** Define a code system for yoga poses.
+**Examples:**
+
+* Define a code system for yoga poses.
 
   ```
   CodeSystem:  YogaCS
@@ -1705,7 +1733,18 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
       "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
   ```
 
-> **Note:** FSH does not support definition of relationships between local codes, such as parent-child (is-a) relationships.
+* Define a code system for anteater taxonomy.
+
+  ```
+  CodeSystem: AnteaterCS
+  Id: anteater-code-system
+  Title: "Anteater Code System."
+  * #Anteater "Anteater" "Members of suborder Vermilingua."
+  * #Anteater #Tamandua "Members of genus Tamandua"
+  * #Anteater #Tamandua #NorthernTamandua "Northern Tamandua"
+  * #Anteater #Tamandua #SouthernTamandua "Southern Tamandua"
+  * #Anteater #GiantAnteater "Giant Anteater"
+  ```
 
 #### Defining Extensions
 
