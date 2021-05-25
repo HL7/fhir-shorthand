@@ -151,7 +151,7 @@ Canonical references refer to the standard URL associated with FHIR items. For e
 
 #### Whitespace
 
-Repeated whitespace has meaning within FSH files when used for [indenting rules](#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful within FSH files. New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning within FSH files when used for [indenting rules](#indented-rules) and within string literals. Since indentation before a rule has meaning, each rule m In all other contexts, repeated whitespace is not meaningful within FSH files. New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -2111,6 +2111,8 @@ The first type of rule applies to mapping the profile as a whole to the target s
 The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/R4/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code MUST come from FHIR's [MimeType value set](https://www.hl7.org/fhir/R4/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
 
 >**Note:** Unlike setting the mapping.map directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
+
+A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rules) applied to it.
 
 **Examples:**
 
