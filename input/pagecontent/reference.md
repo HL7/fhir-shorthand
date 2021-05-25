@@ -235,14 +235,14 @@ The following restrictions apply to indentation:
 * A rule cannot be indented below a rule which has no path. For example, the following is an error:
   
   ```
-  * obeys inv-1
+  * insert ExampleRuleSet
     * family 1..1
   ```
 * Similarly, a rule which has no path cannot be indented. For example, the following is also an error:
   
   ```
   * name 1..1
-    * obeys inv-1
+    * insert ExampleRuleSet
   ```
 
 **Examples:**
