@@ -793,7 +793,7 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)). This syntax is also used to set additional properties of a concept defined in a CodeSystem, such as concept.designation.
+FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)). Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
 
 For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -818,7 +818,7 @@ A special case of the ElementDefinition path is setting properties of the first 
 For a path to a code within a code system, use this syntax:
 
 ```
-<code in CodeSystem> ^<element of corresponding concept>
+#{code} ^<element of corresponding concept>
 ```
 
 **Examples:**
@@ -840,6 +840,20 @@ For a path to a code within a code system, use this syntax:
   ```
   . ^short
   ```
+
+* The path to the designation value of a concept:
+
+  ```
+  #SomeCode ^designation[0].value
+  ```
+
+* The path to the property code of a concept within a hierarchy:
+
+  ```
+  #SomeCode #ChildCode ^property[0].code
+  ```
+
+***
 
 ### Rules for Profiles, Extensions, and Instances
 
@@ -1887,11 +1901,20 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 * #{code} "{display string}" "{definition string}"
 ```
 
-Codes that are contained within other codes can also be defined. The result is a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
+Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
 
 
 ```
-* #{existing code} #{code} "{display string}" "{definition string}"
+* #{parent code} #{code} "{display string}" "{definition string}"
+* #{grandparent code} #{parent code} #{code} "{display string}" "{definition string}"
+```
+
+Another way to define child codes is to indent their definitions after their parent's code definition:
+
+```
+* #{grandparent code} "{display string}" "{definition string}"
+  * #{parent code} "{display string}" "{definition string}"
+    * #{child code} "{display string}" "{definition string}"
 ```
 
 **Notes:**
@@ -1899,7 +1922,8 @@ Codes that are contained within other codes can also be defined. The result is a
 * There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
 * The definition of the term, provided as the second string following the code, is RECOMMENDED.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
-* When defining hierarchical codes, a code must be defined before it can be used to specify a hierarchy.
+* When defining hierarchical codes, parent codes must be defined before their children.
+* Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
 
 **Examples:**
 
@@ -1908,7 +1932,7 @@ Codes that are contained within other codes can also be defined. The result is a
   ```
   CodeSystem:  YogaCS
   Id: yoga-code-system
-  Title: "Yoga Code System."
+  Title: "Yoga Code System"
   Description:  "A brief vocabulary of yoga-related terms."
   * #Sirsasana "Headstand"
       "An inverted asana, also called mudra in classical hatha yoga, involves standing on one's head."
@@ -1925,12 +1949,25 @@ Codes that are contained within other codes can also be defined. The result is a
   ```
   CodeSystem: AnteaterCS
   Id: anteater-code-system
-  Title: "Anteater Code System."
-  * #Anteater "Anteater" "Members of suborder Vermilingua."
-  * #Anteater #Tamandua "Members of genus Tamandua"
-  * #Anteater #Tamandua #NorthernTamandua "Northern Tamandua"
-  * #Anteater #Tamandua #SouthernTamandua "Southern Tamandua"
-  * #Anteater #GiantAnteater "Giant Anteater"
+  Title: "Anteater Code System"
+  * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
+  * #Anteater #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
+  * #Anteater #Tamandua #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
+  * #Anteater #Tamandua #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
+  * #Anteater #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
+  ```
+
+  * Define a code system for anteater taxonomy using indented concept definitions.
+
+  ```
+  CodeSystem: AnteaterCS
+  Id: anteater-code-system
+  Title: "Anteater Code System"
+  * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
+    * #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
+      * #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
+      * #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
+    * #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
   ```
 
 #### Defining Extensions
