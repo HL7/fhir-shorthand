@@ -1751,7 +1751,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 #### Path Rules
 
-Path rules are only used to set the context for subsequent [indented rules](#indented-rules)
+Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
 
 ```
 * <element>
