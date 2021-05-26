@@ -3,6 +3,7 @@ This chapter contains the formal specification of the FHIR Shorthand (FSH) langu
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
 ### About the Specification
+
 The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
 
 Syntax expressions uses the following conventions:
@@ -17,7 +18,6 @@ Syntax expressions uses the following conventions:
 | **bold** | A directory path or file name | **example-1.fsh** |
 | vertical bar | A choice of items or data types in the syntax | `name|id|url` |
 {: .grid }
-
 
 **Examples:**
 
@@ -151,7 +151,7 @@ Canonical references refer to the standard URL associated with FHIR items. For e
 
 #### Whitespace
 
-Repeated whitespace has meaning within FSH files when used for [indenting rules](#indented-rules) and within string literals. Since indentation before a rule has meaning, each rule m In all other contexts, repeated whitespace is not meaningful within FSH files. New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning within FSH files when used for [indenting rules](#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful within FSH files. New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -183,11 +183,18 @@ These comments can take up multiple lines.
 
 The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation. Implementations are free to modify the grammar to allow retention of comments.
 
-#### Rules and Rule Order
+#### Rules
 
-All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space. Rules SHALL be interpreted logically in a top-down manner.
+The following restrictions apply to rules:
 
-In most cases, the order of rules is flexible. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
+* All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
+* All rules must begin on a new line.
+* Rules cannot be preceded by non-whitespace characters on a line.
+* Whitespace characters prior to the initial asterisk (`*`) are meaningful. See [IndentedRules](#indented-rules) below.
+
+##### Rule Order
+
+Rules SHALL be interpreted logically in a top-down manner. In many cases, the order of rules is flexible. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
 
 Logical order dependencies can also arise. For example, in setting properties of a choice element (an element involving FHIR's `[x]` syntax), this order is problematic:
 
@@ -205,49 +212,59 @@ but this order is acceptable:
 
 In the first approach, `value[x]` is not yet known to be restricted to a Quantity, so `value[x].unit` is ambiguous. In the second approach, `value[x]` is known to be a Quantity, so `value[x].unit` is unambiguous.
 
-In cases with no explicit or logical restrictions on rule ordering, users MAY list rules in any order, bearing in mind that [`insert` rules](#insert-rules) expand into other rules that could have order constraints or logical ordering requirements.
+In cases with no explicit or logical restrictions on rule ordering, users MAY list rules in any order, bearing in mind that [insert rules](#insert-rules) expand into other rules that could have order constraints or logical ordering requirements.
 
 It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
 
-#### Indented Rules
+##### Indented Rules
 
-Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule is obtained by prepending the path from the rule above. For example:
-```
-* name 1..1
-  * family 1..1
-```
-is equivalent to:
-```
-* name 1..1
-* name.family 1..1
-```
-In this case, the first rule sets the "context" of `name` for any subsequent indented rules. Since the second rule is indented below the first, the `name` context is prepended to resolve the full path, `name.family`.
+Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by pre-pending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule.
 
-Note that [path rules](#path-rules) can be used to set a path as context for subsequent rules, without applying any rules at that path. If in the above example, only `name.family`, but not `name`, was meant to be constrained, the rules could be specified as:
-```
-* name
-  * family 1..1
-```
-The following restrictions apply to indentation:
-* Regardless of indent, all rules must start on their own line.
-* Rules cannot be preceded by non-whitespace characters on a line.
-* Rules can only be indented in increments of two spaces.
-* A rule cannot be indented below a rule which has no path. For example, the following is an error:
-  
-  ```
-  * insert ExampleRuleSet
-    * family 1..1
-  ```
-* Similarly, a rule which has no path cannot be indented. For example, the following is also an error:
-  
-  ```
-  * name 1..1
-    * insert ExampleRuleSet
-  ```
+Two spaces represent one level of indentation. This is not configurable. Rules can only be indented in increments of two spaces. They can be un-indented by any multiple of two spaces.
+
+[Path rules](#path-rules) are rules containing only a path. They can be used to set a path as context for subsequent rules, without any other effect.
+
+Some types of rules, for example [flag rules](#flag-rules), can involve multiple paths. If multiple paths are specified in a rule that sets context for subsequent rules (such as a flag rule with multiple targets), the last path is used as context. When multiple paths are specified in an indented rule, context is applied to all paths. See examples below for details.
+
+There are some limitations on where indented rules can be used. Indented rules cannot appear below rules that do not specify a path. Rules that may omit an element path include top-level [obeys rules](#obeys-rules), top-level [caret paths](#caret-paths), and [mapping rules](#defining-mappings).
+
+When indented rules are combined with [soft indexing](#soft-indexing) and a rule containing the increment operator `[+]` sets the path context for multiple subsequent rules, the index is only incremented once. On subsequent rules, the `[+]` is effectively replaced with `[=]`. See examples below for details.
 
 **Examples:**
-* Multiple levels of indentation can be used to set a path as context for a subsequent rule:
-  
+
+* Use indented rules to set cardinalities on name.family and name.given in a Patient resource:
+
+  ```
+  * name 1..1
+    * family 1..1
+    * given 1..1
+  ```
+
+  is equivalent to:
+
+  ```
+  * name 1..1
+  * name.family 1..1
+  * name.given 1..1
+  ```
+
+* Use a [path-only rule](#path-rules) to set context for subsequent rules:
+
+  ```
+  * name
+    * family 1..1
+    * given 1..1
+  ```
+
+  is equivalent to:
+
+  ```
+  * name.family 1..1
+  * name.given 1..1
+  ```
+
+* Example of multi-level indented rules:
+
   ```
   * name MS
     * family MS
@@ -262,23 +279,7 @@ The following restrictions apply to indentation:
   * name.family.id MS
   ```
 
-* Indentation can be used to set a path as context for multiple subsequent rules:
-  
-  ```
-  * name MS
-    * family MS
-    * given MS
-  ```
-
-  is equivalent to:
-
-  ```
-  * name MS
-  * name.family MS
-  * name.given MS
-  ```
-
-* The level of indentation can be reduced to indicate that a rule should not use the context of the preceeding rule:
+* Example of reducing the level of indentation to remove the context of a preceding rule:
 
   ```
   * item[0]
@@ -304,8 +305,8 @@ The following restrictions apply to indentation:
   * item[0].item[1].type = #group
   * status = #active
   ```
-
-* When multiple paths are specified in an indented rule, context is applied to all paths:
+  
+* Example of multiple paths in an indented rule, with the context applied to all paths:
 
   ```
   * name
@@ -318,7 +319,7 @@ The following restrictions apply to indentation:
   * name.family and name.given MS
   ```
 
-* When multiple paths are specified in a rule that sets context for subsequent rules, the last path is used as context:
+* Example of multiple paths in a rule that sets context for subsequent rules, where the last path sets the context:
 
   ```
   * birthDate and name MS
@@ -332,7 +333,35 @@ The following restrictions apply to indentation:
   * name.family 1..1
   ```
 
+* Example of combining indented rules with [soft indexing](#soft-indexing), where a rule with the increment operator `[+]` is used to set the context:
 
+  ```
+  * item[+]
+    * linkId = "title"
+    * type = #display
+  ```
+
+  is **not** equivalent to:
+
+  ```
+  * item[+].linkId = "title"
+  * item[+].type = #display
+  ```
+
+  but is instead equivalent to:
+
+  ```
+  * item[+].linkId = "title"
+  * item[=].type = #display
+  ``` 
+
+
+* An error, attempting to use a rule without a path as context for an indented rule:
+  
+  ```
+  * obeys inv-1
+    * family 1..1
+  ```
 
 
 #### Codes and Codings
@@ -496,16 +525,7 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
 
 **Examples:**
 
-* Assign multiple names in an instance of a Patient, first using numerical indices, then using soft indices:
-
-  ```
-  * name[0].given = "Robert"
-  * name[0].family = "Smith"
-  * name[1].given = "Rob"
-  * name[1].family = "Smith"
-  * name[2].given = "Bob"
-  * name[2].family = "Smith"
-  ```
+* Assign multiple names in an instance of a Patient using soft indices:
 
   ```
   * name[+].given = "Robert"
@@ -516,7 +536,32 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
   * name[=].family = "Smith"
   ```
 
-* Add second given (middle) name to the example above, and write equivalent rules using soft indexing:
+  is equivalent to:
+
+  ```
+  * name[0].given = "Robert"
+  * name[0].family = "Smith"
+  * name[1].given = "Rob"
+  * name[1].family = "Smith"
+  * name[2].given = "Bob"
+  * name[2].family = "Smith"
+  ```
+
+* Add second given name to the example above, using soft indexing:
+
+  ```
+  * name[+].given[+] = "Robert"
+  * name[=].given[+] = "David"
+  * name[=].family = "Smith"
+  * name[+].given[+] = "Rob"
+  * name[=].given[+] = "Dave"
+  * name[=].family = "Smith"
+  * name[+].given[+] = "Bob"
+  * name[=].given[+] = "Davey"
+  * name[=].family = "Smith"
+  ```
+
+  is equivalent to:
 
   ```
   * name[0].given[0] = "Robert"
@@ -530,29 +575,21 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
   * name[2].family = "Smith"
   ```
 
-  ```
-  * name[+].given[+] = "Robert"
-  * name[+].given[+] = "David"
-  * name[=].family = "Smith"
-  * name[+].given[+] = "Rob"
-  * name[=].given[+] = "Dave"
-  * name[=].family = "Smith"
-  * name[+].given[+] = "Bob"
-  * name[=].given[+] = "Davey"
-  * name[=].family = "Smith"
-  ```
-
-* Another example of soft indexing, typical of a CapabilityStatement:
+* Another example of soft indexing combined with indented paths, illustrating that when a rule containing `[+]` is used to set the context of multiple subsequent rules, the index is incremented only once:
 
   ```
-  * rest.resource[0].type = #Organization
-  * rest.resource[0].interaction[0].code = #create
-  * rest.resource[0].interaction[1].code = #update
-  * rest.resource[0].interaction[2].code = #delete
-  * rest.resource[1].type = #Condition
-  * rest.resource[1].interaction[0].code = #create
-  * rest.resource[1].interaction[1].code = #update
+  * rest.resource[+]
+    * type = #Organization
+    * interaction[+].code = #create
+    * interaction[+].code = #update
+    * interaction[+].code = #delete
+  * rest.resource[+]
+    * type = #Condition
+    * interaction[+].code = #create
+    * interaction[+].code = #update
   ```
+
+  is equivalent to:
 
   ```
   * rest.resource[+].type = #Organization
@@ -564,27 +601,17 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
   * rest.resource[=].interaction[+].code = #update
   ```
 
-* When soft indexing is combined with [indentation](#indented-rules), and a rule containing `[+]` is used to set the context of subsequent rules, that `[+]` is only used to set context on the first rule which follows the rule containing `[+]`. On subsequent rules beyond the first, the `[+]` is replace with `[=]`:
+  is equivalent to:
 
   ```
-  * item[+]
-    * linkId = "title"
-    * type = #display
+  * rest.resource[0].type = #Organization
+  * rest.resource[0].interaction[0].code = #create
+  * rest.resource[0].interaction[1].code = #update
+  * rest.resource[0].interaction[2].code = #delete
+  * rest.resource[1].type = #Condition
+  * rest.resource[1].interaction[0].code = #create
+  * rest.resource[1].interaction[1].code = #update
   ```
-
-  is **not** equivalent to:
-
-  ```
-  * item[+].linkId = "title"
-  * item[+].type = #display
-  ```
-
-  but is instead equivalent to:
-
-  ```
-  * item[+].linkId = "title"
-  * item[=].type = #display
-  ``` 
 
 ### FSH Paths
 
@@ -802,8 +829,6 @@ A special case of the ElementDefinition path is setting properties of the first 
   . ^short
   ```
 
-***
-
 ### Rules for Profiles, Extensions, and Instances
 
 > * For rules applicable to code systems, see [Defining Code Systems](#defining-code-systems)
@@ -829,8 +854,8 @@ The following table is a summary of the rules applicable to profiles, extensions
 | Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
 | Insert | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
 | Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
-| Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 | Path | `* <element>`|
+| Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 {: .grid }
 
 **Notes:**
