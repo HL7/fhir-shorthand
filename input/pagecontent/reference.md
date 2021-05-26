@@ -151,7 +151,7 @@ Canonical references refer to the standard URL associated with FHIR items. For e
 
 #### Whitespace
 
-Repeated whitespace has meaning within FSH files when used for [indenting rules](#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful within FSH files. New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning within FSH files when used for [indenting rules](#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful. New lines are considered whitespace. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -190,7 +190,7 @@ The following restrictions apply to rules:
 * All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
 * All rules must begin on a new line.
 * Rules cannot be preceded by non-whitespace characters on a line.
-* Whitespace characters prior to the initial asterisk (`*`) are meaningful. See [IndentedRules](#indented-rules) below.
+* Whitespace characters prior to the initial asterisk (`*`) are meaningful. See [Indented Rules](#indented-rules) below.
 
 ##### Rule Order
 
@@ -218,7 +218,7 @@ It is possible for a user to specify contradictory rules, for example, two rules
 
 ##### Indented Rules
 
-Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by pre-pending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule.
+Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by prepending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
 
 Two spaces represent one level of indentation. This is not configurable. Rules can only be indented in increments of two spaces. They can be un-indented by any multiple of two spaces.
 
@@ -226,7 +226,7 @@ Two spaces represent one level of indentation. This is not configurable. Rules c
 
 Some types of rules, for example [flag rules](#flag-rules), can involve multiple paths. If multiple paths are specified in a rule that sets context for subsequent rules (such as a flag rule with multiple targets), the last path is used as context. When multiple paths are specified in an indented rule, context is applied to all paths. See examples below for details.
 
-There are some limitations on where indented rules can be used. Indented rules cannot appear below rules that do not specify a path. Rules that may omit an element path include top-level [obeys rules](#obeys-rules), top-level [caret paths](#caret-paths), and [mapping rules](#defining-mappings).
+There are some limitations on where indented rules can be used. Indented rules cannot appear below rules that do not specify a path. Rules that may omit an element path include top-level [obeys rules](#obeys-rules), top-level [caret paths](#caret-paths), [mapping rules](#defining-mappings), and [insert rules](#insert-rules).
 
 When indented rules are combined with [soft indexing](#soft-indexing) and a rule containing the increment operator `[+]` sets the path context for multiple subsequent rules, the index is only incremented once. On subsequent rules, the `[+]` is effectively replaced with `[=]`. See examples below for details.
 
@@ -361,6 +361,12 @@ When indented rules are combined with [soft indexing](#soft-indexing) and a rule
   ```
   * obeys inv-1
     * family 1..1
+  ```
+* An error, attempting to indent a rule without a path:
+
+  ```
+  * name 1..1
+    * insert ExampleRuleSet
   ```
 
 
