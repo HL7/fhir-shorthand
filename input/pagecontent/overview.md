@@ -8,7 +8,7 @@ FSH was created in response to the need in the FHIR community for scalable, fast
 
 <img src="IG-Need-For-Agility.png" alt="IG Need for Agility" width="800px" style="float:none; margin: 0px 0px 0px 0px;" />
 
-Experience across many domains has shown that complex software projects are best approached with textual languages. As a language designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles. Because it is text-based, FSH brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
+Experience across many domains has shown that complex software projects are best approached with textual languages. As a language designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles or logical models. Because it is text-based, FSH brings a degree of editing agility not found in graphical tools (cutting and pasting, global search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
 
 ### FHIR Shorthand Language
 
@@ -18,7 +18,7 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 
 * **Grammar**: [FSH has a formal grammar](reference.html#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/).
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive).
-* **Whitespace**: Repeated whitespace characters are equivalent to one whitespace character within FSH files, unless they are part of string literals. New lines are considered whitespace.
+* **Whitespace**: Repeated whitespace has meaning within FSH files when used for indenting rules and within string literals. In all other contexts, repeated whitespace is not meaningful. New lines are considered whitespace.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
 
@@ -97,15 +97,17 @@ Title:    "Cancer Disease Status"
 Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
 ```
 
-Keywords that declare new items (like the `Profile` keyword in the previous example) must occur first in any set of keywords. There are nine declarative [keywords in FSH](reference.html#defining-items):
+Keywords that declare new items (like the `Profile` keyword in the previous example) must occur first in any set of keywords. There are eleven declarative [keywords in FSH](reference.html#defining-items):
 
 * Alias
 * CodeSystem
 * Extension
 * Instance
 * Invariant
+* Logical
 * Mapping
 * Profile
+* Resource
 * RuleSet
 * ValueSet
 
@@ -123,7 +125,18 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 * {rule statement}
 ```
 
-The [formal syntax of rules](reference.html#rules-for-profiles-extensions-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary of some of the more important rules in FSH:
+The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logical-models-resources-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary of some of the more important rules in FSH:
+
+* **AddElement rules** are used to define new elements in logical models and resources. They specify a path, cardinality, type(s), short definition, and optional long definition. For example:
+
+  ```
+  * email 0..* string "The person's email addresses" "Email addresses by which the person may be contacted." 
+  ```
+
+  ```
+  * preferredName 0..1 string or HumanName "The person's preferred name"
+      "The name by which the person prefers to be called, if not their formal name." 
+  ```
 
 * **Assignment rules** are used to set fixed values in instances and required patterns in profiles. For example:
 
@@ -429,19 +442,6 @@ Some of the features for FSH under consideration include (in no particular order
 * **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 
 * **Capability Statements (and other conformance resources):** The FSH language supports creation of SDs, and tools like SUSHI address creation of ImplementationGuide resources. However, these are not the only [conformance resources in FHIR](https://www.hl7.org/fhir/R4/conformance-module.html). Others include CapabilityStatement, OperationDefinition, SearchParameter, and CompartmentDefinition. Currently, you can create any of these types as instances; for example, using `InstanceOf: CapabilityStatement`. To make this easier, we provide a [downloadable template](CapabilityStatementTemplate.fsh) for a CapabilityStatement. There may be [other approaches](https://chat.fhir.org/#narrow/stream/215610-shorthand/topic/CapabilityStatement) that could create a CapabilityStatement more directly from requirements. Purpose-specific syntax could also be employed for other conformance resources such as SearchParameter and OperationDefinition.
-
-* **Nested Path Syntax:** While FSH is very good at expressing profiling rules, the current path grammar is cumbersome for populating resources with nested arrays. An example is populating the items in Questionnaires, where each item can contain sub-items. While not suggesting that FSH adopt YAML, it is worth noting that a syntax like YAML is much more concise in this type of situation. Additional syntax is under consideration.
-
-* **Logical Models:** FSH may provide future support for defining data models not derived from a FHIR resource. Logical models are useful for capturing domain objects and relationships early in the development cycle, and can provide traceability from requirements to implementable FHIR artifacts.
-
-* **Resource Definitions:** FSH may provide support for developing new FHIR resources and maintaining existing ones, to help HL7 Work Groups more effectively manage their contributions to FHIR core.
-
-There are also opportunities for tooling related to FSH. This overview also touched on one of those tools, SUSHI. A complete description of SUSHI is found in the [SUSHI Users Guide](sushi.html). Some tooling ideas include:
-
-* **Web-Based FSH:** A web-based deployment of a FSH interpreter would allow an interactive experience with FSH and SUSHI.
-
-* **Importing SDs to FSH:** Currently there is no mature tool to translate existing FHIR artifacts such as SDs into FSH. It should be possible to round-trip between SDs in JSON or XML and FSH. There are two tools under development that convert SDs to FSH, [FSH Food](https://github.com/lantanagroup/fshfood) and GoFSH.
-
 
 SUSHI issues and suggestions can be made [here](https://github.com/FHIR/sushi/issues).
 

@@ -5,7 +5,7 @@ dlurl=$pubsource$publisher_jar
 
 input_cache_path=$PWD/input-cache/
 
-scriptdlroot=https://raw.githubusercontent.com/FHIR/sample-ig/master
+scriptdlroot=https://raw.githubusercontent.com/HL7/ig-publisher-scripts/main
 update_bat_url=$scriptdlroot/_updatePublisher.bat
 gen_bat_url=$scriptdlroot/_genonce.bat
 gencont_bat_url=$scriptdlroot/_gencontinuous.bat

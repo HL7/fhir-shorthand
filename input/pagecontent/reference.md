@@ -111,7 +111,7 @@ Like other HL7 FHIR IGs, the version numbering of the FSH specification does not
 
 FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
-The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `CodeSystem`, `Extension`, `Instance`, `Invariant`, `Mapping`, `Profile`, `RuleSet`, `ValueSet`, `Description`, `Expression`, `Id`, `InstanceOf`, `Parent`, `Severity`, `Source`, `Target`, `Title`, `Usage`, `XPath`.
+The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `CodeSystem`, `Extension`, `Instance`, `Invariant`, `Logical`, `Mapping`, `Profile`, `Resource`, `RuleSet`, `ValueSet`, `Description`, `Expression`, `Id`, `InstanceOf`, `Parent`, `Severity`, `Source`, `Target`, `Title`, `Usage`, `XPath`.
 
 The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
 
@@ -835,7 +835,7 @@ A special case of the ElementDefinition path is setting properties of the first 
   . ^short
   ```
 
-### Rules for Profiles, Extensions, and Instances
+### Rules for Profiles, Extensions, Logical Models, Resources, and Instances
 
 > * For rules applicable to code systems, see [Defining Code Systems](#defining-code-systems)
 > * For rules applicable to mappings, see [Defining Mappings](#defining-mappings).
@@ -847,10 +847,11 @@ Rules are the mechanism for setting cardinality, applying Must Support flags, de
 * {rule statement}
 ```
 
-The following table is a summary of the rules applicable to profiles, extensions, and instances:
+The following table is a summary of the rules applicable to profiles, extensions, logical models, resources, and instances:
 
 | Rule Type | Syntax |
 | --- | --- |
+| AddElement |`* <element> {min}..{max} {dataype} "{short}"` <br/>`<element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
 | Assignment |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
 | Binding |`* <bindable> from {ValueSet name|id|url}` <br/> `* <bindable> from {ValueSet name|id|url} ({strength})`|
 | Cardinality | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
@@ -867,7 +868,85 @@ The following table is a summary of the rules applicable to profiles, extensions
 **Notes:**
 
 * The Assignment rule is the only type of rule applicable to instances
+* The AddElement rule is only applicable to logical models and resources
+* The Assignment and Contains rules are not applicable to logical models or resources
 * Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in a rule set
+
+#### AddElement Rules
+
+Authors define logical models and resources by adding new elements to their definitions. The syntaxes to add a new element are as follows:
+
+<pre><code>* &lt;element&gt; {min}..{max} {datatype} "{short}"
+
+* &lt;element&gt; {min}..{max} Reference({ResourceType name|id|url}) "{short}"
+
+* &lt;element&gt; {min}..{max} {datatype} "{short}" <i>"{definition}"</i>
+
+* &lt;element&gt; {min}..{max} {datatype} "{short}" <i>"""
+  {multi-line definition}
+  """</i>
+
+* &lt;element&gt; {min}..{max} <i>{flag}</i> {datatype} "{short}" <i>"{definition}"</i>
+
+* &lt;element&gt; {min}..{max} <i>{flag}</i> Reference({ResourceType name|id|url}) "{short}" <i>"{definition}"</i>
+
+* &lt;element&gt; {min}..{max} <i>{flag1} {flag2} ...</i> {datatype1} <i>or {datatype2} ...</i> "{short}" <i>"{definition}"</i>
+
+* &lt;element&gt; {min}..{max} <i>{flag1} {flag2} ...</i> Reference({ResourceType1 name|id|url} <i>or {ResourceType2 name|id|url} ...</i>) "{short}" <i>"{definition}"</i>
+</code></pre>
+
+At a minimum, an AddElement rule must specify an element path, cardinality, type, and short description. An author may optionally specify flags and a longer definition. If a longer definition is not specified, the element's definition will be set to the same text as the specified short description. When multiple types are specified, the element path must end with \[x] unless all types are References.
+
+The AddElement rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
+
+**Examples:**
+
+* Add a string-typed element:
+
+  ```
+  * email 0..* string "The person's email addresses"
+  ```
+
+* Add a string-typed element with a summary flag and longer definition:
+
+  ```
+  * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted."
+  ```
+
+* Add a reference-typed element with a longer definition:
+
+  ```
+  * primaryClinicians 0..* Reference(Organization or Practitioner or PractitionerRole) "Primary clinicians"
+      "The person's primary clinical organizations and practitioners"
+  ```
+
+* Add a choice element with a multi-line description using markdown syntax:
+
+  ```
+  * preferredName[x] 0..1 string or HumanName "The person's preferred name" """
+      Sometimes patients prefer to be called by a name other than their _formal_ name. This may be:
+      * their nick name
+      * their middle name
+      * their maiden name
+      * etc.
+      """
+  ```
+
+* Add a BackboneElement element to provide a structured set of elements in the logical model:
+
+  ```
+  * serviceAnimal 0..* BackboneElement "Service animals" "Animals trained to assist the person by performing certain tasks."
+  * serviceAnimal.name 0..1 string "Name of service animal" "The name by which the service animal responds."
+  * serviceAnimal.breed 1..* CodeableConcept "Breed of service animal" "The dominant breed or breeds of the service animal."
+  * serviceAnimal.startDate 0..1 Date "Date the service animal began work" "The date on which the service animal began working for the person."
+  ```
+  or the same set of rules using indentation to maintain the path context:
+  ```
+  * serviceAnimal 0..* BackboneElement "Service animals" "Animals trained to assist the person by performing certain tasks."
+    * name 0..1 string "Name of service animal" "The name by which the service animal responds."
+    * breed 1..* CodeableConcept "Breed of service animal" "The dominant breed or breeds of the service animal."
+    * startDate 0..1 date "Date the service animal began work" "The date on which the service animal began working for the person."
+  ```
 
 #### Assignment Rules
 
@@ -1799,8 +1878,10 @@ Declaration keywords, corresponding to the items defined by FSH, are as follows:
 | `Extension` | Declares a new extension | name |
 | `Instance` | Declares a new instance | id |
 | `Invariant` | Declares a new invariant | id |
+| `Logical` | Declares a new logical model | name |
 | `Mapping` | Declares a new mapping | id |
 | `Profile` | Declares a new profile | name |
+| `Resource` | Declares a new resource | name |
 | `RuleSet` | Declares a set of rules that can be reused | name |
 | `ValueSet` | Declares a new value set | name |
 {: .grid }
@@ -1833,8 +1914,10 @@ The following table shows the relationship between declaration keywords and addi
 [Extension](#defining-extensions)     |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Instance](#defining-instances)       |  x  |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
 [Invariant](#defining-invariants)     |  x  |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
+[Logical](#defining-logical-models)   |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Mapping](#defining-mappings)         |  x  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
 [Profile](#defining-profiles)         |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
+[Resource](#defining-resources)       |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)       |     |             |       |        |            |       |        |        |          |       |            |
 [Value Set](#defining-value-sets)     |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
 {: .grid }
@@ -2114,6 +2197,42 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
   XPath:      "f:given or f:family"
   ```
 
+#### Defining Logical Models
+
+Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](http://hl7.org/fhir/R4/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
+
+Logical models are defined in FSH using the keyword `Logical`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
+
+If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements should use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Authors may also specify another logical model, a resource, or a complex datatype as a logical model's parent.
+
+Rules defining the logical model follow immediately after the keyword section. Logical models are primarily comprised of AddElement rules. Since logical models are represented using StructureDefinition, many of the rules used in profile definitions may also be used when defining logical models. According to the FHIR specification's [interpretation of ElementDefinition in different contexts](http://hl7.org/fhir/R4/elementdefinition.html#interpretation), however, logical models may not use slicing or fixed/patterned values.  As a result, Contains rules and Assignment rules are forbidden in logical model definitions. Logical models are also prohibited from constraining elements inherited from a parent definition.
+
+**Example:**
+
+* Define a logical model for a human and their family members:
+
+  ```
+  Logical:        Human
+  Title:          "Human Being"
+  Description:    "A member of the Homo sapien species."
+  * name 0..* SU HumanName "Name(s) of the human" "The names by which the human is or has been known"
+  * birthDate 0..1 SU dateTime "The date of birth, if known"
+      "The date on which the person was born. Approximations may be used if exact date is unknown."
+  * deceased[x] 0..1 SU boolean or dateTime or Age "Indication if the human is deceased"
+      "An indication if the human has died. Boolean should not be used if date or age at death are known."
+  * family BackboneElement 0..1 "Family" "Members of the human's immediate family."
+    * mother 0..2 FamilyMember "Mother" "Biological mother, current adoptive mother, or both."
+    * mother 0..2 FamilyMember "Father" "Biological father, current adoptive father, or both."
+    * sibling 0..* FamilyMember "Sibling" "Other children of the human's mother and/or father."
+
+  Logical:        FamilyMember
+  Title:          "Family Member"
+  Description:    "A reference to a human's family member."
+  * human 1..1 SU Reference(Human) "Family member" "A reference to the human family member"
+  * biological 0..1 boolean "Biologically related?"
+      "A family member may not be biologically related due to adoption, mixed families, etc."
+  ```
+
 #### Defining Mappings
 
 [Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
@@ -2193,6 +2312,36 @@ To define a profile, the keywords `Profile` and `Parent` are required, and `Id`,
   * code = LNC#81267-7 // Setting of exposure to illness
   * value[x] only CodeableConcept
   * valueCodeableConcept from https://loinc.org/vs/LL3991-8 (extensible)
+  ```
+
+#### Defining Resources
+
+Custom resources allow authors to define new structures representing arbitrary content. Resources are defined similar to [logical models](#defining-logical-models), but are intended to support data exchange using FHIR's RESTful API mechanisms. The capability to define resources may be used by HL7 to define core FHIR resources or by other organizations to define proprietary resources for their own internal use. Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
+
+Resources are defined in FSH using the keyword `Resource`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
+
+Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html)  and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource. If no `Parent` is specified, DomainResource is used as the default parent.
+
+Rules defining the resource follow immediately after the keyword section. Resources are primarily comprised of AddElement rules. Since resources are represented using StructureDefinition, many of the rules used in profile definitions may also be used when defining resources. According to the FHIR specification's [interpretation of ElementDefinition in different contexts](http://hl7.org/fhir/R4/elementdefinition.html#interpretation), however, resources may not use slicing or fixed/patterned values.  As a result, Contains rules and Assignment rules are forbidden in resource definitions. Resources are also prohibited from constraining elements inherited from a parent definition.
+
+**Example:**
+
+* Define a resource representing an emergency vehicle:
+
+  ```
+  Logical:        EmergencyVehicle
+  Title:          "Emergency Vehicle"
+  Description:    "An emergency vehicle, such as an ambulance or fire truck."
+  * identifier 0..* SU Identifier "Identifier(s) of the vehicle" "Vehicle identifiers may include VINs and serial numbers."
+  * make 0..1 SU Coding "The vehicle make" "The vehicle make, e.g., Chevrolet."
+  * make from EmergencyVehicleMake (extensible)
+  * model 0..1 SU Coding "The vehicle model" "The vehicle model, e.g., G4500."
+  * model from EmergencyVehicleModel (extensible)
+  * year 0..1 SU positiveInteger "Year of manufacture" "The year the vehicle was manufactured"
+  * servicePeriod 0..1 Period "When the vehicle was in service" "Start date and end date (if applicable) when the vehicle operated."
+  * operator 0..* Reference(Organization or Practitioner or PractitionerRole) "The operator"
+      "The organization or persons repsonsible for operating the vehicle"
+  * device 0..* Reference(Device) "Devices on board" "Devices on board the vehicle."
   ```
 
 #### Defining Rule Sets
