@@ -2222,7 +2222,7 @@ Rules defining the logical model follow immediately after the keyword section. L
       "An indication if the human has died. Boolean should not be used if date or age at death are known."
   * family BackboneElement 0..1 "Family" "Members of the human's immediate family."
     * mother 0..2 FamilyMember "Mother" "Biological mother, current adoptive mother, or both."
-    * mother 0..2 FamilyMember "Father" "Biological father, current adoptive father, or both."
+    * father 0..2 FamilyMember "Father" "Biological father, current adoptive father, or both."
     * sibling 0..* FamilyMember "Sibling" "Other children of the human's mother and/or father."
 
   Logical:        FamilyMember

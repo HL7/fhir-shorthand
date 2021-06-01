@@ -127,10 +127,10 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logical-models-resources-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary of some of the more important rules in FSH:
 
-* **AddElement rules** are used to define new elements in logical models and resources. They specify a path, cardinality, type(s), short definition, and optional long definition. For example:
+* **AddElement rules** are used to define new elements in logical models and resources. They specify a path, cardinality, optional flags, type(s), short definition, and optional long definition. For example:
 
   ```
-  * email 0..* string "The person's email addresses" "Email addresses by which the person may be contacted." 
+  * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted." 
   ```
 
   ```
