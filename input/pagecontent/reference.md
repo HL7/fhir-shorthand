@@ -2329,7 +2329,7 @@ Rules defining the resource follow immediately after the keyword section. Resour
 * Define a resource representing an emergency vehicle:
 
   ```
-  Logical:        EmergencyVehicle
+  Resource:       EmergencyVehicle
   Title:          "Emergency Vehicle"
   Description:    "An emergency vehicle, such as an ambulance or fire truck."
   * identifier 0..* SU Identifier "Identifier(s) of the vehicle" "Vehicle identifiers may include VINs and serial numbers."
