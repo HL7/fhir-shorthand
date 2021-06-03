@@ -89,7 +89,7 @@ Items can appear in any order within **.fsh** files, and can be moved around wit
 
 Each FSH project MUST declare the version of FHIR it depends upon. The form of this declaration is outside the scope of the FSH specification, and SHOULD be managed by implementations. The FSH specification is not explicitly FHIR-version dependent, but implementations MAY support only a specific version or versions of FHIR.
 
-The FSH language specification has been designed around FHIR R4. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types). It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces new data types.
+The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types). FSH supports pre-release FHIR R5, but support for pre-release versions is still experimental. It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces new data types.
 
 #### Dependency on other IGs
 
@@ -454,15 +454,16 @@ The grammar is:
 
 This shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`).
 
-When the units are not UCUM, the value and units can be set independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+When the units are not UCUM, the same shorthand can be used by specifying the unit using the standard FSH code syntax, or by setting the value and units independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
 
 Example:
 
-* Express a weight in pounds, displaying "lb":
+* Express a weight in pounds, using UCUM units, displaying "lb":
 
   ```
   155.0 '[lb_av]' "lb"
   ```
+
 
 #### Triple-Quoted Strings
 
@@ -970,6 +971,12 @@ In the following, we give details and examples of assignments involving various 
   * recordedDate = "2013-06-08T09:57:34.2112Z"
   ```
 
+* Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0):
+
+  ```
+  * extension[my-extension].valueInteger64 = 1234567890
+  ```
+
 ##### Assignments with the Coding Data Type
 
 A FHIR Coding has five attributes (system, version, code, display, and userSelected). The first four of these can be set with a single assignment statement. The syntax is:
@@ -1120,7 +1127,11 @@ FSH provides a shorthand that allows quantities, units of measure, and display s
 
 <pre><code>&lt;Quantity&gt; = {decimal} '{UCUM code}' <i>"{units display string}"</i></code></pre>
 
-For other code systems, the value and units can also be set independently. To assign a value, use the Quantity.value property:
+A similar shorthand can be used for other code systems by specifying the unit using the standard FSH code syntax:
+
+<pre><code>&lt;Quantity&gt; = {decimal} {CodeSystem name|id|url}|{version string}#{code} <i>"{units display string}"</i></code></pre>
+
+Alternatively, the value and units can also be set independently. To assign a value, use the Quantity.value property:
 
 ```
 * <Quantity>.value = {decimal}
@@ -1150,7 +1161,13 @@ A Quantity can also be bound to a value set:
   ```
   * valueQuantity.value = 55.0
   ```
-  
+
+* Express a weight in pounds, using the UMLS code for units (not recommended), and displaying "pounds":
+
+  ```
+  * valueQuantity = 155.0 http://terminology.hl7.org/CodeSystem/umls#C0439219 "pounds"
+  ```
+
 * Set the units of the same valueQuantity to millimeters, without setting the value (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
 
   ```
@@ -1169,7 +1186,7 @@ A Quantity can also be bound to a value set:
   * valueQuantity.unit = "millimeters"
   * valueQuantity = 55.0 'mm'
   ```
-  Because the second rule pre-clears valueQuantity before applying the specified values, the result is:
+  Note that the second rule **pre-clears** valueQuantity in its entirety before applying the specified values, so the result is:
 
   * value is 55.0
   * system is http://unitsofmeasure.org
@@ -1183,7 +1200,7 @@ A Quantity can also be bound to a value set:
   * valueQuantity.unit = "millimeters"
   ```
 
-* Another correct way to approach this example (with the same result) is:
+* Another way to approach this example (with the correct result) is:
 
   ```
   * valueQuantity = UCUM#mm "millimeters"
@@ -1230,6 +1247,32 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
   ```
   * entry[0].resource = EveAnyperson
+  ```
+
+##### Assignments with the CodeableReference Data Type
+
+The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) data type was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. Making use of CodeableReference involves no new FSH syntax.
+
+**Examples:**
+
+* Constrain Substance.code, which is data type `CodeableReference(SubstanceDefinition)`:
+
+  ```
+  Profile: LatexSubstance
+  Parent: Substance
+  // restrict the CodeableConcept aspect to a code in the LatexCodeVS value set:
+  * code from LatexCodeVS (required)
+  // restrict Reference aspect to an instance of SubstanceDefinition conforming to the LatexSubstanceDefinition profile:
+  * code only Reference(LatexSubstanceDefinition)
+  ```
+
+* Assign the concept and reference aspects of a CodeableReference:
+
+  ```
+  Instance:   LatexSubstanceExample
+  InstanceOf: LatexSubstance
+  * code.concept = SCT#1003754000 "Natural rubber latex (substance)"
+  * code.reference = Reference(NaturalLatexSubstanceDefinitionExample)
   ```
 
 #### Binding Rules
@@ -1743,6 +1786,12 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
   ```
   * onset[x] only Age or AgeRange or DateRange
+  ```
+
+* Restrict value[x] to the integer64 type (note: this data type was introduced in FHIR v4.2.0):
+
+  ```
+  * value[x] only integer64
   ```
 
 * Restrict Observation.performer (a choice of reference to Practitioner, PractitionerRole, Organization, CareTeam, Patient, or RelatedPerson) to allow only Practitioner:
