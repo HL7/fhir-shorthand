@@ -938,7 +938,7 @@ The AddElement rule is only applicable for logical models and resources. It cann
   * serviceAnimal 0..* BackboneElement "Service animals" "Animals trained to assist the person by performing certain tasks."
   * serviceAnimal.name 0..1 string "Name of service animal" "The name by which the service animal responds."
   * serviceAnimal.breed 1..* CodeableConcept "Breed of service animal" "The dominant breed or breeds of the service animal."
-  * serviceAnimal.startDate 0..1 Date "Date the service animal began work" "The date on which the service animal began working for the person."
+  * serviceAnimal.startDate 0..1 date "Date the service animal began work" "The date on which the service animal began working for the person."
   ```
   or the same set of rules using indentation to maintain the path context:
   ```
@@ -2220,7 +2220,7 @@ Rules defining the logical model follow immediately after the keyword section. L
       "The date on which the person was born. Approximations may be used if exact date is unknown."
   * deceased[x] 0..1 SU boolean or dateTime or Age "Indication if the human is deceased"
       "An indication if the human has died. Boolean should not be used if date or age at death are known."
-  * family BackboneElement 0..1 "Family" "Members of the human's immediate family."
+  * family 0..1 BackboneElement "Family" "Members of the human's immediate family."
     * mother 0..2 FamilyMember "Mother" "Biological mother, current adoptive mother, or both."
     * father 0..2 FamilyMember "Father" "Biological father, current adoptive father, or both."
     * sibling 0..* FamilyMember "Sibling" "Other children of the human's mother and/or father."
@@ -2337,7 +2337,7 @@ Rules defining the resource follow immediately after the keyword section. Resour
   * make from EmergencyVehicleMake (extensible)
   * model 0..1 SU Coding "The vehicle model" "The vehicle model, e.g., G4500."
   * model from EmergencyVehicleModel (extensible)
-  * year 0..1 SU positiveInteger "Year of manufacture" "The year the vehicle was manufactured"
+  * year 0..1 SU positiveInt "Year of manufacture" "The year the vehicle was manufactured"
   * servicePeriod 0..1 Period "When the vehicle was in service" "Start date and end date (if applicable) when the vehicle operated."
   * operator 0..* Reference(Organization or Practitioner or PractitionerRole) "The operator"
       "The organization or persons repsonsible for operating the vehicle"
