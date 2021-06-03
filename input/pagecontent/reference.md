@@ -841,16 +841,16 @@ For a path to a code within a code system, use this syntax:
   . ^short
   ```
 
-* The path to the designation value of a concept:
+* The path to the designation value of a [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html) top-level code:
 
   ```
-  #SomeCode ^designation[0].value
+  #active ^designation[0].value
   ```
 
-* The path to the property code of a concept within a hierarchy:
+* The path to the property code of #recurrence code, a child of the #active code in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
 
   ```
-  #SomeCode #ChildCode ^property[0].code
+  #active #recurrence ^property[0].code
   ```
 
 ***
@@ -1896,38 +1896,37 @@ It is sometimes necessary to define new codes inside an IG that are not drawn fr
 
 Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
 
-
 ```
 * #{code} "{display string}" "{definition string}"
 ```
 
 Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
 
+```
+* #{parent code} "{display string}" "{definition string}"
+* #{parent code} #{child code} "{display string}" "{definition string}"
+```
+
+Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
 
 ```
-* #{parent code} #{code} "{display string}" "{definition string}"
-* #{grandparent code} #{parent code} #{code} "{display string}" "{definition string}"
+* #{parent code} "{display string}" "{definition string}"
+  * #{child code} "{display string}" "{definition string}"
 ```
 
-Another way to define child codes is to indent their definitions after their parent's code definition:
-
-```
-* #{grandparent code} "{display string}" "{definition string}"
-  * #{parent code} "{display string}" "{definition string}"
-    * #{child code} "{display string}" "{definition string}"
-```
+Additional levels to any depth can be added in the same manner.
 
 **Notes:**
 
 * There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
-* The definition of the term, provided as the second string following the code, is RECOMMENDED.
+* The definition of the term, provided as the second string following the code, is RECOMMENDED but not required.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
 * When defining hierarchical codes, parent codes must be defined before their children.
 * Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
 
 **Examples:**
 
-* Define a code system for yoga poses.
+* Define a code system for yoga poses:
 
   ```
   CodeSystem:  YogaCS
@@ -1944,7 +1943,7 @@ Another way to define child codes is to indent their definitions after their par
       "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
   ```
 
-* Define a code system for anteater taxonomy.
+* Define a code system for anteater taxonomy:
 
   ```
   CodeSystem: AnteaterCS
@@ -1957,7 +1956,7 @@ Another way to define child codes is to indent their definitions after their par
   * #Anteater #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
   ```
 
-  * Define a code system for anteater taxonomy using indented concept definitions.
+* Define a code system for anteater taxonomy using indented concept definitions:
 
   ```
   CodeSystem: AnteaterCS
