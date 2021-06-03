@@ -454,7 +454,9 @@ The grammar is:
 
 This shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`).
 
-When the units are not UCUM, the value and units can be set independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+When the units are not UCUM, the same shorthand can be used by specifying the unit using the standard FSH code syntax.
+
+Alternatively, the value and units can be set independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
 
 Example:
 
@@ -1100,7 +1102,11 @@ FSH provides a shorthand that allows quantities, units of measure, and display s
 
 <pre><code>&lt;Quantity&gt; = {decimal} '{UCUM code}' <i>"{units display string}"</i></code></pre>
 
-For other code systems, the value and units can also be set independently. To assign a value, use the Quantity.value property:
+A similar shorthand can be used for other code systems by specifying the unit using the standard FSH code syntax:
+
+<pre><code>&lt;Quantity&gt; = {decimal} {CodeSystem name|id|url}|{version string}#{code} <i>"{units display string}"</i></code></pre>
+
+Alternatively, the value and units can also be set independently. To assign a value, use the Quantity.value property:
 
 ```
 * <Quantity>.value = {decimal}
@@ -1131,6 +1137,20 @@ A Quantity can also be bound to a value set:
   * valueQuantity.value = 55.0
   ```
   
+* Set the valueQuantity of an Observation to 9623 blintz using non-UCUM units:
+
+  ```
+  * valueQuantity = 9623 http://potrzebie.org/mad/measures#blintz "blintz"
+  ```
+
+* Set the valueQuantity of an Observation using an alias for the system of non-UCUM units:
+
+  ```
+  Alias: POTRZEBIE = http://potrzebie.org/mad/measures
+  // ...
+  * valueQuantity = 9623 POTRZEBIE#blintz "blintz"
+  ```
+
 * Set the units of the same valueQuantity to millimeters, without setting the value (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
 
   ```
