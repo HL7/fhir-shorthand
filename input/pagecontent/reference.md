@@ -89,7 +89,7 @@ Items can appear in any order within **.fsh** files, and can be moved around wit
 
 Each FSH project MUST declare the version of FHIR it depends upon. The form of this declaration is outside the scope of the FSH specification, and SHOULD be managed by implementations. The FSH specification is not explicitly FHIR-version dependent, but implementations MAY support only a specific version or versions of FHIR.
 
-The FSH language specification has been designed around FHIR R4. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types). It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces new data types.
+The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types). FSH supports pre-release FHIR R5, but support for pre-release versions is still experimental. It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces new data types.
 
 #### Dependency on other IGs
 
@@ -952,6 +952,12 @@ In the following, we give details and examples of assignments involving various 
   * recordedDate = "2013-06-08T09:57:34.2112Z"
   ```
 
+* Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0):
+
+  ```
+  * extension[my-extension].valueInteger64 = 1234567890
+  ```
+
 ##### Assignments with the Coding Data Type
 
 A FHIR Coding has five attributes (system, version, code, display, and userSelected). The first four of these can be set with a single assignment statement. The syntax is:
@@ -1230,6 +1236,32 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
   ```
   * entry[0].resource = EveAnyperson
+  ```
+
+##### Assignments with the CodeableReference Data Type
+
+The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) data type was introduced as part of FHIR R5. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences.
+
+**Examples:**
+
+* Constrain Substance.code, which is a CodeableReference(SubstanceDefinition):
+
+  ```
+  Profile: LatexSubstance
+  Parent: Substance
+  // restrict code concept to LatexCodes value set
+  * code from LatexCodes
+  // restrict code reference from SubstanceDefinition to LatexSubstanceDefinition profile
+  * code only Reference(LatexSubstanceDefinition)
+  ```
+
+* Assign the concept or reference parts (or both) of a CodeableReference:
+
+  ```
+  Instance: MyLatexSubstanceExample
+  InstanceOf: LatexSubstance
+  * code.concept = SCT#1003754000 "Natural rubber latex (substance)"
+  * code.reference = Reference(MyNaturalLatexDefinitionExample)
   ```
 
 #### Binding Rules
@@ -1743,6 +1775,12 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
   ```
   * onset[x] only Age or AgeRange or DateRange
+  ```
+
+* Restrict value[x] type to only `integer64` (note: this data type was introduced in FHIR v4.2.0):
+
+  ```
+  * value[x] only integer64
   ```
 
 * Restrict Observation.performer (a choice of reference to Practitioner, PractitionerRole, Organization, CareTeam, Patient, or RelatedPerson) to allow only Practitioner:
