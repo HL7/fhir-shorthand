@@ -7,12 +7,13 @@ SET publisher_jar=publisher.jar
 SET input_cache_path=%CD%\input-cache\
 SET skipPrompts=false
 
-set update_bat_url=https://raw.githubusercontent.com/FHIR/sample-ig/master/_updatePublisher.bat
-set gen_bat_url=https://raw.githubusercontent.com/FHIR/sample-ig/master/_genonce.bat
-set gencont_bat_url=https://raw.githubusercontent.com/FHIR/sample-ig/master/_gencontinuous.bat
-set gencont_sh_url=https://raw.githubusercontent.com/FHIR/sample-ig/master/_gencontinuous.sh
-set gen_sh_url=https://raw.githubusercontent.com/FHIR/sample-ig/master/_genonce.sh
-set update_sh_url=https://raw.githubusercontent.com/FHIR/sample-ig/master/_updatePublisher.sh
+SET scriptdlroot=https://raw.githubusercontent.com/HL7/ig-publisher-scripts/main
+SET update_bat_url=%scriptdlroot%/_updatePublisher.bat
+SET gen_bat_url=%scriptdlroot%/_genonce.bat
+SET gencont_bat_url=%scriptdlroot%/_gencontinuous.bat
+SET gencont_sh_url=%scriptdlroot%/_gencontinuous.sh
+SET gen_sh_url=%scriptdlroot%/_genonce.sh
+SET update_sh_url=%scriptdlroot%/_updatePublisher.sh
 
 IF "%~1"=="/f" SET skipPrompts=y
 
