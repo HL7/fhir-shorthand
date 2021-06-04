@@ -127,17 +127,6 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logical-models-resources-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary of some of the more important rules in FSH:
 
-* **AddElement rules** are used to define new elements in logical models and resources. They specify a path, cardinality, optional flags, type(s), short definition, and optional long definition. For example:
-
-  ```
-  * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted." 
-  ```
-
-  ```
-  * preferredName 0..1 string or HumanName "The person's preferred name"
-      "The name by which the person prefers to be called, if not their formal name." 
-  ```
-
 * **Assignment rules** are used to set fixed values in instances and required patterns in profiles. For example:
 
   ```
@@ -250,6 +239,17 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   ```
 
 
+* **AddElement rules** are used in logical models and resource definitions to define new elements. They specify a path, cardinality, optional flags, type(s), short definition, and optional long definition. For example:
+
+  ```
+  * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted." 
+  ```
+
+  ```
+  * preferredName 0..1 string or HumanName "The person's preferred name"
+      "The name by which the person prefers to be called, if not their formal name." 
+
+  ```
 * **Value set rules** are used to include or exclude codes in value sets. These rules can be defined two ways:
 
   [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly list the codes to be included and/or excluded, for example:
@@ -431,13 +431,13 @@ A few things to note about this example:
 
 In this introduction, we presented an overview of FSH. Not all features were covered. A complete accounting of the language is found in the [FSH Language Reference](reference.html).
 
-While this version of FSH has been shown capable of producing complex IGs, future versions may introduce additional features. Feature suggestions are welcome, and can be made [in the HL7 Jira](https://jira.hl7.org/browse/FHIR-27321?jql=project%3D%22FHIR%22%20AND%20Specification%20%3D%20%22Shorthand%20(FHIR)%20%5BFHIR-shorthand%5D%22%20). 
+While this version of FSH is capable of producing complex IGs, future versions may introduce additional features. Feature suggestions are welcome, and can be made [in the HL7 Jira](https://jira.hl7.org/browse/FHIR-27321?jql=project%3D%22FHIR%22%20AND%20Specification%20%3D%20%22Shorthand%20(FHIR)%20%5BFHIR-shorthand%5D%22%20). 
 
 > **Note:** When filing issues, use project="FHIR" AND Specification = "Shorthand (FHIR) [FHIR-shorthand]".
 
 Some of the features for FSH under consideration include (in no particular order):
 
-* **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. It is anticipated that a future version of SUSHI will handle most slicing situations without explicit declarations by the user. To enable this, FSH can define logic that can be used to infer slicing discriminators based on the nature of the slices.
+* **Slicing Support:** Currently, slicing requires the user to specify discriminator type, path, and slicing rules. A future version of SUSHI may handle slicing situations without explicit declarations by the user. However, common slicing patterns now can be captured in RuleSets, relieving the need for this feature.
 
 * **Multiple Language Support:** At present, FSH supports only one language at a time (it can be any language). In the future, FSH and SUSHI may introduce mechanisms for generating the same IG in multiple languages.
 

@@ -868,17 +868,17 @@ Rules are the mechanism for setting cardinality, applying Must Support flags, de
 * {rule statement}
 ```
 
-The following table is a summary of the rules applicable to profiles, extensions, logical models, resources, and instances:
+The following table is a summary of the rules that may apply to profiles, extensions, logical models, resources, and instances.
 
 | Rule Type | Syntax |
 | --- | --- |
-| AddElement |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
-| Assignment |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
+| AddElement [1] |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
+| Assignment [2][3] |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
 | Binding |`* <bindable> from {ValueSet name|id|url}` <br/> `* <bindable> from {ValueSet name|id|url} ({strength})`|
 | Cardinality | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
-| Contains (for inline extensions)| <code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i> </code>  <br/> <code>* &lt;Extension&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code> |
-| Contains (for standalone extensions) | <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
-| Contains (for slicing) | <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
+| Contains (for inline extensions) [3]| <code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i> </code>  <br/> <code>* &lt;Extension&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code> |
+| Contains (for standalone extensions) [3]| <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
+| Contains (for slicing) [3]| <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
 | Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
 | Insert | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
 | Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
@@ -888,37 +888,34 @@ The following table is a summary of the rules applicable to profiles, extensions
 
 **Notes:**
 
-* The Assignment rule is the only type of rule applicable to instances
-* The AddElement rule is only applicable to logical models and resources
-* The Assignment and Contains rules are not applicable to logical models or resources
-* Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in a rule set
+1. The AddElement rule is only applicable to logical models and resources
+2. The Assignment rule is the only type of rule applicable to instances
+3. The Assignment and Contains rules are not applicable to logical models or resources
+4. Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in a rule set
 
 #### AddElement Rules
 
-Authors define logical models and resources by adding new elements to their definitions. The syntaxes to add a new element are as follows:
+Authors define logical models and resources by adding new elements to their definitions. The AddElement rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
 
-<pre><code>* &lt;element&gt; {min}..{max} {datatype} "{short}"
+The syntax of the rules to add a new element are as follows:
 
-* &lt;element&gt; {min}..{max} Reference({ResourceType name|id|url}) "{short}"
-
-* &lt;element&gt; {min}..{max} {datatype} "{short}" <i>"{definition}"</i>
-
-* &lt;element&gt; {min}..{max} {datatype} "{short}" <i>"""
-  {multi-line definition}
-  """</i>
-
-* &lt;element&gt; {min}..{max} <i>{flag}</i> {datatype} "{short}" <i>"{definition}"</i>
-
-* &lt;element&gt; {min}..{max} <i>{flag}</i> Reference({ResourceType name|id|url}) "{short}" <i>"{definition}"</i>
-
-* &lt;element&gt; {min}..{max} <i>{flag1} {flag2} ...</i> {datatype1} <i>or {datatype2} ...</i> "{short}" <i>"{definition}"</i>
-
-* &lt;element&gt; {min}..{max} <i>{flag1} {flag2} ...</i> Reference({ResourceType1 name|id|url} <i>or {ResourceType2 name|id|url} ...</i>) "{short}" <i>"{definition}"</i>
+<pre><code>* &lt;element&gt; {min}..{max} <i>{flags}</i> {datatype} "{short}" <i>"{definition}"</i>
 </code></pre>
 
-At a minimum, an AddElement rule must specify an element path, cardinality, type, and short description. An author may optionally specify flags and a longer definition. If a longer definition is not specified, the element's definition will be set to the same text as the specified short description. When multiple types are specified, the element path must end with \[x] unless all types are References.
+where `{datatype}` can be one of the following:
 
-The AddElement rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
+* A primitive or complex datatype,
+* A Reference to a resource or profile, `Reference({{ResourceType name|id|url}})`,
+* A choice of multiple datatypes, separated with `or`,
+* A choice of multiple ResourceTypes inside a Reference, with the ResourceTypes separated with `or`
+
+Note the following:
+
+* An AddElement rule **at minimum** must specify an element path, cardinality, type, and short description.
+* Flags and longer definition are optional.
+* The longer definition can also be a multi-line (triple quoted) string
+* If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
+* When multiple types are specified, the element path must end with \[x] unless all types are References.
 
 **Examples:**
 
@@ -953,7 +950,7 @@ The AddElement rule is only applicable for logical models and resources. It cann
       """
   ```
 
-* Add a BackboneElement element to provide a structured set of elements in the logical model:
+* Add a BackboneElement element to provide a structured set of elements in a logical model:
 
   ```
   * serviceAnimal 0..* BackboneElement "Service animals" "Animals trained to assist the person by performing certain tasks."
@@ -2428,11 +2425,13 @@ To define a profile, the keywords `Profile` and `Parent` are required, and `Id`,
 
 #### Defining Resources
 
-Custom resources allow authors to define new structures representing arbitrary content. Resources are defined similar to [logical models](#defining-logical-models), but are intended to support data exchange using FHIR's RESTful API mechanisms. The capability to define resources may be used by HL7 to define core FHIR resources or by other organizations to define proprietary resources for their own internal use. Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
+Custom resources allow authors to define new structures representing arbitrary content. Resources are defined similar to [logical models](#defining-logical-models), but are intended to support data exchange using FHIR's RESTful API mechanisms. The capability to define resources may be used by HL7 to define core FHIR resources or by other organizations to define proprietary resources for their own internal use. Potentially, they also can be used to represent and maintain existing core FHIR resources.
+
+Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
 
 Resources are defined in FSH using the keyword `Resource`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
 
-Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html)  and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource. If no `Parent` is specified, DomainResource is used as the default parent.
+Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html) and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource. If no `Parent` is specified, DomainResource is used as the default parent.
 
 Rules defining the resource follow immediately after the keyword section. Resources are primarily comprised of AddElement rules. Since resources are represented using StructureDefinition, many of the rules used in profile definitions may also be used when defining resources. According to the FHIR specification's [interpretation of ElementDefinition in different contexts](http://hl7.org/fhir/R4/elementdefinition.html#interpretation), however, resources may not use slicing or fixed/patterned values.  As a result, Contains rules and Assignment rules are forbidden in resource definitions. Resources are also prohibited from constraining elements inherited from a parent definition.
 
@@ -2445,14 +2444,14 @@ Rules defining the resource follow immediately after the keyword section. Resour
   Title:          "Emergency Vehicle"
   Description:    "An emergency vehicle, such as an ambulance or fire truck."
   * identifier 0..* SU Identifier "Identifier(s) of the vehicle" "Vehicle identifiers may include VINs and serial numbers."
-  * make 0..1 SU Coding "The vehicle make" "The vehicle make, e.g., Chevrolet."
+  * make 0..1 SU Coding "The vehicle make" "The vehicle's brand name, e.g., Chevrolet."
   * make from EmergencyVehicleMake (extensible)
   * model 0..1 SU Coding "The vehicle model" "The vehicle model, e.g., G4500."
   * model from EmergencyVehicleModel (extensible)
   * year 0..1 SU positiveInt "Year of manufacture" "The year the vehicle was manufactured"
   * servicePeriod 0..1 Period "When the vehicle was in service" "Start date and end date (if applicable) when the vehicle operated."
   * operator 0..* Reference(Organization or Practitioner or PractitionerRole) "The operator"
-      "The organization or persons repsonsible for operating the vehicle"
+      "The organization or persons responsible for operating the vehicle"
   * device 0..* Reference(Device) "Devices on board" "Devices on board the vehicle."
   ```
 
