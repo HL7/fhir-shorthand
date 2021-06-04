@@ -2437,22 +2437,35 @@ Rules defining the resource follow immediately after the keyword section. Resour
 
 **Example:**
 
-* Define a resource representing an emergency vehicle:
+* Define a resource representing an emergency vehicle, using line spacing to make the definition easier to read:
 
   ```
-  Resource:       EmergencyVehicle
+  Logical:        EmergencyVehicle
   Title:          "Emergency Vehicle"
   Description:    "An emergency vehicle, such as an ambulance or fire truck."
-  * identifier 0..* SU Identifier "Identifier(s) of the vehicle" "Vehicle identifiers may include VINs and serial numbers."
-  * make 0..1 SU Coding "The vehicle make" "The vehicle's brand name, e.g., Chevrolet."
+  * identifier 0..* SU Identifier
+      "Identifier(s) of the vehicle"
+      "Vehicle identifiers may include VINs and serial numbers."
+  * make 0..1 SU Coding
+      "The vehicle make"
+      "The vehicle make, e.g., Chevrolet."
   * make from EmergencyVehicleMake (extensible)
-  * model 0..1 SU Coding "The vehicle model" "The vehicle model, e.g., G4500."
+  * model 0..1 SU Coding
+      "The vehicle model"
+      "The vehicle model, e.g., G4500."
   * model from EmergencyVehicleModel (extensible)
-  * year 0..1 SU positiveInt "Year of manufacture" "The year the vehicle was manufactured"
-  * servicePeriod 0..1 Period "When the vehicle was in service" "Start date and end date (if applicable) when the vehicle operated."
-  * operator 0..* Reference(Organization or Practitioner or PractitionerRole) "The operator"
-      "The organization or persons responsible for operating the vehicle"
-  * device 0..* Reference(Device) "Devices on board" "Devices on board the vehicle."
+  * year 0..1 SU positiveInteger
+      "Year of manufacture"
+      "The year the vehicle was manufactured"
+  * servicePeriod 0..1 Period
+      "When the vehicle was in service"
+      "Start date and end date (if applicable) when the vehicle operated."
+  * operator 0..* Reference(Organization or Practitioner or PractitionerRole)
+      "The operator"
+      "The organization or persons repsonsible for operating the vehicle"
+  * device 0..* Reference(Device)
+      "Devices on board"
+      "Devices on board the vehicle."
   ```
 
 #### Defining Rule Sets
