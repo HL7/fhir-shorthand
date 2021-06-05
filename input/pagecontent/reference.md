@@ -913,7 +913,7 @@ Note the following:
 
 * An AddElement rule **at minimum** must specify an element path, cardinality, type, and short description.
 * Flags and longer definition are optional.
-* The longer definition can also be a multi-line (triple quoted) string
+* The longer definition can also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
 * When multiple types are specified, the element path must end with \[x] unless all types are References.
 
@@ -2440,7 +2440,7 @@ Rules defining the resource follow immediately after the keyword section. Resour
 * Define a resource representing an emergency vehicle, using line spacing to make the definition easier to read:
 
   ```
-  Logical:        EmergencyVehicle
+  Resource:       EmergencyVehicle
   Title:          "Emergency Vehicle"
   Description:    "An emergency vehicle, such as an ambulance or fire truck."
   * identifier 0..* SU Identifier
@@ -2454,7 +2454,7 @@ Rules defining the resource follow immediately after the keyword section. Resour
       "The vehicle model"
       "The vehicle model, e.g., G4500."
   * model from EmergencyVehicleModel (extensible)
-  * year 0..1 SU positiveInteger
+  * year 0..1 SU positiveInt
       "Year of manufacture"
       "The year the vehicle was manufactured"
   * servicePeriod 0..1 Period
