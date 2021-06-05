@@ -4411,9 +4411,9 @@ Modifier extensions SHALL NOT change the meaning of any elements on Resource or 
           <xs:documentation xml:lang="en">0.13.0</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="1.1.0">
+      <xs:enumeration value="2.0.0">
         <xs:annotation>
-          <xs:documentation xml:lang="en">1.1.0</xs:documentation>
+          <xs:documentation xml:lang="en">2.0.0</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="1.0.2">
@@ -4421,9 +4421,9 @@ Modifier extensions SHALL NOT change the meaning of any elements on Resource or 
           <xs:documentation xml:lang="en">1.0.2</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="1.1.0">
+      <xs:enumeration value="2.0.0">
         <xs:annotation>
-          <xs:documentation xml:lang="en">1.1.0</xs:documentation>
+          <xs:documentation xml:lang="en">2.0.0</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="1.4.0">
@@ -26042,7 +26042,7 @@ UDILabelName | UserFriendlyName | PatientReportedName | ManufactureDeviceName | 
       </xs:enumeration>
       <xs:enumeration value="eGenix">
         <xs:annotation>
-          <xs:documentation xml:lang="en">eGenix.com Public License 1.1.0</xs:documentation>
+          <xs:documentation xml:lang="en">eGenix.com Public License 2.0.0</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="Entessa">

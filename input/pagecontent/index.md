@@ -46,6 +46,7 @@ This Implementation Guide has been balloted as Standard for Trial Use (STU) with
 |----|----|----|----|
 | Author | Mark A. Kramer | MITRE Corporation | mkramer@mitre.org |
 | Author | Chris Moesel | MITRE Corporation | cmoesel@mitre.org |
+| Contributor | Joe Paquette | athenahealth |  |
 | Contributor | Julia K. Afeltra | MITRE Corporation | jafeltra@mitre.org |
 | Contributor | Nick Freiter | MITRE Corporation | nfreiter@mitre.org |
 | Contributor | Mint N. Thompson | MITRE Corporation | mathompson@mitre.org |
