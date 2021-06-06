@@ -111,7 +111,7 @@ Keywords that declare new items (like the `Profile` keyword in the previous exam
 
 Note that not every type of FSH item has a direct FHIR equivalent; Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a SD. Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#defining-items).
 
-These are not the only [conformance resources in FHIR](https://www.hl7.org/fhir/R4/conformance-module.html). Others include CapabilityStatement, OperationDefinition, SearchParameter, and CompartmentDefinition. Currently, you can create any of these types as instances; for example, using `InstanceOf: CapabilityStatement`. RuleSets can simplify definition of these items. In this IG, we provide a [downloadable template](CapabilityStatementTemplate.fsh) for a CapabilityStatement.
+These are not the only [conformance resources in FHIR](https://www.hl7.org/fhir/R4/conformance-module.html). Others include CapabilityStatement, OperationDefinition, SearchParameter, and CompartmentDefinition. Currently, you can create any of these types as instances; for example, using `InstanceOf: CapabilityStatement`. RuleSets can simplify definition of these items. For examples of rule sets, see [FSH Online](https://fshschool.org/FSHOnline).
 
 > **Note:** Keywords are case-sensitive.
 
