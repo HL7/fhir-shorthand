@@ -125,6 +125,18 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logical-models-resources-and-instances) are given in the [FSH Language reference](reference.html). Here is a summary of some of the more important rules in FSH:
 
+* **AddElement rules** are used in logical models and resource definitions to define new elements. They specify a path, cardinality, optional flags, type(s), short definition, and optional long definition. For example:
+
+  ```
+  * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted." 
+  ```
+
+  ```
+  * preferredName 0..1 string or HumanName "The person's preferred name"
+      "The name by which the person prefers to be called, if not their formal name." 
+
+  ```
+
 * **Assignment rules** are used to set fixed values in instances and required patterns in profiles. For example:
 
   ```
@@ -236,19 +248,6 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   * recorder only Reference(Practitioner or PractitionerRole)
   ```
 
-
-* **AddElement rules** are used in logical models and resource definitions to define new elements. They specify a path, cardinality, optional flags, type(s), short definition, and optional long definition. For example:
-
-  ```
-  * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted." 
-  ```
-
-  ```
-  * preferredName 0..1 string or HumanName 
-      "The person's preferred name"
-      "The name by which the person prefers to be called, if not their formal name." 
-
-  ```
 * **Value set rules** are used to include or exclude codes in value sets. These rules can be defined two ways:
 
   [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly list the codes to be included and/or excluded, for example:
