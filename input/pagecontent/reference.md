@@ -73,7 +73,7 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 
 #### Projects
 
-The main organizing construct is a FSH project (sometimes called a "[FSH Tank](https://fshschool.org/docs/sushi/project/#simple-fsh-projects)"). Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
+The main organizing construct is a FSH project. Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
 
 #### Files
 
@@ -81,9 +81,9 @@ Content in one FSH project MAY be contained in one or more FSH files. Files MUST
 
 > **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
 
-The items defined by FSH are: [Aliases](#defining-aliases), [Profiles](#defining-profiles), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), and [Invariants](#defining-invariants). How items are divided among files is not meaningful in FSH, and items from all files in one project can be considered pooled together for the purposes of FSH.
+The items defined by FSH are: [Aliases](#defining-aliases), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), [Invariants](#defining-invariants), [Logical Models](#defining-logical-models) [Profiles](#defining-profiles), and [Resources](#defining-resources). 
 
-Items can appear in any order within **.fsh** files, and can be moved around within a file or to other **.fsh** files in the same project without affecting the interpretation of the content.
+The allocation of items to files is not meaningful in FSH, and items from all files in one project can be considered globally pooled for the purposes of FSH. Items can appear in any order within **.fsh** files, and items can be moved inside and between **.fsh** files within the same project without affecting the interpretation of the content.
 
 #### Dependency on FHIR Version
 

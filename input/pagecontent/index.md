@@ -46,12 +46,12 @@ This Implementation Guide has been balloted as Standard for Trial Use (STU) with
 |----|----|----|----|
 | Author | Mark A. Kramer | MITRE Corporation | mkramer@mitre.org |
 | Author | Chris Moesel | MITRE Corporation | cmoesel@mitre.org |
-| Contributor | Joe Paquette | **athena**health | |
 | Contributor | Julia K. Afeltra | MITRE Corporation | jafeltra@mitre.org |
-| Contributor | Nick Freiter | MITRE Corporation | nfreiter@mitre.org |
-| Contributor | Mint N. Thompson | MITRE Corporation | mathompson@mitre.org |
-| Contributor | Julian Alexander Carter | MITRE Corporation | jacarter@mitre.org |
+| Contributor | Julian A. Carter | MITRE Corporation | jacarter@mitre.org |
 | Contributor | Samantha Citron | MITRE Corporation | scitron@mitre.org |
+| Contributor | Nick Freiter | MITRE Corporation | nfreiter@mitre.org |
+| Contributor | Joe Paquette | **athena**health | |
+| Contributor | Mint N. Thompson | MITRE Corporation | mathompson@mitre.org |
 | FHIR Infrastructure Co-chair | Rick Geimer | Lantana Consulting Group | rick.geimer@lantanagroup.com |
 | FHIR Infrastructure Co-chair | Josh Mandel | SMART Health IT | jmandel@gmail.com |
 | FHIR Infrastructure Co-chair | Lloyd McKenzie | HL7 Canada/Gevity | lloyd@lmckenzie.com |
