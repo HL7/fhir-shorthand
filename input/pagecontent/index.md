@@ -50,7 +50,7 @@ This Implementation Guide has been balloted as Standard for Trial Use (STU) with
 | Contributor | Julian A. Carter | MITRE Corporation | jacarter@mitre.org |
 | Contributor | Samantha Citron | MITRE Corporation | scitron@mitre.org |
 | Contributor | Nick Freiter | MITRE Corporation | nfreiter@mitre.org |
-| Contributor | Joe Paquette | **athena**health | |
+| Contributor | Joe Paquette | **athena**health | jpaquette@athenahealth.com |
 | Contributor | Mint N. Thompson | MITRE Corporation | mathompson@mitre.org |
 | FHIR Infrastructure Co-chair | Rick Geimer | Lantana Consulting Group | rick.geimer@lantanagroup.com |
 | FHIR Infrastructure Co-chair | Josh Mandel | SMART Health IT | jmandel@gmail.com |
