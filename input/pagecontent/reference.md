@@ -73,7 +73,7 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 
 #### Projects
 
-The main organizing construct is a FSH project (sometimes called a "[FSH Tank](https://fshschool.org/docs/sushi/project/#simple-fsh-projects)"). Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
+The main organizing construct is a FSH project. Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
 
 #### Files
 
@@ -81,9 +81,9 @@ Content in one FSH project MAY be contained in one or more FSH files. Files MUST
 
 > **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
 
-The items defined by FSH are: [Aliases](#defining-aliases), [Profiles](#defining-profiles), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), and [Invariants](#defining-invariants). How items are divided among files is not meaningful in FSH, and items from all files in one project can be considered pooled together for the purposes of FSH.
+The items defined by FSH are: [Aliases](#defining-aliases), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), [Invariants](#defining-invariants), [Logical Models](#defining-logical-models) [Profiles](#defining-profiles), and [Resources](#defining-resources). 
 
-Items can appear in any order within **.fsh** files, and can be moved around within a file or to other **.fsh** files in the same project without affecting the interpretation of the content.
+The allocation of items to files is not meaningful in FSH, and items from all files in one project can be considered globally pooled for the purposes of FSH. Items can appear in any order within **.fsh** files, and items can be moved inside and between **.fsh** files within the same project without affecting the interpretation of the content.
 
 #### Dependency on FHIR Version
 
@@ -668,6 +668,29 @@ If the index is omitted, the first element of the array (`[0]`) is assumed.
 
   ```
   name.given[1]
+  ```
+
+* Example of nested path involving array indexes:
+
+  ```
+  * group[0].stratifier.component.criteria.language = #text/cql
+  * group[0].stratifier.component.criteria.expression = "Radiology Prostate Cancer Significance"
+  * group[1].stratifier.component.code = #measure-observation
+  * group[1].stratifier.component.criteria.language = #text/cql
+  * group[1].stratifier.component.criteria.expression = "Pathology Gleason Score"
+  ```
+
+* Same as previous example, using indented paths:
+
+  ```
+  * group[0].stratifier.component.criteria
+    * language = #text/cql
+    * expression = "Radiology Prostate Cancer Significance"
+  * group[1].stratifier.component
+    * code = #measure-observation
+    * criteria
+      * language = #text/cql
+      * expression = "Pathology Gleason Score"
   ```
 
 #### Reference Paths
@@ -2672,31 +2695,34 @@ grammar FSH;
 options { tokenVocab = FSHLexer; }
 
 doc:                entity* EOF;
-entity:             alias | profile | extension | invariant | instance | valueSet | codeSystem | ruleSet | paramRuleSet | mapping;
+entity:             alias | profile | extension | invariant | instance | valueSet | codeSystem | ruleSet | paramRuleSet | mapping | logical | resource;
 
 alias:              KW_ALIAS SEQUENCE EQUAL SEQUENCE;
 
-profile:            KW_PROFILE SEQUENCE sdMetadata+ sdRule*;
-extension:          KW_EXTENSION SEQUENCE sdMetadata* sdRule*;
-sdMetadata:         parent | id | title | description | mixins;
-sdRule:             cardRule | flagRule | valueSetRule | fixedValueRule | containsRule | onlyRule | obeysRule | caretValueRule | insertRule;
+profile:            KW_PROFILE name sdMetadata+ sdRule*;
+extension:          KW_EXTENSION name sdMetadata* sdRule*;
+logical:            KW_LOGICAL name sdMetadata* lrRule*;
+resource:           KW_RESOURCE name sdMetadata* lrRule*;
+sdMetadata:         parent | id | title | description;
+sdRule:             cardRule | flagRule | valueSetRule | fixedValueRule | containsRule | onlyRule | obeysRule | caretValueRule | insertRule | pathRule;
+lrRule:             sdRule | addElementRule;
 
-instance:           KW_INSTANCE SEQUENCE instanceMetadata* instanceRule*;
-instanceMetadata:   instanceOf | title | description | usage | mixins;
-instanceRule:       fixedValueRule | insertRule;
+instance:           KW_INSTANCE name instanceMetadata* instanceRule*;
+instanceMetadata:   instanceOf | title | description | usage;
+instanceRule:       fixedValueRule | insertRule | pathRule;
 
-invariant:          KW_INVARIANT SEQUENCE invariantMetadata+;
+invariant:          KW_INVARIANT name invariantMetadata+;
 invariantMetadata:  description | expression | xpath | severity;
 
-valueSet:           KW_VALUESET SEQUENCE vsMetadata* vsRule*;
+valueSet:           KW_VALUESET name vsMetadata* vsRule*;
 vsMetadata:         id | title | description;
 vsRule:             vsComponent | caretValueRule | insertRule;
-codeSystem:         KW_CODESYSTEM SEQUENCE csMetadata* csRule*;
+codeSystem:         KW_CODESYSTEM name csMetadata* csRule*;
 csMetadata:         id | title | description;
-csRule:             concept | caretValueRule | insertRule;
+csRule:             concept | codeCaretValueRule | insertRule;
 
 ruleSet:            KW_RULESET RULESET_REFERENCE ruleSetRule+;
-ruleSetRule:        sdRule | concept | vsComponent;
+ruleSetRule:        sdRule | addElementRule | concept | codeCaretValueRule | vsComponent;
 
 paramRuleSet:       KW_RULESET PARAM_RULESET_REFERENCE paramRuleSetContent;
 paramRuleSetContent:   STAR
@@ -2710,68 +2736,70 @@ paramRuleSetContent:   STAR
                     | KW_RULESET
                     | KW_MAPPING)*;
 
-mapping:            KW_MAPPING SEQUENCE mappingMetadata* mappingEntityRule*;
+mapping:            KW_MAPPING name mappingMetadata* mappingEntityRule*;
 mappingMetadata:    id | source | target | description | title;
-mappingEntityRule:  mappingRule | insertRule;
+mappingEntityRule:  mappingRule | insertRule | pathRule;
 
 // METADATA FIELDS
-parent:             KW_PARENT SEQUENCE;
-id:                 KW_ID SEQUENCE;
+parent:             KW_PARENT name;
+id:                 KW_ID name;
 title:              KW_TITLE STRING;
 description:        KW_DESCRIPTION (STRING | MULTILINE_STRING);
 expression:         KW_EXPRESSION STRING;
 xpath:              KW_XPATH STRING;
 severity:           KW_SEVERITY CODE;
-instanceOf:         KW_INSTANCEOF SEQUENCE;
+instanceOf:         KW_INSTANCEOF name;
 usage:              KW_USAGE CODE;
-mixins:             KW_MIXINS ((SEQUENCE KW_AND)* SEQUENCE | COMMA_DELIMITED_SEQUENCES);
-source:             KW_SOURCE SEQUENCE;
+source:             KW_SOURCE name;
 target:             KW_TARGET STRING;
 
 
 // RULES
 cardRule:           STAR path CARD flag*;
-flagRule:           STAR ((path KW_AND)* path | paths) flag+;
-valueSetRule:       STAR path KW_UNITS? KW_FROM SEQUENCE strength?;
-fixedValueRule:     STAR path KW_UNITS? EQUAL value KW_EXACTLY?;
+flagRule:           STAR path (KW_AND path)* flag+;
+valueSetRule:       STAR path KW_FROM name strength?;
+fixedValueRule:     STAR path EQUAL value KW_EXACTLY?;
 containsRule:       STAR path KW_CONTAINS item (KW_AND item)*;
 onlyRule:           STAR path KW_ONLY targetType (KW_OR targetType)*;
-obeysRule:          STAR path? KW_OBEYS SEQUENCE (KW_AND SEQUENCE)*;
+obeysRule:          STAR path? KW_OBEYS name (KW_AND name)*;
 caretValueRule:     STAR path? caretPath EQUAL value;
+codeCaretValueRule: STAR CODE* caretPath EQUAL value;
 mappingRule:        STAR path? ARROW STRING STRING? CODE?;
 insertRule:         STAR KW_INSERT (RULESET_REFERENCE | PARAM_RULESET_REFERENCE);
+addElementRule:     STAR path CARD flag* targetType (KW_OR targetType)* STRING (STRING | MULTILINE_STRING)?;
+pathRule:           STAR path;
 
 // VALUESET COMPONENTS
 vsComponent:        STAR ( KW_INCLUDE | KW_EXCLUDE )? ( vsConceptComponent | vsFilterComponent );
 vsConceptComponent: code vsComponentFrom?
-                    | (code KW_AND)+ code vsComponentFrom
-                    | COMMA_DELIMITED_CODES vsComponentFrom;
+                    | (code KW_AND)+ code vsComponentFrom;
 vsFilterComponent:  KW_CODES vsComponentFrom (KW_WHERE vsFilterList)?;
 vsComponentFrom:    KW_FROM (vsFromSystem (KW_AND vsFromValueset)? | vsFromValueset (KW_AND vsFromSystem)?);
-vsFromSystem:       KW_SYSTEM SEQUENCE;
-vsFromValueset:     KW_VSREFERENCE ((SEQUENCE KW_AND)* SEQUENCE | COMMA_DELIMITED_SEQUENCES);
-vsFilterList:       (vsFilterDefinition KW_AND)* vsFilterDefinition;
-vsFilterDefinition: SEQUENCE vsFilterOperator vsFilterValue?;
+vsFromSystem:       KW_SYSTEM name;
+vsFromValueset:     KW_VSREFERENCE name (KW_AND name)*;
+vsFilterList:       vsFilterDefinition (KW_AND vsFilterDefinition)*;
+vsFilterDefinition: name vsFilterOperator vsFilterValue?;
 vsFilterOperator:   EQUAL | SEQUENCE;
 vsFilterValue:      code | KW_TRUE | KW_FALSE | REGEX | STRING;
 
 // MISC
+name:               SEQUENCE | NUMBER | KW_MS | KW_SU | KW_TU | KW_NORMATIVE | KW_DRAFT | KW_CODES | KW_VSREFERENCE | KW_SYSTEM;
 path:               SEQUENCE | KW_SYSTEM;
-paths:              COMMA_DELIMITED_SEQUENCES;
 caretPath:          CARET_SEQUENCE;
 flag:               KW_MOD | KW_MS | KW_SU | KW_TU | KW_NORMATIVE | KW_DRAFT;
 strength:           KW_EXAMPLE | KW_PREFERRED | KW_EXTENSIBLE | KW_REQUIRED;
-value:              SEQUENCE | STRING | MULTILINE_STRING | NUMBER | DATETIME | TIME | reference | canonical | code | quantity | ratio | bool ;
-item:               SEQUENCE (KW_NAMED SEQUENCE)? CARD flag*;
+value:              STRING | MULTILINE_STRING | NUMBER | DATETIME | TIME | reference | canonical | code | quantity | ratio | bool | name;
+item:               name (KW_NAMED name)? CARD flag*;
 code:               CODE STRING?;
-concept:            STAR code (STRING | MULTILINE_STRING)?;
-quantity:           NUMBER UNIT STRING?;
+concept:            STAR CODE+ STRING? (STRING | MULTILINE_STRING)?;
+quantity:           NUMBER (UNIT | CODE) STRING?;
 ratio:              ratioPart COLON ratioPart;
-reference:          (OR_REFERENCE | PIPE_REFERENCE) STRING?;
+reference:          REFERENCE STRING?;
+referenceType:      REFERENCE;
 canonical:          CANONICAL;
 ratioPart:          NUMBER | quantity;
 bool:               KW_TRUE | KW_FALSE;
-targetType:         SEQUENCE | reference;
+targetType:         name | referenceType;
 ```
 
 #### Lexer Grammar
@@ -2789,7 +2817,8 @@ KW_VALUESET:        'ValueSet' WS* ':';
 KW_CODESYSTEM:      'CodeSystem' WS* ':';
 KW_RULESET:         'RuleSet' WS* ':' -> pushMode(RULESET_OR_INSERT);
 KW_MAPPING:         'Mapping' WS* ':';
-KW_MIXINS:          'Mixins' WS* ':';
+KW_LOGICAL:         'Logical' WS* ':';
+KW_RESOURCE:        'Resource' WS* ':';
 KW_PARENT:          'Parent' WS* ':';
 KW_ID:              'Id' WS* ':';
 KW_TITLE:           'Title' WS* ':';
@@ -2825,13 +2854,12 @@ KW_CODES:           'codes';
 KW_WHERE:           'where';
 KW_VSREFERENCE:     'valueset';
 KW_SYSTEM:          'system';
-KW_UNITS:           'units';
 KW_EXACTLY:         '(' WS* 'exactly' WS* ')';
 KW_INSERT:          'insert' -> pushMode(RULESET_OR_INSERT);
 
 // SYMBOLS
 EQUAL:              '=';
-STAR:               '*'  [0-9]*;
+STAR:               ([\r\n] | LINE_COMMENT) WS* '*' [ \u00A0];
 COLON:              ':';
 COMMA:              ',';
 ARROW:              '->';
@@ -2840,60 +2868,34 @@ ARROW:              '->';
 
                  //  "    CHARS    "
 STRING:             '"' (~[\\"] | '\\r' | '\\n' | '\\t' | '\\"' | '\\\\')* '"';
-
                  //  """ CHARS """
 MULTILINE_STRING:   '"""' .*? '"""';
-
                  //  +/- ? DIGITS( .  DIGITS)?
 NUMBER:             [+\-]? [0-9]+('.' [0-9]+)?;
-
                  //   '  UCUM UNIT   '
 UNIT:               '\'' (~[\\'])* '\'';
-
                  // SYSTEM     #  SYSTEM
 CODE:               SEQUENCE? '#' (SEQUENCE | CONCEPT_STRING);
-
-
 CONCEPT_STRING:      '"' (NONWS_STR | '\\"' | '\\\\')+ (WS (NONWS_STR | '\\"' | '\\\\')+)* '"';
-
                  //        YEAR         ( -   MONTH   ( -    DAY    ( T TIME )?)?)?
 DATETIME:           [0-9][0-9][0-9][0-9]('-'[0-9][0-9]('-'[0-9][0-9]('T' TIME)?)?)?;
-
                  //    HOUR   ( :   MINUTE  ( :   SECOND  ( . MILLI )?)?)?( Z  |     +/-        HOUR   :  MINUTE   )?
 TIME:               [0-9][0-9](':'[0-9][0-9](':'[0-9][0-9]('.'[0-9]+)?)?)?('Z' | ('+' | '-')[0-9][0-9]':'[0-9][0-9])?;
-
                  // DIGITS  ..  (DIGITS |  * )
 CARD:               ([0-9]+)? '..' ([0-9]+ | '*')?;
-
-                 //  Reference       (        ITEM         |         ITEM         )
-OR_REFERENCE:       'Reference' WS* '(' WS* SEQUENCE WS* (WS 'or' WS+ SEQUENCE WS*)* ')';
-PIPE_REFERENCE:          'Reference' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)* ')';
-
+              //  Reference       (        ITEM         |         ITEM         )
+REFERENCE:       'Reference' WS* '(' WS* SEQUENCE WS* (WS 'or' WS+ SEQUENCE WS*)* ')';
                  // Canonical(Item)
 CANONICAL:         'Canonical' WS* '(' WS* SEQUENCE WS* ('|' WS* SEQUENCE WS*)? ')';
-
                  //  ^  NON-WHITESPACE
 CARET_SEQUENCE:     '^' NONWS+;
-
                  // '/' EXPRESSION '/'
 REGEX:              '/' ('\\/' | ~[*/\r\n])('\\/' | ~[/\r\n])* '/';
-
-
-COMMA_DELIMITED_CODES: (CODE (WS+ STRING)? WS* COMMA WS+)+ CODE (WS+ STRING)?;
-
 PARAMETER_DEF_LIST: '(' (SEQUENCE WS* COMMA WS*)* SEQUENCE ')';
-
-
-                        // (NON-WS  WS  ,   WS )+ NON-WS
-COMMA_DELIMITED_SEQUENCES: (SEQUENCE WS* COMMA WS*)+ SEQUENCE;
-
 // BLOCK_COMMENT must precede SEQUENCE so that a block comment without whitespace does not become a SEQUENCE
 BLOCK_COMMENT:      '/*' .*? '*/' -> skip;
                  // NON-WHITESPACE
 SEQUENCE:           NONWS+;
-
-
-
 // FRAGMENTS
 fragment WS: [ \t\r\n\f\u00A0];
 fragment NONWS: ~[ \t\r\n\f\u00A0];
@@ -2901,7 +2903,7 @@ fragment NONWS_STR: ~[ \t\r\n\f\u00A0\\"];
 
 // IGNORED TOKENS
 WHITESPACE:         WS -> channel(HIDDEN);
-LINE_COMMENT:       '//' .*? [\r\n] -> skip;
+LINE_COMMENT:       '//' ~[\r\n]* [\r\n] -> skip;
 
 mode RULESET_OR_INSERT;
 PARAM_RULESET_REFERENCE:      WS* NONWS+ (WS* ('(' ('\\)' | '\\\\' | ~[)])+ ')')) -> popMode;
