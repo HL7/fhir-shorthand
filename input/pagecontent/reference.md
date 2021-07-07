@@ -83,7 +83,7 @@ Content in one FSH project MAY be contained in one or more FSH files. Files MUST
 
 > **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
 
-The items defined by FSH are: [Aliases](#defining-aliases), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), [Invariants](#defining-invariants), [Logical Models](#defining-logical-models) {%include tu.html%}, [Profiles](#defining-profiles), and [Resources](#defining-resources) {%include tu.html%}. 
+The items defined by FSH are: [Aliases](#defining-aliases), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), [Invariants](#defining-invariants), [Logical Models](#defining-logical-models) {%include tu.html%}, [Profiles](#defining-profiles), and [Resources](#defining-resources) {%include tu.html%}.
 
 The allocation of items to files is not meaningful in FSH, and items from all files in one project can be considered globally pooled for the purposes of FSH. Items can appear in any order within **.fsh** files, and items can be moved inside and between **.fsh** files within the same project without affecting the interpretation of the content.
 
@@ -373,7 +373,6 @@ When indented rules are combined with [soft indexing](#soft-indexing) and a rule
     * insert ExampleRuleSet
   ```
 
-
 #### Codes and Codings
 
 FSH provides special grammar for expressing codes and Codings. Codes are denoted with `#` sign. The FSH syntax is:
@@ -452,13 +451,15 @@ FSH provides a shorthand that allows three aspects of a Quantity to be set simul
 * The units of measure (`Quantity.code`)
 * Optionally, the human-readable displayed units (`Quantity.unit`)
 
-The grammar is:
+The grammar is either:
 
 <pre><code>{decimal} '{UCUM code}' <i>"{display}"</i></code></pre>
 
-This shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`).
+or
 
-When the units are not UCUM, the same shorthand can be used by specifying the unit using the standard FSH code syntax, or by setting the value and units independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+<pre><code>{decimal} {CodeSystem name|id|url}<i>|{version string}</i>#{code} <i>"{display}"</i></code></pre>
+
+The first shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`). The second shorthand can be used when the units are not UCUM. Alternatively, the value and units can be assigned independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
 
 Example:
 
@@ -2048,6 +2049,7 @@ In contrast with other names in FSH (for profiles, extensions, etc.), alias name
   ```
 
 #### Defining Code Systems
+
 It is sometimes necessary to define new codes inside an IG that are not drawn from an external code system (aka _local codes_). Local codes MUST be defined in the context of a code system.
 
 > **Note:** Defining local codes is not best practice, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it might be necessary to define them -- at least temporarily -- as local codes.
@@ -2065,7 +2067,9 @@ Child codes can also be defined, resulting in a hierarchical structure of codes 
 * #{parent code} #{child code} "{display string}" "{definition string}"
 ```
 
-Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition {%include tu.html%}:
+#### Defining Code Systems using Indented Rules {%include tu.html%}
+
+Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
 
 ```
 * #{parent code} "{display string}" "{definition string}"
@@ -2525,7 +2529,7 @@ RuleSet: {name}
   * ^publisher = "Elbonian Medical Society"
   ```
 
-##### Parameterized Rule Sets
+##### Parameterized Rule Sets {%include tu.html%}
 
 Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
 
