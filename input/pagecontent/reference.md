@@ -376,12 +376,6 @@ When indented rules are combined with [soft indexing](#soft-indexing) and a rule
   * obeys inv-1
     * family 1..1
   ```
-* An error, attempting to indent a rule without a path:
-
-  ```
-  * name 1..1
-    * insert ExampleRuleSet
-  ```
 
 </div>
 
@@ -924,7 +918,7 @@ The following table is a summary of the rules that may apply to profiles, extens
 | Contains (for standalone extensions) [3]| <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
 | Contains (for slicing) [3]| <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
 | Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
-| Insert | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
+| Insert | <code>* &lt;element&gt; insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
 | Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
 | Path {%include tu.html%} | `* <element>`|
 | Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
@@ -1739,21 +1733,25 @@ The following syntaxes can be used to assign flags:
 
 #### Insert Rules
 
-[Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. An insert rule is used to add a rule set:
+[Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. An insert rule is used to add a rule set with the following syntax:
 
 <pre><code>* insert {RuleSet name}<i>({parameters})</i>
+</code>
+<code>* &ltelement&gt insert {RuleSet name}<i>({parameters})</i>
 </code></pre>
 
-The rules in the named rule set are interpreted as if they were copied and pasted in the designated location.
+The rules in the named rule set are interpreted as if they were copied and pasted in the designated location. When an element is specified, the path of that element is prepended to the path of all rules in the rule set.
 
 Each rule in the rule set should be compatible with the item where the rule set is inserted, in the sense that all the rules defined in the rule set apply to elements actually present in the target. Implementations SHOULD check the legality of a rule set at compile time. If a particular rule from a rule set does not match an element in the target, that rule will not be applied, and an error SHOULD be emitted. It is up to implementations if other valid rules from the rule set are applied.
 
 ##### Inserting Simple (Non-Parameterized) Rule Sets
 
-Insert a simple rule set by using the name of the rule set:
+Insert a simple rule set by using the name of the rule set, and optionally specifying an element:
 
 ```
 * insert {RuleSet name}
+
+* <element> insert {Ruleset nanme}
 ```
 
 **Examples:**
@@ -1792,6 +1790,31 @@ Insert a simple rule set by using the name of the rule set:
   Profile: FranceBreastRadiologyObservationProfile
   Parent: BreastRadiologyObservationProfile
   * insert FranceObservationRuleSet
+  ```
+
+* Insert a rule set into a profile specifiying an element:
+
+  ```
+  RuleSet: NameRules
+  * family MS
+  * given MS
+
+  Profile: MyPatientProfile
+  Parent: Patient
+  * name insert NameRules
+  * deceased[x] only deceasedBoolean
+  // More profile rules
+  ```
+
+  This is equivalent to the following:
+
+  ```
+  Profile: MyPatientProfile
+  Parent: Patient
+  * name.family MS
+  * name.given MS
+  * deceased[x] only deceasedBoolean
+  // More profile rules
   ```
 
 ##### Inserting Parameterized Rule Sets
