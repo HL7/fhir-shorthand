@@ -874,12 +874,6 @@ A special case of the ElementDefinition path is setting properties of the first 
   . ^short
   ```
 
-* The path to the designation value of a [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html) top-level code:
-
-  ```
-  #active ^designation[0].value
-  ```
-
 ##### Caret Paths for Code Metadata
 
 {%include tu-div.html%}
@@ -891,7 +885,13 @@ For a path to a code within a code system, use this syntax:
 #{code} ^<element of corresponding concept>
 ```
 
-**Example:**
+**Examples:**
+
+* The path to the designation value of a [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html) top-level code:
+
+  ```
+  #active ^designation[0].value
+  ```
 
 * The path to the property code of #recurrence code, a child of the #active code in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
 
