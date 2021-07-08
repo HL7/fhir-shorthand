@@ -2,7 +2,7 @@ This chapter contains the formal specification of the FHIR Shorthand (FSH) langu
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
-Portions of the specification designated as "Trial Use" are indicated by {%include tu.html%}. Remaining unmarked sections contain normative content.
+Portions of the specification designated as "Trial Use" are indicated by {%include tu.html%} and <span style="background-color: #fff5e6;">background shading</span>. Remaining unmarked sections contain normative content.
 
 ### About this Specification
 
@@ -83,7 +83,11 @@ Content in one FSH project MAY be contained in one or more FSH files. Files MUST
 
 > **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
 
-The items defined by FSH are: [Aliases](#defining-aliases), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), [Invariants](#defining-invariants), [Logical Models](#defining-logical-models) {%include tu.html%}, [Profiles](#defining-profiles), and [Resources](#defining-resources) {%include tu.html%}.
+The items defined by FSH are: [Aliases](#defining-aliases), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), [Invariants](#defining-invariants), and [Profiles](#defining-profiles).
+
+{%include tu-div.html%}
+FSH also supports the definition of [Logical Models](#defining-logical-models) and [Resources](#defining-resources).
+</div>
 
 The allocation of items to files is not meaningful in FSH, and items from all files in one project can be considered globally pooled for the purposes of FSH. Items can appear in any order within **.fsh** files, and items can be moved inside and between **.fsh** files within the same project without affecting the interpretation of the content.
 
@@ -93,7 +97,9 @@ Each FSH project MUST declare the version of FHIR it depends upon. The form of t
 
 The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types).
 
-{%include tu.html%} FSH supports new data types in pre-release FHIR R5, but support for pre-release versions is still experimental. It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces additional data types.
+{%include tu-div.html%}
+FSH supports new data types in pre-release FHIR R5, but support for pre-release versions is still experimental. It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces additional data types.
+</div>
 
 #### Dependency on other IGs
 
@@ -155,7 +161,7 @@ Canonical references refer to the standard URL associated with FHIR items. For e
 
 #### Whitespace
 
-Repeated whitespace has meaning within FSH files only when [indenting rules](#indented-rules) {%include tu.html%} and within string literals. In all other contexts, repeated whitespace is not meaningful. New lines are considered whitespace.
+Repeated whitespace has meaning within FSH files only when [indenting rules](#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful. New lines are considered whitespace.
 
 Whitespace insensitivity can be used to improve readability. For example:
 
@@ -196,7 +202,7 @@ The following restrictions apply to rules:
 * All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
 * All rules must begin on a new line.
 * Rules cannot be preceded by non-whitespace characters on a line.
-* Whitespace characters prior to the initial asterisk (`*`) are meaningful. Rules must left-justified unless using [indented rule syntax](#indented-rules) {%include tu.html%}.
+* Whitespace characters prior to the initial asterisk (`*`) are meaningful. Rules must left-justified unless using [indented rule syntax](#indented-rules).
 
 ##### Rule Order
 
@@ -222,7 +228,9 @@ In cases with no explicit or logical restrictions on rule ordering, users MAY li
 
 It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
 
-##### Indented Rules {%include tu.html%}
+##### Indented Rules
+
+{%include tu-div.html%}
 
 Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by prepending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
 
@@ -374,6 +382,7 @@ When indented rules are combined with [soft indexing](#soft-indexing) and a rule
   * name 1..1
     * insert ExampleRuleSet
   ```
+</div>
 
 #### Codes and Codings
 
@@ -397,7 +406,7 @@ FSH represents Codings in the following ways:
 
 {CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
 
-As [indicated by italics](#about-the-specification), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by italics](#about-this-specification), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -870,8 +879,9 @@ A special case of the ElementDefinition path is setting properties of the first 
   #active ^designation[0].value
   ```
 
-##### Caret Paths for Code Metadata {%include tu.html%}
+##### Caret Paths for Code Metadata
 
+{%include tu-div.html%}
 Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
 
 For a path to a code within a code system, use this syntax:
@@ -880,13 +890,14 @@ For a path to a code within a code system, use this syntax:
 #{code} ^<element of corresponding concept>
 ```
 
-**Examples:**
+**Example:**
 
 * The path to the property code of #recurrence code, a child of the #active code in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
 
   ```
   #active #recurrence ^property[0].code
   ```
+</div>
 
 ### Rules for Profiles, Extensions, Logical Models, Resources, and Instances
 
@@ -925,8 +936,9 @@ The following table is a summary of the rules that may apply to profiles, extens
 3. The Assignment and Contains rules are not applicable to logical models or resources
 4. Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in a rule set
 
-#### AddElement Rules {%include tu.html%}
+#### AddElement Rules 
 
+{%include tu-div.html%}
 Authors define logical models and resources by adding new elements to their definitions. The AddElement rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
 
 The syntax of the rules to add a new element are as follows:
@@ -997,6 +1009,7 @@ Note the following:
     * breed 1..* CodeableConcept "Breed of service animal" "The dominant breed or breeds of the service animal."
     * startDate 0..1 date "Date the service animal began work" "The date on which the service animal began working for the person."
   ```
+</div>
 
 #### Assignment Rules
 
@@ -1083,11 +1096,13 @@ In the following, we give details and examples of assignments involving various 
   * recordedDate = "2013-06-08T09:57:34.2112Z"
   ```
 
-* Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0): {%include tu.html%}
+{%include tu-div.html%}
+* Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0): 
 
   ```
   * extension[my-extension].valueInteger64 = 1234567890
   ```
+</div>
 
 ##### Assignments with the Coding Data Type
 
@@ -1361,8 +1376,9 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
   * entry[0].resource = EveAnyperson
   ```
 
-##### Assignments with the CodeableReference Data Type {%include tu.html%}
+##### Assignments with the CodeableReference Data Type 
 
+{%include tu-div.html%}
 The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) data type was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. Making use of CodeableReference involves no new FSH syntax.
 
 **Examples:**
@@ -1386,6 +1402,7 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   * code.concept = SCT#1003754000 "Natural rubber latex (substance)"
   * code.reference = Reference(NaturalLatexSubstanceDefinitionExample)
   ```
+</div>
 
 #### Binding Rules
 
@@ -1900,11 +1917,13 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * onset[x] only Age or AgeRange or DateRange
   ```
 
-* Restrict value[x] to the integer64 type (note: this data type was introduced in FHIR v4.2.0): {%include tu.html%}
+{%include tu-div.html%}
+* Restrict value[x] to the integer64 type (note: this data type was introduced in FHIR v4.2.0):
 
   ```
   * value[x] only integer64
   ```
+</div>
 
 * Restrict Observation.performer (a choice of reference to Practitioner, PractitionerRole, Organization, CareTeam, Patient, or RelatedPerson) to allow only Practitioner:
 
@@ -1930,8 +1949,10 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
-#### Path Rules {%include tu.html%}
 
+#### Path Rules 
+
+{%include tu-div.html%}
 Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
 
 ```
@@ -1949,6 +1970,7 @@ A path rule has no impact on the element it refers to. The only purpose of the p
     * given MS
     * family MS
   ```
+</div>
 
 ### Defining Items
 
@@ -2073,8 +2095,9 @@ Child codes can also be defined, resulting in a hierarchical structure of codes 
 * #{parent code} #{child code} "{display string}" "{definition string}"
 ```
 
-#### Defining Code Systems using Indented Rules {%include tu.html%}
+#### Defining Code Systems using Indented Rules 
 
+{%include tu-div.html%}
 Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
 
 ```
@@ -2136,6 +2159,7 @@ Additional levels to any depth can be added in the same manner.
       * #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
     * #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
   ```
+<div>
 
 #### Defining Extensions
 
@@ -2345,7 +2369,9 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
   XPath:      "f:given or f:family"
   ```
 
-#### Defining Logical Models {%include tu.html%}
+#### Defining Logical Models
+
+{%include tu-div.html%}
 
 Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](http://hl7.org/fhir/R4/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
 
@@ -2380,6 +2406,7 @@ Rules defining the logical model follow immediately after the keyword section. L
   * biological 0..1 boolean "Biologically related?"
       "A family member may not be biologically related due to adoption, blended families, etc."
   ```
+</div>
 
 #### Defining Mappings
 
@@ -2462,7 +2489,9 @@ To define a profile, the keywords `Profile` and `Parent` are required, and `Id`,
   * valueCodeableConcept from https://loinc.org/vs/LL3991-8 (extensible)
   ```
 
-#### Defining Resources {%include tu.html%}
+#### Defining Resources
+
+{%include tu-div.html%}
 
 Custom resources allow authors to define new structures representing arbitrary content. Resources are defined similar to [logical models](#defining-logical-models), but are intended to support data exchange using FHIR's RESTful API mechanisms. The capability to define resources may be used by HL7 to define core FHIR resources or by other organizations to define proprietary resources for their own internal use. Potentially, they also can be used to represent and maintain existing core FHIR resources.
 
@@ -2506,6 +2535,7 @@ Rules defining the resource follow immediately after the keyword section. Resour
       "Devices on board"
       "Devices on board the vehicle."
   ```
+</div>
 
 #### Defining Rule Sets
 
@@ -2535,7 +2565,9 @@ RuleSet: {name}
   * ^publisher = "Elbonian Medical Society"
   ```
 
-##### Parameterized Rule Sets {%include tu.html%}
+##### Parameterized Rule Sets 
+
+{%include tu-div.html%}
 
 Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
 
@@ -2607,6 +2639,7 @@ Each parameter represents a value that can be substituted into the rules when th
   * insert Question(tr2, When did you return?, date, false)
   * insert Question(tr3, What countries did you visit?, code, true)
   ```
+</div>
 
 #### Defining Value Sets
 
@@ -2702,7 +2735,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 
 ### Appendix: Formal Grammar
 
-The grammar of FSH described in [ANTLR4](https://www.antlr.org/). The following parser and lexer includes elements of the FSH language marked as {%include tu.html%}.
+The following is the grammar of FSH described in [ANTLR4](https://www.antlr.org/). The following parser and lexer includes elements of the FSH language marked as {%include tu.html%}.
 
 #### Parser Grammar
 
