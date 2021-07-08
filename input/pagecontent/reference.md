@@ -382,6 +382,7 @@ When indented rules are combined with [soft indexing](#soft-indexing) and a rule
   * name 1..1
     * insert ExampleRuleSet
   ```
+
 </div>
 
 #### Codes and Codings
@@ -2038,10 +2039,10 @@ The following table shows the relationship between declaration keywords and addi
 [Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Instance](#defining-instances)          |  x  |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
 [Invariant](#defining-invariants)        |  x  |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-[Logical](#defining-logical-models) {%include tu.html%} |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Logical](#defining-logical-models)  {%include tu.html%}    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Mapping](#defining-mappings)            |  x  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
 [Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
-[Resource](#defining-resources)  {%include tu.html%}    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Resource](#defining-resources)  {%include tu.html%}        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
 [Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
 {: .grid }
@@ -2095,7 +2096,7 @@ Child codes can also be defined, resulting in a hierarchical structure of codes 
 * #{parent code} #{child code} "{display string}" "{definition string}"
 ```
 
-#### Defining Code Systems using Indented Rules 
+#### Defining Code Systems using Indented Rules
 
 {%include tu-div.html%}
 Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
@@ -2147,7 +2148,7 @@ Additional levels to any depth can be added in the same manner.
   * #Anteater #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
   ```
 
-* Define a code system for anteater taxonomy using indentation instead of explicit parents {%include tu.html%}:
+* Define a code system for anteater taxonomy using indentation instead of explicit parents:
 
   ```
   CodeSystem: AnteaterCS
@@ -2159,7 +2160,8 @@ Additional levels to any depth can be added in the same manner.
       * #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
     * #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
   ```
-<div>
+
+</div>
 
 #### Defining Extensions
 
