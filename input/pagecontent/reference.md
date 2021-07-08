@@ -91,7 +91,9 @@ The allocation of items to files is not meaningful in FSH, and items from all fi
 
 Each FSH project MUST declare the version of FHIR it depends upon. The form of this declaration is outside the scope of the FSH specification, and SHOULD be managed by implementations. The FSH specification is not explicitly FHIR-version dependent, but implementations MAY support only a specific version or versions of FHIR.
 
-The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types). FSH supports pre-release FHIR R5, but support for pre-release versions is still experimental. It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces new data types.
+The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types).
+
+{%include tu.html%} FSH supports new data types in pre-release FHIR R5, but support for pre-release versions is still experimental. It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces additional data types.
 
 #### Dependency on other IGs
 
@@ -820,7 +822,7 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)). Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
+FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
 For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -840,12 +842,6 @@ A special case of the ElementDefinition path is setting properties of the first 
 
 ```
 . ^<element of ElementDefinition[0]>
-```
-
-For a path to a code within a code system, use this syntax:
-
-```
-#{code} ^<element of corresponding concept>
 ```
 
 **Examples:**
@@ -874,13 +870,23 @@ For a path to a code within a code system, use this syntax:
   #active ^designation[0].value
   ```
 
+##### Caret Paths for Code Metadata {%include tu.html%}
+
+Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
+
+For a path to a code within a code system, use this syntax:
+
+```
+#{code} ^<element of corresponding concept>
+```
+
+**Examples:**
+
 * The path to the property code of #recurrence code, a child of the #active code in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
 
   ```
   #active #recurrence ^property[0].code
   ```
-
-***
 
 ### Rules for Profiles, Extensions, Logical Models, Resources, and Instances
 
@@ -1077,7 +1083,7 @@ In the following, we give details and examples of assignments involving various 
   * recordedDate = "2013-06-08T09:57:34.2112Z"
   ```
 
-* Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0):
+* Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0): {%include tu.html%}
 
   ```
   * extension[my-extension].valueInteger64 = 1234567890
@@ -1894,7 +1900,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * onset[x] only Age or AgeRange or DateRange
   ```
 
-* Restrict value[x] to the integer64 type (note: this data type was introduced in FHIR v4.2.0):
+* Restrict value[x] to the integer64 type (note: this data type was introduced in FHIR v4.2.0): {%include tu.html%}
 
   ```
   * value[x] only integer64
