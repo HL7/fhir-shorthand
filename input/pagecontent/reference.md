@@ -1793,7 +1793,7 @@ Insert a simple rule set by using the name of the rule set:
 
 To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
-<pre><code>* insert {RuleSet name}(value1<i>, value2, value3...</i>)
+<pre><code>* insert {RuleSet name}<i>(value1, value2, value3...)</i>
 </code></pre>
 
 As indicated, the list of values is enclosed with parentheses `()` and separated by commas `,`. If you need to put literal `)` or `,` characters inside values, escape them with a backslash: `\)` and `\,`, respectively. White space separating values is optional, and removed before the value is applied to the rule set definition.
