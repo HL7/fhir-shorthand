@@ -1842,7 +1842,7 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
 {%include tu-div.html%}
 Rule sets can be inserted in the context of a path. The context is specified by giving the path prior to the insert rule:
 
-<pre><code>* &lt;element&gt; insert {RuleSet name}(value1<i>, value2, value3...</i>)
+<pre><code>* &lt;element&gt; insert {RuleSet name}<i>(value1, value2, value3...)</i>
 </code></pre>
 
 Alternately, the context can be given by indenting the insert rule under another rule that provides a path context (see [indented rules](#indented-rules)).
