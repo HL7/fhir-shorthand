@@ -1,11 +1,37 @@
 <img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="float:none; margin: 0px 0px 0px 0px;" />
 
-FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts involved in creation of FHIR Implementation Guides (IG). The goal of FSH is to allow profiler creators to more directly express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as GitHub.
+### HL7 Mixed Normative/Trial Use Ballot
 
-The FHIR Shorthand implementation guide includes the following information:
+FHIR Shorthand is a domain-specific language for defining FHIR artifacts involved in creation of FHIR Implementation Guides (IG). The goal of FSH is to allow IG creators to more directly express their intent with fewer concerns about underlying FHIR mechanics.
 
-1. This page, providing an introduction to the IG  _(informative content)_.
-1. [FHIR Shorthand Overview](overview.html) -- Introduction to FSH and SUSHI (the reference implementation of a FSH compiler) _(informative content)_.
+Conceived in September 2019 and initially released in February 2020, FHIR Shorthand (FSH) has been rapidly adopted by the FHIR community. The [FSH Finder](https://fshschool.org/fsh-finder/) tool reports well over 100 projects using FSH, and [npm-stat](https://npm-stat.com/charts.html?package=fsh-sushi&from=2020-02-12&to=2021-07-12) shows that the *fsh-sushi* [npm](https://www.npmjs.com/) package has had over 45,000 downloads as of July 2021. The [#shorthand channel on chat.fhir.org](https://chat.fhir.org/#narrow/stream/215610-shorthand) has 270 subscribers and participation is very active. FSH and related tools have been tested at three HL7 Connectathons. Several significant tools for processing FSH have been developed, including [SUSHI](https://fshschool.org/docs/sushi/), a reference implementation for transforming FSH into FHIR artifacts, and [GoFSH](https://fshschool.org/docs/gofsh/), a tool for transforming FHIR artifacts to FSH. Using these tools, FSH can be losslessly round-tripped to FHIR JSON and back. FSH and SUSHI have been integrated with the [HL7 FHIR Implementation Guide Publishing tool](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), allowing seamless processing from FSH to a complete IG.
+
+FSH was approved as a Standard for Trial Use (STU 1) in May 2020. In the ensuing period, vigorous activity around FSH has driven improvements, new features, and rapid maturation of FSH and related tools. As a result, the FSH specification is now being offered for a mixed normative/trial use ballot. The majority of language features of FSH are proposed as normative, including some post-STU 1 features that have benefited from significant user testing. Certain new language features, such as defining logical models, are proposed as Trial Use. Trial use features are clearly marked in the [language specification](reference.html) as ({%include tu.html%}).
+
+Designation as a normative standard does not mean that the FSH language will not continue to evolve, only that any future changes must be compatible with the normative portions of the specification.
+
+#### Motivations for FHIR Shorthand
+
+FSH was created in response to the need in the FHIR community for scalable, fast, user-friendly tools for IG creation and maintenance. Experience has shown that profiling projects can be difficult and slow, and the resulting IG quality inconsistent. Profiling projects often go through many iterations. As such, an agile approach to refactoring and revision is invaluable.
+
+Experience across many domains has shown that complex software projects are best approached with textual languages. As a language designed for the job of profiling and IG creation, FSH is concise, understandable, and aligned to user intentions. Users may find that the FSH language representation is the best way to understand a set of profiles or logical models. Because it is text-based, FSH brings a degree of editing agility not typically found in graphical tools (cutting and pasting, search and replace, spell checking, etc.) FSH is ideal for distributed development under source code control, providing meaningful version-to-version differentials, support for merging and conflict resolution, and nimble refactoring. These features allow FSH to scale in ways that other approaches cannot. Any text editor can be used to create or modify FSH, but advanced text editor plugins may also be used to further aid authoring.
+
+### Relationships to Other Standards, Tools, and Guidelines
+
+There are several existing methods for IG creation. Each of these methods have certain advantages as well as drawbacks:
+
+1. Hand-editing FHIR conformance artifacts such as StructureDefinition and ValueSet resources gives authors full control over every aspect of the resulting FHIR profiles and definitions, but is unwieldy and prone to errors, and suitable only for FHIR experts.
+1. The [Excel spreadsheet method](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, with the content mixed with formatting directives. According to [HL7 Confluence](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Authoring), the spreadsheet method "is expected to be a near term solution with more sophisticated (and user-friendly) tooling currently under development."
+1. [Simplifier/Forge](https://fire.ly/products/simplifier-net/) and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com) provide graphical and form-based interfaces that help guide users through common profiling tasks. The upside is that the tools provide guidance to authors, while the potential downside is the need to navigate through many screens, and difficulty making cross-cutting changes. Trifolia is fully browser-based, with no software to install locally. Both are commercially-supported products.
+
+As the only *language* designed for profiling and IG creation, FSH is unique among these methods. It provides a fast, scalable, and user-friendly path to IG creation and maintenance. Because it is text-based, FSH brings a degree of editing agility not found in graphical tools (such as cutting and pasting, global search and replace, spell checking, etc.) Because it is a HL7 FHIR standard, tooling can be built around FSH with confidence in its stability and continuity.
+
+### About this IG
+
+The FSH IG includes the following information:
+
+1. This page, providing introductory material  _(informative content)_.
+1. [FHIR Shorthand Overview](overview.html) -- Introduction to FSH language and SUSHI (the reference implementation of a FSH compiler) _(informative content)_.
 1. [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(formal content)_.
 1. A [Quick Reference Sheet](FSHQuickReference.pdf) under the Downloads menu _(informative content)_.
 
@@ -16,20 +42,6 @@ The following material, useful for learning and applying FHIR Shorthand but not 
 1. [FHIR Shorthand Tutorials](https://fshschool.org/docs/tutorials/) -- A step-by-step hands-on introduction to producing an Implementation Guide (IG) with FHIR Shorthand and SUSHI.
 1. [FSH Online](https://fshschool.org/FSHOnline/#/) -- A coding playground for FSH, an online environment that allows you to write FSH and convert it to FHIR artifacts, convert FHIR artifacts to FSH, access examples, and share FSH code with others.
 1. [FSH Finder](https://fshschool.org/fsh-finder/) -- A list of public GitHub repositories that contain FSH code, refreshed daily.
-
-### HL7 Ballot Status
-
-FSH was first balloted as Standard for Trial Use (STU 1) in May 2020. FSH STU 1 has been tested and refined through many [FSH-based Implementation Guide projects](https://fshschool.org/fsh-finder/), resulting in rapid maturation of the standard. In the Sept. 2021 ballot, most language features of FSH are proposed as normative, including some post-STU 1 features that have been tested by many users. Certain new language features, such as defining logical models, are proposed as Trial Use. Trial use features are clearly marked in the [language specification](reference.html) as ({%include tu.html%}).
-
-### Relationships to Other Standards, Tools, and Guidelines
-
-There are several existing methods for IG creation. Each of these methods have certain advantages as well as drawbacks:
-
-1. Hand-editing FHIR conformance artifacts such as StructureDefinition and ValueSet resources gives authors full control over every aspect of the resulting FHIR profiles and definitions, but is unwieldy and prone to errors, and suitable only for FHIR experts.
-1. The [Excel spreadsheet method](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, with the content mixed with formatting directives. According to [HL7 Confluence](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Authoring), the spreadsheet method "is expected to be a near term solution with more sophisticated (and user-friendly) tooling currently under development."
-1. [Simplifier/Forge](https://fire.ly/products/simplifier-net/) and [Trifolia-on-FHIR](https://trifolia-fhir.lantanagroup.com) provide graphical and form-based interfaces that help guide users through common profiling tasks. The upside is that the tools provide guidance to authors, while the potential downside is the need to navigate through many screens, and difficulty making cross-cutting changes. Trifolia is fully browser-based, with no software to install locally. Both are commercially-supported products.
-
-As the only *language* designed for profiling and IG creation, FSH is unique among these methods. It provides a fast, scalable, and user-friendly path to IG creation and maintenance. Because it is text-based, FSH brings a degree of editing agility not found in graphical tools (such as cutting and pasting, global search and replace, spell checking, etc.) Because it is a HL7 FHIR standard, tooling can be built around FSH with confidence in its stability and continuity. The most notable FSH-based tool currently is [SUSHI](https://fshschool.org/docs/sushi/), a reference implementation for transforming FSH into FHIR artifacts. SUSHI has been integrated with the [HL7 FHIR Implementation Guide Publishing tool](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), allowing seamless processing from FSH to a complete IG.
 
 ### Authors and Contributors
 
