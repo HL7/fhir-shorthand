@@ -1,3 +1,5 @@
+{%include shaded-rows.html%}
+
 This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended as a reference, not a tutorial.
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
@@ -908,6 +910,8 @@ Rules are the mechanism for setting cardinality, applying Must Support flags, de
 
 The following table is a summary of the rules that may apply to profiles, extensions, logical models, resources, and instances.
 
+<div class = "shadedRow2">
+
 | Rule Type | Syntax |
 | --- | --- |
 | {%include tu.html%} AddElement [1]  |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
@@ -924,6 +928,8 @@ The following table is a summary of the rules that may apply to profiles, extens
 | {%include tu.html%} Path  | `* <element>`|
 | Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 {: .grid }
+
+</div>
 
 **Notes:**
 
@@ -2043,6 +2049,8 @@ Description: "The purpose of the treatment."
 
 Declarations, corresponding to the items defined by FSH, are as follows:
 
+<div class = "shadedRow">
+
 | Declaration | Purpose | Data Type |
 |----------|---------|---------|
 | `Alias`| Declares an alias for a URL or OID | name or $name |
@@ -2057,6 +2065,7 @@ Declarations, corresponding to the items defined by FSH, are as follows:
 | `RuleSet` | Declares a set of rules that can be reused | name |
 | `ValueSet` | Declares a new value set | name |
 {: .grid }
+</div>
 
 Additional keywords are as follows:
 
@@ -2079,6 +2088,8 @@ Additional keywords are as follows:
 
 The following table shows the relationship between declarations and additional keywords.
 
+<div class = "shadedRow">
+
 | Declaration   | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |-------|-----|----------|-------|--------|------------|-------|--------|--------|-----|-------|--------|
 [Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
@@ -2093,6 +2104,7 @@ The following table shows the relationship between declarations and additional k
 [Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
 [Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
 {: .grid }
+</div>
 
 **KEY:**  R = REQUIRED, S = suggested (SHOULD be used), O = OPTIONAL, blank = disallowed, x = Id is required but specified in the declaration statement
 
