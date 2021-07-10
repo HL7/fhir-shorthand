@@ -54,7 +54,7 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 
 | Symbol | Meaning | Examples |
 |--------|--------|---------|
-| `{Coding}`  | Instance of a Coding | `SCT#961000205106 "Wearing street clothes, no shoes"` |
+| `{Coding}`  | Instance of a Coding | `$SCT#961000205106 "Wearing street clothes, no shoes"` |
 | `<CodeableConcept>`  | An element or path to an element whose data type is CodeableConcept |  `category`  |
 | `<bindable>` | An element or path to an element whose data type allows it to be bound to a value set | `code` |
 | `{flag}`  | One of the valid [FSH flags](#flag-rules) |  `MS` |
@@ -431,10 +431,10 @@ This syntax is also used with CodeableConcepts (see [Assignments with the Codeab
   http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
   ```
   
-* The same Coding, assuming SCT has been defined as an alias for http://snomed.info/sct:
+* The same Coding, assuming $SCT has been defined as an alias for http://snomed.info/sct:
 
   ```
-  SCT#363346000 "Malignant neoplastic disease (disorder)"
+  $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
   
 * A Coding from ICD10-CM, assuming the alias $ICD for that code system:
@@ -1034,18 +1034,18 @@ Adding `(exactly)` indicates that conformance to the profile requires a precise 
 
 > **Note:** The `(exactly)` modifier does not apply to instances.
 
-Consider the interpretation of the following assignment statements in instances and profiles, assuming the code element is a CodeableConcept and LNC is an alias for http://loinc.org:
+Consider the interpretation of the following assignment statements in instances and profiles, assuming the code element is a CodeableConcept and $LNC is an alias for http://loinc.org:
 
 ```
-* code = LNC#69548-6
-```
-
-```
-* code = LNC#69548-6 "Genetic variant assessment"
+* code = $LNC#69548-6
 ```
 
 ```
-* code = LNC#69548-6 (exactly)
+* code = $LNC#69548-6 "Genetic variant assessment"
+```
+
+```
+* code = $LNC#69548-6 (exactly)
 ```
 
 In the context of an instance:
@@ -1139,7 +1139,7 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
 * Example of what happens when a second assignment replaces an existing value:
 
   ```
-  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding = ICD10#C80.1
   ```
   Because the second assignment pre-clears the previous value of myCoding, the result is:
@@ -1153,7 +1153,7 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
 
   ```
   * myCoding.userSelected = true
-  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
   The result is:
   * system is http://snomed.info/sct
@@ -1164,7 +1164,7 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
 * The correct way to approach the previous example is to reverse the order of the assignments:
 
   ```
-  * myCoding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCoding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding.userSelected = true
   ```
 
@@ -1194,19 +1194,19 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
 * Set the first Coding myCodeableConcept:
 
   ```
-  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * An equivalent representation, using explicit array index on the coding array:
 
   ```
-  * myCodeableConcept.coding[0] = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding[0] = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * Another equivalent representation, using the shorthand that allows dropping the [0] index:
 
   ```
-  * myCodeableConcept.coding = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept.coding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
 * Add a second value to the array of Codings:
@@ -1226,7 +1226,7 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
   ```
   * myCodeableConcept.coding[0].userSelected = true
   * myCodeableConcept.text = "Metastatic Cancer"
-  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
   The result is:
   
@@ -1239,7 +1239,7 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
 * The correct way to approach the previous example is to set the values of userSelected and text **after** setting the coding, since those assignments only change the specific subelements on the left side of those assignments:
 
   ```
-  * myCodeableConcept = SCT#363346000 "Malignant neoplastic disease (disorder)"
+  * myCodeableConcept = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCodeableConcept.coding[0].userSelected = true
   * myCodeableConcept.text = "Metastatic Cancer"
   ```
@@ -1294,7 +1294,7 @@ A Quantity can also be bound to a value set:
 * Set the units of the same valueQuantity to millimeters, without setting the value (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
 
   ```
-  * valueQuantity = UCUM#mm "millimeters"
+  * valueQuantity = $UCUM#mm "millimeters"
   ```
 
 * Bind a value set to a Quantity, constraining the units of that Quantity:
@@ -1326,7 +1326,7 @@ A Quantity can also be bound to a value set:
 * Another way to approach this example (with the correct result) is:
 
   ```
-  * valueQuantity = UCUM#mm "millimeters"
+  * valueQuantity = $UCUM#mm "millimeters"
   * valueQuantity.value = 55.0
   ```
 
@@ -1395,7 +1395,7 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   ```
   Instance:   LatexSubstanceExample
   InstanceOf: LatexSubstance
-  * code.concept = SCT#1003754000 "Natural rubber latex (substance)"
+  * code.concept = $SCT#1003754000 "Natural rubber latex (substance)"
   * code.reference = Reference(NaturalLatexSubstanceDefinitionExample)
   ```
 </div>
@@ -1680,12 +1680,12 @@ The slice content rules MUST appear *after* the contains rule that creates the s
 * Constrain the content of the systolicBP and diastolicBP slices:
 
   ```
-  * component[systolicBP].code = LNC#8480-6 // Systolic blood pressure
+  * component[systolicBP].code = $LNC#8480-6 // Systolic blood pressure
   * component[systolicBP].value[x] only Quantity
-  * component[systolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
-  * component[diastolicBP].code = LNC#8462-4 // Diastolic blood pressure
+  * component[systolicBP].valueQuantity = $UCUM#mm[Hg] "mmHg"
+  * component[diastolicBP].code = $LNC#8462-4 // Diastolic blood pressure
   * component[diastolicBP].value[x] only Quantity
-  * component[diastolicBP].valueQuantity = UCUM#mm[Hg] "mmHg"
+  * component[diastolicBP].valueQuantity = $UCUM#mm[Hg] "mmHg"
   ```
 
 At minimum, each slice MUST be constrained such that it can be uniquely identified via the discriminator (see Step 1). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
@@ -2117,7 +2117,7 @@ In contrast with other names in FSH (for profiles, extensions, etc.), alias name
 **Examples:**
 
   ```
-  Alias: SCT = http://snomed.info/sct
+  Alias: $SCT = http://snomed.info/sct
  
   Alias: $RaceAndEthnicityCDC = urn:oid:2.16.840.1.113883.6.238
  
@@ -2374,10 +2374,10 @@ If `Usage` is unspecified, the default is `#example`.
   * id = "mCODEPrimaryCancerConditionExample01"
   * clinicalStatus = $ClinStatus#active "Active"
   * verificationStatus = $VerStatus#confirmed "Confirmed"
-  * code = SCT#254637007 "Non-small cell lung cancer (disorder)"
-  * extension[HistologyMorphologyBehavior].valueCodeableConcept = SCT#35917007 "Adenocarcinoma"
-  * bodySite = SCT#39607008 "Lung structure (body structure)"
-  * bodySite.extension[Laterality].valueCodeableConcept = SCT#7771000 "Left (qualifier value)"
+  * code = $SCT#254637007 "Non-small cell lung cancer (disorder)"
+  * extension[HistologyMorphologyBehavior].valueCodeableConcept = $SCT#35917007 "Adenocarcinoma"
+  * bodySite = $SCT#39607008 "Lung structure (body structure)"
+  * bodySite.extension[Laterality].valueCodeableConcept = $SCT#7771000 "Left (qualifier value)"
   * subject = Reference(mCODEPatientExample01)
   * onsetDateTime = "2019-04-01"
   * asserter = Reference(mCODEPractitionerExample01)
@@ -2533,7 +2533,7 @@ To define a profile, the keywords `Profile` and `Parent` are required, and `Id`,
   Id:             known-exposure-setting
   Title:          "Known Exposure Setting Profile"
   Description:    "The setting where an individual was exposed to a contagion."
-  * code = LNC#81267-7 // Setting of exposure to illness
+  * code = $LNC#81267-7 // Setting of exposure to illness
   * value[x] only CodeableConcept
   * valueCodeableConcept from https://loinc.org/vs/LL3991-8 (extensible)
   ```
@@ -2704,10 +2704,10 @@ The contents of a value set are defined by a set of rules. There are four types 
 
 | To include... | Syntax | Example |
 |-------|---------|----------|
-| A single code | `* include {Coding}` | `* include SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* SCT#961000205106 "Wearing street clothes, no shoes"`|
+| A single code | `* include {Coding}` | `* include $SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* $SCT#961000205106 "Wearing street clothes, no shoes"`|
 | All codes from another value set | `* include codes from valueset {ValueSet name|id|url}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
 | All codes from a code system | `* include codes from system {CodeSystem name|id|url}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
-| Selected codes from a code system (filters are code system dependent) | `* include codes from system {CodeSystem name|id|url} where {filter} and {filter} and ...` | `* include codes from system SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system SCT where concept is-a #254837009`|
+| Selected codes from a code system (filters are code system dependent) | `* include codes from system {CodeSystem name|id|url} where {filter} and {filter} and ...` | `* include codes from system $SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system $SCT where concept is-a #254837009`|
 {: .grid }
 
 See [below](#filters) for discussion of filters.
@@ -2716,10 +2716,10 @@ Analogous rules can be used to leave out certain codes, with the word `exclude` 
 
 | To exclude... | Syntax | Example |
 |-------|---------|----------|
-| A single code | `* exclude {Coding}` | `* exclude SCT#961000205106 "Wearing street clothes, no shoes"` |
+| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from another value set | `* exclude codes from valueset {ValueSet name|id|url}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | `* exclude codes from system {CodeSystem name|id|url}` | `* exclude codes from system http://snomed.info/sct` |
-| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {CodeSystem name|id|url} where {filter}` | `* exclude codes from system SCT where concept is-a #254837009` |
+| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {CodeSystem name|id|url} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
 {: .grid }
 
 ##### Filters
@@ -2734,9 +2734,9 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
   ValueSet: BodyWeightPreconditionVS
   Title: "Body weight preconditions."
   Description:  "Circumstances for body weight measurement."
-  * SCT#971000205103 "Wearing street clothes with shoes"
-  * SCT#961000205106 "Wearing street clothes, no shoes"
-  * SCT#951000205108 "Wearing underwear or less"
+  * $SCT#971000205103 "Wearing street clothes with shoes"
+  * $SCT#961000205106 "Wearing street clothes, no shoes"
+  * $SCT#951000205108 "Wearing underwear or less"
   ```
 
 * Define a value set using [intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules:
@@ -2746,13 +2746,13 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
   Id: mcode-histology-morphology-behavior-vs
   Title: "Histology Morphology Behavior Value Set"
   Description: "Codes representing the structure, arrangement, and behavioral characteristics of malignant neoplasms, and cancer cells.
-  * include codes from system SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
-  * include codes from system SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
-  * include codes from system SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
-  * exclude codes from system SCT where concept is-a #450893003 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)"
-  * exclude codes from system SCT where concept is-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)"
-  * exclude codes from system SCT where concept is-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)"
-  * exclude codes from system SCT where concept is-a #703548001 "Endometrioid intraepithelial neoplasia (morphologic abnormality)"
+  * include codes from system $SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
+  * include codes from system $SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
+  * include codes from system $SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #450893003 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #703548001 "Endometrioid intraepithelial neoplasia (morphologic abnormality)"
   ```
 
 > **Note:** Intensional and extensional forms can be used together in a single value set definition.
@@ -2767,13 +2767,13 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 | FSH   | FHIR Shorthand
 | IG | Implementation Guide
 | JSON   | JavaScript Object Notation
-| LNC | Common FSH alias for LOINC
+| $LNC | Common FSH alias for LOINC
 | LOINC | Logical Observation Identifiers Names and Codes
 | NPI   | National Provider Identifier (US)
 | N   |  Flag denoting normative element
 | MS  | Flag denoting a Must Support element
 |  OID   | Object Identifier
-| SCT | Common FSH alias for SNOMED Clinical Terms
+| $SCT | Common FSH alias for SNOMED Clinical Terms
 |  SD   | StructureDefinition
 |  SU  | Flag denoting "include in summary"
 |  TU  | Flag denoting trial use element
