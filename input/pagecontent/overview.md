@@ -2,7 +2,7 @@ FHIR Shorthand (FSH) is a domain-specific language for defining the contents of 
 
 ### FHIR Shorthand Language
 
-The complete FSH language is described in the [FHIR Shorthand Language Reference](reference.html). Here we present just enough to get a taste of FSH.
+The complete FSH language is formally described in the [FHIR Shorthand Language Reference](reference.html). Here we present just enough to get a taste of FSH.
 
 #### Basics
 
