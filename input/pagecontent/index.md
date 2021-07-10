@@ -2,7 +2,7 @@
 
 FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts involved in creation of FHIR Implementation Guides (IG). The goal of FSH is to allow profiler creators to more directly express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as GitHub.
 
-The FHIR Shorthand (FSH) implementation guide includes the following information:
+The FHIR Shorthand implementation guide includes the following information:
 
 1. This page, providing an introduction to the IG  _(informative content)_.
 1. [FHIR Shorthand Overview](overview.html) -- Introduction to FSH and SUSHI (the reference implementation of a FSH compiler) _(informative content)_.
@@ -19,7 +19,7 @@ The following material, useful for learning and applying FHIR Shorthand but not 
 
 ### HL7 Ballot Status
 
-The FSH Implementation Guide was first balloted as Standard for Trial Use (STU 1) in May 2020. FSH STU 1 has been tested and refined through many [FSH-based Implementation Guide projects](https://fshschool.org/fsh-finder/), resulting in rapid maturation of the standard. In this ballot, most language features of FSH are now proposed as normative, including some post-STU 1 features, such as [soft indexing](reference.html#soft-indexing), which have been used extensively in the post-STU 1 period. Certain new language features, such as defining logical models, are proposed as Trial Use ({%include tu.html%}). Trial use features are clearly marked in the [language specification](reference.html).
+FSH was first balloted as Standard for Trial Use (STU 1) in May 2020. FSH STU 1 has been tested and refined through many [FSH-based Implementation Guide projects](https://fshschool.org/fsh-finder/), resulting in rapid maturation of the standard. In the Sept. 2021 ballot, most language features of FSH are proposed as normative, including some post-STU 1 features that have been tested by many users. Certain new language features, such as defining logical models, are proposed as Trial Use. Trial use features are clearly marked in the [language specification](reference.html) as ({%include tu.html%}).
 
 ### Relationships to Other Standards, Tools, and Guidelines
 
