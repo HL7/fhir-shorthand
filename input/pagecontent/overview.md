@@ -13,10 +13,10 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 #### Basics
 
 * **Grammar**: [FSH has a formal grammar](reference.html#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/).
-* **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive).
+* **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive), and also include datatypes proposed for inclusion in FHIR R5 ([integer64](https://build.fhir.org/datatypes.html#primitive) and [CodeableReference](https://build.fhir.org/references.html#codeablereference)).
 * **Whitespace**: Repeated whitespace has meaning within FSH files when used for indenting rules and within string literals. In all other contexts, repeated whitespace is not meaningful. New lines are considered whitespace.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
-* **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set Organization.active to `true`:
+* **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set an element named `active` to `true`:
 
   ```
   * active = true
@@ -39,10 +39,18 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
   ```
 
 
-* **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and oids. Once defined anywhere in a FSH project, the alias can be used anywhere the url or oid can be used. For example:
+* **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and object identifiers (OIDs). Once defined anywhere in a FSH project, the alias can be used anywhere the URL or OID can be used. By convention, aliases often begin with $ character, for example:
+
+  ```
+  Alias: $SCT = http://snomed.info/sct
+  ```
+
+  However, these are also valid alias definitions:
 
   ```
   Alias: SCT = http://snomed.info/sct
+
+  Alias: lnc = http://loinc.org
   ```
 
 * **Coded Data Types**: A leading hash sign (#) (*aka* number sign, pound sign, or octothorp) is used in FSH to denote a code taken from a formal terminology. FSH provides special grammar for expressing FHIR's coded data types (code, Coding, CodeableConcept, and Quantity):
@@ -57,16 +65,16 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
   http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
-  and here is the same code, using the alias `SCT` in place of http://snomed.info/sct:
+  and here is the same code, using the alias `$SCT` in place of http://snomed.info/sct:
 
   ```
-  SCT#363346000 "Malignant neoplastic disease (disorder)"
+  $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
   The code/Coding shorthand is frequently used in [assignment rules](reference.html#assignment-rules). FSH uses the `=` sign to express assignment. To set the bodySite in an instance of Condition:
 
   ```
-  * bodySite = SCT#87878005 "Left cardiac ventricular structure"
+  * bodySite = $SCT#87878005 "Left cardiac ventricular structure"
   ```
  
   Another example is assigning the units of measure of a Quantity in a profile (using the alias UCUM for http://unitsofmeasure.org):
@@ -251,15 +259,15 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly list the codes to be included and/or excluded, for example:
 
   ```
-  * include SCT#54102005 "G1 grade (finding)"
+  * include $SCT#54102005 "G1 grade (finding)"
 
-  * exclude SCT#12619005 "Tumor grade GX"
+  * exclude $SCT#12619005 "Tumor grade GX"
   ```
 
   [Intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules are used when code membership in the value set is defined algorithmically. For example, to include all codes from a code system:
 
   ```
-  * include codes from system RXNORM
+  * include codes from system $RXNORM
   ```
 
   Similar rules can include or exclude all codes from another value set:
@@ -273,7 +281,7 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   More complex intensional rules involving filters are also possible. These rules depend on relationships or properties defined in a specific code system. A rule for LOINC, for example, would not be applicable to SNOMED-CT. Here is an example of a SNOMED-CT intensional rule with a filter:
 
   ```
-  * include codes from system SCT where concept is-a #123037004 "BodyStructure"
+  * include codes from system $SCT where concept is-a #123037004 "BodyStructure"
   ```
 
   > **Note:** Because including codes is much more common than excluding codes, for brevity, the word `include` is optional in all value set rules.
@@ -312,8 +320,8 @@ For more information on the use of SUSHI, see [the SUSHI Documentation](https://
 In this section, we will walk through a realistic example of FSH, line by line.
 
 ```
-1   Alias: LNC = http://loinc.org
-2   Alias: SCT = http://snomed.info/sct
+1   Alias: $LNC = http://loinc.org
+2   Alias: $SCT = http://snomed.info/sct
 3
 4   Profile:  CancerDiseaseStatus
 5   Parent:   Observation
@@ -334,7 +342,7 @@ In this section, we will walk through a realistic example of FSH, line by line.
 20  * subject 1..1
 21  * basedOn only Reference(ServiceRequest or MedicationRequest)
 22  * partOf only Reference(MedicationAdministration or MedicationStatement or Procedure)
-23  * code = LNC#88040-1
+23  * code = $LNC#88040-1
 24  * subject only Reference(CancerPatient)
 25  * focus only Reference(CancerConditionParent)
 26  * performer only Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner)
@@ -352,21 +360,21 @@ In this section, we will walk through a realistic example of FSH, line by line.
 38  Id: mcode-condition-status-trend-vs
 39  Title: "Condition Status Trend Value Set"
 40  Description:  "How patient's given disease, condition, or ability is trending."
-41  * SCT#260415000 "Not detected (qualifier)"
-42  * SCT#268910001 "Patient condition improved (finding)"
-43  * SCT#359746009 "Patient's condition stable (finding)"
-44  * SCT#271299001 "Patient's condition worsened (finding)"
-45  * SCT#709137006 "Patient condition undetermined (finding)"
+41  * $SCT#260415000 "Not detected (qualifier)"
+42  * $SCT#268910001 "Patient condition improved (finding)"
+43  * $SCT#359746009 "Patient's condition stable (finding)"
+44  * $SCT#271299001 "Patient's condition worsened (finding)"
+45  * $SCT#709137006 "Patient condition undetermined (finding)"
 46
 47  ValueSet: CancerDiseaseStatusEvidenceTypeVS
 48  Id: mcode-cancer-disease-status-evidence-type-vs
 49  Title: "Cancer Disease Status Evidence Type Value Set"
 50  Description:  "The type of evidence backing up the clinical determination of cancer progression."
-51  * SCT#363679005 "Imaging (procedure)"
-52  * SCT#252416005 "Histopathology test (procedure)"
-53  * SCT#711015009 "Assessment of symptom control (procedure)"
-54  * SCT#5880005   "Physical examination procedure (procedure)"
-55  * SCT#386344002 "Laboratory data interpretation (procedure)"
+51  * $SCT#363679005 "Imaging (procedure)"
+52  * $SCT#252416005 "Histopathology test (procedure)"
+53  * $SCT#711015009 "Assessment of symptom control (procedure)"
+54  * $SCT#5880005   "Physical examination procedure (procedure)"
+55  * $SCT#386344002 "Laboratory data interpretation (procedure)"
 ```
 
 * Lines 1 and 2 define aliases for the LOINC and SNOMED-CT code systems.
