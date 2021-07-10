@@ -376,12 +376,6 @@ When indented rules are combined with [soft indexing](#soft-indexing) and a rule
   * obeys inv-1
     * family 1..1
   ```
-* An error, attempting to indent a rule without a path:
-
-  ```
-  * name 1..1
-    * insert ExampleRuleSet
-  ```
 
 </div>
 
@@ -916,7 +910,7 @@ The following table is a summary of the rules that may apply to profiles, extens
 
 | Rule Type | Syntax |
 | --- | --- |
-| AddElement [1] {%include tu.html%} |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
+| {%include tu.html%} AddElement [1]  |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
 | Assignment [2][3] |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
 | Binding |`* <bindable> from {ValueSet name|id|url}` <br/> `* <bindable> from {ValueSet name|id|url} ({strength})`|
 | Cardinality | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
@@ -925,8 +919,9 @@ The following table is a summary of the rules that may apply to profiles, extens
 | Contains (for slicing) [3]| <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
 | Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
 | Insert | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
+| {%include tu.html%} Insert with Path Context | <code>* &lt;element&gt; insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code>|
 | Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
-| Path {%include tu.html%} | `* <element>`|
+| {%include tu.html%} Path  | `* <element>`|
 | Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 {: .grid }
 
@@ -1764,7 +1759,7 @@ Insert a simple rule set by using the name of the rule set:
   Profile: MyPatientProfile
   Parent: Patient
   * insert RuleSet1
-  * deceased[x] only deceasedBoolean
+  * deceased[x] only boolean
   // More profile rules
   ```
 
@@ -1776,7 +1771,7 @@ Insert a simple rule set by using the name of the rule set:
   * ^status = #draft
   * ^experimental = true
   * ^publisher = "Elbonian Medical Society"
-  * deceased[x] only deceasedBoolean
+  * deceased[x] only boolean
   // More profile rules
   ```
 
@@ -1798,7 +1793,7 @@ Insert a simple rule set by using the name of the rule set:
 
 To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
-<pre><code>* insert {RuleSet name}(value1<i>, value2, value3...</i>)
+<pre><code>* insert {RuleSet name}<i>(value1, value2, value3...)</i>
 </code></pre>
 
 As indicated, the list of values is enclosed with parentheses `()` and separated by commas `,`. If you need to put literal `)` or `,` characters inside values, escape them with a backslash: `\)` and `\,`, respectively. White space separating values is optional, and removed before the value is applied to the rule set definition.
@@ -1841,6 +1836,58 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   * name[2].family = "Smith"
   // more rules
   ```
+
+##### Inserting Rule Sets with a Path Context
+
+{%include tu-div.html%}
+Rule sets can be inserted in the context of a path. The context is specified by giving the path prior to the insert rule:
+
+<pre><code>* &lt;element&gt; insert {RuleSet name}<i>(value1, value2, value3...)</i>
+</code></pre>
+
+Alternately, the context can be given by indenting the insert rule under another rule that provides a path context (see [indented rules](#indented-rules)).
+
+When the rule set is expanded, the path of the element is pre-pended to the path of all rules in the rule set.
+
+**Examples:**
+
+* Insert a rule set into a profile specifying an element:
+
+  ```
+  RuleSet: NameRules
+  * family MS
+  * given MS
+
+  Profile: MyPatientProfile
+  Parent: Patient
+  * name insert NameRules
+  * deceased[x] only boolean
+  // More profile rules
+  ```
+  
+  An equivalent way to write the profile is:
+
+  ```
+  Profile: MyPatientProfile
+  Parent: Patient
+  * name 
+    * insert NameRules
+  * deceased[x] only boolean
+  // More profile rules
+  ```
+
+  Both of the above are equivalent to:
+
+  ```
+  Profile: MyPatientProfile
+  Parent: Patient
+  * name.family MS
+  * name.given MS
+  * deceased[x] only boolean
+  // More profile rules
+  ```
+
+</div>
 
 #### Obeys Rules
 
@@ -1951,7 +1998,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   ```
 
 
-#### Path Rules 
+#### Path Rules
 
 {%include tu-div.html%}
 Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
@@ -1977,7 +2024,7 @@ A path rule has no impact on the element it refers to. The only purpose of the p
 
 This section explains how to define items in FSH. The general pattern used to define an item in FSH is:
 
-* One declaration keyword statement
+* One declaration statement
 * A number of additional keyword statements
 * A number of rules
 
@@ -1994,19 +2041,19 @@ Extension: TreatmentIntent
 Description: "The purpose of the treatment."
 ```
 
-Declaration keywords, corresponding to the items defined by FSH, are as follows:
+Declarations, corresponding to the items defined by FSH, are as follows:
 
-| Declaration Keyword | Purpose | Data Type |
+| Declaration | Purpose | Data Type |
 |----------|---------|---------|
 | `Alias`| Declares an alias for a URL or OID | name or $name |
 | `CodeSystem` | Declares a new code system | name |
 | `Extension` | Declares a new extension | name |
 | `Instance` | Declares a new instance | id |
 | `Invariant` | Declares a new invariant | id |
-| `Logical` {%include tu.html%} | Declares a new logical model | name |
+| {%include tu.html%} `Logical` | Declares a new logical model | name |
 | `Mapping` | Declares a new mapping | id |
 | `Profile` | Declares a new profile | name |
-| `Resource` {%include tu.html%} | Declares a new resource | name |
+|  {%include tu.html%} `Resource` | Declares a new resource | name |
 | `RuleSet` | Declares a set of rules that can be reused | name |
 | `ValueSet` | Declares a new value set | name |
 {: .grid }
@@ -2030,19 +2077,19 @@ Additional keywords are as follows:
 
 > **Note:** Keywords are case-sensitive.
 
-The following table shows the relationship between declaration keywords and additional keywords.
+The following table shows the relationship between declarations and additional keywords.
 
-| Declaration \ Keyword                  | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
-|----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
+| Declaration   | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+|-------|-----|----------|-------|--------|------------|-------|--------|--------|-----|-------|--------|
 [Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
 [Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
 [Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Instance](#defining-instances)          |  x  |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
 [Invariant](#defining-invariants)        |  x  |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-[Logical](#defining-logical-models)  {%include tu.html%}    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+{%include tu.html%} [Logical](#defining-logical-models)  |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Mapping](#defining-mappings)            |  x  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
 [Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
-[Resource](#defining-resources)  {%include tu.html%}        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+{%include tu.html%}  [Resource](#defining-resources)    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
 [Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
 {: .grid }
