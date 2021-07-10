@@ -14,7 +14,7 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 
 * **Grammar**: [FSH has a formal grammar](reference.html#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/).
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive), and also include datatypes proposed for inclusion in FHIR R5 ([integer64](https://build.fhir.org/datatypes.html#primitive) and [CodeableReference](https://build.fhir.org/references.html#codeablereference)).
-* **Whitespace**: Repeated whitespace has meaning within FSH files when used for indenting rules and within string literals. In all other contexts, repeated whitespace is not meaningful. New lines are considered whitespace.
+* **Whitespace**: Repeated whitespace has meaning within FSH files only when used for [indenting rules](reference.html#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set an element named `active` to `true`:
 
@@ -29,28 +29,10 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
   * ^experimental = false
   ```
 
-  Another use of caret syntax is to specify slicing logic (in this case, slicing Observation.component):
-
-  ```
-  * component ^slicing.discriminator.type = #pattern
-  * component ^slicing.discriminator.path = "code"
-  * component ^slicing.rules = #open
-  * component ^slicing.description = "Slice based on the component.code pattern"
-  ```
-
-
 * **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and object identifiers (OIDs). Once defined anywhere in a FSH project, the alias can be used anywhere the URL or OID can be used. By convention, aliases often begin with $ character, for example:
 
   ```
   Alias: $SCT = http://snomed.info/sct
-  ```
-
-  However, these are also valid alias definitions:
-
-  ```
-  Alias: SCT = http://snomed.info/sct
-
-  Alias: lnc = http://loinc.org
   ```
 
 * **Coded Data Types**: A leading hash sign (#) (*aka* number sign, pound sign, or octothorp) is used in FSH to denote a code taken from a formal terminology. FSH provides special grammar for expressing FHIR's coded data types (code, Coding, CodeableConcept, and Quantity):
@@ -59,28 +41,10 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
 
   Only the `#{code}` portion is used to specify a code. For a Coding or CodeableConcept, the `CodeSystem` represents a reference to the controlled terminology that the code is taken from. The `"{display string}"` is optional.
 
-  Here is SNOMED-CT code 363346000 in this syntax:
-
-  ```
-  http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
-  ```
-
-  and here is the same code, using the alias `$SCT` in place of http://snomed.info/sct:
+  Here is SNOMED-CT code 363346000 in this syntax, using the previously-defined alias:
 
   ```
   $SCT#363346000 "Malignant neoplastic disease (disorder)"
-  ```
-
-  The code/Coding shorthand is frequently used in [assignment rules](reference.html#assignment-rules). FSH uses the `=` sign to express assignment. To set the bodySite in an instance of Condition:
-
-  ```
-  * bodySite = $SCT#87878005 "Left cardiac ventricular structure"
-  ```
- 
-  Another example is assigning the units of measure of a Quantity in a profile (using the alias UCUM for http://unitsofmeasure.org):
-
-  ```
-  * valueQuantity = UCUM#mm "millimeters"
   ```
 
 #### Defining Items in FSH
@@ -157,6 +121,10 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   * status = #arrived
   ```
 
+  ```
+  * valueQuantity = UCUM#mm "millimeters"
+  ```
+
 * **Binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR R4's binding strengths](http://hl7.org/fhir/R4/valueset-binding-strength.html) (example, preferred, extensible, or required). For example:
 
   ```
@@ -170,7 +138,7 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
 * **Cardinality rules** constrain the number of occurrences of an element, either both upper and lower bounds, or just upper or lower bound. For example:
 
   ```
-  * note 0..0
+  * note 1..5
   ```
 
   ```
@@ -198,19 +166,14 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   * component[diastolicBP].value[x] only Quantity
   * component[diastolicBP].valueQuantity = UCUM#mm[Hg]
   ```
-    The syntax for extensions is very similar. Here are two examples:
+
+  The syntax for extensions is very similar:
 
   ```
   * bodySite.extension contains laterality 0..1
   ```
-
-  ```
-  * extension contains
-      treatmentIntent 0..1 MS and
-      terminationReason 0..* MS
-  ```
   
-   When incorporating an extension defined by FHIR, an external IG, or using FSH's `Extension` keyword, a modified syntax that assigns local name to the extension is used:
+  When incorporating an extension defined by FHIR, an external IG, or using FSH's `Extension` keyword, a modified syntax that assigns local name to the extension is used:
 
   ```
   // Adding standard FHIR extensions in an AllergyIntolerance profile:
@@ -254,7 +217,7 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   * recorder only Reference(Practitioner or PractitionerRole)
   ```
 
-* **Value set rules** are used to include or exclude codes in value sets. These rules can be defined two ways:
+* **Value set rules** are used to select codes to populate value sets. These rules can be defined two ways:
 
   [Extensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules explicitly list the codes to be included and/or excluded, for example:
 
@@ -267,7 +230,7 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   [Intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules are used when code membership in the value set is defined algorithmically. For example, to include all codes from a code system:
 
   ```
-  * include codes from system $RXNORM
+  * include codes from system http://www.nlm.nih.gov/research/umls/rxnorm
   ```
 
   Similar rules can include or exclude all codes from another value set:

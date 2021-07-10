@@ -4,7 +4,7 @@ In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "S
 
 Portions of the specification designated as "Trial Use" are indicated by {%include tu.html%} and <span style="background-color: #fff5e6;">background shading</span>. Remaining unmarked sections contain normative content.
 
-### Notational Conventions
+### About this Specification
 
 The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
 
@@ -401,7 +401,7 @@ FSH represents Codings in the following ways:
 
 {CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
 
-As [indicated by italics](#notational-conventions), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by italics](#about-this-specification), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -2387,7 +2387,7 @@ If `Usage` is unspecified, the default is `#example`.
 
 ##### Defining Instances of Conformance Resources
 
-The FSH language is designed to support creation of StructureDefinitions for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](sushi.html) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
+The FSH language is designed to support creation of StructureDefinitions for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
 
 These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The CapabilityStatement is populated using assignment statements.
 
