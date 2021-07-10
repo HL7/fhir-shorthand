@@ -133,7 +133,9 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
   ```
   * communication MS SU
+  ```
 
+  ```
   * identifier and identifier.system and identifier.value MS
   ```
 
@@ -161,7 +163,9 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
   ```
   * include $SCT#54102005 "G1 grade (finding)"
+  ```
 
+  ```
   * exclude $SCT#12619005 "Tumor grade GX"
   ```
 
@@ -169,11 +173,17 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
   ```
   * include codes from system http://www.nlm.nih.gov/research/umls/rxnorm
+  ```
 
+  ```
   * include codes from valueset ConditionStatusTrendVS
+  ```
 
+  ```
   * include codes from system $SCT where concept is-a #123037004 "BodyStructure"
+  ```
 
+  ```
   * exclude codes from valueset EndStageRenalDiseaseVS
   ```
 
@@ -309,12 +319,5 @@ SUSHI can be run from the command line or invoked as part of the [HL7 FHIR IG Pu
 
 For more information on the use of SUSHI and the IG Publisher, see [the SUSHI Documentation](https://fshschool.org/docs/sushi/).
 
-### Issue Reporting and Contribution
-
-* FSH language issues and suggestions can be made [in the HL7 Jira](https://jira.hl7.org/browse/FHIR-27321?jql=project%3D%22FHIR%22%20AND%20Specification%20%3D%20%22Shorthand%20(FHIR)%20%5BFHIR-shorthand%5D%22%20). When filing FSH language or IG issues, use project="FHIR" AND Specification = "Shorthand (FHIR) [FHIR-shorthand]".
-
-* SUSHI bugs, issues, and suggestions can be made [here](https://github.com/FHIR/sushi/issues).
-
-* FSH examples for inclusion in FSH Online can be contributed [here](https://github.com/FSHSchool/FSHOnline-Examples).
 
 **[Continue to FSH Language Specification ->](reference.html)**

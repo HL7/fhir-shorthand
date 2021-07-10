@@ -43,7 +43,20 @@ The following material, useful for learning and applying FHIR Shorthand but not 
 1. [FSH Online](https://fshschool.org/FSHOnline/#/) -- A coding playground for FSH, an online environment that allows you to write FSH and convert it to FHIR artifacts, convert FHIR artifacts to FSH, access examples, and share FSH code with others.
 1. [FSH Finder](https://fshschool.org/fsh-finder/) -- A list of public GitHub repositories that contain FSH code, refreshed daily.
 
-Note that the [Language Reference](reference.html) is the formal specification, and if there is any conflict between that and any other written or programmatic materials and the Language Reference, the former is considered the source of truth.
+Note that the [Language Reference](reference.html) is the formal specification, and if there is any conflict between that and any other written or programmatic materials, the former is considered the source of truth.
+
+### Issue Reporting and Contributions
+
+* FSH language issues and suggestions can be made [in the HL7 Jira](https://jira.hl7.org/browse/FHIR-27321?jql=project%3D%22FHIR%22%20AND%20Specification%20%3D%20%22Shorthand%20(FHIR)%20%5BFHIR-shorthand%5D%22%20). When filing FSH language or IG issues, use project="FHIR" AND Specification = "Shorthand (FHIR) [FHIR-shorthand]".
+
+* SUSHI bugs, issues, and suggestions can be made [here](https://github.com/FHIR/sushi/issues).
+
+* GoFSH bugs, issues, and suggestions can be made [here](https://github.com/FHIR/GoFSH).
+
+* If your FSH project is not listed in FSH Finder, log an issue [here](https://github.com/FSHSchool/fsh-finder/issues) or submit a pull request on the list of organizations in [settings.yml](https://github.com/FSHSchool/fsh-finder/tree/v1.1).
+
+* FSH examples for inclusion in FSH Online can be contributed [here](https://github.com/FSHSchool/FSHOnline-Examples).
+
 
 ### Authors and Contributors
 
