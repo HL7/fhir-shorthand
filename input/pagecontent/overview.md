@@ -94,7 +94,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
   ```
 
   ```
-  * address.state from USPSTwoLetterAlphabeticCodes (extensible)
+  * address.state from USPSTwoLetterAlphabeticCodes (extensible)  // USPSTwoLetterAlphabeticCodes is a value set defined in US Core
   ```
 
 * **Cardinality rules** constrain the number of occurrences of an element, either both upper and lower bounds, or just upper or lower bound. For example:
