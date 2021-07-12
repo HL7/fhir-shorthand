@@ -71,10 +71,10 @@ The complete FSH language is described in the [FHIR Shorthand Language Reference
   * bodySite = SCT#87878005 "Left cardiac ventricular structure"
   ```
  
-  Another example is assigning the units of measure of a Quantity in a profile (using the alias UCUM for http://unitsofmeasure.org):
+  Another example is assigning the units of measure of a Quantity in a profile (using the alias $UCUM for http://unitsofmeasure.org):
 
   ```
-  * valueQuantity = UCUM#mm "millimeters"
+  * valueQuantity = $UCUM#mm "millimeters"
   ```
 
 #### Defining Items in FSH
@@ -158,7 +158,7 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   ```
 
   ```
-  * address.state from USPSTwoLetterAlphabeticCodes (extensible)
+  * address.state from USPSTwoLetterAlphabeticCodes (extensible)  // USPSTwoLetterAlphabeticCodes is a value set defined in US Core
   ```
 
 * **Cardinality rules** constrain the number of occurrences of an element, either both upper and lower bounds, or just upper or lower bound. For example:
@@ -187,10 +187,10 @@ The [formal syntax of rules](reference.html#rules-for-profiles-extensions-logica
   ```
   * component[systolicBP].code = http://loinc.org#8480-6 // Systolic blood pressure
   * component[systolicBP].value[x] only Quantity
-  * component[systolicBP].valueQuantity = UCUM#mm[Hg]
+  * component[systolicBP].valueQuantity = $UCUM#mm[Hg]
   * component[diastolicBP].code = http://loinc.org#8462-4 // Diastolic blood pressure
   * component[diastolicBP].value[x] only Quantity
-  * component[diastolicBP].valueQuantity = UCUM#mm[Hg]
+  * component[diastolicBP].valueQuantity = $UCUM#mm[Hg]
   ```
     The syntax for extensions is very similar. Here are two examples:
 
