@@ -11,8 +11,8 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
 #### Basics
 
 * **Grammar**: [FSH has a formal grammar](reference.html#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/).
-* **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive), and also include <span style="background-color: #fff5e6;">{%include tu-div.html%} datatypes proposed for inclusion in FHIR R5 ([integer64](https://build.fhir.org/datatypes.html#primitive) and [CodeableReference](https://build.fhir.org/references.html#codeablereference))</span>.
-* **Whitespace**: Repeated whitespace has meaning within FSH files only within string literals and when used for <span style="background-color: #fff5e6;">{%include tu-div.html%} [indenting rules](reference.html#indented-rules)</span>. In all other contexts, repeated whitespace is not meaningful.
+* **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive), and also include <span style="background-color: #fff5e6;">{%include tu.html%} datatypes proposed for inclusion in FHIR R5 ([integer64](https://build.fhir.org/datatypes.html#primitive) and [CodeableReference](https://build.fhir.org/references.html#codeablereference))</span>.
+* **Whitespace**: Repeated whitespace has meaning within FSH files only within string literals and when used for <span style="background-color: #fff5e6;">{%include tu.html%} [indenting rules](reference.html#indented-rules)</span>. In all other contexts, repeated whitespace is not meaningful.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set an element named `active` to `true`:
 
@@ -58,10 +58,10 @@ Keywords that declare new items (like the `Profile` keyword in the previous exam
 * Extension
 * Instance
 * Invariant
-* Logical ({%include tu.html%})
+* <span style="background-color: #fff5e6;">{%include tu.html%} Logical</span>
 * Mapping
 * Profile
-* Resource ({%include tu.html%})
+* <span style="background-color: #fff5e6;">{%include tu.html%} Resource</span>
 * RuleSet
 * ValueSet
 
@@ -313,7 +313,7 @@ Content written in FSH is stored in plain text files (ASCII or UTF-8) with the `
 * Group related items in one file, e.g., a profile together with its value sets, extensions, and examples
 * Create subdirectories for each type of item (profiles, extensions, value sets), with separate files for each item of the corresponding type inside those subdirectories.
 
-#### Running SUSHI
+#### Run SUSHI and/or HL7 IG Publisher
 
 Before running SUSHI, you must have a [configuration file named **sushi-config.yaml**](https://fshschool.org/docs/sushi/configuration/) (2) containing some basic information about the project, such as its canonical URL.
 
