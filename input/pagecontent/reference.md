@@ -1140,11 +1140,11 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
 
   ```
   * myCoding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
-  * myCoding = ICD10#C80.1
+  * myCoding = $ICD#C80.1
   ```
   Because the second assignment pre-clears the previous value of myCoding, the result is:
 
-  * myCoding.system is http://hl7.org/fhir/sid/icd-10-cm (assuming the ICD10 alias maps to this URL)
+  * myCoding.system is http://hl7.org/fhir/sid/icd-10-cm (assuming the $ICD alias maps to this URL)
   * myCoding.code is "C80.1"
   * myCoding.display **has no value**
   * myCoding.version **has no value**
@@ -1212,7 +1212,7 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
 * Add a second value to the array of Codings:
 
   ```
-  * myCodeableConcept.coding[1] = ICD10#C80.1 "Malignant (primary) neoplasm, unspecified"
+  * myCodeableConcept.coding[1] = $ICD#C80.1 "Malignant (primary) neoplasm, unspecified"
   ```
     
 * Set the top-level text:
@@ -1291,7 +1291,7 @@ A Quantity can also be bound to a value set:
   * valueQuantity = 155.0 http://terminology.hl7.org/CodeSystem/umls#C0439219 "pounds"
   ```
 
-* Set the units of the same valueQuantity to millimeters, without setting the value (assuming UCUM has been defined as an alias for http://unitsofmeasure.org):
+* Set the units of the same valueQuantity to millimeters, without setting the value (assuming $UCUM has been defined as an alias for http://unitsofmeasure.org):
 
   ```
   * valueQuantity = $UCUM#mm "millimeters"
@@ -1430,10 +1430,10 @@ The [binding rules defined in FHIR](https://www.hl7.org/fhir/R4/profiling.html#b
   * gender from http://hl7.org/fhir/ValueSet/administrative-gender
   ```
 
-* Bind to a value set using an alias name:
+* Bind to a value set using an alias name, assuming $AdGen is an alias for http://hl7.org/fhir/ValueSet/administrative-gender:
 
   ```
-  * address.state from USPSTwoLetterAlphabeticCodes (extensible)
+  * gender from $AdGen
   ```
 
 #### Cardinality Rules
@@ -2112,7 +2112,7 @@ Several things to note about aliases:
 * Alias statements stand alone, and cannot be mixed into rule sets of other items.
 * Aliases are global within a FSH project.
 
-In contrast with other names in FSH (for profiles, extensions, etc.), alias names can optionally begin with a dollar sign ($). If you define an alias with a leading $, you are protected against misspellings. For example, if you choose the alias name $RaceAndEthnicityCDC and accidentally type $RaceEthnicityCDC, implementations can easily detect there is no alias by that name. However, if the alias is RaceAndEthnicityCDC and the misspelling is RaceEthnicityCDC, implementations do not know an alias is intended, and will look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
+In contrast with other names in FSH (for profiles, extensions, etc.), alias names can optionally begin with a dollar sign ($). If you define an alias with a leading $, you are protected against misspellings. For example, if you choose the alias name $RaceAndEthnicityCDC and accidentally type $EthnicityCDC, implementations can easily detect there is no alias by that name. Without the $ sign, implementations do not know an alias is intended, and will look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
 
 **Examples:**
 
@@ -2245,10 +2245,10 @@ Since simple and complex extensions are mutually-exclusive, FSH implementations 
       text 1..1 MS
   * extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
   * extension[ombCategory].value[x] only Coding
-  * extension[ombCategory].valueCoding from OmbEthnicityCategories (required)
+  * extension[ombCategory].valueCoding from OmbEthnicityCategories (required) // OmbEthnicityCategories is a value set defined by US Core
   * extension[detailed] ^short = "Extended ethnicity codes"
   * extension[detailed].value[x] only Coding
-  * extension[detailed].valueCoding from DetailedEthnicity (required)
+  * extension[detailed].valueCoding from DetailedEthnicity (required) // DetailedEthnicity is defined in US Core
   * extension[text] ^short = "Ethnicity text"
   * extension[text].value[x] only string
   ```
@@ -2381,7 +2381,7 @@ If `Usage` is unspecified, the default is `#example`.
   * subject = Reference(mCODEPatientExample01)
   * onsetDateTime = "2019-04-01"
   * asserter = Reference(mCODEPractitionerExample01)
-  * stage.summary = AJCC#3C "IIIC"
+  * stage.summary = $AJCC#3C "IIIC"
   * stage.assessment = Reference(mCODETNMClinicalStageGroupExample01)
   ```
 
