@@ -2148,34 +2148,14 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 * #{code} "{display string}" "{definition string}"
 ```
 
-Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
-
-```
-* #{parent code} "{display string}" "{definition string}"
-* #{parent code} #{child code} "{display string}" "{definition string}"
-```
-
-#### Defining Code Systems using Indented Rules
-
-{%include tu-div.html%}
-Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
-
-```
-* #{parent code} "{display string}" "{definition string}"
-  * #{child code} "{display string}" "{definition string}"
-```
-
-Additional levels to any depth can be added in the same manner.
-
 **Notes:**
 
 * There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
 * The definition of the term, provided as the second string following the code, is RECOMMENDED but not required.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
-* When defining hierarchical codes, parent codes must be defined before their children.
 * Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
 
-**Examples:**
+**Example:**
 
 * Define a code system for yoga poses:
 
@@ -2185,16 +2165,39 @@ Additional levels to any depth can be added in the same manner.
   Title: "Yoga Code System"
   Description:  "A brief vocabulary of yoga-related terms."
   * #Sirsasana "Headstand"
-      "An inverted asana, also called mudra in classical hatha yoga, involves standing on one's head."
+      "An inverted pose that involves standing on one's head."
   * #Halasana "Plough Pose"
-      "Halasana or Plough pose is an inverted asana in hatha yoga and modern yoga as exercise. Its variations include Karnapidasana with the knees by the ears, and Supta Konasana with the feet wide apart."
+      "A pose from supine position, bringing legs up and over until the toes touch the ground behind the head."
   * #Matsyasana "Fish Pose"
-      "Matsyasana is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly considered a counterasana to Sarvangasana, or shoulder stand, specifically within the context of the Ashtanga Vinyasa Yoga Primary Series."
+      "A pose from supine position, arching the back and pressing the chest upwards."
   * #Bhujangasana "Cobra Pose"
-      "Bhujangasana, or Cobra Pose is a reclining back-bending asana in hatha yoga and modern yoga as exercise. It is commonly performed in a cycle of asanas in Surya Namaskar (Salute to the Sun) as an alternative to Urdhva Mukha Svanasana (Upwards Dog Pose)."
+      "A pose starting from prone position with hands pushing the shoulders upward, with legs and hips remaining on the ground."
   ```
 
-* Define a code system for anteater taxonomy:
+#### Defining Code Systems with Hierarchical Codes
+
+{%include tu-div.html%}
+Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
+
+```
+* #{parent code} "{display string}" "{definition string}"
+* #{parent code} #{child code} "{display string}" "{definition string}"
+```
+
+Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
+
+```
+* #{parent code} "{display string}" "{definition string}"
+  * #{child code} "{display string}" "{definition string}"
+```
+
+Additional levels to any depth can be added in the same manner.
+
+> **Note:** When defining hierarchical codes, parent codes must be defined before their children.
+
+**Examples:**
+
+  * Define a code system for anteater taxonomy with hierarchical codes:
 
   ```
   CodeSystem: AnteaterCS
@@ -2207,7 +2210,7 @@ Additional levels to any depth can be added in the same manner.
   * #Anteater #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
   ```
 
-* Define a code system for anteater taxonomy using indentation instead of explicit parents:
+  * Define the same code system using indentation instead of explicit parents:
 
   ```
   CodeSystem: AnteaterCS
