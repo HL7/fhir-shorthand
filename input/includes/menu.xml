@@ -3,7 +3,6 @@
   <li><a href="toc.html">Table of Contents</a></li>
   <li><a href="overview.html">Overview</a></li>
   <li><a href="reference.html">Language Reference</a></li>
-  <li><a href="sushi.html">SUSHI</a></li>
   <li class="dropdown">
     <a data-toggle="dropdown" href="#" class="dropdown-toggle">Downloads<b class="caret"> </b></a>
     <ul class="dropdown-menu">
