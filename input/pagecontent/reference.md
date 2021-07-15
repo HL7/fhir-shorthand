@@ -1,6 +1,6 @@
 {%include shaded-rows.html%}
 
-This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended as a reference, not a tutorial.
+This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended primarily as a reference, not a tutorial. For tutorials and additional documentation please go to [fshschool.org](https://fshschool.org).
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
@@ -14,16 +14,16 @@ Syntax expressions uses the following conventions:
 
 | Style | Explanation | Example |
 |:------------|:------|:---------|
+| **bold** | A directory path or file name | **example-1.fsh** |
 | `Code` | Code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
 | `{curly braces}` | An item to be substituted in a syntax expression | `{display string}` |
-| `<datatype>` | An element or path to an element with the given data type, to be substituted in the syntax expression | `<CodeableConcept>`
-| _italics_ | An optional item in a syntax expression | <code><i>"{string}"</i></code> |
-| ellipsis (...) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code>
-| **bold** | A directory path or file name | **example-1.fsh** |
-| vertical bar | A choice of items or data types in the syntax | `name|id|url` |
+| `<datatype>` | An element or path to an element with the given data type, to be substituted in the syntax expression | `<CodeableConcept>` |
+| ellipsis (`...`) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
+| <code><i>italics</i></code> | An optional item in a syntax expression | <code><i>{flag}</i></code> |
+| vertical bar (`|`) | A choice of items or data types in the syntax | `name|id|url` |
 {: .grid }
 
-**Examples:**
+**Syntax Expression Examples:**
 
 * A FSH rule to assign the value of a Quantity:
 
@@ -41,9 +41,7 @@ Syntax expressions uses the following conventions:
 
 * A rule to constrain an element to a certain data type or types:
 
-  ```
-  * <element> only {datatype1} or {datatype2} or {datatype3}...
-  ```
+  <pre><code>* &lt;element&gt; only {datatype1} <i>or {datatype2} or {datatype3}...</i></code></pre>
 
   A FSH statement following this pattern would be written as:
 
@@ -60,7 +58,7 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 | `<CodeableConcept>`  | An element or path to an element whose data type is CodeableConcept |  `category`  |
 | `<bindable>` | An element or path to an element whose data type allows it to be bound to a value set | `code` |
 | `{flag}`  | One of the valid [FSH flags](#flag-rules) |  `MS` |
-| `{flags}` | A sequence of 1 or more flags, separated by whitespace | `MS SU TU` |
+| <code><i>{flags}</i></code> or <code><i>{flag1} {flag2} {flag3}&nbsp;...</i></code> | An optional sequence of 1 or more flags, separated by whitespace | `MS SU` |
 | `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
 | `<element>` | Any element or path to any element | `method.type` |
 | `<Extension>` | An element or path to an element with data type Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
@@ -77,33 +75,27 @@ Here are some examples of curly braces and angle brackets used in this Guide:
 
 #### Projects
 
-The main organizing construct is a FSH project. Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
+A major organizing construct is the FSH project. Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
 
 #### Files
 
 Content in one FSH project MAY be contained in one or more FSH files. Files MUST use the **.fsh** extension. It is up to implementations to define the association between FSH files and FSH projects.
 
-> **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
-
-The items defined by FSH are: [Aliases](#defining-aliases), [Extensions](#defining-extensions), [Instances](#defining-instances), [Value Sets](#defining-value-sets), [Code Systems](#defining-code-systems), [Mappings](#defining-mappings), [Rule Sets](#defining-rule-sets), [Invariants](#defining-invariants), and [Profiles](#defining-profiles).
-
-{%include tu-div.html%}
-FSH also supports the definition of [Logical Models](#defining-logical-models) and [Resources](#defining-resources).
-</div>
-
 The allocation of items to files is not meaningful in FSH, and items from all files in one project can be considered globally pooled for the purposes of FSH. Items can appear in any order within **.fsh** files, and items can be moved inside and between **.fsh** files within the same project without affecting the interpretation of the content.
 
-#### Dependency on FHIR Version
+> **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
+
+#### FHIR Version
 
 Each FSH project MUST declare the version of FHIR it depends upon. The form of this declaration is outside the scope of the FSH specification, and SHOULD be managed by implementations. The FSH specification is not explicitly FHIR-version dependent, but implementations MAY support only a specific version or versions of FHIR.
 
 The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types).
 
 {%include tu-div.html%}
-FSH supports new data types in pre-release FHIR R5, but support for pre-release versions is still experimental. It is conceivable that future changes in FHIR could impact the FSH language specification, for example, if FHIR introduces additional data types.
+FSH supports new data types integer64 and CodeableReference in pre-release FHIR R5 on a trial use basis.
 </div>
 
-#### Dependency on other IGs
+#### External IGs
 
 Dependencies between a FSH project and other IGs MUST be declared. The form of this declaration is outside the scope of the FSH language and SHOULD be managed by implementations. In this Guide, these are referred to as "external" IGs.
 
@@ -123,49 +115,13 @@ Like other HL7 FHIR IGs, the version numbering of the FSH specification does not
 
 FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
-The following words are reserved only if followed by a colon (intervening white spaces allowed): `Alias`, `CodeSystem`, `Extension`, `Instance`, `Invariant`, `Logical` {%include tu.html%}, `Mapping`, `Profile`, `Resource` {%include tu.html%}, `RuleSet`, `ValueSet`, `Description`, `Expression`, `Id`, `InstanceOf`, `Parent`, `Severity`, `Source`, `Target`, `Title`, `Usage`, `XPath`.
+The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Logical:` {%include tu.html%}, `Mapping:`, `Profile:`, `Resource:` {%include tu.html%}, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`. To minimize potential confusion, it is best to treat these words as reserved.
 
-The following words are reserved only when enclosed in parentheses (intervening white spaces allowed): `example`, `preferred`, `extensible`, `required`, `exactly`.
-
-#### Primitives
-
-The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to code, id, oid, etc. refer to the primitive datatypes defined in FHIR.
-
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark.
-
-#### Names
-
-FSH item names follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names MUST be between 1 and 255 characters, begin with an uppercase letter, and contain only letters, numbers, and "_".
-
-By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
-
-Alias names MAY begin with `$`. Choosing alias names beginning with `$` allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
-
-#### Identifiers
-
-Items in FSH MAY have an identifier (id), typically specified using the [`Id` keyword](#defining-items). Each id MUST be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is best to use a unique id for every item in a FSH project.
-
-If no id is provided by a FSH author, implementations MAY create an id. It is RECOMMENDED that the id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the [FHIR id datatype](https://www.hl7.org/fhir/R4/datatypes.html#primitive)).
-
-#### Referring to Other Items
-
-FSH allows internal and external items to be referred to by name, id, or canonical URL.  
-
-A FSH item within the same project SHOULD be referred to by the name or id given in the item's [declaration statement](#defining-items). Core FHIR resources SHOULD be referred to by name, e.g., `Patient` or `Observation`. Items from external IGs and extensions, profiles, code systems, and value sets in core FHIR SHOULD be referred to by their canonical URLs, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal item takes precedence, and external item MUST be referred to by its canonical URL.
-
-#### Reference and Canonical Data Types
-
-FHIR resources can contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
-
-FSH represents Resource references using the syntax `Reference({Resource name|id|url})`. For elements that require a Reference data type, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
-
-Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name|id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+The following words are reserved, with or without white spaces inside the parentheses: `(example)`, `(preferred)`, `(extensible)`, `(required)`, `(exactly)`.
 
 #### Whitespace
 
-Repeated whitespace has meaning within FSH files only when [indenting rules](#indented-rules) and within string literals. In all other contexts, repeated whitespace is not meaningful. New lines are considered whitespace.
-
-Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning within FSH files only within string literals and when used for <span style="background-color: #fff5e6;">[indenting rules](reference.html#indented-rules) {%include tu.html%}</span>. In all other contexts, repeated whitespace is not meaningful. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -197,189 +153,19 @@ These comments can take up multiple lines.
 
 The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation. Implementations are free to modify the grammar to allow retention of comments.
 
-#### Rules
+#### Primitives
 
-The following restrictions apply to rules:
+The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to code, id, oid, etc. refer to the primitive datatypes defined in FHIR.
 
-* All rules in FSH begin with an asterisk (`*`) symbol followed by at least one space.
-* All rules must begin on a new line.
-* Rules cannot be preceded by non-whitespace characters on a line.
-* Whitespace characters prior to the initial asterisk (`*`) are meaningful. Rules must left-justified unless using [indented rule syntax](#indented-rules).
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark.
 
-##### Rule Order
+#### Reference and Canonical Data Types
 
-Rules SHALL be interpreted logically in a top-down manner. In many cases, the order of rules is flexible. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
+FHIR resources can contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
 
-Logical order dependencies can also arise. For example, in setting properties of a choice element (an element involving FHIR's `[x]` syntax), this order is problematic:
+FSH represents Resource references using the syntax `Reference({Resource name|id|url})`. For elements that require a Reference data type, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
 
-```
-* value[x].unit 0..0
-* value[x] only Quantity
-```
-
-but this order is acceptable:
-
-```
-* value[x] only Quantity
-* value[x].unit 0..0
-```
-
-In the first approach, `value[x]` is not yet known to be restricted to a Quantity, so `value[x].unit` is ambiguous. In the second approach, `value[x]` is known to be a Quantity, so `value[x].unit` is unambiguous.
-
-In cases with no explicit or logical restrictions on rule ordering, users MAY list rules in any order, bearing in mind that [insert rules](#insert-rules) expand into other rules that could have order constraints or logical ordering requirements.
-
-It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
-
-##### Indented Rules
-
-{%include tu-div.html%}
-
-Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by prepending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
-
-Two spaces represent one level of indentation. This is not configurable. Rules can only be indented in increments of two spaces. They can be un-indented by any multiple of two spaces.
-
-[Path rules](#path-rules) are rules containing only a path. They can be used to set a path as context for subsequent rules, without any other effect.
-
-Some types of rules, for example [flag rules](#flag-rules), can involve multiple paths. If multiple paths are specified in a rule that sets context for subsequent rules (such as a flag rule with multiple targets), the last path is used as context. When multiple paths are specified in an indented rule, context is applied to all paths. See examples below for details.
-
-There are some limitations on where indented rules can be used. Indented rules cannot appear below rules that do not specify a path. Rules that may omit an element path include top-level [obeys rules](#obeys-rules), top-level [caret paths](#caret-paths), [mapping rules](#defining-mappings), and [insert rules](#insert-rules).
-
-When indented rules are combined with [soft indexing](#soft-indexing) and a rule containing the increment operator `[+]` sets the path context for multiple subsequent rules, the index is only incremented once. On subsequent rules, the `[+]` is effectively replaced with `[=]`. See examples below for details.
-
-**Examples:**
-
-* Use indented rules to set cardinalities on name.family and name.given in a Patient resource:
-
-  ```
-  * name 1..1
-    * family 1..1
-    * given 1..1
-  ```
-
-  is equivalent to:
-
-  ```
-  * name 1..1
-  * name.family 1..1
-  * name.given 1..1
-  ```
-
-* Use a [path-only rule](#path-rules) to set context for subsequent rules:
-
-  ```
-  * name
-    * family 1..1
-    * given 1..1
-  ```
-
-  is equivalent to:
-
-  ```
-  * name.family 1..1
-  * name.given 1..1
-  ```
-
-* Example of multi-level indented rules:
-
-  ```
-  * name MS
-    * family MS
-      * id MS
-  ```
-
-  is equivalent to:
-
-  ```
-  * name MS
-  * name.family MS
-  * name.family.id MS
-  ```
-
-* Example of reducing the level of indentation to remove the context of a preceding rule:
-
-  ```
-  * item[0]
-    * linkId = "title"
-    * type = #display
-    * item[0]
-      * linkId = "uniquearv_number"
-      * type = #string
-    * item[1]
-      * linkId = "personal_info"
-      * type = #group
-  * status = #active
-  ```
-
-  is equivalent to:
-
-  ```
-  * item[0].linkId = "title"
-  * item[0].type = #display
-  * item[0].item[0].linkId = "uniquearv_number"
-  * item[0].item[0].type = #string
-  * item[0].item[1].linkId = "personal_info"
-  * item[0].item[1].type = #group
-  * status = #active
-  ```
-  
-* Example of multiple paths in an indented rule, with the context applied to all paths:
-
-  ```
-  * name
-    * family and given MS
-  ```
-
-  is equivalent to:
-
-  ```
-  * name.family and name.given MS
-  ```
-
-* Example of multiple paths in a rule that sets context for subsequent rules, where the last path sets the context:
-
-  ```
-  * birthDate and name MS
-    * family 1..1
-  ```
-
-  is equivalent to:
-
-  ```
-  * birthDate and name MS
-  * name.family 1..1
-  ```
-
-* Example of combining indented rules with [soft indexing](#soft-indexing), where a rule with the increment operator `[+]` is used to set the context:
-
-  ```
-  * item[+]
-    * linkId = "title"
-    * type = #display
-  ```
-
-  is **not** equivalent to:
-
-  ```
-  * item[+].linkId = "title"
-  * item[+].type = #display
-  ```
-
-  but is instead equivalent to:
-
-  ```
-  * item[+].linkId = "title"
-  * item[=].type = #display
-  ``` 
-
-
-* An error, attempting to use a rule without a path as context for an indented rule:
-  
-  ```
-  * obeys inv-1
-    * family 1..1
-  ```
-
-</div>
+Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name|id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
 #### Codes and Codings
 
@@ -397,13 +183,11 @@ or
 
 In general, the first syntax is sufficient. Quotes are only required when a code contains white space.
 
-FSH represents Codings in the following ways:
+FSH represents Codings as follows:
 
-<pre><code>{CodeSystem name|id|url}#{code} <i>"{display string}"</i>
+<pre><code>{CodeSystem name|id|url}<i>|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
 
-{CodeSystem name|id|url}|{version string}#{code} <i>"{display string}"</i></code></pre>
-
-As [indicated by italics](#notational-conventions), the `"{display string}"` is OPTIONAL. `CodeSystem` represents the controlled terminology the code is taken from. The bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by italics](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -477,6 +261,11 @@ Example:
   155.0 '[lb_av]' "lb"
   ```
 
+* Express the same weight in pounds, using NCI Thesaurus code for the units:
+
+  ```
+  155.0 http://ncithesaurus-stage.nci.nih.gov#C48531 "Pound"
+  ```
 
 #### Triple-Quoted Strings
 
@@ -510,29 +299,159 @@ When processing triple-quote strings, the following approach is used:
 * If any other line contains only whitespace, truncate it to zero characters.
 * For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
 
-#### Array Indexing
+#### Item Names
 
-##### Numerical Indexing
+Item names SHOULD follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names MUST be between 1 and 255 characters, begin with an uppercase letter, and contain only letters, numbers, and "_". By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
 
-Individual elements in an array are accessed with square brackets and an integer array index, with the index being placed between `[` and `]`. Arrays are referenced using 0-based indices, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc.
+Alias names MAY begin with `$`. Choosing alias names beginning with `$` allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
 
-Example of array indexing:
-```
-* name[0].given = "John"
-* name[1].given = "Richard"
-```
+#### Item Identifiers
 
-When referencing the first element of an array, the bracket notation can be omitted as an index of `[0]` is assumed:
+Item identifiers (ids) MUST be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is best to use a unique id for every item in a FSH project. If no id is provided by a FSH author, implementations MAY create an id. It is RECOMMENDED that the id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the [FHIR id datatype](https://www.hl7.org/fhir/R4/datatypes.html#primitive)).
 
-```
-* name.given = "John"
-* name[1].given = "Richard"
-```
+#### Referring to Items
 
-Arrays with missing elements (gaps in the sequence of indices) are not allowed. 
+FSH allows internal and external items to be referred to by name, id, or canonical URL.  
 
+A FSH item within the same project SHOULD be referred to by the name or id given in the item's [declaration statement](#declaration-statements). Core FHIR resources SHOULD be referred to by name, e.g., `Patient` or `Observation`. Items from external IGs and extensions, profiles, code systems, and value sets in core FHIR SHOULD be referred to by their canonical URLs, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal item takes precedence, and external item MUST be referred to by its canonical URL.
 
-##### Soft Indexing
+### FSH Paths
+
+FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Here are examples of things paths can refer to:
+
+* Top-level elements such as the code element of an Observation
+* Nested elements, such as the text element of the method element of an Observation
+* Elements in a list or array, such as the second element in the name array of a Patient resource
+* Individual data types of choice elements, such as onsetAge in onset[x]
+* Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
+* Metadata elements, such as the experimental and active elements of StructureDefinition (SD).
+* Properties of ElementDefinitions nested within an SD, such as the maxLength property of string elements
+
+In the following, the various types of path references are discussed. Some examples are presented using simple rules. For rule syntax and meaning, see [FSH Rules](#fsh-rules).
+
+#### Top-Level Paths
+
+The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path MUST NOT include the resource name. For example, when defining a profile of Observation, the path to Observation.code is just `code`.
+
+#### Nested Element Paths
+
+To refer to nested elements, the path lists the properties in order, separated by a dot (`.`). Since the resource can be inferred from the context, the resource name is not included in the path.
+
+**Example:**
+
+* The path to the lot number of a Medication:
+
+  ```
+  batch.lotNumber
+  ```
+
+* The path to the plain text representation of the site of a MedicationAdministration:
+
+  ```
+  dosage.site.text
+  ```
+
+#### Reference Paths
+
+Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure \| Observation). To address a specific resource or profile among the choices, append the target data type (represented by a name, id, or url) enclosed in square brackets to the path.
+
+> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that has data type Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
+
+**Examples:**
+
+* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/R4/diagnosticreport.html), whose acceptable data types are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
+
+  ```
+  performer[Practitioner]
+  ```
+
+* Path to the Reference(US Core Organization) option of the performer element in [US Core DiagnosticReport Lab](http://hl7.org/fhir/us/core/StructureDefinition-us-core-diagnosticreport-lab.html), using the canonical URL:
+
+  ```
+  performer[http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization]
+  ```
+
+* The same path, using the id of the US Core Organization profile instead of its canonical URL:
+
+  ```
+  performer[us-core-organization]
+  ```
+
+#### Data Type Choice [x] Paths
+
+FHIR represents an element with a choice of data types using the style foo[x]. For example, Condition.onset[x] can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](http://hl7.org/fhir/R4/formats.html#choice), to refer to one of these data types, replace the `[x]` with the data type name, capitalizing the first letter. For Condition.onset[x], the individual choices are onsetDateTime, onsetAge, onsetPeriod, onsetRange, and onsetString.
+
+> **Note:** foo[x] choices are NOT represented as foo[dateTime], foo[Period], etc.
+
+**Examples:**
+
+* The path to the string data type of Observation.value[x]:
+
+  ```
+  valueString
+  ```
+
+* The path to the Reference data type choice of Medication.ingredient.item[x]:
+
+  ```
+  ingredient.itemReference
+  ```
+
+* Given that the itemReference has further choices Reference(Substance) or Reference(Medication), the path to the Reference(Substance) choice:
+
+  ```
+  ingredient.itemReference[Substance]
+  ```
+
+#### Array Paths using Numerical Indices
+
+FSH uses square-bracketed numerical indices to address elements in arrays. Arrays are referenced using 0-based indices, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc. Arrays with missing elements (gaps in the sequence of indices) are not allowed. If the index is omitted, the first element of the array (`[0]`) is assumed.
+
+Numerical indices apply only to arrays that can be populated with concrete values, e.g., in instances or in metadata elements of SDs. Numerical indices SHOULD NOT be used in Profiles, because arrays in profiles are not populated _per se_, and only contain constraints on the values that can appear in instances. The exception is setting metadata properties of SDs using [caret paths](#caret-paths), since these are actually concrete properties of an SD instance. The preferred way to reference arrays in Profiles is by [slice name](#sliced-array-paths).
+
+**Examples:**
+
+* Path to first element in Patient.name field:
+
+  ```
+  name[0]
+  ```
+
+* Path to a patient's second given name in the first name field:
+
+  ```
+  name[0].given[1]
+  ```
+
+* An equivalent path expression, since the zero index is assumed when omitted:
+
+  ```
+  name.given[1]
+  ```
+
+#### Sliced Array Paths
+
+FHIR allows lists in profiles and extensions to be compartmentalized into sublists called "slices". To address a specific slice, follow the path with square brackets containing the slice name. Since slices are most often unordered, slice names rather than array indices SHOULD be used. Note that slice names (like other [FSH item names](#item-names)) cannot be purely numerical, so slice names cannot be confused with indices.
+
+To access a slice of a slice (a resliced array), follow the first pair of brackets with a second pair containing the resliced slice name.
+
+**Examples:**
+
+* Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
+
+  ```
+  component[respirationScore].code
+  ```
+
+* Paths to the codes representing the one minute and five minute respiration scores, assuming the Apgar respiration component has been resliced:
+
+  ```
+  component[respirationScore][oneMinuteScore].code
+
+  component[respirationScore][fiveMinuteScore].code
+  ```
+
+##### Array Paths using Soft Indexing
 
 Array elements can also be referenced using soft indexing. In soft indexing sequences, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numeric indexes to be mixed.
 
@@ -542,8 +461,7 @@ Another use case for soft indexing involves [parameterized rule sets](#parameter
 
 For nested arrays, several sequences of soft indexes can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` is at index [0]. (An analogy is using a keyboard's Enter key to advance to a new line that initially has no characters.)
 
-
-**Examples:**
+-**Examples:**
 
 * Assign multiple names in an instance of a Patient using soft indices:
 
@@ -595,169 +513,6 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
   * name[2].family = "Smith"
   ```
 
-* Another example of soft indexing combined with indented paths, illustrating that when a rule containing `[+]` is used to set the context of multiple subsequent rules, the index is incremented only once:
-
-  ```
-  * rest.resource[+]
-    * type = #Organization
-    * interaction[+].code = #create
-    * interaction[+].code = #update
-    * interaction[+].code = #delete
-  * rest.resource[+]
-    * type = #Condition
-    * interaction[+].code = #create
-    * interaction[+].code = #update
-  ```
-
-  is equivalent to:
-
-  ```
-  * rest.resource[+].type = #Organization
-  * rest.resource[=].interaction[+].code = #create
-  * rest.resource[=].interaction[+].code = #update
-  * rest.resource[=].interaction[+].code = #delete
-  * rest.resource[+].type = #Condition
-  * rest.resource[=].interaction[+].code = #create
-  * rest.resource[=].interaction[+].code = #update
-  ```
-
-  is equivalent to:
-
-  ```
-  * rest.resource[0].type = #Organization
-  * rest.resource[0].interaction[0].code = #create
-  * rest.resource[0].interaction[1].code = #update
-  * rest.resource[0].interaction[2].code = #delete
-  * rest.resource[1].type = #Condition
-  * rest.resource[1].interaction[0].code = #create
-  * rest.resource[1].interaction[1].code = #update
-  ```
-
-### FSH Paths
-
-FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Here are examples of things paths can refer to:
-
-* Top-level elements such as Observation.code
-* Nested elements, such as Observation.method.text
-* Elements in a list or array, such as Patient.name[2]
-* Individual data types of choice elements, such as onsetAge in onset[x]
-* Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
-* Elements in an SD, like active and experimental
-* Properties of ElementDefinitions nested within an SD, such as the maxLength property of string elements
-
-In the following, the various types of path references are discussed.
-
-#### Top-Level Paths
-
-The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path MUST NOT include the resource name. For example, when defining a profile of Observation, the path to Observation.code is just `code`.
-
-#### Nested Element Paths
-
-To refer to nested elements, the path lists the properties in order, separated by a dot (`.`). Since the resource can be inferred from the context, the resource name is not included in the path.
-
-**Example:**
-
-* The path to the text property of Observation.method:
-
-  ```
-  method.text
-  ```
-
-#### Array Property Paths
-
-FSH uses indices to address array elements. The array index is represented using square brackets containing the 0-based index of the item (e.g., first item is `[0]`, second item is `[1]`, etc.).
-
-If the index is omitted, the first element of the array (`[0]`) is assumed.
-
-**Examples:**
-
-* Path to a patient's second given name in the first name field:
-
-  ```
-  name[0].given[1]
-  ```
-
-* Equivalent path expression, since the zero index is assumed when omitted:
-
-  ```
-  name.given[1]
-  ```
-
-* Example of nested path involving array indexes:
-
-  ```
-  * group[0].stratifier.component.criteria.language = #text/cql
-  * group[0].stratifier.component.criteria.expression = "Radiology Prostate Cancer Significance"
-  * group[1].stratifier.component.code = #measure-observation
-  * group[1].stratifier.component.criteria.language = #text/cql
-  * group[1].stratifier.component.criteria.expression = "Pathology Gleason Score"
-  ```
-
-* Same as previous example, using indented paths:
-
-  ```
-  * group[0].stratifier.component.criteria
-    * language = #text/cql
-    * expression = "Radiology Prostate Cancer Significance"
-  * group[1].stratifier.component
-    * code = #measure-observation
-    * criteria
-      * language = #text/cql
-      * expression = "Pathology Gleason Score"
-  ```
-
-#### Reference Paths
-
-Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure \| Observation). To address a specific resource or profile among the choices, the path to the element appends the target data type (represented by a name, id, or url) enclosed in square brackets.
-
-> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that has data type Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
-
-**Examples:**
-
-* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/R4/diagnosticreport.html), whose acceptable data types are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
-
-  ```
-  performer[Practitioner]
-  ```
-
-* Path to the Reference(US Core Organization) option of the performer element in [US Core DiagnosticReport Lab](http://hl7.org/fhir/us/core/StructureDefinition-us-core-diagnosticreport-lab.html), using the canonical URL:
-
-  ```
-  performer[http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization]
-  ```
-
-* The same path, using the id of the US Core Organization profile instead of its canonical URL:
-
-  ```
-  performer[us-core-organization]
-  ```
-
-#### Data Type Choice [x] Paths
-
-FHIR represents an element with a choice of data types using the style foo[x]. For example, Condition.onset[x] can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](http://hl7.org/fhir/R4/formats.html#choice), to refer to one of these data types, replace the `[x]` with the data type name, capitalizing the first letter. For Condition.onset[x], the individual choices are onsetDateTime, onsetAge, onsetPeriod, onsetRange, and onsetString.
-
-> **Note:** foo[x] choices are NOT represented as foo[dateTime], foo[Period], etc.
-
-**Examples:**
-
-* The path to the string data type of Observation.value[x]:
-
-  ```
-  valueString
-  ```
-
-* The path to the Reference data type choice of Medication.ingredient.item[x]:
-
-  ```
-  ingredient.itemReference
-  ```
-
-* Given that the itemReference has further choices Reference(Substance) or Reference(Medication), the path to the Reference(Substance) choice:
-
-  ```
-  ingredient.itemReference[Substance]
-  ```
-
 #### Extension Paths
 
 Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions can be identified by that slice name, or the extension's URL.
@@ -804,31 +559,9 @@ For locally-defined extensions, using the slice name is the simplest choice. For
   extension[ethnicity].extension[detailed][1].valueCoding
   ```
 
-#### Sliced Array Paths
-
-FHIR allows lists to be compartmentalized into sublists called "slices".  To address a specific slice, follow the path with square brackets containing the slice name. Since slices are most often unordered, slice names rather than array indices SHOULD be used. Note that slice names (like other [FSH names](#names)) cannot be purely numerical, so slice names cannot be confused with indices.
-
-To access a slice of a slice (a resliced array), follow the first pair of brackets with a second pair containing the resliced slice name.
-
-**Examples:**
-
-* Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
-
-  ```
-  component[respirationScore].code
-  ```
-
-* Paths to the codes representing the one minute and five minute respiration scores, assuming the Apgar respiration component has been resliced:
-
-  ```
-  component[respirationScore][oneMinuteScore].code
-
-  component[respirationScore][fiveMinuteScore].code
-  ```
-
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#defining-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
+FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#fsh-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
 For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -870,9 +603,241 @@ A special case of the ElementDefinition path is setting properties of the first 
   . ^short
   ```
 
-##### Caret Paths for Code Metadata
+### FSH Items
+
+A central purpose of FSH is to create and define items that represent and can be translated into FHIR artifacts. The general pattern used to define an item in FSH is:
+
+* Declaration statement
+* Additional keyword statements
+* Rules
+
+#### Declaration Statements
+
+Declaration statements follow the syntax:
+
+```
+{declaration}: {value}
+```
+
+A declaration is always the first statement in an item definition. The value represents the item's name or identifier (id), depending on the item's type, as shown in the table below:
+
+<div class = "shadedRow">
+
+| Declaration | Purpose | Data Type |
+|----------|---------|---------|
+| [Alias](#defining-aliases)| Declares an alias for a URL or OID | name or $name |
+| [CodeSystem](#defining-code-systems) | Declares a new code system | name |
+| [Extension](#defining-extensions) | Declares a new extension | name |
+| [Instance](#defining-instances) | Declares a new instance | id |
+| [Invariant](#defining-invariants) | Declares a new invariant | id |
+| {%include tu.html%} [Logical] | Declares a new logical model | name |
+| [Mapping](#defining-mappings) | Declares a new mapping | id |
+| [Profile](#defining-profiles) | Declares a new profile | name |
+| {%include tu.html%} [Resource](#defining-resources) | Declares a new resource | name |
+| [RuleSet](#defining-rule-sets) | Declares a set of rules that can be reused | name |
+| [ValueSet](#defining-value-sets) | Declares a new value set | name |
+{: .grid }
+
+</div>
+
+#### Keyword Statements
+
+Keyword statements directly follow the declaration and precede any rules. Keyword statements follow the syntax:
+
+```
+{keyword}: {value}
+```
+
+The following keywords (case-sensitive) are defined:
+
+| Keyword | Description | Data Type |
+|----------|---------|---------|
+| `Description` | A human-readable description | string or markdown |
+| `Expression` | The FHIR path expression in an invariant | FHIRPath string |
+| `Id` | An identifier for an item | id |
+| `InstanceOf` | The profile or resource an instance instantiates | name or id or url |
+| `Parent` | The base class for a profile or extension | name or id or url |
+| `Severity` | Whether violation of an invariant represents an error or a warning | code |
+| `Source` | The profile the mapping applies to | name |
+| `Target` | The standard being mapped to | uri |
+| `Title` | A short human-readable name | string |
+| `Usage` | Specifies how an instance is intended to be used in the IG | code |
+| `XPath` | The XPath in an invariant | XPath string |
+{: .grid }
+
+In the above, `name` refers to a valid [item name](#item-names) and `id` to a [item identifier](#item-identifiers).
+
+Depending on the type of item being defined, keywords may be required, suggested, optional, or prohibited. The following table shows the relationship between declarations and keywords:
+
+<div class = "shadedRow">
+
+| Declaration                             | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+|----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
+[Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
+[Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
+[Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
+[Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
+{%include tu.html%} [Logical](#defining-logical-models)  |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Mapping](#defining-mappings)            |     |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
+[Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
+{%include tu.html%}  [Resource](#defining-resources)    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
+[Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
+{: .grid }
+
+</div>
+
+**KEY:**  R = REQUIRED, S = suggested (SHOULD be used), O = OPTIONAL, blank = prohibited
+
+#### Applicability of Rule Types to Item Types
+
+A number of rules follow the keyword statements. The following table shows the applicability of rule types to item types. [Aliases](#defining-aliases) and [Invariants](#defining-invariants) are not shown since these items do not permit rules:
+
+<div class = "shadedRow3">
+
+| Rule Type | [Profile](#defining-profiles) | [Extension](#defining-extensions) | {%include tu.html%} [Logical](#defining-logical-models)/[Resource](#defining-resources) | [Instance](#defining-instances) | [Code System](#defining-code-systems) | [Mapping](#defining-mappings) | [Value Set](#defining-value-sets) |
+|--------------------------------------------------------------------|---------|-----------|--------------------|----------|-------------|-----------|---------|
+| {%include tu.html%} [Add Element](#addelement-rules)              |         |           | Y                  |          |             |           |         |
+| [Assignment](#assignment-rules)                                    | Y       | Y         | C                  | Y        | C           |           | C       |
+| [Binding](#binding-rules)                                          | Y       | Y         | A                  |          |             |           |         |
+| [Cardinality](#cardinality-rules)                                  | Y       | Y         | A                  |          |             |           |         |
+| [Contains (inline extensions)](#contains-rules-for-extensions)     |         | Y         |                    |          |             |           |         |
+| [Contains (standalone extensions)](#contains-rules-for-extensions) | Y       | Y         |                    |          |             |           |         |
+| [Contains (slicing)](#contains-rules-for-slicing)                  | Y       | Y         |                    |          |             |           |         |
+| [Flag](#flag-rules)                                                | Y       | Y         | L                  |          |             |           |         |
+| [Insert](#insert-rules)                                            | Y       | Y         | Y                  | Y        | Y           | Y         | Y       |
+| [Obeys](#obeys-rules)                                              | Y       | Y         | Y                  |          |             |           |         |
+| {%include tu.html%} [Path](#path-rules)                            | Y       | Y         | Y                  | Y        |             |           | Y       |
+| [Type](#type-rules)                                                | Y       | Y         | A                  |          |             |           |         |
+| [CodeSystem Rules](#defining-code-systems)                         |         |           |                    |          | Y           |           |         |
+| [Mapping Rules](#defining-mappings)                                |         |           |                    |          |             | Y         |         |
+| [ValueSet Rules](#defining-value-sets)                             |         |           |                    |          |             |           | Y       |
+{: .grid }
+
+</div>
+
+Key:
+Y = Rule type can be used with item, L = All flags except must support (MS) are supported, C = Assignments can be applied only to caret paths, A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
+
+#### Defining Aliases
+
+Aliases allow the user to replace a lengthy url or oid with a short string. Aliases are for readability only, and do not change the meaning of rules. Typical uses of aliases are to represent code systems and canonical URLs.
+
+Alias definitions follow this syntax:
+
+```
+Alias: {Alias name} = {url or oid}
+```
+
+Several things to note about aliases:
+
+* Aliases do not permit additional keywords or rules.
+* Alias statements stand alone, and cannot be mixed into rule sets of other items.
+* Aliases are global within a FSH project.
+
+In contrast with other names in FSH (for profiles, extensions, etc.), alias names optionally begin with a dollar sign ($). If you define an alias with a leading $, implementations can more easily check for misspellings. For example, if you choose the alias name $RaceAndEthnicity and accidentally type $RaceEthnicity, implementations can easily detect there is no alias by that name. Without the $ sign, implementations are forced to look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
+
+**Examples:**
+
+  ```
+  Alias: $SCT = http://snomed.info/sct
+ 
+  Alias: $RaceAndEthnicityCDC = urn:oid:2.16.840.1.113883.6.238
+ 
+  Alias: obs-cat = http://terminology.hl7.org/CodeSystem/observation-category
+  ```
+
+#### Defining Code Systems
+
+It is sometimes necessary to define new codes inside an IG that are not drawn from an external code system (aka _local codes_). Local codes MUST be defined in the context of a code system.
+
+> **Note:** Defining local codes is not best practice, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it might be necessary to define them -- at least temporarily -- as local codes.
+
+Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
+
+```
+* #{code} "{display string}" "{definition string}"
+```
+
+**Notes:**
+
+* There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
+* The definition of the term, provided as the second string following the code, is RECOMMENDED but not required.
+* Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
+* Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
+* [Assignment rules](#assignment-rules) can be applied to CodeSystems, but only in the context of caret paths (to set metadata).
+
+**Example:**
+
+* Define a code system for yoga poses:
+
+  ```
+  CodeSystem:  YogaCS
+  Id: yoga-code-system
+  Title: "Yoga Code System"
+  Description:  "A brief vocabulary of yoga-related terms."
+  * #Sirsasana "Headstand"
+      "An pose that involves standing on one's head."
+  * #Halasana "Plough Pose"
+      "A pose from supine position, bringing legs up and over until the toes touch the ground behind the head."
+  * #Matsyasana "Fish Pose"
+      "A pose from supine position, arching the back and pressing the chest upwards."
+  * #Bhujangasana "Cobra Pose"
+      "A pose starting from prone position with hands pushing the shoulders upward, with legs and hips remaining on the ground."
+  ```
+
+##### Defining Code Systems with Hierarchical Codes
 
 {%include tu-div.html%}
+Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
+
+```
+* #{parent code} "{display string}" "{definition string}"
+* #{parent code} #{child code} "{display string}" "{definition string}"
+```
+
+Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
+
+```
+* #{parent code} "{display string}" "{definition string}"
+  * #{child code} "{display string}" "{definition string}"
+```
+
+Additional levels to any depth can be added in the same manner.
+
+> **Note:** When defining hierarchical codes, parent codes must be defined before their children.
+
+**Examples:**
+
+  * Define a code system for anteater taxonomy with hierarchical codes:
+
+  ```
+  CodeSystem: AnteaterCS
+  Id: anteater-code-system
+  Title: "Anteater Code System"
+  * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
+  * #Anteater #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
+  * #Anteater #Tamandua #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
+  * #Anteater #Tamandua #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
+  * #Anteater #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
+  ```
+
+  * Define the same code system using indentation instead of explicit parents:
+
+  ```
+  CodeSystem: AnteaterCS
+  Id: anteater-code-system
+  Title: "Anteater Code System"
+  * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
+    * #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
+      * #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
+      * #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
+    * #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
+  ```
+
+##### Code Metadata
+
 Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
 
 For a path to a code within a code system, use this syntax:
@@ -883,10 +848,10 @@ For a path to a code within a code system, use this syntax:
 
 **Examples:**
 
-* The path to the designation value of a [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html) top-level code:
+* The set the to the designation use of the code `#active` in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
 
   ```
-  #active ^designation[0].value
+  * #active ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
   ```
 
 * The path to the property code of #recurrence code, a child of the #active code in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
@@ -894,51 +859,823 @@ For a path to a code within a code system, use this syntax:
   ```
   #active #recurrence ^property[0].code
   ```
+
 </div>
 
-### Rules for Profiles, Extensions, Logical Models, Resources, and Instances
+#### Defining Extensions
 
-> * For rules applicable to code systems, see [Defining Code Systems](#defining-code-systems)
-> * For rules applicable to mappings, see [Defining Mappings](#defining-mappings).
-> * For rules applicable to value sets, see [Defining Value Sets](#defining-value-sets).
+Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension).
 
-Rules are the mechanism for setting cardinality, applying Must Support flags, defining extensions, creating slices, and more. All rules begin with an asterisk:
+All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a simple extension, the value[x] element should be constrained. To create a complex extension, the extension array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
+
+Since simple and complex extensions are mutually-exclusive, FSH implementations SHOULD set the value[x] cardinality to 0..0 if sub-extensions are specified, set extension cardinality to 0..0 if constraints are applied to value[x], and signal an error if value[x] and extensions are simultaneously specified.
+
+Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Contains (standalone extensions)](#contains-rules-for-extensions), [Contains (inline extensions)](#contains-rules-for-extensions)[Contains (slicing)](#contains-rules-for-slicing), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
+
+**Examples:**
+
+* How the [US Core BirthSex extension](http://hl7.org/fhir/us/core/StructureDefinition-us-core-birthsex.html) (a simple extension) would be defined in FSH:
+
+  ```
+  Extension: USCoreBirthSexExtension
+  Id:   us-core-birthsex
+  Title:  "US Core Birth Sex Extension"
+  Description: "A code classifying the person's sex assigned at birth as specified by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."
+  // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
+  * value[x] only code
+  * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
+  ```
+
+* How [US Core Ethnicity extension](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-ethnicity.html) (a complex extension with inline sub-extensions) would be defined in FSH:
+
+  ```
+  Extension:      USCoreEthnicityExtension
+  Id:             us-core-ethnicity
+  Title:          "US Core Ethnicity Extension"
+  Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. The ethnicity codes used to represent these concepts are based upon the [CDC ethnicity and Ethnicity Code Set Version 1.0](http://www.cdc.gov/phin/resources/vocabulary/index.html) which includes over 900 concepts for representing race and ethnicity of which 43 reference ethnicity.  The ethnicity concepts are grouped by and pre-mapped to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."
+  * extension contains
+      ombCategory 0..1 MS and
+      detailed 0..* and
+      text 1..1 MS
+  * extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
+  * extension[ombCategory].value[x] only Coding
+  * extension[ombCategory].valueCoding from OmbEthnicityCategories (required) // OmbEthnicityCategories is a value set defined by US Core
+  * extension[detailed] ^short = "Extended ethnicity codes"
+  * extension[detailed].value[x] only Coding
+  * extension[detailed].valueCoding from DetailedEthnicity (required) // DetailedEthnicity is defined in US Core
+  * extension[text] ^short = "Ethnicity text"
+  * extension[text].value[x] only string
+  ```
+
+* Define an extension with an explicit parent, constraining the US Core Birth Sex extension for US states that do not recognize non-binary birth sex:
+
+  ```
+  Extension:      BinaryBirthSexExtension
+  Parent:         USCoreBirthSexExtension
+  Id:             binary-birthsex
+  Title:          "Binary Birth Sex Extension"
+  Description:    "As of 2019, certain US states only allow M or F on birth certificates."
+  * valueCode from BinaryBirthSexValueSet (required)
+  ```
+
+#### Defining Instances
+
+Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name, id, or url for any profile, resource, or complex data type defined internally or externally.
+
+The `Usage` keyword specifies how the instance should be presented in the IG:
+
+* `Usage: #example` (default) means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
+* `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
+* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array.
+
+Instances inherit values from their SD (i.e. assigned codes, extensions) if those values are required. Assignment rules are used to set additional values.
+
+Rules types that apply to Instances are: [Assignment](#assignment-rules), [Insert](#insert-rules), and [Path](#path-rules). No other rule types are allowed.
+
+**Examples:**
+
+* Define an example instance of US Core Patient, with name, birthDate, race, and ethnicity:
+
+  ```
+  Instance:  EveAnyperson
+  InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  Title:   "Eve Anyperson"
+  Usage:  #example
+  * name.given = "Eve"
+  * name.family = "Anyperson"
+  * birthDate = 1960-04-25
+  * extension[us-core-race].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2106-3 "White"
+  * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2186-5 "Non Hispanic or Latino"
+  ```
+
+* Define an instance of US Core Practitioner, with name and NPI, meant to be inlined in a composition:
+
+  ```
+  Instance:   DrDavidAnydoc
+  InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  Title:  "Dr. David Anydoc"
+  Usage:  #inline
+  * name.family = "Anydoc"
+  * name.given = "David"
+  * name.suffix = "MD"
+  * identifier[NPI].value = "8274017284"
+  ```
+
+  This instance would be incorporated into a DomainResource with a statement such as:
+
+  ```
+  *  contained[0] = DrDavidAnydoc
+  ```
+
+* Define an `#inline` Patient instance, and then use that instance in a Condition resource, inlining it as a contained resource:
+
+  ```
+  Instance: EveAnyperson
+  InstanceOf: Patient
+  Usage: #inline // #inline means this instance should not be exported as a separate example
+  * name.given[0] = "Eve"
+  * name.family = "Anyperson"
+
+  Instance: EvesCondition
+  InstanceOf: Condition
+  Usage: #example
+  Description: "An example that uses contained"
+  * contained[0] = EveAnyperson // this inlines EveAnyperson definition here
+  * code = http://foo.org#bar
+  * subject = Reference(EveAnyperson) // this automatically creates the relative reference correctly
+  ```
+  This results in:
+
+  ```json
+  {
+    "resourceType": "Condition",
+    "id": "EvesCondition",
+    "contained": [
+      {
+        "resourceType": "Patient",
+        "id": "EveAnyperson",
+        "name": [
+          {
+            "given": [
+              "Eve"
+            ],
+            "family": "Anyperson"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "coding": [
+        {
+          "code": "bar",
+          "system": "http://foo.org"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "#EveAnyperson"
+    }
+  }
+  ```
+
+* Define an instance of PrimaryCancerCondition, using many available features:
+
+  ```
+  Instance: mCODEPrimaryCancerConditionExample01
+  InstanceOf: PrimaryCancerCondition
+  Description: "mCODE Example for Primary Cancer Condition"
+  Usage: #example
+  * id = "mCODEPrimaryCancerConditionExample01"
+  * clinicalStatus = $ClinStatus#active "Active"
+  * verificationStatus = $VerStatus#confirmed "Confirmed"
+  * code = $SCT#254637007 "Non-small cell lung cancer (disorder)"
+  * extension[HistologyMorphologyBehavior].valueCodeableConcept = $SCT#35917007 "Adenocarcinoma"
+  * bodySite = $SCT#39607008 "Lung structure (body structure)"
+  * bodySite.extension[Laterality].valueCodeableConcept = $SCT#7771000 "Left (qualifier value)"
+  * subject = Reference(mCODEPatientExample01)
+  * onsetDateTime = "2019-04-01"
+  * asserter = Reference(mCODEPractitionerExample01)
+  * stage.summary = $AJCC#3C "IIIC"
+  * stage.assessment = Reference(mCODETNMClinicalStageGroupExample01)
+  ```
+
+##### Defining Instances of Other Conformance Resources
+
+The FSH language is designed to support creation of SDs for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
+
+These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The CapabilityStatement is populated using assignment statements.
+
+#### Defining Invariants
+
+Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, {%include tu.html%}logical models, or {%include tu.html%} resources via [obeys rules](#obeys-rules).
+
+| Keyword | Usage | Corresponding element in ElementDefinition | Data Type | Required |
+|-------|------------|--------------|-------|----|
+| Invariant | Identifier for the invariant | constraint.key | id | yes |
+| Description | Human description of constraint | constraint.human | string  | yes |
+| Expression | FHIRPath expression of constraint | constraint.expression | FHIRPath string | no |
+| Severity | Either #error or #warning, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/R4/valueset-constraint-severity.html) | constraint.severity | code | yes |
+| XPath | XPath expression of constraint | constraint.xpath | XPath string | no |
+{: .grid }
+
+**Example:**
+
+* Define an invariant found in US Core using FSH:
+
+  ```
+  Invariant:  us-core-8
+  Description: "Patient.name.given or Patient.name.family or both SHALL be present"
+  Expression: "family.exists() or given.exists()"
+  Severity:   #error
+  XPath:      "f:given or f:family"
+  ```
+
+#### Defining Logical Models
+
+{%include tu-div.html%}
+
+Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](http://hl7.org/fhir/R4/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
+
+Logical models are defined in FSH using the keyword `Logical`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
+
+If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements should use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Authors may also specify another logical model, a resource, or a complex datatype as a logical model's parent.
+
+Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#addelement-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
+
+* Binding, cardinality, and type rules can be applied only to elements defined by the item (not inherited elements).
+* Flag rules cannot include MS flags.
+* Assignment rules can only be used to set certain metadata via caret rules.  
+
+The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R4/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
+
+**Example:**
+
+* Define a logical model for a human and their family members:
+
+  ```
+  Logical:        Human
+  Title:          "Human Being"
+  Description:    "A member of the Homo sapien species."
+  * name 0..* SU HumanName "Name(s) of the human" "The names by which the human is or has been known"
+  * birthDate 0..1 SU dateTime "The date of birth, if known"
+      "The date on which the person was born. Approximations may be used if exact date is unknown."
+  * deceased[x] 0..1 SU boolean or dateTime or Age "Indication if the human is deceased"
+      "An indication if the human has died. Boolean should not be used if date or age at death are known."
+  * family 0..1 BackboneElement "Family" "Members of the human's immediate family."
+    * mother 0..2 FamilyMember "Mother" "Biological mother, current adoptive mother, or both."
+    * father 0..2 FamilyMember "Father" "Biological father, current adoptive father, or both."
+    * sibling 0..* FamilyMember "Sibling" "Other children of the human's mother and/or father."
+
+  Logical:        FamilyMember
+  Title:          "Family Member"
+  Description:    "A reference to a human's family member."
+  * human 1..1 SU Reference(Human) "Family member" "A reference to the human family member"
+  * biological 0..1 boolean "Biologically related?"
+      "A family member may not be biologically related due to adoption, blended families, etc."
+  ```
+</div>
+
+#### Defining Mappings
+
+[Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
+
+To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required, and `Title` and `Description` are OPTIONAL.
+
+| Keyword | Usage | SD element |
+|-------|------------|--------------|
+| Mapping | Appears first and provides a unique name for the mapping | n/a |
+| Source | The name or id of the profile the mapping applies to | n/a |
+| Target | The URL, URI, or OID for the specification being mapped to | mapping.uri |
+| Id | An internal identifier for the target specification | mapping.identity |
+| Title | A human-readable name for the target specification | mapping.name  |
+| Description | Additional information such as version notes, issues, or scope limitations. | mapping.comment |
+{: .grid }
+
+The mappings themselves are declared in rules with the following syntaxes:
+
+<pre><code>* -> "{map string}" <i>"{comment string}" #{mime-type code}</i>
+
+* &lt;element&gt; -> "{map string}" <i>"{comment string}" #{mime-type code}</i>
+</code></pre>
+
+The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target. No other types of rules are allowed.
+
+The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/R4/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code MUST come from FHIR's [MimeType value set](https://www.hl7.org/fhir/R4/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
+
+>**Note:** Unlike setting the mapping.map directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
+
+A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rules) applied to it.
+
+**Examples:**
+
+* Map the entire profile to a Patient item in another specification:
+
+  ```
+  * -> "Patient" "This profile maps to Patient in Argonaut"
+  ```
+
+* Map the identifier.value element from one IG to another:
+
+  ```
+  * identifier.value -> "Patient.identifier.value"
+  ```
+
+* Define a map between USCorePatient and Argonaut:
+
+  ```
+  Mapping:  USCorePatientToArgonaut
+  Source:   USCorePatient
+  Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
+  Title:    "Argonaut DSTU2"
+  Id:       argonaut-dq-dstu2
+  * -> "Patient"
+  * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
+  * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
+  * extension[USCoreBirthSexExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
+  * identifier -> "Patient.identifier"
+  * identifier.system -> "Patient.identifier.system"
+  * identifier.value -> "Patient.identifier.value"
+  ```
+
+#### Defining Profiles
+
+To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are OPTIONAL. Rules defining the profile follow immediately after the keyword section.
+
+Rules types that apply to Profiles are: [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Contains (standalone extensions)](#contains-rules-for-extensions), [Contains (slicing)](#contains-rules-for-slicing), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). Note that [inline extensions](#contains-rules-for-extensions) are not permitted in profiles.
+
+**Example:**
+
+* Define a profile for exposure to a pathogen:
+
+  ```
+  Profile:        KnownExposureSetting
+  Parent:         Observation
+  Id:             known-exposure-setting
+  Title:          "Known Exposure Setting Profile"
+  Description:    "The setting where an individual was exposed to a contagion."
+  * code = $LNC#81267-7 // Setting of exposure to illness
+  * value[x] only CodeableConcept
+  * valueCodeableConcept from https://loinc.org/vs/LL3991-8 (extensible)
+  ```
+
+#### Defining Resources
+
+{%include tu-div.html%}
+
+Custom resources allow authors to define new structures representing arbitrary content. Resources are defined similar to [logical models](#defining-logical-models), but are intended to support data exchange using FHIR's RESTful API mechanisms. The capability to define resources may be used by HL7 to define core FHIR resources or by other organizations to define proprietary resources for their own internal use. Potentially, they also can be used to represent and maintain existing core FHIR resources.
+
+Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
+
+Resources are defined in FSH using the keyword `Resource`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
+
+Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html) and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource. If no `Parent` is specified, DomainResource is used as the default parent.
+
+Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#addelement-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
+
+* Binding, cardinality, and type rules can be applied only to elements defined by the item (not inherited elements).
+* Flag rules cannot include MS flags.
+* Assignment rules can only be used to set certain metadata via caret rules.  
+
+The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R4/elementdefinition.html#interpretation). Assignments MUST NOT set elements that are prohibited in that table. For example, the table indicates that setting maxLength or mustSupport is prohibited.
+
+**Example:**
+
+* Define a resource representing an emergency vehicle, using line spacing to make the definition easier to read:
+
+  ```
+  Resource:       EmergencyVehicle
+  Title:          "Emergency Vehicle"
+  Description:    "An emergency vehicle, such as an ambulance or fire truck."
+  * identifier 0..* SU Identifier
+      "Identifier(s) of the vehicle"
+      "Vehicle identifiers may include VINs and serial numbers."
+  * make 0..1 SU Coding
+      "The vehicle make"
+      "The vehicle make, e.g., Chevrolet."
+  * make from EmergencyVehicleMake (extensible)
+  * model 0..1 SU Coding
+      "The vehicle model"
+      "The vehicle model, e.g., G4500."
+  * model from EmergencyVehicleModel (extensible)
+  * year 0..1 SU positiveInt
+      "Year of manufacture"
+      "The year the vehicle was manufactured"
+  * servicePeriod 0..1 Period
+      "When the vehicle was in service"
+      "Start date and end date (if applicable) when the vehicle operated."
+  * operator 0..* Reference(Organization or Practitioner or PractitionerRole)
+      "The operator"
+      "The organization or persons repsonsible for operating the vehicle"
+  * device 0..* Reference(Device)
+      "Devices on board"
+      "Devices on board the vehicle."
+  ```
+</div>
+
+#### Defining Rule Sets
+
+Rule sets provide the ability to define a group rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. If rules within a rule set are [indented](#indented-rules), the full paths are resolved from the indentation before the rule set is applied. Therefore, the indentation used in the rule set will not have any meaning in the target.
+
+All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
+
+##### Simple Rule Sets
+
+Simple rule sets are defined by using the keyword `RuleSet` and do not include parameters:
+
+```
+RuleSet: {name}
+{rule1}
+{rule2}
+// More rules
+```
+
+**Example:**
+
+* Define a rule set for metadata to be used in multiple profiles:
+
+  ```
+  RuleSet: RuleSet1
+  * ^status = #draft
+  * ^experimental = true
+  * ^publisher = "Elbonian Medical Society"
+  ```
+
+##### Parameterized Rule Sets
+
+{%include tu-div.html%}
+
+Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
+
+<pre><code>RuleSet: {name}(parameter1<i>, parameter2, parameter3...</i>)
+{rule1}
+{rule2}
+// More rules
+</code></pre>
+
+Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. In the rules, the places where substitutions should occur are indicated by enclosing a parameter name in curly braces `{}`. Spaces are allowed inside the curly braces: `{parameter1}` and `{ parameter1 }` are both valid substitution sequences for a parameter named `parameter1`. A parameter may occur more than once in the rule set definition.
+
+**Examples:**
+
+* Define a rule set that contains the syntax for setting the context of an extension. This example also demonstrates the use of [soft indexing](#array-paths-using-soft-indexing). Note that the curly brackets in this example are literal, not syntax expressions:
+
+  ```
+  RuleSet: SetContext(path)
+  * ^context[+].type = #element
+  * ^context[=].expression = "{path}"
+  ```
+
+  This rule set can be applied to indicate an extension can only be applied to certain resources, for example:
+
+  ```
+  * insert SetContext(Procedure)
+  * insert SetContext(MedicationRequest)
+  * insert SetContext(MedicationAdministration)
+  ```
+
+  When the rule set is expanded, it translates to:
+
+  ```
+  * ^context[+].type = #element
+  * ^context[=].expression = "Procedure"
+  * ^context[+].type = #element
+  * ^context[=].expression = "MedicationRequest"
+  * ^context[+].type = #element
+  * ^context[=].expression = "MedicationAdministration"
+  ```
+
+  Interpreting the soft indices, this is equivalent to:
+
+   ```
+  * ^context[0].type = #element
+  * ^context[0].expression = "Procedure"
+  * ^context[1].type = #element
+  * ^context[1].expression = "MedicationRequest"
+  * ^context[2].type = #element
+  * ^context[2].expression = "MedicationAdministration"
+  ``` 
+
+* Define a parameterized rule set to define items in a Questionnaire:
+
+  ```
+  RuleSet: Question(linkId, text, type, repeats)
+  * item[+].linkId = "{linkId}"
+  * item[=].text = "{text}"
+  * item[=].type = #{type}
+  * item[=].repeats = {repeats}
+  ```
+
+  Apply the rule set to populate a Questionnaire:
+
+  ```
+  Instance: TravelRecord
+  InstanceOf: Questionnaire
+  // skip some
+  * insert Question(tr1, When did you leave?, date, false)
+  * insert Question(tr2, When did you return?, date, false)
+  * insert Question(tr3, What countries did you visit?, code, true)
+  ```
+</div>
+
+#### Defining Value Sets
+
+A value set is a group of coded values representing acceptable values for a FHIR element whose data type is code, Coding, CodeableConcept, Quantity, string, or url.
+
+Value sets are defined using the declarative keyword `ValueSet`, with OPTIONAL keywords `Id`, `Title` and `Description`.
+
+Codes MUST be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
+
+The contents of a value set are defined by a set of rules. There are four types of rules to populate a value set:
+
+> **Note:** In value set rules, the word `include` is OPTIONAL.
+
+| To include... | Syntax | Example |
+|-------|---------|----------|
+| A single code | `* include {Coding}` | `* include $SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* $SCT#961000205106 "Wearing street clothes, no shoes"`|
+| All codes from another value set | `* include codes from valueset {ValueSet name|id|url}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
+| All codes from a code system | `* include codes from system {CodeSystem name|id|url}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
+| Selected codes from a code system (filters are code system dependent) | `* include codes from system {CodeSystem name|id|url} where {filter} and {filter} and ...` | `* include codes from system $SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system $SCT where concept is-a #254837009`|
+{: .grid }
+
+See [below](#filters) for discussion of filters.
+
+Analogous rules can be used to leave out certain codes, with the word `exclude` replacing the word `include`:
+
+| To exclude... | Syntax | Example |
+|-------|---------|----------|
+| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"` |
+| All codes from another value set | `* exclude codes from valueset {ValueSet name|id|url}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
+| All codes from a code system | `* exclude codes from system {CodeSystem name|id|url}` | `* exclude codes from system http://snomed.info/sct` |
+| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {CodeSystem name|id|url} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
+{: .grid }
+
+In addition, [assignment rules](#assignment-rules) can be applied to value sets, but only in the context of caret paths (to set metadata).
+
+##### Filters
+
+A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](http://hl7.org/fhir/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
+
+**Examples** 
+
+* Define a value set using [extensional](https://www.hl7.org/fhir/R4/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
+
+  ```
+  ValueSet: BodyWeightPreconditionVS
+  Title: "Body weight preconditions."
+  Description:  "Circumstances for body weight measurement."
+  * $SCT#971000205103 "Wearing street clothes with shoes"
+  * $SCT#961000205106 "Wearing street clothes, no shoes"
+  * $SCT#951000205108 "Wearing underwear or less"
+  ```
+
+* Define a value set using [intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules:
+
+  ```
+  ValueSet: HistologyMorphologyBehaviorVS
+  Id: mcode-histology-morphology-behavior-vs
+  Title: "Histology Morphology Behavior Value Set"
+  Description: "Codes representing the structure, arrangement, and behavioral characteristics of malignant neoplasms, and cancer cells.
+  * include codes from system $SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
+  * include codes from system $SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
+  * include codes from system $SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #450893003 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)"
+  * exclude codes from system $SCT where concept is-a #703548001 "Endometrioid intraepithelial neoplasia (morphologic abnormality)"
+  ```
+
+> **Note:** Intensional and extensional forms can be used together in a single value set definition.
+
+### FSH Rules
+
+Rules are the mechanism in FSH for populating and constraining items by setting cardinality, applying flags, binding value sets, defining extensions, and more. Rules in FSH are distinguished by a leading asterisk (`*`) symbol:
 
 ```
 * {rule statement}
 ```
 
-The following table is a summary of the rules that may apply to profiles, extensions, logical models, resources, and instances.
+The following restrictions apply to rules:
+
+* All rules must begin on a new line.
+* The asterisk symbol must be followed by at least one space.
+* The asterisk cannot be preceded by non-whitespace characters on a line.
+* The asterisk cannot be preceded by whitespace characters, <span style="background-color: #fff5e6;">unless using [indented rule syntax](#indented-rules).</span>
+
+The following table is a summary of the rule syntax.
 
 <div class = "shadedRow2">
 
 | Rule Type | Syntax |
 | --- | --- |
-| {%include tu.html%} AddElement [1]  |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
-| Assignment [2][3] |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
-| Binding |`* <bindable> from {ValueSet name|id|url}` <br/> `* <bindable> from {ValueSet name|id|url} ({strength})`|
-| Cardinality | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
-| Contains (for inline extensions) [3]| <code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i> </code>  <br/> <code>* &lt;Extension&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code> |
-| Contains (for standalone extensions) [3]| <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
-| Contains (for slicing) [3]| <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
-| Flag | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
-| Insert | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
-| {%include tu.html%} Insert with Path Context | <code>* &lt;element&gt; insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code>|
-| Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
-| {%include tu.html%} Path  | `* <element>`|
-| Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
+| {%include tu.html%} [Add Element](#addelement-rules) |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
+| [Assignment](#assignment-rules) |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
+| [Binding](#binding-rules) |`* <bindable> from {ValueSet name|id|url}` <br/> `* <bindable> from {ValueSet name|id|url} ({strength})`|
+| [Cardinality](#cardinality-rules) | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
+| [Contains (inline extensions)](#contains-rules-for-extensions) | <code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i> </code>  <br/> <code>* &lt;Extension&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code> |
+| [Contains (standalone extensions)](#contains-rules-for-extensions) | <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
+| [Contains (slicing)](#contains-rules-for-slicing) | <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
+| [Flag](#flag-rules) | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
+| [Insert](#insert-rules) | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
+| {%include tu.html%} [Insert with Path Context](#inserting-rule-sets-with-path-context) | <code>* &lt;element&gt; insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code>|
+| [Obeys](#obeys-rules) | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
+| {%include tu.html%} [Path](#path-rules)  | `* <element>`|
+| [Type](#type-rules) | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 {: .grid }
 
 </div>
 
-**Notes:**
+##### Rule Order
 
-1. The AddElement rule is only applicable to logical models and resources
-2. The Assignment rule is the only type of rule applicable to instances
-3. The Assignment and Contains rules are not applicable to logical models or resources
-4. Any type of rule (including ValueSet, CodeSystem, and Mapping rules) can be included in a rule set
+Rules SHALL be interpreted logically in a top-down manner. In many cases, the order of rules is flexible. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
 
-#### AddElement Rules 
+Logical order dependencies can also arise. For example, in setting properties of a choice element (an element involving FHIR's `[x]` syntax), this order is problematic:
+
+```
+* value[x].unit 0..0
+* value[x] only Quantity
+```
+
+but this order is acceptable:
+
+```
+* value[x] only Quantity
+* value[x].unit 0..0
+```
+
+In the first approach, `value[x]` is not yet known to be restricted to a Quantity, so `value[x].unit` is ambiguous. In the second approach, `value[x]` is known to be a Quantity, so `value[x].unit` is unambiguous.
+
+In cases with no explicit or logical restrictions on rule ordering, users MAY list rules in any order, bearing in mind that [insert rules](#insert-rules) expand into other rules that could have order constraints or logical ordering requirements.
+
+It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
+
+#### Indented Rules
+
+{%include tu-div.html%}
+
+Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by pre-pending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
+
+Two spaces represent one level of indentation. This is not configurable. Rules can only be indented in increments of two spaces. They can be un-indented by any multiple of two spaces.
+
+[Path rules](#path-rules) are rules containing only a path. They can be used to set a path as context for subsequent rules, without any other effect.
+
+Some types of rules, for example [flag rules](#flag-rules), can involve multiple paths. If multiple paths are specified in a rule that sets context for subsequent rules (such as a flag rule with multiple targets), the last path is used as context. When multiple paths are specified in an indented rule, context is applied to all paths. See examples below for details.
+
+There are some limitations on where indented rules can be used. Indented rules cannot appear below rules that do not specify a path. Rules that may omit an element path include top-level [obeys rules](#obeys-rules), top-level [caret paths](#caret-paths), [mapping rules](#defining-mappings), and [insert rules](#insert-rules).
+
+When indented rules are combined with [soft indexing](#array-paths-using-soft-indexing) and a rule containing the increment operator `[+]` sets the path context for multiple subsequent rules, the index is only incremented once. On subsequent rules, the `[+]` is effectively replaced with `[=]`. See examples below for details.
+
+**Examples:**
+
+* Use indented rules to set cardinalities on name.family and name.given in a Patient resource:
+
+  ```
+  * name 1..1
+    * family 1..1
+    * given 1..1
+  ```
+
+  is equivalent to:
+
+  ```
+  * name 1..1
+  * name.family 1..1
+  * name.given 1..1
+  ```
+
+* Use a [path-only rule](#path-rules) to set context for subsequent rules:
+
+  ```
+  * name
+    * family 1..1
+    * given 1..1
+  ```
+
+  is equivalent to:
+
+  ```
+  * name.family 1..1
+  * name.given 1..1
+  ```
+
+* Example of multi-level indented rules:
+
+  ```
+  * name MS
+    * family MS
+      * id MS
+  ```
+
+  is equivalent to:
+
+  ```
+  * name MS
+  * name.family MS
+  * name.family.id MS
+  ```
+
+* Example of multiple paths in an indented rule, with the context applied to all paths:
+
+  ```
+  * name
+    * family and given MS
+  ```
+
+  is equivalent to:
+
+  ```
+  * name.family and name.given MS
+  ```
+
+* Example of multiple paths in a rule that sets context for subsequent rules, where the last path sets the context:
+
+  ```
+  * birthDate and name MS
+    * family 1..1
+  ```
+
+  is equivalent to:
+
+  ```
+  * birthDate and name MS
+  * name.family 1..1
+  ```
+
+* Example of reducing the level of indentation to remove the context of a preceding rule:
+
+  ```
+  * item[0]
+    * linkId = "title"
+    * type = #display
+    * item[0]
+      * linkId = "uniquearv_number"
+      * type = #string
+    * item[1]
+      * linkId = "personal_info"
+      * type = #group
+  * status = #active
+  ```
+
+  is equivalent to:
+
+  ```
+  * item[0].linkId = "title"
+  * item[0].type = #display
+  * item[0].item[0].linkId = "uniquearv_number"
+  * item[0].item[0].type = #string
+  * item[0].item[1].linkId = "personal_info"
+  * item[0].item[1].type = #group
+  * status = #active
+  ```
+
+* Example of combining soft indexing with [indented rules](#indented-rules), where a rule with the increment operator `[+]` is used to set the context:
+
+  ```
+  * item[+]
+    * linkId = "title"
+    * type = #display
+  ```
+
+  is **not** equivalent to:
+
+  ```
+  * item[+].linkId = "title"
+  * item[+].type = #display
+  ```
+
+  but is instead equivalent to:
+
+  ```
+  * item[+].linkId = "title"
+  * item[=].type = #display
+  ``` 
+
+* Another example of soft indexing combined with indented paths, illustrating that when a rule containing `[+]` is used to set the context of multiple subsequent rules, the index is incremented only once:
+
+  ```
+  * rest.resource[+]
+    * type = #Organization
+    * interaction[+].code = #create
+    * interaction[+].code = #update
+    * interaction[+].code = #delete
+  * rest.resource[+]
+    * type = #Condition
+    * interaction[+].code = #create
+    * interaction[+].code = #update
+  ```
+
+  is equivalent to:
+
+  ```
+  * rest.resource[+].type = #Organization
+  * rest.resource[=].interaction[+].code = #create
+  * rest.resource[=].interaction[+].code = #update
+  * rest.resource[=].interaction[+].code = #delete
+  * rest.resource[+].type = #Condition
+  * rest.resource[=].interaction[+].code = #create
+  * rest.resource[=].interaction[+].code = #update
+  ```
+
+  is equivalent to:
+
+  ```
+  * rest.resource[0].type = #Organization
+  * rest.resource[0].interaction[0].code = #create
+  * rest.resource[0].interaction[1].code = #update
+  * rest.resource[0].interaction[2].code = #delete
+  * rest.resource[1].type = #Condition
+  * rest.resource[1].interaction[0].code = #create
+  * rest.resource[1].interaction[1].code = #update
+  ```
+
+* An error, attempting to use a rule without a path as context for an indented rule, since "obeys" does not imply a path:
+  
+  ```
+  * obeys inv-1
+    * family 1..1
+  ```
+
+</div>
+
+#### AddElement Rules
 
 {%include tu-div.html%}
 Authors define logical models and resources by adding new elements to their definitions. The AddElement rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
@@ -989,7 +1726,7 @@ Note the following:
   ```
   * preferredName[x] 0..1 string or HumanName "The person's preferred name" """
       Sometimes patients prefer to be called by a name other than their _formal_ name. This may be:
-      * their nick name
+      * their nickname
       * their middle name
       * their maiden name
       * etc.
@@ -1023,22 +1760,20 @@ Assignment rules follow this syntax:
 
 The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side MUST align with the data type of the final element in the path. An assignment replaces any existing value assigned to the element.
 
-##### Assignments in Instances versus Profiles
+##### Assigning Values versus Specifying Requirements
 
 Assignment rules have two different interpretations, depending on context:
 
-* In an *instance*, an assignment rule sets the value of the target element.
-* In a *profile or extension*, an assignment rule establishes a pattern that must be satisfied by instances conforming to that profile or extension. By default, the pattern is considered "open" in the sense that the element in question might have content in addition to the prescribed value, such as alternative codes in a CodeableConcept or an extension.
+* In an instance and in SD metadata (accessed via a [caret paths](#caret-paths)), assignment rules set the **value** of the target element.
+* In profiles and extension definitions, assignment rule establish **requirements** for instances conforming to the profile or extension. The requirement is expressed as a pattern of values that must be present in the instance.
 
-If conformance to a profile requires a precise match to the specified value (which is rare), then the following syntax can be used:
+By default, the pattern is considered "open" in the sense that the element in question might have content in addition to the prescribed value, such as alternative codes in a CodeableConcept or an extension. If conformance to a profile requires a precise match to the pattern (which is rare), then the following syntax can be used:
 
 ```
 * <element> = {value} (exactly)
 ```
 
-Adding `(exactly)` indicates that conformance to the profile requires a precise match to the specified values. No additional values or extensions are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles.
-
-> **Note:** The `(exactly)` modifier does not apply to instances.
+Adding `(exactly)` indicates no additional values or extensions are allowed on the element. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles. The `(exactly)` modifier SHOULD NOT be used when assigning values to instances or SD metadata, and if present, will be ignored.
 
 Consider the interpretation of the following assignment statements in instances and profiles, assuming the code element is a CodeableConcept and $LNC is an alias for http://loinc.org:
 
@@ -1054,13 +1789,13 @@ Consider the interpretation of the following assignment statements in instances 
 * code = $LNC#69548-6 (exactly)
 ```
 
-In the context of an instance:
+In the context of an instance or SD metadata (via caret paths):
 
 * The first statement sets the system and code, leaving the display empty.
 * The second statement sets the system, code, and display text.
-* The third statement has the same meaning as the first statement.
+* The third statement is the same as the first, since `(exactly)` is meaningless in this context.
 
-In the context of a profile:
+In the context of a profile or an extension definition:
 
 * The first statement signals that an instance must have the system http://loinc.org and the code 69548-6 to pass validation.
 * The second statement says that an instance must have the system http://loinc.org, the code 69548-6, *and* the display text "Genetic variant assessment" to pass validation.
@@ -1378,7 +2113,7 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
   * entry[0].resource = EveAnyperson
   ```
 
-##### Assignments with the CodeableReference Data Type 
+##### Assignments with the CodeableReference Data Type
 
 {%include tu-div.html%}
 The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) data type was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. Making use of CodeableReference involves no new FSH syntax.
@@ -1504,7 +2239,7 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
 
 Extensions are created by adding elements to extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
 
-Extensions are specified using the `contains` keyword. There are two types of extensions, standalone and inline:
+Extensions are specified using the `contains` keyword. There are two types of extensions, *standalone* and *inline*:
 
 * Standalone extensions have their own SDs, and can be reused. They can be defined internally (in the same FSH project), or externally in core FHIR or an external IG. Only standalone extensions can be used directly in profiles.
 * Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions can only be used to specify sub-extensions in a complex (nested) extension.
@@ -1513,7 +2248,7 @@ The syntaxes to specify standalone extension(s) are:
 
 <pre><code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i>
 
-* &lt;Extension&gt; contains 
+* &lt;Extension&gt; contains
     {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and 
     {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> and
     {Extension3 name|id|url} named {name3} {card3} <i>{flags3}</i> ...
@@ -1523,7 +2258,7 @@ The syntaxes to define inline extension(s) are:
 
 <pre><code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i>
 
-* &lt;Extension&gt; contains 
+* &lt;Extension&gt; contains
     {name1} {card1} <i>{flags1}</i> and
     {name2} {card2} <i>{flags2}</i> and
     {name3} {card3} <i>{flags3}</i> ...</code></pre>
@@ -1843,7 +2578,7 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   // more rules
   ```
 
-##### Inserting Rule Sets with a Path Context
+##### Inserting Rule Sets with Path Context
 
 {%include tu-div.html%}
 Rule sets can be inserted in the context of a path. The context is specified by giving the path prior to the insert rule:
@@ -2026,751 +2761,7 @@ A path rule has no impact on the element it refers to. The only purpose of the p
   ```
 </div>
 
-### Defining Items
 
-This section explains how to define items in FSH. The general pattern used to define an item in FSH is:
-
-* One declaration statement
-* A number of additional keyword statements
-* A number of rules
-
-Keyword statements follow the syntax:
-
-```
-{Keyword}: {value}
-```
-
-For example:
-
-```
-Extension: TreatmentIntent
-Description: "The purpose of the treatment."
-```
-
-Declarations, corresponding to the items defined by FSH, are as follows:
-
-<div class = "shadedRow">
-
-| Declaration | Purpose | Data Type |
-|----------|---------|---------|
-| `Alias`| Declares an alias for a URL or OID | name or $name |
-| `CodeSystem` | Declares a new code system | name |
-| `Extension` | Declares a new extension | name |
-| `Instance` | Declares a new instance | id |
-| `Invariant` | Declares a new invariant | id |
-| {%include tu.html%} `Logical` | Declares a new logical model | name |
-| `Mapping` | Declares a new mapping | id |
-| `Profile` | Declares a new profile | name |
-|  {%include tu.html%} `Resource` | Declares a new resource | name |
-| `RuleSet` | Declares a set of rules that can be reused | name |
-| `ValueSet` | Declares a new value set | name |
-{: .grid }
-</div>
-
-Additional keywords are as follows:
-
-| Additional Keyword | Purpose | Data Type |
-|----------|---------|---------|
-| `Description` | Provides a human-readable description | string or markdown |
-| `Expression` | The FHIR path expression in an invariant | FHIRPath string |
-| `Id` | An identifier for an item | id |
-| `InstanceOf` | The profile or resource an instance instantiates | name or id or url |
-| `Parent` | Specifies the base class for a profile or extension | name or id or url |
-| `Severity` | whether violation of an invariant represents an error or a warning | code |
-| `Source` | The profile the mapping applies to | name |
-| `Target` | The standard being mapped to | uri |
-| `Title` | Short human-readable name | string |
-| `Usage` | Specifies how an instance is intended to be used in the IG | code |
-| `XPath` | the XPath in an invariant | XPath string |
-{: .grid }
-
-> **Note:** Keywords are case-sensitive.
-
-The following table shows the relationship between declarations and additional keywords.
-
-<div class = "shadedRow">
-
-| Declaration   | Id  | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
-|-------|-----|----------|-------|--------|------------|-------|--------|--------|-----|-------|--------|
-[Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
-[Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
-[Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Instance](#defining-instances)          |  x  |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
-[Invariant](#defining-invariants)        |  x  |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-{%include tu.html%} [Logical](#defining-logical-models)  |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Mapping](#defining-mappings)            |  x  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
-[Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
-{%include tu.html%}  [Resource](#defining-resources)    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
-[Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
-{: .grid }
-</div>
-
-**KEY:**  R = REQUIRED, S = suggested (SHOULD be used), O = OPTIONAL, blank = disallowed, x = Id is required but specified in the declaration statement
-
-#### Defining Aliases
-
-Aliases allow the user to replace a lengthy url or oid with a short string. Aliases are for readability only, and do not change the meaning of rules. Typical uses of aliases are to represent code systems and canonical URLs.
-
-Alias definitions follow this syntax:
-
-```
-Alias: {Alias name} = {url or oid}
-```
-
-Several things to note about aliases:
-
-* Aliases do not permit additional keywords or rules.
-* Alias statements stand alone, and cannot be mixed into rule sets of other items.
-* Aliases are global within a FSH project.
-
-In contrast with other names in FSH (for profiles, extensions, etc.), alias names can optionally begin with a dollar sign ($). If you define an alias with a leading $, you are protected against misspellings. For example, if you choose the alias name $RaceAndEthnicityCDC and accidentally type $EthnicityCDC, implementations can easily detect there is no alias by that name. Without the $ sign, implementations do not know an alias is intended, and will look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
-
-**Examples:**
-
-  ```
-  Alias: $SCT = http://snomed.info/sct
- 
-  Alias: $RaceAndEthnicityCDC = urn:oid:2.16.840.1.113883.6.238
- 
-  Alias: $ObsCat = http://terminology.hl7.org/CodeSystem/observation-category
-  ```
-
-#### Defining Code Systems
-
-It is sometimes necessary to define new codes inside an IG that are not drawn from an external code system (aka _local codes_). Local codes MUST be defined in the context of a code system.
-
-> **Note:** Defining local codes is not best practice, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it might be necessary to define them -- at least temporarily -- as local codes.
-
-Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
-
-```
-* #{code} "{display string}" "{definition string}"
-```
-
-**Notes:**
-
-* There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
-* The definition of the term, provided as the second string following the code, is RECOMMENDED but not required.
-* Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
-* Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
-
-**Example:**
-
-* Define a code system for yoga poses:
-
-  ```
-  CodeSystem:  YogaCS
-  Id: yoga-code-system
-  Title: "Yoga Code System"
-  Description:  "A brief vocabulary of yoga-related terms."
-  * #Sirsasana "Headstand"
-      "An inverted pose that involves standing on one's head."
-  * #Halasana "Plough Pose"
-      "A pose from supine position, bringing legs up and over until the toes touch the ground behind the head."
-  * #Matsyasana "Fish Pose"
-      "A pose from supine position, arching the back and pressing the chest upwards."
-  * #Bhujangasana "Cobra Pose"
-      "A pose starting from prone position with hands pushing the shoulders upward, with legs and hips remaining on the ground."
-  ```
-
-#### Defining Code Systems with Hierarchical Codes
-
-{%include tu-div.html%}
-Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
-
-```
-* #{parent code} "{display string}" "{definition string}"
-* #{parent code} #{child code} "{display string}" "{definition string}"
-```
-
-Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
-
-```
-* #{parent code} "{display string}" "{definition string}"
-  * #{child code} "{display string}" "{definition string}"
-```
-
-Additional levels to any depth can be added in the same manner.
-
-> **Note:** When defining hierarchical codes, parent codes must be defined before their children.
-
-**Examples:**
-
-  * Define a code system for anteater taxonomy with hierarchical codes:
-
-  ```
-  CodeSystem: AnteaterCS
-  Id: anteater-code-system
-  Title: "Anteater Code System"
-  * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
-  * #Anteater #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
-  * #Anteater #Tamandua #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
-  * #Anteater #Tamandua #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
-  * #Anteater #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
-  ```
-
-  * Define the same code system using indentation instead of explicit parents:
-
-  ```
-  CodeSystem: AnteaterCS
-  Id: anteater-code-system
-  Title: "Anteater Code System"
-  * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
-    * #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
-      * #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
-      * #SouthernTamandua "Southern Tamandua" "The southern species of Tamandua anteaters"
-    * #GiantAnteater "Giant Anteater" "The Giant Anteater, typically 6 - 7 feet in length"
-  ```
-
-</div>
-
-#### Defining Extensions
-
-Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension).
-
-All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a simple extension, the value[x] element should be constrained. To create a complex extension, the extension array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
-
-Since simple and complex extensions are mutually-exclusive, FSH implementations should set the value[x] cardinality to 0..0 if sub-extensions are specified, set extension cardinality to 0..0 if constraints are applied to value[x], and signal an error if value[x] and extensions are simultaneously specified.
-
-**Examples:**
-
-* Show how the [US Core BirthSex extension](http://hl7.org/fhir/us/core/StructureDefinition-us-core-birthsex.html) (a simple extension) would be defined in FSH:
-
-  ```
-  Extension: USCoreBirthSexExtension
-  Id:   us-core-birthsex
-  Title:  "US Core Birth Sex Extension"
-  Description: "A code classifying the person's sex assigned at birth as specified by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."
-  // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
-  * value[x] only code
-  * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
-  ```
-
-* Show how [US Core Ethnicity extension](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-ethnicity.html) (a complex extension with inline sub-extensions) would be defined in FSH:
-
-  ```
-  Extension:      USCoreEthnicityExtension
-  Id:             us-core-ethnicity
-  Title:          "US Core Ethnicity Extension"
-  Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. The ethnicity codes used to represent these concepts are based upon the [CDC ethnicity and Ethnicity Code Set Version 1.0](http://www.cdc.gov/phin/resources/vocabulary/index.html) which includes over 900 concepts for representing race and ethnicity of which 43 reference ethnicity.  The ethnicity concepts are grouped by and pre-mapped to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."
-  * extension contains
-      ombCategory 0..1 MS and
-      detailed 0..* and
-      text 1..1 MS
-  * extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
-  * extension[ombCategory].value[x] only Coding
-  * extension[ombCategory].valueCoding from OmbEthnicityCategories (required) // OmbEthnicityCategories is a value set defined by US Core
-  * extension[detailed] ^short = "Extended ethnicity codes"
-  * extension[detailed].value[x] only Coding
-  * extension[detailed].valueCoding from DetailedEthnicity (required) // DetailedEthnicity is defined in US Core
-  * extension[text] ^short = "Ethnicity text"
-  * extension[text].value[x] only string
-  ```
-
-* Define an extension with an explicit parent, constraining the US Core Birth Sex extension for US states that do not recognize non-binary birth sex:
-
-  ```
-  Extension:      BinaryBirthSexExtension
-  Parent:         USCoreBirthSexExtension
-  Id:             binary-birthsex
-  Title:          "Binary Birth Sex Extension"
-  Description:    "As of 2019, certain US states only allow M or F on birth certificates."
-  * valueCode from BinaryBirthSexValueSet (required)
-  ```
-
-#### Defining Instances
-
-Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name, id, or url for any profile, resource, or complex data type defined internally or externally.
-
-Instances inherit structures and values from their StructureDefinition (i.e. assigned codes, extensions). Assignment rules are used to set additional values.
-
-The `Usage` keyword specifies how the instance should be presented in the IG:
-
-* `Usage: #example` means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
-* `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
-* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array.
-
-If `Usage` is unspecified, the default is `#example`.
-
-**Examples:**
-
-* Define an example instance of US Core Patient, with name, birthdate, race, and ethnicity:
-
-  ```
-  Instance:  EveAnyperson
-  InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
-  Title:   "Eve Anyperson"
-  Usage:  #example
-  * name.given = "Eve"
-  * name.family = "Anyperson"
-  * birthDate = 1960-04-25
-  * extension[us-core-race].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2106-3 "White"
-  * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2186-5 "Non Hispanic or Latino"
-  ```
-
-* Define an instance of US Core Practitioner, with name and NPI, meant to be inlined in a composition:
-
-  ```
-  Instance:   DrDavidAnydoc
-  InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
-  Title:  "Dr. David Anydoc"
-  Usage:  #inline
-  * name.family = "Anydoc"
-  * name.given = "David"
-  * name.suffix = "MD"
-  * identifier[NPI].value = "8274017284"
-  ```
-
-  This instance would be incorporated into a DomainResource with a statement such as:
-
-  ```
-  *  contained[0] = DrDavidAnydoc
-  ```
-
-* Define an `#inline` Patient instance, and then use that instance in a Condition resource, inlining it as a contained resource:
-
-  ```
-  Instance: EveAnyperson
-  InstanceOf: Patient
-  Usage: #inline // #inline means this instance should not be exported as a separate example
-  * name.given[0] = "Eve"
-  * name.family = "Anyperson"
-
-  Instance: EvesCondition
-  InstanceOf: Condition
-  Usage: #example
-  Description: "An example that uses contained"
-  * contained[0] = EveAnyperson // this inlines EveAnyperson definition here
-  * code = http://foo.org#bar
-  * subject = Reference(EveAnyperson) // this automatically creates the relative reference correctly
-  ```
-  This results in:
-
-  ```json
-  {
-    "resourceType": "Condition",
-    "id": "EvesCondition",
-    "contained": [
-      {
-        "resourceType": "Patient",
-        "id": "EveAnyperson",
-        "name": [
-          {
-            "given": [
-              "Eve"
-            ],
-            "family": "Anyperson"
-          }
-        ]
-      }
-    ],
-    "code": {
-      "coding": [
-        {
-          "code": "bar",
-          "system": "http://foo.org"
-        }
-      ]
-    },
-    "subject": {
-      "reference": "#EveAnyperson"
-    }
-  }
-  ```
-
-* Define an instance of PrimaryCancerCondition, using many available features:
-
-  ```
-  Instance: mCODEPrimaryCancerConditionExample01
-  InstanceOf: PrimaryCancerCondition
-  Description: "mCODE Example for Primary Cancer Condition"
-  Usage: #example
-  * id = "mCODEPrimaryCancerConditionExample01"
-  * clinicalStatus = $ClinStatus#active "Active"
-  * verificationStatus = $VerStatus#confirmed "Confirmed"
-  * code = $SCT#254637007 "Non-small cell lung cancer (disorder)"
-  * extension[HistologyMorphologyBehavior].valueCodeableConcept = $SCT#35917007 "Adenocarcinoma"
-  * bodySite = $SCT#39607008 "Lung structure (body structure)"
-  * bodySite.extension[Laterality].valueCodeableConcept = $SCT#7771000 "Left (qualifier value)"
-  * subject = Reference(mCODEPatientExample01)
-  * onsetDateTime = "2019-04-01"
-  * asserter = Reference(mCODEPractitionerExample01)
-  * stage.summary = $AJCC#3C "IIIC"
-  * stage.assessment = Reference(mCODETNMClinicalStageGroupExample01)
-  ```
-
-##### Defining Instances of Conformance Resources
-
-The FSH language is designed to support creation of StructureDefinitions for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
-
-These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The CapabilityStatement is populated using assignment statements.
-
-<!--Because CapabilityStatements can be lengthy, we provide a [downloadable template](CapabilityStatementTemplate.fsh) as a starting point.-->
-
-#### Defining Invariants
-
-Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules, and are incorporated into a profile via [obeys rules](#obeys-rules).
-
-| Keyword | Usage | Corresponding element in ElementDefinition | Data Type | Required |
-|-------|------------|--------------|-------|----|
-| Invariant | Identifier for the invariant | constraint.key | id | yes |
-| Description | Human description of constraint | constraint.human | string  | yes |
-| Expression | FHIRPath expression of constraint | constraint.expression | FHIRPath string | no |
-| Severity | Either #error or #warning, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/R4/valueset-constraint-severity.html) | constraint.severity | code | yes |
-| XPath | XPath expression of constraint | constraint.xpath | XPath string | no |
-{: .grid }
-
-**Example:**
-
-* Define an invariant found in US Core using FSH:
-
-  ```
-  Invariant:  us-core-8
-  Description: "Patient.name.given or Patient.name.family or both SHALL be present"
-  Expression: "family.exists() or given.exists()"
-  Severity:   #error
-  XPath:      "f:given or f:family"
-  ```
-
-#### Defining Logical Models
-
-{%include tu-div.html%}
-
-Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](http://hl7.org/fhir/R4/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
-
-Logical models are defined in FSH using the keyword `Logical`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
-
-If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements should use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Authors may also specify another logical model, a resource, or a complex datatype as a logical model's parent.
-
-Rules defining the logical model follow immediately after the keyword section. Logical models are primarily comprised of AddElement rules. Since logical models are represented using StructureDefinition, many of the rules used in profile definitions may also be used when defining logical models. According to the FHIR specification's [interpretation of ElementDefinition in different contexts](http://hl7.org/fhir/R4/elementdefinition.html#interpretation), however, logical models may not use slicing or fixed/patterned values.  As a result, Contains rules and Assignment rules are forbidden in logical model definitions. Logical models are also prohibited from constraining elements inherited from a parent definition.
-
-**Example:**
-
-* Define a logical model for a human and their family members:
-
-  ```
-  Logical:        Human
-  Title:          "Human Being"
-  Description:    "A member of the Homo sapien species."
-  * name 0..* SU HumanName "Name(s) of the human" "The names by which the human is or has been known"
-  * birthDate 0..1 SU dateTime "The date of birth, if known"
-      "The date on which the person was born. Approximations may be used if exact date is unknown."
-  * deceased[x] 0..1 SU boolean or dateTime or Age "Indication if the human is deceased"
-      "An indication if the human has died. Boolean should not be used if date or age at death are known."
-  * family 0..1 BackboneElement "Family" "Members of the human's immediate family."
-    * mother 0..2 FamilyMember "Mother" "Biological mother, current adoptive mother, or both."
-    * father 0..2 FamilyMember "Father" "Biological father, current adoptive father, or both."
-    * sibling 0..* FamilyMember "Sibling" "Other children of the human's mother and/or father."
-
-  Logical:        FamilyMember
-  Title:          "Family Member"
-  Description:    "A reference to a human's family member."
-  * human 1..1 SU Reference(Human) "Family member" "A reference to the human family member"
-  * biological 0..1 boolean "Biologically related?"
-      "A family member may not be biologically related due to adoption, blended families, etc."
-  ```
-</div>
-
-#### Defining Mappings
-
-[Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
-
-To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required, and `Title` and `Description` are OPTIONAL.
-
-| Keyword | Usage | SD element |
-|-------|------------|--------------|
-| Mapping | Appears first and provides a unique name for the mapping | n/a |
-| Source | The name or id of the profile the mapping applies to | n/a |
-| Target | The URL, URI, or OID for the specification being mapped to | mapping.uri |
-| Id | An internal identifier for the target specification | mapping.identity |
-| Title | A human-readable name for the target specification | mapping.name  |
-| Description | Additional information such as version notes, issues, or scope limitations. | mapping.comment |
-{: .grid }
-
-The mappings themselves are declared in rules with the following syntaxes:
-
-<pre><code>* -> "{map string}" <i>"{comment string}" #{mime-type code}</i>
-
-* &lt;element&gt; -> "{map string}" <i>"{comment string}" #{mime-type code}</i>
-</code></pre>
-
-The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target.
-
-The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/R4/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code MUST come from FHIR's [MimeType value set](https://www.hl7.org/fhir/R4/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
-
->**Note:** Unlike setting the mapping.map directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
-
-A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rules) applied to it.
-
-**Examples:**
-
-* Map the entire profile to a Patient item in another specification:
-
-  ```
-  * -> "Patient" "This profile maps to Patient in Argonaut"
-  ```
-
-* Map the identifier.value element from one IG to another:
-
-  ```
-  * identifier.value -> "Patient.identifier.value"
-  ```
-
-* Define a map between USCorePatient and Argonaut:
-
-  ```
-  Mapping:  USCorePatientToArgonaut
-  Source:   USCorePatient
-  Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
-  Title:    "Argonaut DSTU2"
-  Id:       argonaut-dq-dstu2
-  * -> "Patient"
-  * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
-  * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
-  * extension[USCoreBirthSexExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-birthsex]"
-  * identifier -> "Patient.identifier"
-  * identifier.system -> "Patient.identifier.system"
-  * identifier.value -> "Patient.identifier.value"
-  ```
-
-#### Defining Profiles
-
-To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are OPTIONAL. Rules defining the profile follow immediately after the keyword section.
-
-**Example:**
-
-* Define a profile for exposure to a pathogen:
-
-  ```
-  Profile:        KnownExposureSetting
-  Parent:         Observation
-  Id:             known-exposure-setting
-  Title:          "Known Exposure Setting Profile"
-  Description:    "The setting where an individual was exposed to a contagion."
-  * code = $LNC#81267-7 // Setting of exposure to illness
-  * value[x] only CodeableConcept
-  * valueCodeableConcept from https://loinc.org/vs/LL3991-8 (extensible)
-  ```
-
-#### Defining Resources
-
-{%include tu-div.html%}
-
-Custom resources allow authors to define new structures representing arbitrary content. Resources are defined similar to [logical models](#defining-logical-models), but are intended to support data exchange using FHIR's RESTful API mechanisms. The capability to define resources may be used by HL7 to define core FHIR resources or by other organizations to define proprietary resources for their own internal use. Potentially, they also can be used to represent and maintain existing core FHIR resources.
-
-Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
-
-Resources are defined in FSH using the keyword `Resource`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
-
-Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html) and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource. If no `Parent` is specified, DomainResource is used as the default parent.
-
-Rules defining the resource follow immediately after the keyword section. Resources are primarily comprised of AddElement rules. Since resources are represented using StructureDefinition, many of the rules used in profile definitions may also be used when defining resources. According to the FHIR specification's [interpretation of ElementDefinition in different contexts](http://hl7.org/fhir/R4/elementdefinition.html#interpretation), however, resources may not use slicing or fixed/patterned values.  As a result, Contains rules and Assignment rules are forbidden in resource definitions. Resources are also prohibited from constraining elements inherited from a parent definition.
-
-**Example:**
-
-* Define a resource representing an emergency vehicle, using line spacing to make the definition easier to read:
-
-  ```
-  Resource:       EmergencyVehicle
-  Title:          "Emergency Vehicle"
-  Description:    "An emergency vehicle, such as an ambulance or fire truck."
-  * identifier 0..* SU Identifier
-      "Identifier(s) of the vehicle"
-      "Vehicle identifiers may include VINs and serial numbers."
-  * make 0..1 SU Coding
-      "The vehicle make"
-      "The vehicle make, e.g., Chevrolet."
-  * make from EmergencyVehicleMake (extensible)
-  * model 0..1 SU Coding
-      "The vehicle model"
-      "The vehicle model, e.g., G4500."
-  * model from EmergencyVehicleModel (extensible)
-  * year 0..1 SU positiveInt
-      "Year of manufacture"
-      "The year the vehicle was manufactured"
-  * servicePeriod 0..1 Period
-      "When the vehicle was in service"
-      "Start date and end date (if applicable) when the vehicle operated."
-  * operator 0..* Reference(Organization or Practitioner or PractitionerRole)
-      "The operator"
-      "The organization or persons repsonsible for operating the vehicle"
-  * device 0..* Reference(Device)
-      "Devices on board"
-      "Devices on board the vehicle."
-  ```
-</div>
-
-#### Defining Rule Sets
-
-Rule sets provide the ability to define a group rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. If rules within a rule set are [indented](#indented-rules), the full paths are resolved from the indentation before the rule set is applied. Therefore, the indentation used in the rule set will not have any meaning in the target.
-
-All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
-
-##### Simple Rule Sets
-
-Simple rule sets are defined by using the keyword `RuleSet` and do not include parameters:
-
-```
-RuleSet: {name}
-{rule1}
-{rule2}
-// More rules
-```
-
-**Example:**
-
-* Define a rule set for metadata to be used in multiple profiles:
-
-  ```
-  RuleSet: RuleSet1
-  * ^status = #draft
-  * ^experimental = true
-  * ^publisher = "Elbonian Medical Society"
-  ```
-
-##### Parameterized Rule Sets 
-
-{%include tu-div.html%}
-
-Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
-
-<pre><code>RuleSet: {name}(parameter1<i>, parameter2, parameter3...</i>)
-{rule1}
-{rule2}
-// More rules
-</code></pre>
-
-Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. In the rules, the places where substitutions should occur are indicated by enclosing a parameter name in curly braces `{}`. Spaces are allowed inside the curly braces: `{parameter1}` and `{ parameter1 }` are both valid substitution sequences for a parameter named `parameter1`. A parameter may occur more than once in the rule set definition.
-
-**Examples:**
-
-* Define a rule set that contains the syntax for setting the context of an extension. This example also demonstrates the use of [soft indexing](#soft-indexing). Note that the curly brackets in this example are literal, not syntax expressions:
-
-  ```
-  RuleSet: SetContext(path)
-  * ^context[+].type = #element
-  * ^context[=].expression = "{path}"
-  ```
-
-  This rule set can be applied to indicate an extension can only be applied to certain resources, for example:
-
-  ```
-  * insert SetContext(Procedure)
-  * insert SetContext(MedicationRequest)
-  * insert SetContext(MedicationAdministration)
-  ```
-
-  When the rule set is expanded, it translates to:
-
-  ```
-  * ^context[+].type = #element
-  * ^context[=].expression = "Procedure"
-  * ^context[+].type = #element
-  * ^context[=].expression = "MedicationRequest"
-  * ^context[+].type = #element
-  * ^context[=].expression = "MedicationAdministration"
-  ```
-
-  Interpreting the soft indices, this is equivalent to:
-
-   ```
-  * ^context[0].type = #element
-  * ^context[0].expression = "Procedure"
-  * ^context[1].type = #element
-  * ^context[1].expression = "MedicationRequest"
-  * ^context[2].type = #element
-  * ^context[2].expression = "MedicationAdministration"
-  ``` 
-
-* Define a parameterized rule set to define items in a Questionnaire:
-
-  ```
-  RuleSet: Question(linkId, text, type, repeats)
-  * item[+].linkId = "{linkId}"
-  * item[=].text = "{text}"
-  * item[=].type = #{type}
-  * item[=].repeats = {repeats}
-  ```
-
-  Apply the rule set to populate a Questionnaire:
-
-  ```
-  Instance: TravelRecord
-  InstanceOf: Questionnaire
-  // skip some
-  * insert Question(tr1, When did you leave?, date, false)
-  * insert Question(tr2, When did you return?, date, false)
-  * insert Question(tr3, What countries did you visit?, code, true)
-  ```
-</div>
-
-#### Defining Value Sets
-
-A value set is a group of coded values representing acceptable values for a FHIR element whose data type is code, Coding, CodeableConcept, Quantity, string, or url.
-
-Value sets are defined using the declarative keyword `ValueSet`, with OPTIONAL keywords `Id`, `Title` and `Description`.
-
-Codes MUST be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
-
-The contents of a value set are defined by a set of rules. There are four types of rules to populate a value set:
-
-> **Note:** In value set rules, the word `include` is OPTIONAL.
-
-| To include... | Syntax | Example |
-|-------|---------|----------|
-| A single code | `* include {Coding}` | `* include $SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* $SCT#961000205106 "Wearing street clothes, no shoes"`|
-| All codes from another value set | `* include codes from valueset {ValueSet name|id|url}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
-| All codes from a code system | `* include codes from system {CodeSystem name|id|url}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
-| Selected codes from a code system (filters are code system dependent) | `* include codes from system {CodeSystem name|id|url} where {filter} and {filter} and ...` | `* include codes from system $SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system $SCT where concept is-a #254837009`|
-{: .grid }
-
-See [below](#filters) for discussion of filters.
-
-Analogous rules can be used to leave out certain codes, with the word `exclude` replacing the word `include`:
-
-| To exclude... | Syntax | Example |
-|-------|---------|----------|
-| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from another value set | `* exclude codes from valueset {ValueSet name|id|url}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | `* exclude codes from system {CodeSystem name|id|url}` | `* exclude codes from system http://snomed.info/sct` |
-| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {CodeSystem name|id|url} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
-{: .grid }
-
-##### Filters
-
-A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](http://hl7.org/fhir/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
-
-**Examples** 
-
-* Define a value set using [extensional](https://www.hl7.org/fhir/R4/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
-
-  ```
-  ValueSet: BodyWeightPreconditionVS
-  Title: "Body weight preconditions."
-  Description:  "Circumstances for body weight measurement."
-  * $SCT#971000205103 "Wearing street clothes with shoes"
-  * $SCT#961000205106 "Wearing street clothes, no shoes"
-  * $SCT#951000205108 "Wearing underwear or less"
-  ```
-
-* Define a value set using [intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules:
-
-  ```
-  ValueSet: HistologyMorphologyBehaviorVS
-  Id: mcode-histology-morphology-behavior-vs
-  Title: "Histology Morphology Behavior Value Set"
-  Description: "Codes representing the structure, arrangement, and behavioral characteristics of malignant neoplasms, and cancer cells.
-  * include codes from system $SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
-  * include codes from system $SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
-  * include codes from system $SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
-  * exclude codes from system $SCT where concept is-a #450893003 "Papillary neoplasm, pancreatobiliary-type, with high grade intraepithelial neoplasia (morphologic abnormality)"
-  * exclude codes from system $SCT where concept is-a #128640002 "Glandular intraepithelial neoplasia, grade III (morphologic abnormality)"
-  * exclude codes from system $SCT where concept is-a #450890000 "Glandular intraepithelial neoplasia, low grade (morphologic abnormality)"
-  * exclude codes from system $SCT where concept is-a #703548001 "Endometrioid intraepithelial neoplasia (morphologic abnormality)"
-  ```
-
-> **Note:** Intensional and extensional forms can be used together in a single value set definition.
 
 ### Appendix: Abbreviations
 
