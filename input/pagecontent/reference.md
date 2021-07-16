@@ -1,4 +1,4 @@
-{%include shaded-rows.html%}
+{%include shaded-table.html%}
 
 This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended primarily as a reference, not a tutorial. For tutorials and additional documentation please go to [fshschool.org](https://fshschool.org).
 
@@ -624,21 +624,21 @@ Declaration statements follow the syntax:
 
 A declaration is always the first statement in an item definition. The value represents the item's name or identifier (id), depending on the item's type, as shown in the table below:
 
-<div class = "shadedRow">
+<div class = "shadeRow6 shadeRow9">
 
 | Declaration | Purpose | Data Type |
 |----------|---------|---------|
-| [Alias](#defining-aliases)| Declares an alias for a URL or OID | name or $name |
+| [Alias](#defining-aliases)           | Declares an alias for a URL or OID | expression |
 | [CodeSystem](#defining-code-systems) | Declares a new code system | name |
-| [Extension](#defining-extensions) | Declares a new extension | name |
-| [Instance](#defining-instances) | Declares a new instance | id |
-| [Invariant](#defining-invariants) | Declares a new invariant | id |
+| [Extension](#defining-extensions)    | Declares a new extension | name |
+| [Instance](#defining-instances)      | Declares a new instance | id |
+| [Invariant](#defining-invariants)    | Declares a new invariant | id |
 | {%include tu.html%} [Logical](#defining-logical-models) | Declares a new logical model | name |
-| [Mapping](#defining-mappings) | Declares a new mapping | id |
-| [Profile](#defining-profiles) | Declares a new profile | name |
+| [Mapping](#defining-mappings)        | Declares a new mapping | id |
+| [Profile](#defining-profiles)        | Declares a new profile | name |
 | {%include tu.html%} [Resource](#defining-resources) | Declares a new resource | name |
-| [RuleSet](#defining-rule-sets) | Declares a set of rules that can be reused | name |
-| [ValueSet](#defining-value-sets) | Declares a new value set | name |
+| [RuleSet](#defining-rule-sets)       | Declares a set of rules that can be reused | name |
+| [ValueSet](#defining-value-sets)     | Declares a new value set | name |
 {: .grid }
 
 </div>
@@ -672,9 +672,9 @@ In the above, `name` refers to a valid [item name](#item-names) and `id` to a [i
 
 Depending on the type of item being defined, keywords may be required, suggested, optional, or prohibited. The following table shows the relationship between declarations and keywords:
 
-<div class = "shadedRow">
+<div class="shadeRow6 shadeRow9">
 
-| Declaration                             | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+| Declaration | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
 [Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
 [Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
@@ -691,8 +691,10 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 </div>
 
+
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
 
+<div class="shadeCol7 shadeCol10 shadeHead7 shadeHead10">
 
 | Keyword | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | {%include tu.html%} [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | {%include tu.html%}  [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
 |---------------|---|---|---|---|---|---|---|---|---|---|---|
@@ -709,32 +711,34 @@ Depending on the type of item being defined, keywords may be required, suggested
 |   XPath       |   |   |   |   | O |   |   |   |   |   |   |
 {: .grid }
 
+</div>
+
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
 
 
 #### Applicability of Rule Types to Item Types
 
-A number of rules follow the keyword statements. The following table shows the applicability of rule types to item types. [Aliases](#defining-aliases) and [Invariants](#defining-invariants) are not shown since these items do not permit rules:
+A number of rules follow the keyword statements. The following table shows the applicability of rule types to item types:
 
-<div class = "shadedRow3">
+<div class = "shadeCol7 shadeCol10 shadeRow1 shadeRow11 shadeHead shadeHead7 shadeHead10">
 
 | Rule Type | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | {%include tu.html%} [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | {%include tu.html%}  [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
-|-----------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
-| {%include tu.html%} [Add Element](#addelement-rules)             |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
-| [Assignment](#assignment-rules)              |       | C           | Y         | Y        |           | C       |         | Y       | C        | Y        | C         |
-| [Binding](#binding-rules)                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
-| [Cardinality](#cardinality-rules)          |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
-| [Contains (inline extensions)](#contains-rules-for-extensions)             |       |             | Y         |          |           |         |         |         |          | Y        |           |
+|--------------------------------------------------------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
+| {%include tu.html%} [Add Element](#addelement-rules)               |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
+| [Assignment](#assignment-rules)                                    |       | C           | Y         | Y        |           | C       |         | Y       | C        | Y        | C         |
+| [Binding](#binding-rules)                                          |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
+| [Cardinality](#cardinality-rules)                                  |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
+| [Contains (inline extensions)](#contains-rules-for-extensions)     |       |             | Y         |          |           |         |         |         |          | Y        |           |
 | [Contains (standalone extensions)](#contains-rules-for-extensions) |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
-| [Contains (slicing)](#contains-rules-for-slicing)     |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
-| [Flag](#flag-rules)                      |       |             | Y         |          |           | L       |         | Y       | L        | Y        |           |
-| [Insert](#insert-rules)                  |       | Y           | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        | Y         |
-| [Obeys](#obeys-rules)                 |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
-| {%include tu.html%} [Path](#path-rules)                 |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
-| [Type](#type-rules)                 |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
-| [CodeSystem Rules](#defining-code-systems)                |       | Y           |           |          |           |         |         |         |          | Y        |           |
-| [Mapping Rules](#defining-mappings)           |       |             |           |          |           |         | Y       |         |          | Y        |           |
-| [ValueSet Rules](#defining-value-sets)          |       |             |           |          |           |         |         |         |          | Y        | Y         |
+| [Contains (slicing)](#contains-rules-for-slicing)                  |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
+| [Flag](#flag-rules)                                                |       |             | Y         |          |           | L       |         | Y       | L        | Y        |           |
+| [Insert](#insert-rules)                                            |       | Y           | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        | Y         |
+| [Obeys](#obeys-rules)                                              |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
+| {%include tu.html%} [Path](#path-rules)                            |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
+| [Type](#type-rules)                                                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
+| [CodeSystem Rules](#defining-code-systems)                         |       | Y           |           |          |           |         |         |         |          | Y        |           |
+| [Mapping Rules](#defining-mappings)                                |       |             |           |          |           |         | Y       |         |          | Y        |           |
+| [ValueSet Rules](#defining-value-sets)                             |       |             |           |          |           |         |         |         |          | Y        | Y         |
 {: .grid }
 
 </div>
@@ -1134,6 +1138,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
   * biological 0..1 boolean "Biologically related?"
       "A family member may not be biologically related due to adoption, blended families, etc."
   ```
+
 </div>
 
 #### Defining Mappings
@@ -1271,6 +1276,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
       "Devices on board"
       "Devices on board the vehicle."
   ```
+
 </div>
 
 #### Defining Rule Sets
@@ -1375,6 +1381,7 @@ Each parameter represents a value that can be substituted into the rules when th
   * insert Question(tr2, When did you return?, date, false)
   * insert Question(tr3, What countries did you visit?, code, true)
   ```
+
 </div>
 
 #### Defining Value Sets
@@ -1699,6 +1706,7 @@ When indented rules are combined with [soft indexing](#array-paths-using-soft-in
 #### AddElement Rules
 
 {%include tu-div.html%}
+
 Authors define logical models and resources by adding new elements to their definitions. The AddElement rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
 
 The syntax of the rules to add a new element are as follows:
@@ -1769,6 +1777,7 @@ Note the following:
     * breed 1..* CodeableConcept "Breed of service animal" "The dominant breed or breeds of the service animal."
     * startDate 0..1 date "Date the service animal began work" "The date on which the service animal began working for the person."
   ```
+
 </div>
 
 #### Assignment Rules
@@ -1845,11 +1854,13 @@ When assigning values to an instance, the `(exactly)` modifier has no meaning an
   ```
 
 {%include tu-div.html%}
+
 * Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0): 
 
   ```
   * extension[my-extension].valueInteger64 = 1234567890
   ```
+
 </div>
 
 ##### Assignments with the Coding Data Type
@@ -2126,6 +2137,7 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 ##### Assignments with the CodeableReference Data Type
 
 {%include tu-div.html%}
+
 The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) data type was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. Making use of CodeableReference involves no new FSH syntax.
 
 **Examples:**
@@ -2149,6 +2161,7 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   * code.concept = $SCT#1003754000 "Natural rubber latex (substance)"
   * code.reference = Reference(NaturalLatexSubstanceDefinitionExample)
   ```
+
 </div>
 
 #### Binding Rules
@@ -2591,6 +2604,7 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
 ##### Inserting Rule Sets with Path Context
 
 {%include tu-div.html%}
+
 Rule sets can be inserted in the context of a path. The context is specified by giving the path prior to the insert rule:
 
 <pre><code>* &lt;element&gt; insert {RuleSet name}<i>(value1, value2, value3...)</i>
@@ -2717,11 +2731,13 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   ```
 
 {%include tu-div.html%}
+
 * Restrict value[x] to the integer64 type (note: this data type was introduced in FHIR v4.2.0):
 
   ```
   * value[x] only integer64
   ```
+
 </div>
 
 * Restrict Observation.performer (a choice of reference to Practitioner, PractitionerRole, Organization, CareTeam, Patient, or RelatedPerson) to allow only Practitioner:
@@ -2752,6 +2768,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 #### Path Rules
 
 {%include tu-div.html%}
+
 Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
 
 ```
@@ -2769,6 +2786,7 @@ A path rule has no impact on the element it refers to. The only purpose of the p
     * given MS
     * family MS
   ```
+
 </div>
 
 
