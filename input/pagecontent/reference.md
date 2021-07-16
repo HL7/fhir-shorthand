@@ -92,7 +92,7 @@ Each FSH project MUST declare the version of FHIR it depends upon. The form of t
 The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types).
 
 {%include tu-div.html%}
-FSH supports new data types integer64 and CodeableReference in pre-release FHIR R5 on a trial use basis.
+FSH supports new pre-release FHIR R5 data types integer64 and CodeableReference on a trial use basis.
 </div>
 
 #### External IGs
@@ -115,13 +115,15 @@ Like other HL7 FHIR IGs, the version numbering of the FSH specification does not
 
 FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
-The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Logical:` {%include tu.html%}, `Mapping:`, `Profile:`, `Resource:` {%include tu.html%}, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
+The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Mapping:`, `Profile:`, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
+
+<span style="background-color: #fff5e6;"> {%include tu.html%} `Logical:` and `Resource:` are reserved on trial use basis.</span>
 
 The following words are reserved, with or without white spaces inside the parentheses: `(example)`, `(preferred)`, `(extensible)`, `(required)`, `(exactly)`.
 
 #### Whitespace
 
-Repeated whitespace has meaning within FSH files only within string literals and when used for <span style="background-color: #fff5e6;">[indenting rules](reference.html#indented-rules) {%include tu.html%}</span>. In all other contexts, repeated whitespace is not meaningful. Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning within FSH files only within string literals <span style="background-color: #fff5e6;">and when used for [indenting rules](reference.html#indented-rules) {%include tu.html%}</span>. In all other contexts, repeated whitespace is not meaningful. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -608,13 +610,17 @@ A special case of the ElementDefinition path is setting properties of the first 
 
 ### FSH Items
 
+#### Structure of FSH Items
+
 A central purpose of FSH is to create and define items that represent and can be translated into FHIR artifacts. The general pattern used to define an item in FSH is:
 
 * Declaration statement
-* Additional keyword statements
-* Rules
+* Keyword statements
+* Rule statements
 
-#### Declaration Statements
+While every FSH item requires a declaration, depending on the item type, keyword statements and rules may not be required, or even permitted.
+
+##### Declaration Statements
 
 Declaration statements follow the syntax:
 
@@ -643,7 +649,7 @@ A declaration is always the first statement in an item definition. The value rep
 
 </div>
 
-#### Keyword Statements
+##### Keyword Statements
 
 Keyword statements directly follow the declaration and precede any rules. Keyword statements follow the syntax:
 
@@ -668,7 +674,7 @@ The following keywords (case-sensitive) are defined:
 | XPath | Provides the XPath in an invariant | XPath string |
 {: .grid }
 
-In the above, `name` refers to a valid [item name](#item-names) and `id` to a [item identifier](#item-identifiers).
+In the above, `name` refers to a valid [item name](#item-names) and `id` to an [item identifier](#item-identifiers).
 
 Depending on the type of item being defined, keywords may be required, suggested, optional, or prohibited. The following table shows the relationship between declarations and keywords:
 
@@ -691,34 +697,12 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 </div>
 
-
-**KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
-
-<div class="shadeCol7 shadeCol10 shadeHead7 shadeHead10">
-
-| Keyword | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | {%include tu.html%} [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | {%include tu.html%}  [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
-|---------------|---|---|---|---|---|---|---|---|---|---|---|
-|   Description |   | S | S | S | R | S | S | S | S |   | S |
-|   Expression  |   |   |   |   | O |   |   |   |   |   |   |
-|   Id          |   | S | S |   |   | S |   | S | S |   | S |
-|   Parent      |   |   | O |   |   | O |   | R | O |   |   |
-|   InstanceOf  |   |   |   | R |   |   |   |   |   |   |   |
-|   Severity    |   |   |   |   | R |   |   |   |   |   |   |
-|   Source      |   |   |   |   |   |   | R |   |   |   |   |
-|   Target      |   |   |   |   |   |   | R |   |   |   |   |
-|   Title       |   | S | S | S |   | S | S | S | S |   | S |
-|   Usage       |   |   |   | O |   |   |   |   |   |   |   |
-|   XPath       |   |   |   |   | O |   |   |   |   |   |   |
-{: .grid }
-
-</div>
-
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
 
 
-#### Applicability of Rule Types to Item Types
+##### Rule Statements
 
-A number of rules follow the keyword statements. The following table shows the applicability of rule types to item types:
+A number of rules may follow the keyword statements. The grammar and meaning of different rule types are discussed in the [FSH Rules](#fsh-rules) section. Without defining the rule types here, the following table shows the applicability of rule types to item types:
 
 <div class = "shadeCol7 shadeCol10 shadeRow1 shadeRow11 shadeHead shadeHead7 shadeHead10">
 
@@ -1470,7 +1454,7 @@ The following restrictions apply to rules:
 
 The following table is a summary of the rule syntax.
 
-<div class = "shadedRow2">
+<div class = "shadeRow1 shadeRow10 shadeRow12 shadeHead">
 
 | Rule Type | Syntax |
 | --- | --- |
