@@ -115,7 +115,7 @@ Like other HL7 FHIR IGs, the version numbering of the FSH specification does not
 
 FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
-The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Logical:` {%include tu.html%}, `Mapping:`, `Profile:`, `Resource:` {%include tu.html%}, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`. To minimize potential confusion, it is best to treat these words as reserved.
+The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Logical:` {%include tu.html%}, `Mapping:`, `Profile:`, `Resource:` {%include tu.html%}, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
 
 The following words are reserved, with or without white spaces inside the parentheses: `(example)`, `(preferred)`, `(extensible)`, `(required)`, `(exactly)`.
 
@@ -324,8 +324,8 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * Elements in a list or array, such as the second element in the name array of a Patient resource
 * Individual data types of choice elements, such as onsetAge in onset[x]
 * Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
-* Metadata elements, such as the experimental and active elements of StructureDefinition (SD).
-* Properties of ElementDefinitions nested within an SD, such as the maxLength property of string elements
+* Metadata elements of definitional resources, such as the experimental and active elements of a StructureDefinition.
+* Properties of ElementDefinitions nested within a StructureDefinition, such as the maxLength property of string elements
 
 In the following, the various types of path references are discussed. Some examples are presented using simple rules. For rule syntax and meaning, see [FSH Rules](#fsh-rules).
 
@@ -405,9 +405,9 @@ FHIR represents an element with a choice of data types using the style foo[x]. F
 
 #### Array Paths using Numerical Indices
 
-FSH uses square-bracketed numerical indices to address elements in arrays. Arrays are referenced using 0-based indices, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc. Arrays with missing elements (gaps in the sequence of indices) are not allowed. If the index is omitted, the first element of the array (`[0]`) is assumed.
+FSH uses square-bracketed integers to address elements in arrays. Arrays are referenced using 0-based indices, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc. Arrays with missing elements (gaps in the sequence of indices) are not allowed. If the index is omitted, the first element of the array (`[0]`) is assumed.
 
-Numerical indices apply only to arrays that can be populated with concrete values, e.g., in instances or in metadata elements of SDs. Numerical indices SHOULD NOT be used in Profiles, because arrays in profiles are not populated _per se_, and only contain constraints on the values that can appear in instances. The exception is setting metadata properties of SDs using [caret paths](#caret-paths), since these are actually concrete properties of an SD instance. The preferred way to reference arrays in Profiles is by [slice name](#sliced-array-paths).
+Numerical indices apply only to arrays that can be populated with concrete values, e.g., in instances or in metadata elements of SDs. Numerical indices SHOULD NOT be used in Profiles, because arrays in profiles are not populated _per se_, and only contain constraints on the values that can appear in instances. The exception is setting metadata properties of SDs using [caret paths](#caret-paths), since these are actually concrete properties of a StructureDefinition instance. The preferred way to reference arrays in Profiles is by [slice name](#sliced-array-paths).
 
 **Examples:**
 
@@ -429,31 +429,11 @@ Numerical indices apply only to arrays that can be populated with concrete value
   name.given[1]
   ```
 
-#### Sliced Array Paths
+#### Array Paths using Soft Indexing
 
-FHIR allows lists in profiles and extensions to be compartmentalized into sublists called "slices". To address a specific slice, follow the path with square brackets containing the slice name. Since slices are most often unordered, slice names rather than array indices SHOULD be used. Note that slice names (like other [FSH item names](#item-names)) cannot be purely numerical, so slice names cannot be confused with indices.
+Numerical array references can be replaced with so-called "soft indexing." In soft indexing, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numerical indexes to be mixed.
 
-To access a slice of a slice (a resliced array), follow the first pair of brackets with a second pair containing the resliced slice name.
-
-**Examples:**
-
-* Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
-
-  ```
-  component[respirationScore].code
-  ```
-
-* Paths to the codes representing the one minute and five minute respiration scores, assuming the Apgar respiration component has been resliced:
-
-  ```
-  component[respirationScore][oneMinuteScore].code
-
-  component[respirationScore][fiveMinuteScore].code
-  ```
-
-##### Array Paths using Soft Indexing
-
-Array elements can also be referenced using soft indexing. In soft indexing sequences, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numeric indexes to be mixed.
+Similar to numerical indices, soft indices should only be used when populating or referencing arrays in instances (including definitional instances accessed via [caret paths](#caret-paths)).
 
 Soft indexing is useful when populating long array, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle and CapabilityStatement have arrays may contain scores of items. Managing indexes can become quite tedious and error prone when adding or removing items in the middle of a long list.
 
@@ -513,6 +493,29 @@ For nested arrays, several sequences of soft indexes can run simultaneously. The
   * name[2].family = "Smith"
   ```
 
+
+#### Sliced Array Paths
+
+FHIR allows lists in profiles and extensions to be compartmentalized into sublists called "slices". To address a specific slice, follow the path with square brackets containing the slice name. Since slices are most often unordered, slice names rather than array indices SHOULD be used. Note that slice names (like other [FSH item names](#item-names)) cannot be purely numerical, so slice names cannot be confused with indices.
+
+To access a slice of a slice (a resliced array), follow the first pair of brackets with a second pair containing the resliced slice name.
+
+**Examples:**
+
+* Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
+
+  ```
+  component[respirationScore].code
+  ```
+
+* Paths to the codes representing the one minute and five minute respiration scores, assuming the Apgar respiration component has been resliced:
+
+  ```
+  component[respirationScore][oneMinuteScore].code
+
+  component[respirationScore][fiveMinuteScore].code
+  ```
+
 #### Extension Paths
 
 Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions can be identified by that slice name, or the extension's URL.
@@ -563,13 +566,13 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#fsh-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
-For a path to an element of an SD, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
+For a path to an element of a StructureDefinition, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
 ```
-^<element of SD>
+^<element of StructureDefinition>
 ```
 
-For a path to an element of an ElementDefinition within an SD, use this syntax:
+For a path to an element of an ElementDefinition within a StructureDefinition, use this syntax:
 
 ```
 <element in Profile> ^<element of corresponding ElementDefinition>
@@ -577,7 +580,7 @@ For a path to an element of an ElementDefinition within an SD, use this syntax:
 
 **Note:** There is a required space before the ^ character.
 
-A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to a named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of an SD directly, but elements of the first ElementDefinition contained in the SD. The syntax is:
+A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to a named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of a StructureDefinition directly, but elements of the first ElementDefinition contained in the StructureDefinition. The syntax is:
 
 ```
 . ^<element of ElementDefinition[0]>
@@ -630,7 +633,7 @@ A declaration is always the first statement in an item definition. The value rep
 | [Extension](#defining-extensions) | Declares a new extension | name |
 | [Instance](#defining-instances) | Declares a new instance | id |
 | [Invariant](#defining-invariants) | Declares a new invariant | id |
-| {%include tu.html%} [Logical] | Declares a new logical model | name |
+| {%include tu.html%} [Logical](#defining-logical-models) | Declares a new logical model | name |
 | [Mapping](#defining-mappings) | Declares a new mapping | id |
 | [Profile](#defining-profiles) | Declares a new profile | name |
 | {%include tu.html%} [Resource](#defining-resources) | Declares a new resource | name |
@@ -650,19 +653,19 @@ Keyword statements directly follow the declaration and precede any rules. Keywor
 
 The following keywords (case-sensitive) are defined:
 
-| Keyword | Description | Data Type |
+| Keyword | Purpose | Data Type |
 |----------|---------|---------|
-| `Description` | A human-readable description | string or markdown |
-| `Expression` | The FHIR path expression in an invariant | FHIRPath string |
-| `Id` | An identifier for an item | id |
-| `InstanceOf` | The profile or resource an instance instantiates | name or id or url |
-| `Parent` | The base class for a profile or extension | name or id or url |
-| `Severity` | Whether violation of an invariant represents an error or a warning | code |
-| `Source` | The profile the mapping applies to | name |
-| `Target` | The standard being mapped to | uri |
-| `Title` | A short human-readable name | string |
-| `Usage` | Specifies how an instance is intended to be used in the IG | code |
-| `XPath` | The XPath in an invariant | XPath string |
+| Description | Provides a human-readable description | string or markdown |
+| Expression | Provides a FHIR path expression in an invariant | FHIRPath string |
+| Id | Provides a identifier for an item | id |
+| InstanceOf | Names the profile or resource an instance instantiates | name or id or url |
+| Parent | Names the base class for a profile or extension | name or id or url |
+| Severity | Specifies whether violation of an invariant represents an error or a warning | code |
+| Source | Provides the profile the mapping applies to | name |
+| Target | Provides the standard being mapped to | uri |
+| Title | Provides a short human-readable name | string |
+| Usage | Specifies how an instance is intended to be used in the IG | code |
+| XPath | Provides the XPath in an invariant | XPath string |
 {: .grid }
 
 In the above, `name` refers to a valid [item name](#item-names) and `id` to a [item identifier](#item-identifiers).
@@ -688,7 +691,26 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 </div>
 
-**KEY:**  R = REQUIRED, S = suggested (SHOULD be used), O = OPTIONAL, blank = prohibited
+**KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
+
+
+| Keyword | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | {%include tu.html%} [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | {%include tu.html%}  [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
+|---------------|---|---|---|---|---|---|---|---|---|---|---|
+|   Description |   | S | S | S | R | S | S | S | S |   | S |
+|   Expression  |   |   |   |   | O |   |   |   |   |   |   |
+|   Id          |   | S | S |   |   | S |   | S | S |   | S |
+|   Parent      |   |   | O |   |   | O |   | R | O |   |   |
+|   InstanceOf  |   |   |   | R |   |   |   |   |   |   |   |
+|   Severity    |   |   |   |   | R |   |   |   |   |   |   |
+|   Source      |   |   |   |   |   |   | R |   |   |   |   |
+|   Target      |   |   |   |   |   |   | R |   |   |   |   |
+|   Title       |   | S | S | S |   | S | S | S | S |   | S |
+|   Usage       |   |   |   | O |   |   |   |   |   |   |   |
+|   XPath       |   |   |   |   | O |   |   |   |   |   |   |
+{: .grid }
+
+**KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
+
 
 #### Applicability of Rule Types to Item Types
 
@@ -696,29 +718,28 @@ A number of rules follow the keyword statements. The following table shows the a
 
 <div class = "shadedRow3">
 
-| Rule Type | [Profile](#defining-profiles) | [Extension](#defining-extensions) | {%include tu.html%} [Logical](#defining-logical-models)/[Resource](#defining-resources) | [Instance](#defining-instances) | [Code System](#defining-code-systems) | [Mapping](#defining-mappings) | [Value Set](#defining-value-sets) |
-|--------------------------------------------------------------------|---------|-----------|--------------------|----------|-------------|-----------|---------|
-| {%include tu.html%} [Add Element](#addelement-rules)              |         |           | Y                  |          |             |           |         |
-| [Assignment](#assignment-rules)                                    | Y       | Y         | C                  | Y        | C           |           | C       |
-| [Binding](#binding-rules)                                          | Y       | Y         | A                  |          |             |           |         |
-| [Cardinality](#cardinality-rules)                                  | Y       | Y         | A                  |          |             |           |         |
-| [Contains (inline extensions)](#contains-rules-for-extensions)     |         | Y         |                    |          |             |           |         |
-| [Contains (standalone extensions)](#contains-rules-for-extensions) | Y       | Y         |                    |          |             |           |         |
-| [Contains (slicing)](#contains-rules-for-slicing)                  | Y       | Y         |                    |          |             |           |         |
-| [Flag](#flag-rules)                                                | Y       | Y         | L                  |          |             |           |         |
-| [Insert](#insert-rules)                                            | Y       | Y         | Y                  | Y        | Y           | Y         | Y       |
-| [Obeys](#obeys-rules)                                              | Y       | Y         | Y                  |          |             |           |         |
-| {%include tu.html%} [Path](#path-rules)                            | Y       | Y         | Y                  | Y        |             |           | Y       |
-| [Type](#type-rules)                                                | Y       | Y         | A                  |          |             |           |         |
-| [CodeSystem Rules](#defining-code-systems)                         |         |           |                    |          | Y           |           |         |
-| [Mapping Rules](#defining-mappings)                                |         |           |                    |          |             | Y         |         |
-| [ValueSet Rules](#defining-value-sets)                             |         |           |                    |          |             |           | Y       |
+| Rule Type | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | {%include tu.html%} [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | {%include tu.html%}  [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
+|-----------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
+| {%include tu.html%} [Add Element](#addelement-rules)             |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
+| [Assignment](#assignment-rules)              |       | C           | Y         | Y        |           | C       |         | Y       | C        | Y        | C         |
+| [Binding](#binding-rules)                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
+| [Cardinality](#cardinality-rules)          |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
+| [Contains (inline extensions)](#contains-rules-for-extensions)             |       |             | Y         |          |           |         |         |         |          | Y        |           |
+| [Contains (standalone extensions)](#contains-rules-for-extensions) |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
+| [Contains (slicing)](#contains-rules-for-slicing)     |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
+| [Flag](#flag-rules)                      |       |             | Y         |          |           | L       |         | Y       | L        | Y        |           |
+| [Insert](#insert-rules)                  |       | Y           | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        | Y         |
+| [Obeys](#obeys-rules)                 |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
+| {%include tu.html%} [Path](#path-rules)                 |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
+| [Type](#type-rules)                 |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
+| [CodeSystem Rules](#defining-code-systems)                |       | Y           |           |          |           |         |         |         |          | Y        |           |
+| [Mapping Rules](#defining-mappings)           |       |             |           |          |           |         | Y       |         |          | Y        |           |
+| [ValueSet Rules](#defining-value-sets)          |       |             |           |          |           |         |         |         |          | Y        | Y         |
 {: .grid }
 
 </div>
 
-Key:
-Y = Rule type can be used with item, L = All flags except must support (MS) are supported, C = Assignments can be applied only to caret paths, A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
+**KEY:** Y = Rule type can be used, L = All flags except must support (MS) are supported, C = Assignments can be applied only to caret paths, A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
 
 #### Defining Aliases
 
@@ -928,7 +949,7 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 * `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
 * `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array.
 
-Instances inherit values from their SD (i.e. assigned codes, extensions) if those values are required. Assignment rules are used to set additional values.
+Instances inherit values from their StructureDefinition (i.e. assigned codes, extensions) if those values are required. Assignment rules are used to set additional values.
 
 Rules types that apply to Instances are: [Assignment](#assignment-rules), [Insert](#insert-rules), and [Path](#path-rules). No other rule types are allowed.
 
@@ -1117,11 +1138,11 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 
 #### Defining Mappings
 
-[Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of an SD, intended to help implementers understand the SD in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
+[Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of a StructureDefinition, intended to help implementers understand the StructureDefinition in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
 
 To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required, and `Title` and `Description` are OPTIONAL.
 
-| Keyword | Usage | SD element |
+| Keyword | Usage | StructureDefinition element |
 |-------|------------|--------------|
 | Mapping | Appears first and provides a unique name for the mapping | n/a |
 | Source | The name or id of the profile the mapping applies to | n/a |
@@ -1142,7 +1163,7 @@ The first type of rule applies to mapping the profile as a whole to the target s
 
 The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/R4/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code MUST come from FHIR's [MimeType value set](https://www.hl7.org/fhir/R4/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
 
->**Note:** Unlike setting the mapping.map directly in the SD, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
+>**Note:** Unlike setting the mapping.map directly in the StructureDefinition, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
 A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rules) applied to it.
 
@@ -1760,50 +1781,40 @@ Assignment rules follow this syntax:
 
 The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side MUST align with the data type of the final element in the path. An assignment replaces any existing value assigned to the element.
 
-##### Assigning Values versus Specifying Requirements
+##### Assigning Values versus Specifying Constraints
 
-Assignment rules have two different interpretations, depending on context:
+Assignment rules have two very different interpretations, depending on context:
 
-* In an instance and in SD metadata (accessed via a [caret paths](#caret-paths)), assignment rules set the **value** of the target element.
-* In profiles and extension definitions, assignment rule establish **requirements** for instances conforming to the profile or extension. The requirement is expressed as a pattern of values that must be present in the instance.
+* In instances, assignment rules set the **value** of the target element. Note that whenever an element is accessed via a [caret path](#caret-paths), it is actually accessing the definitional instance (for example, the StructureDefinition of the profile). Therefore, assignments involving caret paths also set the **value** of the target element.
+* Assignment rules in profiles and extensions establish **constraints** on instances conforming to the profile or extension. The requirement is expressed as a pattern of values that must be present in the instance. In this context, and assignment rule does not set the value of the element, but instead, establishes a **constraint** on that value.
 
-By default, the pattern is considered "open" in the sense that the element in question might have content in addition to the prescribed value, such as alternative codes in a CodeableConcept or an extension. If conformance to a profile requires a precise match to the pattern (which is rare), then the following syntax can be used:
+This is best illustrated by example. Consider the following assignment (assuming code is a CodeableConcept):
+
+```
+* code = https://loinc.org#69548-6
+```
+
+If this statement appears in an instance of an Observation, then the values of code.coding[0].system and code.coding[0].code will be set to https://loinc.org and 69548-6, respectively, in that Observation.
+
+If the identical statement appears in a profile on Observation, it signals that the StructureDefinition should be configured such that the code element of a conformant instance must have a Coding with the system http://loinc.org and the code 69548-6. (In fact, the StructureDefinition does not even *have* a code element to populate.)
+
+> **Note**: In the profiling context, typically only the system and code are important conformance criteria. If a display text is included, it will be part of the conformance criteria.
+
+In the latter case of establishing a constraint in a profile, the constraint pattern considered "open" by default, in the sense that the element in question might have content in addition to the prescribed value, such as alternative codes in a CodeableConcept. If conformance to a profile requires a precise match to the pattern (which is rare), then the following syntax can be used:
 
 ```
 * <element> = {value} (exactly)
 ```
 
-Adding `(exactly)` indicates no additional values or extensions are allowed on the element. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles. The `(exactly)` modifier SHOULD NOT be used when assigning values to instances or SD metadata, and if present, will be ignored.
-
-Consider the interpretation of the following assignment statements in instances and profiles, assuming the code element is a CodeableConcept and $LNC is an alias for http://loinc.org:
-
-```
-* code = $LNC#69548-6
-```
-
-```
-* code = $LNC#69548-6 "Genetic variant assessment"
-```
+Adding `(exactly)` indicates no additional values or extensions are allowed on the element. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles. For example, in a profile,
 
 ```
 * code = $LNC#69548-6 (exactly)
 ```
 
-In the context of an instance or SD metadata (via caret paths):
+means that a conforming instance must have the system http://loinc.org, the code 69548-6, and *must not have* a display text, additional codes, or extensions on the code element.
 
-* The first statement sets the system and code, leaving the display empty.
-* The second statement sets the system, code, and display text.
-* The third statement is the same as the first, since `(exactly)` is meaningless in this context.
-
-In the context of a profile or an extension definition:
-
-* The first statement signals that an instance must have the system http://loinc.org and the code 69548-6 to pass validation.
-* The second statement says that an instance must have the system http://loinc.org, the code 69548-6, *and* the display text "Genetic variant assessment" to pass validation.
-* The third statement says that an instance must have the system http://loinc.org and the code 69548-6, and *must not have* a display text, additional codes, or extensions.
-  
-In a profiling context, typically only the system and code are important conformance criteria, so the first statement is preferred. In the context of an instance, the display text conveys additional information useful to the information receiver, so the second statement would be preferred.
-
-In the following, we give details and examples of assignments involving various data types.
+When assigning values to an instance, the `(exactly)` modifier has no meaning and SHOULD NOT be used. Implementations may ignore the modifier or signal an error.
 
 ##### Assignments with Primitive Data Types
 
@@ -1928,7 +1939,6 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
 ```
 * <CodeableConcept>.text = "{string}"
 ```
-
 
 **Examples:**
 
@@ -2780,7 +2790,6 @@ A path rule has no impact on the element it refers to. The only purpose of the p
 | MS  | Flag denoting a Must Support element
 |  OID   | Object Identifier
 | $SCT | Common FSH alias for SNOMED Clinical Terms
-|  SD   | StructureDefinition
 |  SU  | Flag denoting "include in summary"
 |  TU  | Flag denoting trial use element
 | UCUM  | Unified Code for Units of Measure
