@@ -680,7 +680,7 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 <div class="shadeRow6 shadeRow9">
 
-| Declaration | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+|       Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
 [Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
 [Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
@@ -706,7 +706,7 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 
 <div class = "shadeCol7 shadeCol10 shadeRow1 shadeRow11 shadeHead shadeHead7 shadeHead10">
 
-| Rule Type | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | {%include tu.html%} [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | {%include tu.html%}  [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
+|              Item →<br/>Rule Type ↓ | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | [Logical](#defining-logical-models)<br/>{%include tu.html%} | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | [Resource](#defining-resources)<br/>{%include tu.html%} | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
 |--------------------------------------------------------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
 | {%include tu.html%} [Add Element](#addelement-rules)               |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
 | [Assignment](#assignment-rules)                                    |       | C           | Y         | Y        |           | C       |         | Y       | C        | Y        | C         |
