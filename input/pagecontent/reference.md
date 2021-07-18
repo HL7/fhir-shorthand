@@ -727,7 +727,7 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 | [Flag](#flag-rules)                                                |       |             | Y         |          |           | L       |         | Y       | L        | Y        |           |
 | [Include](#include-rules)                                          |       |             |           |          |           |         |         |         |          | Y        | Y         |
 | [Insert](#insert-rules)                                            |       | Y           | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        | Y         |
-| [Local Code](#define-code-rules)                                   |       | Y           |           |          |           |         |         |         |          | Y        |           |
+| [Local Code](#local-code-rules)                                   |       | Y           |           |          |           |         |         |         |          | Y        |           |
 | [Mapping](#mapping-rules)                                          |       |             |           |          |           |         | Y       |         |          | Y        |           |
 | [Obeys](#obeys-rules)                                              |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
 | {%include tu.html%} [Path](#path-rules)                            |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
