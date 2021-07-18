@@ -17,7 +17,7 @@ Syntax expressions uses the following conventions:
 | **bold** | A directory path or file name | **example-1.fsh** |
 | `Code` | Code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
 | `{curly braces}` | An item to be substituted in a syntax expression | `{flag}` |
-| `<angle brackets>` | An element or path to an element with the given data type, to be substituted in the syntax expression | `<CodeableConcept>` |
+| `<angle brackets>` | An element or path to an element with the given datatype, to be substituted in the syntax expression | `<CodeableConcept>` |
 | `...` (ellipsis) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
 | <code><span class="optional">italics</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
 {: .grid }
@@ -33,12 +33,12 @@ Syntax expressions uses the following conventions:
   A FSH statement following this pattern would be written as:
 
   * An asterisk, followed by
-  * Any element of data type Quantity or a path to an element with data type Quantity, followed by
+  * Any element of datatype Quantity or a path to an element with datatype Quantity, followed by
   * An equals sign, followed by
   * Any decimal or integer number, followed by
   * Any Unified Code for Units of Measure (UCUM) unit, enclosed in single quotes.
 
-* A rule to constrain an element to a certain data type or types:
+* A rule to constrain an element to a certain datatype or types:
 
   `* <element> only {datatype(s)}`
 
@@ -47,17 +47,17 @@ Syntax expressions uses the following conventions:
   * An asterisk, followed by
   * Any element or a path to any element, followed by
   * The word `only`, followed by
-  * A list including at least one datatype
+  * A list including at least one datatype, where datatype 
 
 Here are some examples of angle brackets and curly braces and used in this IG:
 
 | Angle Brackets | Meaning | Example(s) |
 |--------|--------|---------|
-| `<bindable>` | Substitute an element or path to an element whose data type allows it to be bound to a value set | `code` |
-| `<CodeableConcept>`  | Substitute an element or path to an element whose data type is CodeableConcept |  `category`  |
+| `<bindable>` | Substitute an element or path to an element whose datatype allows it to be bound to a value set | `code` |
+| `<CodeableConcept>`  | Substitute an element or path to an element whose datatype is CodeableConcept |  `category`  |
 | `<element>` | Substitute any element or path to any element | `method.type` |
 | `<element(s)>` | Substitute one or more elements or paths, separated by `and` | `category and method and method.type` |
-| `<Extension>` | Substitute an element or path to an element whose data type is Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
+| `<Extension>` | Substitute an element or path to an element whose datatype is Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
 {: .grid }
 
 | Curly Braces | Meaning | Example(s) |
@@ -66,8 +66,8 @@ Here are some examples of angle brackets and curly braces and used in this IG:
 | `{code}`  | Substitute an instance of a code | `#active` |
 | `{CodeableConcept}`  | Substitute an instance of a CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
 | `{decimal}` | Substitute any decimal number | `124.0` |
-| `{datatype}` | Substitute any primitive or complex data type name or a Reference | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
-| `{datatype(s)}` | Substitute one or more primitive or complex data type names or a References, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)` |
+| `{datatype}` | Substitute any primitive or complex datatype name or a Reference | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | Substitute one or more primitive or complex datatype names, Reference(s) or Canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  Substitute the name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | Substitute one of the valid [FSH flags](#flag-rules) |  `MS` |
 | `{flag(s)}` | Substitute one or more flags, separated by whitespace | `MS SU ?!` |
@@ -98,10 +98,10 @@ The allocation of items to files is not meaningful in FSH, and items from all fi
 
 Each FSH project MUST declare the version of FHIR it depends upon. The form of this declaration is outside the scope of the FSH specification, and SHOULD be managed by implementations. The FSH specification is not explicitly FHIR-version dependent, but implementations MAY support only a specific version or versions of FHIR.
 
-The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive data types).
+The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive datatypes).
 
 {%include tu-div.html%}
-FSH supports new pre-release FHIR R5 data types integer64 and CodeableReference on a trial use basis.
+FSH supports new pre-release FHIR R5 datatypes integer64 and CodeableReference on a trial use basis.
 </div>
 
 #### External IGs
@@ -118,7 +118,7 @@ Like other HL7 FHIR IGs, the version numbering of the FSH specification does not
 
 #### Formal Grammar
 
-[FSH has a formal grammar](#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/). The grammar is looser than the language specification since many things, such as data type agreement, are not enforced by the grammar. If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
+[FSH has a formal grammar](#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/). The grammar is looser than the language specification since many things, such as datatype agreement, are not enforced by the grammar. If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
 #### Reserved Words
 
@@ -166,7 +166,7 @@ The formal grammar for FSH discards all comments during import; they are not ret
 
 #### Primitives
 
-The primitive data types and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to code, id, oid, etc. refer to the primitive datatypes defined in FHIR.
+The primitive datatypes and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to code, id, oid, etc. refer to the primitive datatypes defined in FHIR.
 
 FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark.
 
@@ -174,9 +174,9 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 FHIR resources can contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
 
-FSH represents Resource references using the syntax `Reference({Resource})`. For elements that require a Reference data type, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
+FSH represents Resource references using the syntax `Reference({Resource})`. For elements that require a Reference datatype, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
 
-Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical datatype, FSH will accept a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
 #### Codes and Codings
 
@@ -198,7 +198,7 @@ FSH represents Codings as follows:
 
 <pre><code>{CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
-As [indicated by italics](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by italics](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical datatype in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -333,7 +333,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * Top-level elements such as the code element of an Observation
 * Nested elements, such as the text element of the method element of an Observation
 * Elements in a list or array, such as the second element in the name array of a Patient resource
-* Individual data types of choice elements, such as onsetAge in onset[x]
+* Individual datatypes of choice elements, such as onsetAge in onset[x]
 * Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
 * Metadata elements of definitional resources, such as the experimental and active elements of a StructureDefinition.
 * Properties of ElementDefinitions nested within a StructureDefinition, such as the maxLength property of string elements
@@ -366,11 +366,11 @@ To refer to nested elements, the path lists the properties in order, separated b
 
 Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure \| Observation). To address a specific resource or profile among the choices, append the target Resource or Profile (represented by a name, id, or url) enclosed in square brackets to the path.
 
-> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that has data type Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
+> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that has datatype Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
 
 **Examples:**
 
-* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/R4/diagnosticreport.html), whose acceptable data types are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
+* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/R4/diagnosticreport.html), whose acceptable datatypes are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
 
   ```
   performer[Practitioner]
@@ -390,19 +390,19 @@ Elements can offer a choice of reference types. In the FHIR specification, these
 
 #### Data Type Choice [x] Paths
 
-FHIR represents an element with a choice of data types using the style foo[x]. For example, Condition.onset[x] can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](http://hl7.org/fhir/R4/formats.html#choice), to refer to one of these data types, replace the `[x]` with the data type name, capitalizing the first letter. For Condition.onset[x], the individual choices are onsetDateTime, onsetAge, onsetPeriod, onsetRange, and onsetString.
+FHIR represents an element with a choice of datatypes using the style foo[x]. For example, Condition.onset[x] can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](http://hl7.org/fhir/R4/formats.html#choice), to refer to one of these datatypes, replace the `[x]` with the datatype name, capitalizing the first letter. For Condition.onset[x], the individual choices are onsetDateTime, onsetAge, onsetPeriod, onsetRange, and onsetString.
 
 > **Note:** foo[x] choices are NOT represented as foo[dateTime], foo[Period], etc.
 
 **Examples:**
 
-* The path to the string data type of Observation.value[x]:
+* The path to the string datatype of Observation.value[x]:
 
   ```
   valueString
   ```
 
-* The path to the Reference data type choice of Medication.ingredient.item[x]:
+* The path to the Reference datatype choice of Medication.ingredient.item[x]:
 
   ```
   ingredient.itemReference
@@ -561,7 +561,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
   telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct]
   ```
 
-* Path to the Coding data type of the value[x] in the nested extension ombCategory under the ethnicity extension in US Core, using the slice names of the extensions:
+* Path to the Coding datatype of the value[x] in the nested extension ombCategory under the ethnicity extension in US Core, using the slice names of the extensions:
 
   ```
   extension[ethnicity].extension[ombCategory].valueCoding
@@ -938,7 +938,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
 
 #### Defining Instances
 
-Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name, id, or url for any profile, resource, or complex data type defined internally or externally.
+Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name, id, or url for any profile, resource, or complex datatype defined internally or externally.
 
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
@@ -1379,7 +1379,7 @@ Each parameter represents a value that can be substituted into the rules when th
 
 #### Defining Value Sets
 
-A value set is a group of coded values representing acceptable values for a FHIR element whose data type is code, Coding, CodeableConcept, Quantity, string, or url.
+A value set is a group of coded values representing acceptable values for a FHIR element whose datatype is code, Coding, CodeableConcept, Quantity, string, or url.
 
 Value sets are defined using the declarative keyword `ValueSet`, with OPTIONAL keywords `Id`, `Title` and `Description`.
 
@@ -1509,7 +1509,7 @@ In the first approach, `value[x]` is not yet known to be restricted to a Quantit
 
 In cases with no explicit or logical restrictions on rule ordering, users MAY list rules in any order, bearing in mind that [insert rules](#insert-rules) expand into other rules that could have order constraints or logical ordering requirements.
 
-It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different data types. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
+It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different datatypes. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
 
 #### Indented Rules
 
@@ -1712,10 +1712,9 @@ The syntax of the rules to add a new element are as follows:
 
 where `{datatype(s)}` can be one of the following:
 
-* A primitive or complex datatype name,
-* A choice of multiple datatypes, separated with `or`,
-* A Reference to a resource or profile, `Reference({ResourceOrProfile})`,
-* A choice of multiple Resource or Profiles inside a Reference, separated with `or`
+* A primitive or complex datatype name, or multiple datatypes, separated with `or`,
+* References to one or more resources or profiles, `Reference({ResourceOrProfile(s)})`, separated with `or`
+* Canonicals for one or more resources or profiles, `Canonical({ResourceOrProfile(s)})`, separated with `or`
 
 Note the following:
 
@@ -1784,7 +1783,7 @@ Assignment rules follow this syntax:
 * <element> = {value}
 ```
 
-The left side of this expression follows the [FSH path grammar](#fsh-paths). The data type on the right side MUST align with the data type of the final element in the path. An assignment replaces any existing value assigned to the element.
+The left side of this expression follows the [FSH path grammar](#fsh-paths). The datatype on the right side MUST align with the datatype of the final element in the path. An assignment replaces any existing value assigned to the element.
 
 ##### Assigning Values versus Specifying Constraints
 
@@ -1825,7 +1824,7 @@ When assigning values to an instance, the `(exactly)` modifier has no meaning an
 
 **Examples:**
 
-* Assignment of a code data type:
+* Assignment of a code datatype:
 
   ```
   * status = #arrived
@@ -1851,7 +1850,7 @@ When assigning values to an instance, the `(exactly)` modifier has no meaning an
 
 {%include tu-div.html%}
 
-* Assignment of an integer64 (note: this data type was introduced in FHIR v4.2.0): 
+* Assignment of an integer64 (note: this datatype was introduced in FHIR v4.2.0): 
 
   ```
   * extension[my-extension].valueInteger64 = 1234567890
@@ -1889,7 +1888,7 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
   * myCoding.userSelected = true
   ```
   
-* In an instance of a Signature, set Signature.type (a Coding data type):
+* In an instance of a Signature, set Signature.type (a Coding datatype):
 
   ```
   * type = urn:iso-astm:E1762-95:2013#1.2.840.10065.1.12.1.2 "Coauthor's Signature"
@@ -2027,7 +2026,7 @@ A Quantity can also be bound to a value set:
 <pre><code>* &lt;Quantity&gt; from {ValueSet}
 </code></pre>
 
-> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR oddly treating Quantity as a coded data type.
+> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR oddly treating Quantity as a coded datatype.
 
 **Examples:**
 
@@ -2124,7 +2123,7 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
   * name.family = "Anyperson"
   ```
 
-* Assignment of the same instance in Bundle.entry.resource, whose data type is Resource (not Reference(Resource)):
+* Assignment of the same instance in Bundle.entry.resource, whose datatype is Resource (not Reference(Resource)):
 
   ```
   * entry[0].resource = EveAnyperson
@@ -2134,11 +2133,11 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
 {%include tu-div.html%}
 
-The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) data type was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. Making use of CodeableReference involves no new FSH syntax.
+The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. Making use of CodeableReference involves no new FSH syntax.
 
 **Examples:**
 
-* Constrain Substance.code, which is data type `CodeableReference(SubstanceDefinition)`:
+* Constrain Substance.code, which is datatype `CodeableReference(SubstanceDefinition)`:
 
   ```
   Profile: LatexSubstance
@@ -2346,7 +2345,7 @@ In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) 
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
 
-The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, data type of sliced element, or profile conformance.
+The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, or profile conformance.
 
 **Example:**
 
@@ -2374,9 +2373,9 @@ The second step in slicing is to populate the array that is to be sliced, using 
 
 In this pattern, `<array>` is a path to the element that is to be sliced and to which the slicing rules defined in step (1) will applied. The names (`name`, `name1`, etc.) are created by the rule author to describe the slice in the context of the profile. These names are used to refer to the slice in later rules. By convention, the slice names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
 
-Each slice will match or constrain the data type of the array it slices. In particular:
+Each slice will match or constrain the datatype of the array it slices. In particular:
 
-* If an array is a one of the FHIR data types, each slice will be the same data type or a profile of it. For example, if Observation.identifier is sliced, each slice will have type Identifier or be constrained to a profile of the Identifier data type.
+* If an array is a one of the FHIR datatypes, each slice will be the same datatype or a profile of it. For example, if Observation.identifier is sliced, each slice will have type Identifier or be constrained to a profile of the Identifier datatype.
 * If the sliced array is a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints can be applied to the slices.
 * If the array to be sliced is a Reference, then each slice MUST be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice must either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
 
@@ -2724,7 +2723,7 @@ A path rule has no impact on the element it refers to. The only purpose of the p
 
 #### Type Rules
 
-FSH rules can be used to restrict the data type of an element. The syntaxes to restrict the type are:
+FSH rules can be used to restrict the datatype(s) of an element. The syntaxes are:
 
 ```
 * <element> only {datatype}
@@ -2734,11 +2733,15 @@ FSH rules can be used to restrict the data type of an element. The syntaxes to r
 * <element> only Reference({ResourceOrProfile})
 
 * <element> only Reference({ResourceOrProfile1} or {ResourceOrProfile2} or {ResourceOrProfile3}...)
+
+* <element> only Canonical({ResourceOrProfile})
+
+* <element> only Canonical({ResourceOrProfile1} or {ResourceOrProfile2} or {ResourceOrProfile3}...)
 ```
 
-Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive data type or profile for one of the choices appearing in the parent profile or resource.
+Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource.
 
-Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/R4/profiling.html), the data type(s) in a type rule MUST always be more restrictive than the original data type. For example, if the parent data type is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
+Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/R4/profiling.html), the datatype(s) in a type rule MUST always be more restrictive than the original datatype. For example, if the parent datatype is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
 
 **Examples:**
 
@@ -2768,7 +2771,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 {%include tu-div.html%}
 
-* Restrict value[x] to the integer64 type (note: this data type was introduced in FHIR v4.2.0):
+* Restrict value[x] to the integer64 type (note: this datatype was introduced in FHIR v4.2.0):
 
   ```
   * value[x] only integer64
@@ -2776,13 +2779,13 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 </div>
 
-* Restrict Observation.performer (a choice of reference to Practitioner, PractitionerRole, Organization, CareTeam, Patient, or RelatedPerson) to allow only Practitioner:
+* Restrict Observation.performer (nominally Reference(Practitioner | PractitionerRole | Organization | CareTeam | Patient | RelatedPerson) to allow only Practitioner:
 
   ```
   * performer only Reference(Practitioner)
   ```
 
-* Restrict Observation.performer to either a Practitioner or a PractitionerRole:
+* Restrict performer to either a Practitioner or a PractitionerRole:
 
   ```
   * performer only Reference(Practitioner or PractitionerRole)
@@ -2800,6 +2803,17 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
+* Restrict PlanDefinition.action.definition[x], nominally a choice of uri or canonical(ActivityDefinition | PlanDefinition | Questionnaire), to allow only the canonical of an ActivityDefinition:
+
+  ```
+  * action.definition[x] only Canonical(ActivityDefinition)
+  ```
+
+* Restrict action.definition[x] to a canonical of either an ActivityDefinition or a PlanDefinition:
+
+  ```
+  * action.definition[x] only Canonical(ActivityDefinition or PlanDefinition)
+  ```
 
 ### Appendix: Abbreviations
 
