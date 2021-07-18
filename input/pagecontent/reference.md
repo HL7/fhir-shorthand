@@ -16,11 +16,10 @@ Syntax expressions uses the following conventions:
 |:------------|:------|:---------|
 | **bold** | A directory path or file name | **example-1.fsh** |
 | `Code` | Code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
-| `{curly braces}` | An item to be substituted in a syntax expression | `{display string}` |
-| `<datatype>` | An element or path to an element with the given data type, to be substituted in the syntax expression | `<CodeableConcept>` |
-| ellipsis (`...`) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
-| <code><i>italics</i></code> | An optional item in a syntax expression | <code><i>{flag}</i></code> |
-| vertical bar (`|`) | A choice of items or data types in the syntax | `name|id|url` |
+| `{curly braces}` | An item to be substituted in a syntax expression | `{flag}` |
+| `<angle brackets>` | An element or path to an element with the given data type, to be substituted in the syntax expression | `<CodeableConcept>` |
+| `...` (ellipsis) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
+| <code><span class="optional">italics</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
 {: .grid }
 
 **Syntax Expression Examples:**
@@ -41,35 +40,45 @@ Syntax expressions uses the following conventions:
 
 * A rule to constrain an element to a certain data type or types:
 
-  <pre><code>* &lt;element&gt; only {datatype1} <i>or {datatype2} or {datatype3}...</i></code></pre>
+  `* <element> only {datatype(s)}`
 
   A FSH statement following this pattern would be written as:
 
   * An asterisk, followed by
   * Any element or a path to any element, followed by
   * The word `only`, followed by
-  * A list including at least one data type, separated by the word `or`
+  * A list including at least one datatype
 
-Here are some examples of curly braces and angle brackets used in this Guide:
+Here are some examples of angle brackets and curly braces and used in this IG:
 
-| Symbol | Meaning | Examples |
+| Angle Brackets | Meaning | Example(s) |
 |--------|--------|---------|
-| `{Coding}`  | Instance of a Coding | `$SCT#961000205106 "Wearing street clothes, no shoes"` |
-| `<CodeableConcept>`  | An element or path to an element whose data type is CodeableConcept |  `category`  |
-| `<bindable>` | An element or path to an element whose data type allows it to be bound to a value set | `code` |
-| `{flag}`  | One of the valid [FSH flags](#flag-rules) |  `MS` |
-| <code><i>{flags}</i></code> or <code><i>{flag1} {flag2} {flag3}&nbsp;...</i></code> | An optional sequence of 1 or more flags, separated by whitespace | `MS SU` |
-| `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
-| `<element>` | Any element or path to any element | `method.type` |
-| `<Extension>` | An element or path to an element with data type Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
-| `{Extension name|id|url}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
-| `{rule}` | Any FSH rule | `* category 1..1 MS`
-| `{RuleSet name}` | The name of a RuleSet | `RuleSet1`
-| `{Invariant id}` | The id of an Invariant | `us-core-8`
-| `{datatype}` | Any primitive or complex data type | `decimal` <br/> `ContactPoint` |
-| `{ValueSet name|id|url}` | The name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
-| `{ResourceType name|id|url}` | The name, id, or canonical URL (or alias) for any type of Resource or Profile | `Condition` <br/>  `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
+| `<bindable>` | Substitute an element or path to an element whose data type allows it to be bound to a value set | `code` |
+| `<CodeableConcept>`  | Substitute an element or path to an element whose data type is CodeableConcept |  `category`  |
+| `<element>` | Substitute any element or path to any element | `method.type` |
+| `<element(s)>` | Substitute one or more elements or paths, separated by `and` | `category and method and method.type` |
+| `<Extension>` | Substitute an element or path to an element whose data type is Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
 {: .grid }
+
+| Curly Braces | Meaning | Example(s) |
+|--------|--------|---------|
+| `{card}` | Substitute a [cardinality expression](#cardinality-rules) |  `0..1` |
+| `{code}`  | Substitute an instance of a code | `#active` |
+| `{CodeableConcept}`  | Substitute an instance of a CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
+| `{decimal}` | Substitute any decimal number | `124.0` |
+| `{datatype}` | Substitute any primitive or complex data type name or a Reference | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | Substitute one or more primitive or complex data type names or a References, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)` |
+| `{Extension}` |  Substitute the name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
+| `{flag}`  | Substitute one of the valid [FSH flags](#flag-rules) |  `MS` |
+| `{flag(s)}` | Substitute one or more flags, separated by whitespace | `MS SU ?!` |
+| `{Invariant}` | Substitute the id of an Invariant | `us-core-8` |
+| `{ResourceOrProfile}` | Substitute the name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
+| `{rule}` | Substitute any FSH rule | `* category 1..1 MS` |
+| `{RuleSet}` | Substitute the name of a RuleSet | `MyRuleSet` |
+| `{ValueSet}` | Substitute the name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
+{: .grid }
+
+>**Note:** When listing multiple items, consecutive elements and paths are always separated by `and`, consecutive flags are always separated by white spaces, and consecutive datatypes area always separated by `or`. When listing multiple References, the `or` is placed *inside* the Reference(), e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
 
 ### FSH Foundations
 
@@ -165,9 +174,9 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 FHIR resources can contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
 
-FSH represents Resource references using the syntax `Reference({Resource name|id|url})`. For elements that require a Reference data type, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
+FSH represents Resource references using the syntax `Reference({Resource})`. For elements that require a Reference data type, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
 
-Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name|id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical data type, FSH will accept a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
 #### Codes and Codings
 
@@ -187,7 +196,7 @@ In general, the first syntax is sufficient. Quotes are only required when a code
 
 FSH represents Codings as follows:
 
-<pre><code>{CodeSystem name|id|url}<i>|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+<pre><code>{CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
 As [indicated by italics](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical data type in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
@@ -247,11 +256,11 @@ FSH provides a shorthand that allows three aspects of a Quantity to be set simul
 
 The grammar is either:
 
-<pre><code>{decimal} '{UCUM code}' <i>"{display}"</i></code></pre>
+<pre><code>{decimal} '{UCUM code}' <span class="optional">"{display}"</span></code></pre>
 
 or
 
-<pre><code>{decimal} {CodeSystem name|id|url}<i>|{version string}</i>#{code} <i>"{display}"</i></code></pre>
+<pre><code>{decimal} {CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{display}"</span></code></pre>
 
 The first shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`). The second shorthand can be used when the units are not UCUM. Alternatively, the value and units can be assigned independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
 
@@ -355,7 +364,7 @@ To refer to nested elements, the path lists the properties in order, separated b
 
 #### Reference Paths
 
-Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure \| Observation). To address a specific resource or profile among the choices, append the target data type (represented by a name, id, or url) enclosed in square brackets to the path.
+Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure \| Observation). To address a specific resource or profile among the choices, append the target Resource or Profile (represented by a name, id, or url) enclosed in square brackets to the path.
 
 > **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that has data type Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
 
@@ -522,10 +531,10 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions can be identified by that slice name, or the extension's URL.
 
-The path to an extension is constructed by combining the path to the extension array with a reference to the extension in square brackets:
+The path to an extension is constructed by combining the path to the extension array with a reference to slice name in square brackets:
 
 ```
-<Extension>[{extension slice name|id|URL}]
+<Extension>[{name or id or URL}]
 ```
 
 For locally-defined extensions, using the slice name is the simplest choice. For externally-defined extensions, the canonical URL can be easier to find than the slice name.
@@ -680,7 +689,7 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 <div class="shadeRow6 shadeRow9">
 
-|       Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
+|         Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
 [Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
 [Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
@@ -699,12 +708,11 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
 
-
 ##### Rule Statements
 
 A number of rules may follow the keyword statements. The grammar and meaning of different rule types are discussed in the [FSH Rules](#fsh-rules) section. Without defining the rule types here, the following table shows the applicability of rule types to item types:
 
-<div class = "shadeCol7 shadeCol10 shadeRow1 shadeRow11 shadeHead shadeHead7 shadeHead10">
+<div class = "shadeCol7 shadeCol10 shadeRow1 shadeRow15 unshadeHead unshadeHead7 unshadeHead10">
 
 |              Item →<br/>Rule Type ↓ | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | [Logical](#defining-logical-models)<br/>{%include tu.html%} | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | [Resource](#defining-resources)<br/>{%include tu.html%} | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
 |--------------------------------------------------------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
@@ -715,19 +723,20 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 | [Contains (inline extensions)](#contains-rules-for-extensions)     |       |             | Y         |          |           |         |         |         |          | Y        |           |
 | [Contains (standalone extensions)](#contains-rules-for-extensions) |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
 | [Contains (slicing)](#contains-rules-for-slicing)                  |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
+| [Exclude](#exclude-rules)                                          |       |             |           |          |           |         |         |         |          | Y        | Y         |
 | [Flag](#flag-rules)                                                |       |             | Y         |          |           | L       |         | Y       | L        | Y        |           |
+| [Include](#include-rules)                                          |       |             |           |          |           |         |         |         |          | Y        | Y         |
 | [Insert](#insert-rules)                                            |       | Y           | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        | Y         |
+| [Local Code](#define-code-rules)                                   |       | Y           |           |          |           |         |         |         |          | Y        |           |
+| [Mapping](#mapping-rules)                                          |       |             |           |          |           |         | Y       |         |          | Y        |           |
 | [Obeys](#obeys-rules)                                              |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
 | {%include tu.html%} [Path](#path-rules)                            |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
 | [Type](#type-rules)                                                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
-| [CodeSystem Rules](#defining-code-systems)                         |       | Y           |           |          |           |         |         |         |          | Y        |           |
-| [Mapping Rules](#defining-mappings)                                |       |             |           |          |           |         | Y       |         |          | Y        |           |
-| [ValueSet Rules](#defining-value-sets)                             |       |             |           |          |           |         |         |         |          | Y        | Y         |
 {: .grid }
 
 </div>
 
-**KEY:** Y = Rule type can be used, L = All flags except must support (MS) are supported, C = Assignments can be applied only to caret paths, A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
+**KEY:** Y = Rule type can be used, L = All flags except must support (MS) are supported, C = Assignments can be applied only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
 
 #### Defining Aliases
 
@@ -1143,9 +1152,9 @@ To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required
 
 The mappings themselves are declared in rules with the following syntaxes:
 
-<pre><code>* -> "{map string}" <i>"{comment string}" #{mime-type code}</i>
+<pre><code>* -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span>
 
-* &lt;element&gt; -> "{map string}" <i>"{comment string}" #{mime-type code}</i>
+* &lt;element&gt; -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span>
 </code></pre>
 
 The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target. No other types of rules are allowed.
@@ -1297,7 +1306,7 @@ RuleSet: {name}
 
 Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
 
-<pre><code>RuleSet: {name}(parameter1<i>, parameter2, parameter3...</i>)
+<pre><code>RuleSet: {name}(parameter1<span class="optional">, parameter2, parameter3...</span>)
 {rule1}
 {rule2}
 // More rules
@@ -1382,22 +1391,22 @@ The contents of a value set are defined by a set of rules. There are four types 
 
 | To include... | Syntax | Example |
 |-------|---------|----------|
-| A single code | `* include {Coding}` | `* include $SCT#961000205106 "Wearing street clothes, no shoes"` <br/> or equivalently, <br/> `* $SCT#961000205106 "Wearing street clothes, no shoes"`|
-| All codes from another value set | `* include codes from valueset {ValueSet name|id|url}` | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`  <br/> or equivalently, <br/> `* codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`|
-| All codes from a code system | `* include codes from system {CodeSystem name|id|url}` | `* include codes from system http://snomed.info/sct` <br/> or equivalently, <br/> `* codes from system http://snomed.info/sct`|
-| Selected codes from a code system (filters are code system dependent) | `* include codes from system {CodeSystem name|id|url} where {filter} and {filter} and ...` | `* include codes from system $SCT where concept is-a #254837009` <br/> or equivalently, <br/> `* codes from system $SCT where concept is-a #254837009`|
+| A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
+| All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}</code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
+| All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}</code> | `* include codes from system http://snomed.info/sct` |
+| Filtered codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem} where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept is-a #254837009` |
 {: .grid }
 
-See [below](#filters) for discussion of filters.
+> **Note:** Filters are code system dependent. See [below](#filters) for further discussion.
 
 Analogous rules can be used to leave out certain codes, with the word `exclude` replacing the word `include`:
 
 | To exclude... | Syntax | Example |
 |-------|---------|----------|
 | A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from another value set | `* exclude codes from valueset {ValueSet name|id|url}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | `* exclude codes from system {CodeSystem name|id|url}` | `* exclude codes from system http://snomed.info/sct` |
-| Selected codes from a code system (filters are code system dependent) | `* exclude codes from system {CodeSystem name|id|url} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
+| All codes from another value set | `* exclude codes from valueset {ValueSet}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
+| All codes from a code system | `* exclude codes from system {CodeSystem}` | `* exclude codes from system http://snomed.info/sct` |
+| Filtered codes from a code system | `* exclude codes from system {CodeSystem} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
 {: .grid }
 
 In addition, [assignment rules](#assignment-rules) can be applied to value sets, but only in the context of caret paths (to set metadata).
@@ -1454,23 +1463,26 @@ The following restrictions apply to rules:
 
 The following table is a summary of the rule syntax.
 
-<div class = "shadeRow1 shadeRow10 shadeRow12 shadeHead">
+<div class = "shadeRow1 shadeRow15 unshadeHead">
 
 | Rule Type | Syntax |
 | --- | --- |
-| {%include tu.html%} [Add Element](#addelement-rules) |`* <element> {min}..{max} {dataype} "{short}"` <br/>`* <element> {min}..{max} Reference({ResourceType name|id|url}) "{short}"` <br/>`* <element> {min}..{max} {dataype} "{short}" "{definition}"` <br/>`* <element> {min}..{max} {flag1} {flag2} ... {dataype1} or {datatype2} ... "{short}" "{definition}"` |
-| [Assignment](#assignment-rules) |`* <element> = {value}` <br/> `* <element> = {value} (exactly)` |
-| [Binding](#binding-rules) |`* <bindable> from {ValueSet name|id|url}` <br/> `* <bindable> from {ValueSet name|id|url} ({strength})`|
-| [Cardinality](#cardinality-rules) | `* <element> {min}..{max}` <br/>`* <element> {min}..` <br/>`* <element> ..{max}` |
-| [Contains (inline extensions)](#contains-rules-for-extensions) | <code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i> </code>  <br/> <code>* &lt;Extension&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code> |
-| [Contains (standalone extensions)](#contains-rules-for-extensions) | <code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i></code> <br/>  <code> * &lt;Extension&gt; contains {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> ...</code>
-| [Contains (slicing)](#contains-rules-for-slicing) | <code>* &lt;array&gt; contains {name} {card} <i>{flags}</i></code> <br/> <code>* &lt;array&gt; contains {name1} {card1} <i>{flags1}</i> and {name2} {card2} <i>{flags2}</i> ...</code>|
-| [Flag](#flag-rules) | `* <element> {flag}` <br/> `* <element> {flag1} {flag2} ...` <br/> `* <element1> and <element2> and <element3> ... {flag1} {flag2} ...` |
-| [Insert](#insert-rules) | <code>* insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code> |
-| {%include tu.html%} [Insert with Path Context](#inserting-rule-sets-with-path-context) | <code>* &lt;element&gt; insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code>|
-| [Obeys](#obeys-rules) | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
+| {%include tu.html%} [Add Element](#addelement-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {dataype(s)} "{short}" <span class="optional">"{definition}"</span></code> |
+| [Assignment](#assignment-rules) |<code>* &lt;element&gt; = {value} <span class="optional">(exactly)</span></code> |
+| [Binding](#binding-rules) |<code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code> |
+| [Cardinality](#cardinality-rules) |<code>* &lt;element&gt; <span class="optional">{min}</span>..<span class="optional">{max}</span> // min, max, or both must be present </code> |
+| [Contains (inline extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {Extension} {card} <span class="optional">{flag(s)} <br/>   and {Extension2} {card} {flag(s)}  <br/>   and {Extension3} {card} {flag(s)}...</span></code> |
+| [Contains (standalone extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {Extension} named {name} {card} <span class="optional">{flag(s)} <br/>   and {Extension2} named {name2} {card} {flag(s)}  <br/>   and {Extension3} named {name3} {card} {flag(s)}...</span></code> |
+| [Contains (slicing)](#contains-rules-for-extensions) | <code>* &lt;array&gt; contains {name} {card} <span class="optional">{flag(s)} <br/>   and {name2} {card} {flag2} <br/>   and {name3} {card} {flag(s)}...</span></code> |
+| [Exclude](#exclude-rules) |`* exclude {Coding}`<br/>`* exclude codes from valueset {ValueSet}`<br/><code>* exclude codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code>|
+| [Flag](#flag-rules) |`* <element(s)> {flag(s)}` |
+| [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding} <br/> * <span class="optional">include</span> codes from valueset {ValueSet} <br/> * <span class="optional">include</span> codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code> |
+| [Insert](#insert-rules)|<code>* insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span><br/>{%include tu.html%}* &lt;element&gt; insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span></code> |
+| [Local Code](#local-code-rules) |<code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code> |
+| [Mapping](#mapping-rules)|<code>* <span class="optional">&lt;element&gt;</span> -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span></code> |
+| [Obeys](#obeys-rules) | <code>* <span class="optional">&lt;element&gt;</span> obeys {Invariant} <span class="optional">and {Invariant2} and {Invariant3}...</span></code> |
 | {%include tu.html%} [Path](#path-rules)  | `* <element>`|
-| [Type](#type-rules) | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
+| [Type](#type-rules) | <code>* &lt;element&gt; only {datatype(s)} |
 {: .grid }
 
 </div>
@@ -1695,15 +1707,15 @@ Authors define logical models and resources by adding new elements to their defi
 
 The syntax of the rules to add a new element are as follows:
 
-<pre><code>* &lt;element&gt; {min}..{max} <i>{flags}</i> {datatype} "{short}" <i>"{definition}"</i>
+<pre><code>* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span>
 </code></pre>
 
-where `{datatype}` can be one of the following:
+where `{datatype(s)}` can be one of the following:
 
-* A primitive or complex datatype,
-* A Reference to a resource or profile, `Reference({{ResourceType name|id|url}})`,
+* A primitive or complex datatype name,
 * A choice of multiple datatypes, separated with `or`,
-* A choice of multiple ResourceTypes inside a Reference, with the ResourceTypes separated with `or`
+* A Reference to a resource or profile, `Reference({ResourceOrProfile})`,
+* A choice of multiple Resource or Profiles inside a Reference, separated with `or`
 
 Note the following:
 
@@ -1851,9 +1863,9 @@ When assigning values to an instance, the `(exactly)` modifier has no meaning an
 
 A FHIR Coding has five attributes (system, version, code, display, and userSelected). The first four of these can be set with a single assignment statement. The syntax is:
 
-<pre><code>&lt;Coding&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+<pre><code>&lt;Coding&gt; = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
-The only required part of this statement is the code (including the # sign), although it is rare to have a Coding without a code system. The version string cannot appear without a code system.
+The only required part of this statement is the code (including the # sign), although every Coding SHOULD have a code system. The version string cannot appear without a code system.
 
 Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if a Coding has a value that includes a display string, and a subsequent assignment replaces the system and code but has no display string, the result is a Coding without a display string.
 
@@ -1919,13 +1931,13 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
 
 A CodeableConcept consists of an array of Codings and a text. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
 
-<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+<pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
 This is precisely like setting a Coding, as discussed directly above.
 
 To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
 
-<pre><code>* &lt;CodeableConcept&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{display string}"</i></code></pre>
+<pre><code>* &lt;CodeableConcept&gt; = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
 Whenever the shortcut rule is applied, the value on the right side **entirely replaces** any previous value of the CodeableConcept on the left side. Any previous value(s) in the CodeableConcept are cleared.
 
@@ -1994,11 +2006,11 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
 
 FSH provides a shorthand that allows quantities, units of measure, and display string for the units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes:
 
-<pre><code>&lt;Quantity&gt; = {decimal} '{UCUM code}' <i>"{units display string}"</i></code></pre>
+<pre><code>&lt;Quantity&gt; = {decimal} '{UCUM code}' <span class="optional">"{units display string}"</span></code></pre>
 
 A similar shorthand can be used for other code systems by specifying the unit using the standard FSH code syntax:
 
-<pre><code>&lt;Quantity&gt; = {decimal} {CodeSystem name|id|url}|{version string}#{code} <i>"{units display string}"</i></code></pre>
+<pre><code>&lt;Quantity&gt; = {decimal} {CodeSystem}|{version string}#{code} <span class="optional">"{units display string}"</span></code></pre>
 
 Alternatively, the value and units can also be set independently. To assign a value, use the Quantity.value property:
 
@@ -2008,11 +2020,11 @@ Alternatively, the value and units can also be set independently. To assign a va
 
 The units of measure can be set by assigning a coded value to a Quantity:
 
-<pre><code>* &lt;Quantity&gt; = <i>{CodeSystem name|id|url}|{version string}</i>#{code} <i>"{units display string}"</i></code></pre>
+<pre><code>* &lt;Quantity&gt; = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{units display string}"</span></code></pre>
 
 A Quantity can also be bound to a value set:
 
-<pre><code>* &lt;Quantity&gt; from {ValueSet name|id|url}
+<pre><code>* &lt;Quantity&gt; from {ValueSet}
 </code></pre>
 
 > **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR oddly treating Quantity as a coded data type.
@@ -2152,7 +2164,7 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
 
 Binding is the process of associating a coded element with a set of possible values. The syntaxes to bind a value set, or alter an inherited binding, use the reserved word `from`:
 
-<pre><code>* &lt;bindable&gt; from {ValueSet name|id|url} <i>({strength})</i></code></pre>
+<pre><code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code></pre>
 
 The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1).
 
@@ -2253,22 +2265,22 @@ Extensions are specified using the `contains` keyword. There are two types of ex
 
 The syntaxes to specify standalone extension(s) are:
 
-<pre><code>* &lt;Extension&gt; contains {Extension name|id|url} named {name} {card} <i>{flags}</i>
+<pre><code>* &lt;extension&gt; contains {Extension} named {name} {card} <span class="optional">{flag(s)}</span>
 
-* &lt;Extension&gt; contains
-    {Extension1 name|id|url} named {name1} {card1} <i>{flags1}</i> and 
-    {Extension2 name|id|url} named {name2} {card2} <i>{flags2}</i> and
-    {Extension3 name|id|url} named {name3} {card3} <i>{flags3}</i> ...
+* &lt;extension&gt; contains
+    {Extension1} named {name1} {card} <span class="optional">{flag(s)}</span> and 
+    {Extension2} named {name2} {card} <span class="optional">{flag(s)}</span> and
+    {Extension3} named {name3} {card} <span class="optional">{flag(s)}</span> ...
 </code></pre>
 
 The syntaxes to define inline extension(s) are:
 
-<pre><code>* &lt;Extension&gt; contains {name} {card} <i>{flags}</i>
+<pre><code>* &lt;extension&gt; contains {name} {card} <span class="optional">{flag(s)}</span>
 
-* &lt;Extension&gt; contains
-    {name1} {card1} <i>{flags1}</i> and
-    {name2} {card2} <i>{flags2}</i> and
-    {name3} {card3} <i>{flags3}</i> ...</code></pre>
+* &lt;extension&gt; contains
+    {name1} {card} <span class="optional">{flag(s)}</span> and
+    {name2} {card} <span class="optional">{flag(s)}</span> and
+    {name3} {card} <span class="optional">{flag(s)}</span> ...</code></pre>
 
 In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local names created by the rule author. They are used to refer to that extension in later rules. By convention, the local names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
 
@@ -2352,12 +2364,12 @@ The slicing logic parameters are specified using [caret paths](#caret-paths). Th
 
 The second step in slicing is to populate the array that is to be sliced, using the `contains` keyword. The syntaxes are very similar to [contains rules for inline extensions](#contains-rules-for-extensions):
 
-<pre><code>* &lt;array&gt; contains {name} {card} <i>{flags}</i>
+<pre><code>* &lt;array&gt; contains {name} {card} <span class="optional">{flag(s)}</span>
 
 * &lt;array&gt; contains
-    {name1} {card1} <i>{flags1}</i> and
-    {name2} {card2} <i>{flags2}</i> and
-    {name3} {card3} <i>{flags3}</i> ...
+    {name1} {card} <span class="optional">{flag(s)}</span> and
+    {name2} {card} <span class="optional">{flag(s)}</span> and
+    {name3} {card} <span class="optional">{flag(s)}</span> ...
 </code></pre>
 
 In this pattern, `<array>` is a path to the element that is to be sliced and to which the slicing rules defined in step (1) will applied. The names (`name`, `name1`, etc.) are created by the rule author to describe the slice in the context of the profile. These names are used to refer to the slice in later rules. By convention, the slice names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
@@ -2388,12 +2400,12 @@ Each slice will match or constrain the data type of the array it slices. In part
 
 Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand side uses [slice path syntax](#sliced-array-paths) to refer to the slice that is being resliced:
 
-<pre><code>* &lt;array[{slice name}]&gt; contains {name} {card} <i>{flags}</i>
+<pre><code>* &lt;array[{slice name}]&gt; contains {name} {card} <span class="optional">{flag(s)}</span>
 
 * &lt;array[{slice name}]&gt; contains
-    {name1} {card1} <i>{flags1}</i> and
-    {name2} {card2} <i>{flags2}</i> and
-    {name3} {card3} <i>{flags3}</i> ...
+    {name1} {card} <span class="optional">{flag(s)}</span> and
+    {name2} {card} <span class="optional">{flag(s)}</span> and
+    {name3} {card} <span class="optional">{flag(s)}</span> ...
 </code></pre>
 
 **Example:**
@@ -2438,6 +2450,10 @@ The slice content rules MUST appear *after* the contains rule that creates the s
 
 At minimum, each slice MUST be constrained such that it can be uniquely identified via the discriminator (see Step 1). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
 
+#### Exclude Rules
+
+Exclude rules are used to remove codes from value sets. Exclude rules appear only in ValueSet items. For more details on exclude rules, see [Defining Value Sets](#defining-value-sets).
+
 #### Flag Rules
 
 Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
@@ -2459,11 +2475,11 @@ The following syntaxes can be used to assign flags:
 ```
 * <element> {flag}
 
-* <element> {flag1} {flag2} ...
+* <element> {flag1} {flag2}...
 
 * <element1> and <element2> and <element3> ... {flag}
 
-* <element1> and <element2> and <element3> ... {flag1} {flag2} ...
+* <element1> and <element2> and <element3> ... {flag1} {flag2}...
 ```
 
 **Examples:**
@@ -2480,11 +2496,15 @@ The following syntaxes can be used to assign flags:
   * identifier and identifier.system and identifier.value and name and name.family MS
   ```
 
+#### Include Rules
+
+Include rules are used to add codes to value sets. Include rules appear only in ValueSet items. For more details on include rules, see [Defining Value Sets](#defining-value-sets).
+
 #### Insert Rules
 
-[Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. An insert rule is used to add a rule set:
+[Rule sets](#defining-rule-sets) are reusable groups of rules that are defined independently of other items. An insert rule is used to add the contents of a rule set to an item:
 
-<pre><code>* insert {RuleSet name}<i>({parameters})</i>
+<pre><code>* insert {RuleSet}<span class="optional">({parameters})</span>
 </code></pre>
 
 The rules in the named rule set are interpreted as if they were copied and pasted in the designated location.
@@ -2496,7 +2516,7 @@ Each rule in the rule set should be compatible with the item where the rule set 
 Insert a simple rule set by using the name of the rule set:
 
 ```
-* insert {RuleSet name}
+* insert {RuleSet}
 ```
 
 **Examples:**
@@ -2541,7 +2561,7 @@ Insert a simple rule set by using the name of the rule set:
 
 To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
-<pre><code>* insert {RuleSet name}<i>(value1, value2, value3...)</i>
+<pre><code>* insert {RuleSet}<span class="optional">(value1, value2, value3...)</span>
 </code></pre>
 
 As indicated, the list of values is enclosed with parentheses `()` and separated by commas `,`. If you need to put literal `)` or `,` characters inside values, escape them with a backslash: `\)` and `\,`, respectively. White space separating values is optional, and removed before the value is applied to the rule set definition.
@@ -2591,7 +2611,7 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
 
 Rule sets can be inserted in the context of a path. The context is specified by giving the path prior to the insert rule:
 
-<pre><code>* &lt;element&gt; insert {RuleSet name}<i>(value1, value2, value3...)</i>
+<pre><code>* &lt;element&gt; insert {RuleSet}<span class="optional">(value1, value2, value3...)</span>
 </code></pre>
 
 Alternately, the context can be given by indenting the insert rule under another rule that provides a path context (see [indented rules](#indented-rules)).
@@ -2638,18 +2658,26 @@ When the rule set is expanded, the path of the element is pre-pended to the path
 
 </div>
 
+#### Local Code Rules
+
+Local codes rules are used to define codes in code systems. Local code rules appear only in CodeSystem items. For more details on local code rules, see [Defining Code Systems](#defining-code-systems).
+
+#### Mapping Rules
+
+Mapping rules are used to define relationships between different specifications. Mapping rules appear only in Mapping items. For more details on mapping rules, see [Defining Mappings](#defining-mappings).
+
 #### Obeys Rules
 
 [Invariants](https://www.hl7.org/fhir/R4/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath](https://www.hl7.org/fhir/R4/fhirpath.html) or [XPath](https://developer.mozilla.org/en-US/docs/Web/XPath) expressions. An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The syntax for applying invariants in profiles is:
 
 ```
-* obeys {Invariant id}
+* obeys {Invariant}
 
-* obeys {Invariant1 id} and {Invariant2 id} ...
+* obeys {Invariant1} and {Invariant2}...
 
-* <element> obeys {Invariant id}
+* <element> obeys {Invariant}
 
-* <element> obeys {Invariant1 id} and {Invariant2 id} ...
+* <element> obeys {Invariant1} and {Invariant2}...
 ```
 
 The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
@@ -2670,6 +2698,30 @@ The referenced invariant and its properties MUST be declared somewhere within th
   * name obeys us-core-8
   ```
 
+#### Path Rules
+
+{%include tu-div.html%}
+
+Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
+
+```
+* <element>
+```
+
+A path rule has no impact on the element it refers to. The only purpose of the path rule is to set context.
+
+**Examples:**
+
+* Set a context of `name` for subsequent rules:
+
+  ```
+  * name
+    * given MS
+    * family MS
+  ```
+
+</div>
+
 #### Type Rules
 
 FSH rules can be used to restrict the data type of an element. The syntaxes to restrict the type are:
@@ -2677,11 +2729,11 @@ FSH rules can be used to restrict the data type of an element. The syntaxes to r
 ```
 * <element> only {datatype}
 
-* <element> only {datatype1} or {datatype2} or {datatype3} ...
+* <element> only {datatype1} or {datatype2} or {datatype3}...
 
-* <element> only Reference({ResourceType name|id|url})
+* <element> only Reference({ResourceOrProfile})
 
-* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)
+* <element> only Reference({ResourceOrProfile1} or {ResourceOrProfile2} or {ResourceOrProfile3}...)
 ```
 
 Certain elements in FHIR offer a choice of data types using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive data type or profile for one of the choices appearing in the parent profile or resource.
@@ -2749,32 +2801,6 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   ```
 
 
-#### Path Rules
-
-{%include tu-div.html%}
-
-Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
-
-```
-* <element>
-```
-
-A path rule has no impact on the element it refers to. The only purpose of the path rule is to set context.
-
-**Examples:**
-
-* Set a context of `name` for subsequent rules:
-
-  ```
-  * name
-    * given MS
-    * family MS
-  ```
-
-</div>
-
-
-
 ### Appendix: Abbreviations
 
 | Abbreviation | Description |
@@ -2785,7 +2811,7 @@ A path rule has no impact on the element it refers to. The only purpose of the p
 | FSH   | FHIR Shorthand
 | IG | Implementation Guide
 | JSON   | JavaScript Object Notation
-| $LNC | Common FSH alias for LOINC
+| $LNC | Common FSH alias for LOINC code system (http://loinc.org)
 | LOINC | Logical Observation Identifiers Names and Codes
 | NPI   | National Provider Identifier (US)
 | N   |  Flag denoting normative element
