@@ -15,10 +15,10 @@ Syntax expressions uses the following conventions:
 | Style | Explanation | Example |
 |:------------|:------|:---------|
 | **bold** | A directory path or file name | **example-1.fsh** |
-| `Code` | Code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
-| `{curly braces}` | An item to be substituted in a syntax expression | `{flag}` |
-| `<angle brackets>` | An element or path to an element with the given datatype, to be substituted in the syntax expression | `<CodeableConcept>` |
-| `...` (ellipsis) | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
+| `code` | Font used for code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
+| `{ }` | Indicates an item to be substituted with the given type | `{flag}` |
+| `< >` | Indicates an element or path to an element with the given datatype should be substituted | `<CodeableConcept>` |
+| `...` | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
 | <code><span class="optional">italics</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
 {: .grid }
 
@@ -47,35 +47,35 @@ Syntax expressions uses the following conventions:
   * An asterisk, followed by
   * Any element or a path to any element, followed by
   * The word `only`, followed by
-  * A list including at least one datatype, where datatype 
+  * A list including at least one valid datatype.
 
-Here are some examples of angle brackets and curly braces and used in this IG:
+Here are some examples of angle brackets and curly braces in this IG:
 
-| Angle Brackets | Meaning | Example(s) |
+| Angle Brackets | Substitute: | Example(s) |
 |--------|--------|---------|
-| `<bindable>` | Substitute an element or path to an element whose datatype allows it to be bound to a value set | `code` |
-| `<CodeableConcept>`  | Substitute an element or path to an element whose datatype is CodeableConcept |  `category`  |
-| `<element>` | Substitute any element or path to any element | `method.type` |
-| `<element(s)>` | Substitute one or more elements or paths, separated by `and` | `category and method and method.type` |
-| `<Extension>` | Substitute an element or path to an element whose datatype is Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
+| `<bindable>` | An element or path to an element whose datatype allows it to be bound to a value set | `code` |
+| `<CodeableConcept>`  | An element or path to an element whose datatype is CodeableConcept |  `category`  |
+| `<element>` | Any element or path to any element | `method.type` |
+| `<element(s)>` | One or more elements or paths, separated by `and` | `category and method and method.type` |
+| `<Extension>` | An element or path to an element whose datatype is Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
 {: .grid }
 
-| Curly Braces | Meaning | Example(s) |
+| Curly Braces | Substitute: | Example(s) |
 |--------|--------|---------|
-| `{card}` | Substitute a [cardinality expression](#cardinality-rules) |  `0..1` |
-| `{code}`  | Substitute an instance of a code | `#active` |
-| `{CodeableConcept}`  | Substitute an instance of a CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
-| `{decimal}` | Substitute any decimal number | `124.0` |
-| `{datatype}` | Substitute any single primitive or complex datatype name, Reference or Canonical | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
-| `{datatype(s)}` | Substitute one or more primitive or complex datatype names, Reference(s) or Canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
-| `{Extension}` |  Substitute the name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
-| `{flag}`  | Substitute one of the valid [FSH flags](#flag-rules) |  `MS` |
-| `{flag(s)}` | Substitute one or more flags, separated by whitespace | `MS SU ?!` |
-| `{Invariant}` | Substitute the id of an Invariant | `us-core-8` |
-| `{ResourceOrProfile}` | Substitute the name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
-| `{rule}` | Substitute any FSH rule | `* category 1..1 MS` |
-| `{RuleSet}` | Substitute the name of a RuleSet | `MyRuleSet` |
-| `{ValueSet}` | Substitute the name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
+| `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
+| `{code}`  | A code | `#active` |
+| `{CodeableConcept}`  | A CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
+| `{decimal}` | A decimal number | `124.0` |
+| `{datatype}` | Any single [FHIR datatype](https://www.hl7.org/fhir/datatypes.html), including a Reference or canonical | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html), including Reference(s) or canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
+| `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
+| `{flag}`  | One of the [FSH flags](#flag-rules) |  `MS` |
+| `{flag(s)}` | One or more flags, separated by whitespace | `MS SU ?!` |
+| `{Invariant}` | The id of an Invariant | `us-core-8` |
+| `{ResourceOrProfile}` | The name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
+| `{rule}` | Any FSH rule | `* category 1..1 MS` |
+| `{RuleSet}` | The name of a RuleSet | `MyRuleSet` |
+| `{ValueSet}` | The name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
 {: .grid }
 
 >**Note:** When listing multiple items, consecutive elements and paths are always separated by `and`, consecutive flags are always separated by white spaces, and consecutive datatypes area always separated by `or`. When listing multiple References, the `or` is placed *inside* the Reference(), e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
@@ -170,15 +170,19 @@ The primitive datatypes and value formats in FSH are identical to the [primitive
 
 FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark.
 
-#### Reference and Canonical Data Types
+#### References
 
-FHIR resources can contain two types of references, [Resource references](https://www.hl7.org/fhir/R4/references.html#2.3.0) and [Canonical references](https://www.hl7.org/fhir/R4/references.html#canonical).
+FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({ResourceOrProfile})`. A name, id, or URL can be used to identify the resource or profile. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
-FSH represents Resource references using the syntax `Reference({Resource})`. For elements that require a Reference datatype, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
+In constructing profiles, references typically refer to resource or profile *types*. In profiles, references typically refer to resource or profile types, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance.
 
-Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical datatype, FSH will accept a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+If there are no restrictions on the type of Resource or Profile an element can refer to, this is expressed as `Reference(Any)`.
 
-When syntax allows for multiple References of Canonicals, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
+#### Canonicals
+
+FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+
+When syntax allows for multiple Canonicals, the items are separated by `or` placed *inside* the parentheses, e.g. `Canonical(ActivityDefinition or PlanDefinition)`, **not** `Canonical(ActivityDefinition) or Canonical(PlanDefinition)`.
 
 #### Codes and Codings
 
