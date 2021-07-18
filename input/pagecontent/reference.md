@@ -66,7 +66,7 @@ Here are some examples of angle brackets and curly braces and used in this IG:
 | `{code}`  | Substitute an instance of a code | `#active` |
 | `{CodeableConcept}`  | Substitute an instance of a CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
 | `{decimal}` | Substitute any decimal number | `124.0` |
-| `{datatype}` | Substitute any primitive or complex datatype name or a Reference | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype}` | Substitute any single primitive or complex datatype name, Reference or Canonical | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
 | `{datatype(s)}` | Substitute one or more primitive or complex datatype names, Reference(s) or Canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  Substitute the name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | Substitute one of the valid [FSH flags](#flag-rules) |  `MS` |
@@ -177,6 +177,8 @@ FHIR resources can contain two types of references, [Resource references](https:
 FSH represents Resource references using the syntax `Reference({Resource})`. For elements that require a Reference datatype, `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths).
 
 Canonical references refer to the standard URL associated with FHIR items. For elements that require a canonical datatype, FSH will accept a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+
+When syntax allows for multiple References of Canonicals, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
 
 #### Codes and Codings
 
@@ -2480,6 +2482,8 @@ The following syntaxes can be used to assign flags:
 
 * <element1> and <element2> and <element3> ... {flag1} {flag2}...
 ```
+
+> **Note:** When multiple flags are specified, they are separated with whitespace(s). When multiple element paths are specified, they are separated by `and`.
 
 **Examples:**
 
