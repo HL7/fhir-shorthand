@@ -926,7 +926,7 @@ The following table is a summary of the rules that may apply to profiles, extens
 | {%include tu.html%} Insert with Path Context | <code>* &lt;element&gt; insert {RuleSet name}<i>({value1}, {value2}, ...)</i></code>|
 | Obeys | `* obeys {Invariant id}` <br/> `* obeys {Invariant1 id} and {Invariant2 id} ...` <br/> `* <element> obeys {Invariant id}` <br/> `* <element> obeys {Invariant1 id} and {Invariant2 id} ...` |
 | {%include tu.html%} Path  | `* <element>`|
-| Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
+| Type | `* <element> only {datatype}` <br/> `* <element> only {datatype1} or {datatype2} or {datatype3} ...` <br/> `* <element> only Reference({ResourceType name|id|url})` <br/> `* <element> only Canonical({ResourceType name|id|url})` <br/> `* <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)`|
 {: .grid }
 
 </div>
@@ -952,8 +952,10 @@ where `{datatype}` can be one of the following:
 
 * A primitive or complex datatype,
 * A Reference to a resource or profile, `Reference({{ResourceType name|id|url}})`,
+* A Canonical to a resource or profile, `Canonical({{ResourceType name|id|url}})`,
 * A choice of multiple datatypes, separated with `or`,
 * A choice of multiple ResourceTypes inside a Reference, with the ResourceTypes separated with `or`
+* A choice of multiple ResourceTypes inside a Canonical, with the ResourceTypes separated with `or`
 
 Note the following:
 
@@ -1938,6 +1940,8 @@ FSH rules can be used to restrict the data type of an element. The syntaxes to r
 
 * <element> only Reference({ResourceType name|id|url})
 
+* <element> only Canonical({ResourceType name|id|url})
+
 * <element> only Reference({ResourceType1 name|id|url} or {ResourceType2 name|id|url} or {ResourceType3 name|id|url} ...)
 ```
 
@@ -1985,7 +1989,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * performer only Reference(Practitioner)
   ```
 
-* Restrict Observation.performer to either a Practitioner or a PractitionerRole:
+* Restrict performer to either a Practitioner or a PractitionerRole:
 
   ```
   * performer only Reference(Practitioner or PractitionerRole)
@@ -2003,6 +2007,17 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
+* Restrict PlanDefinition.action.definition[x] (a choice of uri or canonical(ActivityDefinition | PlanDefinition | Questionnaire)) to allow only a canonical of ActivityDefinition:
+
+  ```
+  * action.definition[x] only Canonical(ActivityDefinition)
+  ```
+
+* Restrict action.definition[x] to a canonical of either an ActivityDefinition or a PlanDefinition:
+
+  ```
+  * action.definition[x] only Canonical(ActivityDefinition or PlanDefinition)
+  ```
 
 #### Path Rules
 
