@@ -10,7 +10,17 @@
      "path" : "http://build.fhir.org/ig/HL7/fhir-shorthand",
      "status" : "ci-build",
      "current" : true
-    }, 
+    },
+    {
+      "version": "1.2.0",
+      "date": "",
+      "desc": "HL7 Normative Ballot",
+      "path": "http://hl7.org/fhir/uv/shorthand/2020Sep",
+      "status": "ballot",
+      "sequence": "N1",
+      "fhirversion": "4.0.1",
+      "current": true
+    },
     {
       "version": "1.0.0",
       "date": "2020-09-01",
@@ -28,6 +38,7 @@
       "desc": "FHIR Shorthand STU 1, version 0.13.0",
       "path": "http://hl7.org/fhir/uv/shorthand/2020May",
       "status": "draft",
-      "sequence": "STU 1"
+      "sequence": "STU 1",
+      "current": false
     }]
    }
