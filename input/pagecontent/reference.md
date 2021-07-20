@@ -40,7 +40,9 @@ Syntax expressions use the following conventions:
 
 * A rule to constrain an element to a certain datatype or types:
 
-  `* <element> only {datatype(s)}`
+    ```
+    * <element> only {datatype(s)}
+    ```
 
   A FSH statement following this pattern would be written as:
 
@@ -722,7 +724,7 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 
 |              Item →<br/>Rule Type ↓ | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | [Logical](#defining-logical-models)<br/>{%include tu.html%} | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | [Resource](#defining-resources)<br/>{%include tu.html%} | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
 |--------------------------------------------------------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
-| {%include tu.html%} [Add Element](#addelement-rules)               |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
+| {%include tu.html%} [Add Element](#add-element-rules)               |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
 | [Assignment](#assignment-rules)                                    |       | C           | Y         | Y        |           | C       |         | Y       | C        | Y        | C         |
 | [Binding](#binding-rules)                                          |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
 | [Cardinality](#cardinality-rules)                                  |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
@@ -1104,7 +1106,7 @@ Logical models are defined in FSH using the keyword `Logical`. The keywords `Par
 
 If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements should use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Authors may also specify another logical model, a resource, or a complex datatype as a logical model's parent.
 
-Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#addelement-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
+Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
 * Binding, cardinality, and type rules can be applied only to elements defined by the item (not inherited elements).
 * Flag rules cannot include MS flags.
@@ -1235,7 +1237,7 @@ Resources are defined in FSH using the keyword `Resource`. The keywords `Parent`
 
 Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html) and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource. If no `Parent` is specified, DomainResource is used as the default parent.
 
-Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#addelement-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
+Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
 * Binding, cardinality, and type rules can be applied only to elements defined by the item (not inherited elements).
 * Flag rules cannot include MS flags.
@@ -1473,7 +1475,7 @@ The following table is a summary of the rule syntax.
 
 | Rule Type | Syntax |
 | --- | --- |
-| {%include tu.html%} [Add Element](#addelement-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {dataype(s)} "{short}" <span class="optional">"{definition}"</span></code> |
+| {%include tu.html%} [Add Element](#add-element-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span></code> |
 | [Assignment](#assignment-rules) |<code>* &lt;element&gt; = {value} <span class="optional">(exactly)</span></code> |
 | [Binding](#binding-rules) |<code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code> |
 | [Cardinality](#cardinality-rules) |<code>* &lt;element&gt; <span class="optional">{min}</span>..<span class="optional">{max}</span> // min, max, or both must be present </code> |
