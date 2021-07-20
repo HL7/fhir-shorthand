@@ -10,7 +10,7 @@ Portions of the specification designated as "Trial Use" are indicated by {%inclu
 
 The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
 
-Syntax expressions uses the following conventions:
+Syntax expressions use the following conventions:
 
 | Style | Explanation | Example |
 |:------------|:------|:---------|
@@ -175,13 +175,13 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({ResourceOrProfile})`. A name, id, or URL can be used to identify the resource or profile. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
-In constructing profiles, references typically refer to resource or profile *types*. In profiles, references typically refer to resource or profile types, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance.
+In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance.
 
 If there are no restrictions on the type of Resource or Profile an element can refer to, this is expressed as `Reference(Any)`.
 
 #### Canonicals
 
-FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
 When syntax allows for multiple Canonicals, the items are separated by `or` placed *inside* the parentheses, e.g. `Canonical(ActivityDefinition or PlanDefinition)`, **not** `Canonical(ActivityDefinition) or Canonical(PlanDefinition)`.
 
@@ -271,7 +271,7 @@ or
 
 The first shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`). The second shorthand can be used when the units are not UCUM. Alternatively, the value and units can be assigned independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
 
-Example:
+**Examples:**
 
 * Express a weight in pounds, using UCUM units, displaying "lb":
 
@@ -287,7 +287,7 @@ Example:
 
 #### Triple-Quoted Strings
 
-While line breaks are supported using normal strings, FSH also supports different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file. As an example, an author might use a triple-quote string to write markdown so that the markdown is neatly indented:
+While line breaks are supported using normal strings, FSH also supports different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file. As an example, an author might use a triple-quoted string to write markdown so that the markdown is neatly indented:
 
 ```
 * ^purpose = """
@@ -311,7 +311,7 @@ Using a single-quoted string requires the following spacing to accomplish the sa
 
 The difference between these two approaches is that the latter obscures the fact that the first and fourth line are at the same indentation level, and makes it appear there are two rules because of the asterisk in the first column. The former approach allows the first line to be empty so the string is defined as a block, and allows the entire block to be indented, so visually, it does not appear a second rule is involved (because of the asterisk in the first column). Using triple-quoted strings is entirely a matter of preference.
 
-When processing triple-quote strings, the following approach is used:
+When processing triple-quoted strings, the following approach is used:
 
 * If the first line or last line contains only whitespace (including newline), discard it.
 * If any other line contains only whitespace, truncate it to zero characters.
@@ -449,17 +449,17 @@ Numerical indices apply only to arrays that can be populated with concrete value
 
 #### Array Paths using Soft Indexing
 
-Numerical array references can be replaced with so-called "soft indexing." In soft indexing, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numerical indexes to be mixed.
+Numerical array references can be replaced with so-called "soft indexing." In soft indexing, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numerical indices to be mixed.
 
-Similar to numerical indices, soft indices should only be used when populating or referencing arrays in instances (including definitional instances accessed via [caret paths](#caret-paths)).
+Similar to numerical indices, soft indices should only be used when populating or referencing arrays in instances, or when using [caret paths](#caret-paths).
 
-Soft indexing is useful when populating long array, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle and CapabilityStatement have arrays may contain scores of items. Managing indexes can become quite tedious and error prone when adding or removing items in the middle of a long list.
+Soft indexing is useful when populating long arrays, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle and CapabilityStatement have arrays may contain scores of items. Managing indices can become tedious and error prone when adding or removing items in the middle of a long list.
 
 Another use case for soft indexing involves [parameterized rule sets](#parameterized-rule-sets). Rule sets provide a way to avoid repeating the same pattern of rules when populating an array ([see example](#parameterized-rule-sets)).
 
-For nested arrays, several sequences of soft indexes can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` is at index [0]. (An analogy is using a keyboard's Enter key to advance to a new line that initially has no characters.)
+For nested arrays, several sequences of soft indices can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` is at index [0]. (An analogy is using a keyboard's Enter key to advance to a new line that initially has no characters.)
 
--**Examples:**
+**Examples:**
 
 * Assign multiple names in an instance of a Patient using soft indices:
 
@@ -582,7 +582,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access to elements of definitional item corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#fsh-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
+FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#fsh-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
 For a path to an element of a StructureDefinition, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -598,10 +598,10 @@ For a path to an element of an ElementDefinition within a StructureDefinition, u
 
 **Note:** There is a required space before the ^ character.
 
-A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to a named element appearing in an instance, we use the dot or full stop (`.`) to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of a StructureDefinition directly, but elements of the first ElementDefinition contained in the StructureDefinition. The syntax is:
+A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., StructureDefinition.differential.element[0]). This element always refers to the profile or standalone extension itself. Since this element does not correspond to a named element appearing in an instance, we use the dot or full stop (`.`) to represent it (The dot symbol is often used to represent "current context" in other languages). It is important to note that the "self" elements are not the elements of a StructureDefinition directly, but elements of the first ElementDefinition contained in the StructureDefinition. The syntax is:
 
 ```
-. ^<element of ElementDefinition[0]>
+. ^<element of StructureDefinition.differential[0]>
 ```
 
 **Examples:**
@@ -873,13 +873,13 @@ For a path to a code within a code system, use this syntax:
 
 **Examples:**
 
-* The set the to the designation use of the code `#active` in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
+* To set the designation.use of the code `#active`:
 
   ```
   * #active ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
   ```
 
-* The path to the property code of #recurrence code, a child of the #active code in the [Condition Clinical Status value set](https://terminology.hl7.org/ValueSet-condition-clinical.html):
+* The path to the property code of #recurrence code, a child of the #active code:
 
   ```
   #active #recurrence ^property[0].code
@@ -889,13 +889,13 @@ For a path to a code within a code system, use this syntax:
 
 #### Defining Extensions
 
-Defining extensions is similar to defining a profile, except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension).
+Defining extensions is similar to [defining profiles](#defining-profiles), except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension).
 
 All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a simple extension, the value[x] element should be constrained. To create a complex extension, the extension array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
 
 Since simple and complex extensions are mutually-exclusive, FSH implementations SHOULD set the value[x] cardinality to 0..0 if sub-extensions are specified, set extension cardinality to 0..0 if constraints are applied to value[x], and signal an error if value[x] and extensions are simultaneously specified.
 
-Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Contains (standalone extensions)](#contains-rules-for-extensions), [Contains (inline extensions)](#contains-rules-for-extensions)[Contains (slicing)](#contains-rules-for-slicing), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
+Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Contains (standalone extensions)](#contains-rules-for-extensions), [Contains (inline extensions)](#contains-rules-for-extensions), [Contains (slicing)](#contains-rules-for-slicing), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
 
 **Examples:**
 
@@ -1072,7 +1072,7 @@ These conformance resources are created using FSH instance grammar. For example,
 
 #### Defining Invariants
 
-Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, {%include tu.html%}logical models, or {%include tu.html%} resources via [obeys rules](#obeys-rules).
+Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, <span style="background-color: #fff5e6;">{%include tu.html%} logical models, or resources </span> via [obeys rules](#obeys-rules).
 
 | Keyword | Usage | Corresponding element in ElementDefinition | Data Type | Required |
 |-------|------------|--------------|-------|----|
@@ -1522,7 +1522,7 @@ It is possible for a user to specify contradictory rules, for example, two rules
 
 {%include tu-div.html%}
 
-Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by pre-pending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
+Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by prepending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
 
 Two spaces represent one level of indentation. This is not configurable. Rules can only be indented in increments of two spaces. They can be un-indented by any multiple of two spaces.
 
@@ -1552,7 +1552,7 @@ When indented rules are combined with [soft indexing](#array-paths-using-soft-in
   * name.given 1..1
   ```
 
-* Use a [path-only rule](#path-rules) to set context for subsequent rules:
+* Use a [path rule](#path-rules) to set context for subsequent rules:
 
   ```
   * name
@@ -1706,11 +1706,11 @@ When indented rules are combined with [soft indexing](#array-paths-using-soft-in
 
 </div>
 
-#### AddElement Rules
+#### Add Element Rules
 
 {%include tu-div.html%}
 
-Authors define logical models and resources by adding new elements to their definitions. The AddElement rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
+Authors define logical models and resources by adding new elements to their definitions. The add element rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
 
 The syntax of the rules to add a new element are as follows:
 
@@ -1725,7 +1725,7 @@ where `{datatype(s)}` can be one of the following:
 
 Note the following:
 
-* An AddElement rule **at minimum** must specify an element path, cardinality, type, and short description.
+* An add element rule **at minimum** must specify an element path, cardinality, type, and short description.
 * Flags and longer definition are optional.
 * The longer definition can also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
@@ -2028,13 +2028,6 @@ The units of measure can be set by assigning a coded value to a Quantity:
 
 <pre><code>* &lt;Quantity&gt; = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{units display string}"</span></code></pre>
 
-A Quantity can also be bound to a value set:
-
-<pre><code>* &lt;Quantity&gt; from {ValueSet}
-</code></pre>
-
-> **Note:** The ability to assign a coded value or bind a value set directly to a Quantity is a consequence of FHIR oddly treating Quantity as a coded datatype.
-
 **Examples:**
 
 * Set the valueQuantity of an Observation to 55 millimeters using UCUM units:
@@ -2059,12 +2052,6 @@ A Quantity can also be bound to a value set:
 
   ```
   * valueQuantity = $UCUM#mm "millimeters"
-  ```
-
-* Bind a value set to a Quantity, constraining the units of that Quantity:
-
-  ```
-  * valueQuantity from http://hl7.org/fhir/ValueSet/distance-units
   ```
 
 * Example of how **incorrect** ordering of rules can result in the loss of a previously assigned value:
@@ -2172,7 +2159,7 @@ Binding is the process of associating a coded element with a set of possible val
 
 <pre><code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code></pre>
 
-The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1).
+The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1). In FHIR R5, <span style="background-color: #fff5e6;">{%include tu.html%} CodeableReference</span> is also bindable.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required. If strength is not specified, a required binding is assumed.
 
@@ -2624,7 +2611,7 @@ Rule sets can be inserted in the context of a path. The context is specified by 
 
 Alternately, the context can be given by indenting the insert rule under another rule that provides a path context (see [indented rules](#indented-rules)).
 
-When the rule set is expanded, the path of the element is pre-pended to the path of all rules in the rule set.
+When the rule set is expanded, the path of the element is prepended to the path of all rules in the rule set.
 
 **Examples:**
 
