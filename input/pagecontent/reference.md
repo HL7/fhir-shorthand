@@ -65,6 +65,7 @@ Here are some examples of angle brackets and curly braces in this IG:
 | `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
 | `{code}`  | A code | `#active` |
 | `{CodeableConcept}`  | A CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
+| `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
 | `{decimal}` | A decimal number | `124.0` |
 | `{datatype}` | Any single [FHIR datatype](https://www.hl7.org/fhir/datatypes.html), including a Reference or canonical | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
 | `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html), including Reference(s) or canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
