@@ -1,6 +1,5 @@
 <ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">
   <li><a href="index.html">Home</a></li>
-  <li><a href="toc.html">Table of Contents</a></li>
   <li><a href="overview.html">Overview</a></li>
   <li><a href="reference.html">Language Reference</a></li>
   <li class="dropdown">
