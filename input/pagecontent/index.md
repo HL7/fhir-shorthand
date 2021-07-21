@@ -1,12 +1,12 @@
 <br/>
-<span style="background-color: yellow; font-size:1.6em;">NOTE: Information on this page is [informative content](https://www.hl7.org/fhir/versions.html#std-process).</span>
+<span style="background-color: LightYellow;">NOTE: Information on this page is [informative content](https://www.hl7.org/fhir/versions.html#std-process).</span>
 <br/>
 
 <img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="float:none; margin: 0px 0px 0px 0px;" />
 
 ### HL7 Mixed Normative/Trial Use Ballot
 
-FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts involved in creation of FHIR Implementation Guides (IG). The goal of FSH is to allow IG creators to more directly express their intent with fewer concerns about underlying FHIR mechanics, and efficiently produce high-quality FHIR IGs.
+FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts involved in creation of FHIR Implementation Guides (IG). The goal of FSH is to allow Implementation Guide (IG) creators to more directly express their intent with fewer concerns about underlying FHIR mechanics, and efficiently produce high-quality FHIR IGs.
 
 Conceived in September 2019 with the first version of the specification released in March 2020, FSH has been rapidly adopted by the FHIR community. The [FSH Finder](https://fshschool.org/fsh-finder/) tool reports well over 100 projects using FSH. The [#shorthand channel on chat.fhir.org](https://chat.fhir.org/#narrow/stream/215610-shorthand) has 270 subscribers and participation is very active. FSH and related tools have been tested at three HL7 Connectathons. Several significant tools for processing FSH have been developed, including [SUSHI](https://fshschool.org/docs/sushi/), a reference implementation for transforming FSH into FHIR artifacts. The site [npm-stat](https://npm-stat.com/charts.html?package=fsh-sushi&from=2020-02-12&to=2021-07-12) shows that the *fsh-sushi* [npm](https://www.npmjs.com/) package has had over 45,000 downloads as of July 2021. [GoFSH](https://fshschool.org/docs/gofsh/), a tool for transforming FHIR artifacts to FSH, enables lossless round-tripping from FHIR JSON to FSH and back. FSH and SUSHI have been integrated with the [HL7 FHIR Implementation Guide Publishing tool](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation), allowing seamless processing from FSH to a complete IG.
 
@@ -44,6 +44,10 @@ The following material, useful for learning and applying FHIR Shorthand but not 
 1. [FSH Finder](https://fshschool.org/fsh-finder/) -- A list of public GitHub repositories that contain FSH code, refreshed daily.
 
 Note that the [Language Reference](reference.html) is the formal specification, and if there is any conflict between that and any other written or programmatic materials, the former is considered the source of truth.
+
+#### Version Number
+
+The sequence of releases of this specification is expressed in terms of three integers, x.y.z. An increment in z indicates minor, backward-compatible updates. An increment in y indicates new or modified language features, and potentially, non-backward-compatible changes. By HL7 convention, the major version number x typically does not increment until the release of a new balloted version. The current version, if approved, will be released as version 2.0.0. Implementations SHOULD indicate what version or versions of the FSH specification they implement.
 
 ### Issue Reporting and Contributions
 
