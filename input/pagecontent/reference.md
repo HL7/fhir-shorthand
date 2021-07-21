@@ -14,12 +14,13 @@ Syntax expressions use the following conventions:
 
 | Style | Explanation | Example |
 |:------------|:------|:---------|
-| **bold** | A directory path or file name | **example-1.fsh** |
 | `code` | Font used for code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
-| `{ }` | Indicates an item to be substituted with the given type | `{flag}` |
+| `{ }` | Substitution: If a datatype, replace with a value; if an item, replace with a name, id, or URL | `{decimal}` |
 | `< >` | Indicates an element or path to an element with the given datatype should be substituted | `<CodeableConcept>` |
-| `...` | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
 | <code><span class="optional">italics</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
+| `...` | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
+| `/` | A choice of items | `Resource/Profile` |
+| **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
 
 **Syntax Expression Examples:**
@@ -69,13 +70,14 @@ Here are some examples of angle brackets and curly braces in this IG:
 | `{CodeableConcept}`  | A CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
 | `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
 | `{decimal}` | A decimal number | `124.0` |
-| `{datatype}` | Any single [FHIR datatype](https://www.hl7.org/fhir/datatypes.html), including a Reference or canonical | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
-| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html), including Reference(s) or canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
+| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html), including a Reference or canonical | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html), including Reference(s) and canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | One of the [FSH flags](#flag-rules) |  `MS` |
 | `{flag(s)}` | One or more flags, separated by whitespace | `MS SU ?!` |
 | `{Invariant}` | The id of an Invariant | `us-core-8` |
-| `{ResourceOrProfile}` | The name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
+| `{Resource}` | The name, id, or canonical URL (or alias) of any Resource | `Condition` |
+| `{Resource/Profile}` | The name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
 | `{rule}` | Any FSH rule | `* category 1..1 MS` |
 | `{RuleSet}` | The name of a RuleSet | `MyRuleSet` |
 | `{ValueSet}` | The name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
@@ -973,25 +975,6 @@ Rules types that apply to Instances are: [Assignment](#assignment-rules), [Inser
   * birthDate = 1960-04-25
   * extension[us-core-race].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2106-3 "White"
   * extension[us-core-ethnicity].extension[ombCategory].valueCoding = RaceAndEthnicityCDC#2186-5 "Non Hispanic or Latino"
-  ```
-
-* Define an instance of US Core Practitioner, with name and NPI, meant to be inlined in a composition:
-
-  ```
-  Instance:   DrDavidAnydoc
-  InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
-  Title:  "Dr. David Anydoc"
-  Usage:  #inline
-  * name.family = "Anydoc"
-  * name.given = "David"
-  * name.suffix = "MD"
-  * identifier[NPI].value = "8274017284"
-  ```
-
-  This instance would be incorporated into a DomainResource with a statement such as:
-
-  ```
-  *  contained[0] = DrDavidAnydoc
   ```
 
 * Define an `#inline` Patient instance, and then use that instance in a Condition resource, inlining it as a contained resource:
@@ -2090,13 +2073,13 @@ Resource instances can refer to other resource instances. The referred resources
 A resource reference is assigned using this grammar:
 
 ```
-* <Reference> = Reference({Resource id|url})
+* <Reference> = Reference({Resource})
 ```
 
 For assignment of a resource to the value of an element directly:
 
 ```
-* <Resource> = {Resource id|url}
+* <Resource> = {Resource}
 ```
 
 As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the URL is the preferred way to reference an instance for the resource types on which it is defined. One advantage is that the URL can include a version. For an internal FSH-defined instance, referring to an instance by its id (as defined in the `Instance` declaration) is more typical (see examples).
@@ -2263,7 +2246,7 @@ The syntaxes to specify standalone extension(s) are:
 <pre><code>* &lt;extension&gt; contains {Extension} named {name} {card} <span class="optional">{flag(s)}</span>
 
 * &lt;extension&gt; contains
-    {Extension1} named {name1} {card} <span class="optional">{flag(s)}</span> and 
+    {Extension1} named {name1} {card} <span class="optional">{flag(s)}</span> and
     {Extension2} named {name2} {card} <span class="optional">{flag(s)}</span> and
     {Extension3} named {name3} {card} <span class="optional">{flag(s)}</span> ...
 </code></pre>
