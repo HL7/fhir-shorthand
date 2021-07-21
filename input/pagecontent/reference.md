@@ -1,6 +1,6 @@
-{%include shaded-table.html%}
+{%include styles.html%}
 
-This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended primarily as a reference, not a tutorial. For tutorials and additional documentation please go to [fshschool.org](https://fshschool.org).
+This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended primarily as a reference, not a tutorial. For tutorials and additional documentation please consult the [Overview](overview.html) or go to [fshschool.org](https://fshschool.org).
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
@@ -17,7 +17,7 @@ Syntax expressions use the following conventions:
 | `code` | Font used for code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
 | `{ }` | Substitution: If a datatype, replace with a value; if an item, replace with a name, id, or URL | `{decimal}` |
 | `< >` | Indicates an element or path to an element with the given datatype should be substituted | `<CodeableConcept>` |
-| <code><span class="optional">italics</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
+| <code><span class="optional">orange</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
 | `...` | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
 | `/` | A choice of items | `Resource/Profile` |
 | **bold** | A directory path or file name | **example-1.fsh** |
@@ -83,7 +83,7 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{ValueSet}` | The name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
 {: .grid }
 
->**Note:** When listing multiple items, consecutive elements and paths are always separated by `and`, consecutive flags are always separated by white spaces, and consecutive datatypes are always separated by `or`. When listing multiple References, the `or` is placed *inside* the Reference(), e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
+>**Note:** When listing multiple items, consecutive elements and paths are always separated by `and`, consecutive flags are always separated by white spaces, and consecutive datatypes are always separated by `or`. When listing multiple References, the `or` is placed *inside* the Reference, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
 
 ### FSH Foundations
 
@@ -112,12 +112,6 @@ FSH supports new pre-release FHIR R5 datatypes integer64 and CodeableReference o
 #### External IGs
 
 Dependencies between a FSH project and other IGs MUST be declared. The form of this declaration is outside the scope of the FSH language and SHOULD be managed by implementations. In this Guide, these are referred to as "external" IGs.
-
-#### Version Numbering
-
-The FSH specification, like other FHIR Implementation Guides (IGs), expresses versions in terms of three integers, x.y.z, indicating the sequence of releases. Release 2 is later than release 1 if x2 > x1 or (x2 = x1 and y2 > y1), or (x2 = x1 and y2 = y1 and z2 > z1). Implementations SHOULD indicate what version or versions of the FSH specification they implement.
-
-Like other HL7 FHIR IGs, the version numbering of the FSH specification does not entirely follow the [semantic versioning convention](https://semver.org). Consistent with semantic versioning, an increment of z indicates a patch release containing minor updates and bug fixes, while maintaining backwards compatibility with the previous version. An increment in y indicates new or modified features, and potentially, non-backward-compatible changes (i.e., a minor or major release in semantic versioning). By HL7 convention, the major version number x typically does not increment until the release of a new balloted version.
 
 ### FSH Language Basics
 
@@ -177,7 +171,7 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 #### References
 
-FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({ResourceOrProfile})`. A name, id, or URL can be used to identify the resource or profile. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
+FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A name, id, or URL can be used to identify the resource or profile. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
 In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance. If a reference value in an instance does not resolve to another instance, the specified reference value will be retained as-is.
 
@@ -435,7 +429,7 @@ FHIR represents an element with a choice of datatypes using the style foo[x]. Fo
 
 FSH uses square-bracketed integers to address elements in arrays. Arrays are referenced using 0-based indices, meaning that the first array element is referenced by `[0]`, the second element is referenced by `[1]`, etc. Arrays with missing elements (gaps in the sequence of indices) are not allowed. If the index is omitted, the first element of the array (`[0]`) is assumed.
 
-Numerical indices apply only to arrays that can be populated with concrete values, e.g., in instances or in metadata elements of SDs. Numerical indices SHOULD NOT be used in Profiles, because arrays in profiles are not populated _per se_, and only contain constraints on the values that can appear in instances. The exception is setting metadata properties of SDs using [caret paths](#caret-paths), since these are actually concrete properties of a StructureDefinition instance. The preferred way to reference arrays in Profiles is by [slice name](#sliced-array-paths).
+Numerical indices apply only to arrays that can be populated with concrete values, e.g., in instances or in metadata elements of StructureDefinitions. Numerical indices SHOULD NOT be used in Profiles, because arrays in profiles are not populated _per se_, and only contain constraints on the values that can appear in instances. The exception is setting metadata properties of StructureDefinitions using [caret paths](#caret-paths), since these are actually concrete properties of a StructureDefinition instance. The preferred way to reference arrays in Profiles is by [slice name](#sliced-array-paths).
 
 **Examples:**
 
@@ -1075,7 +1069,7 @@ Rules types that apply to Instances are: [Assignment](#assignment-rules), [Inser
 
 ##### Defining Instances of Other Conformance Resources
 
-The FSH language is designed to support creation of SDs for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
+The FSH language is designed to support creation of StructureDefinitions for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
 
 These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement` with `Usage: #definition`. The CapabilityStatement is populated using assignment statements. <span style="background-color: #fff5e6;">Authors may choose to use {%include tu.html%}  [parameterized rule sets](#parameterized-rule-sets) to reduce repetition of common patterns in conformance resources.</span>
 
@@ -1728,9 +1722,9 @@ The syntax of the rules to add a new element are as follows:
 
 where `{datatype(s)}` can be one of the following:
 
-* A primitive or complex datatype name, or multiple datatypes, separated with `or`,
-* References to one or more resources or profiles, `Reference({ResourceOrProfile(s)})`, separated with `or`
-* Canonicals for one or more resources or profiles, `Canonical({ResourceOrProfile(s)})`, separated with `or`
+* A primitive or complex datatype name, or multiple datatypes separated with `or`,
+* References to one or more resources or profiles, <code>Reference({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
+* Canonicals for one or more resources or profiles, <code>Canonical({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 
 Note the following:
 
@@ -2268,8 +2262,8 @@ Extensions are created by adding elements to extension arrays. Extension arrays 
 
 Extensions are specified using the `contains` keyword. There are two types of extensions, *standalone* and *inline*:
 
-* Standalone extensions have their own SDs, and can be reused. They can be defined internally (in the same FSH project), or externally in core FHIR or an external IG. Only standalone extensions can be used directly in profiles.
-* Inline extensions do not have separate SDs, and cannot be reused in other profiles. Inline extensions can only be used to specify sub-extensions in a complex (nested) extension.
+* Standalone extensions have their own StructureDefinitions, and can be reused. They can be defined internally (in the same FSH project), or externally in core FHIR or an external IG. Only standalone extensions can be used directly in profiles.
+* Inline extensions do not have StructureDefinitions, and cannot be reused in other profiles. Inline extensions can only be used to specify sub-extensions in a complex (nested) extension.
 
 The syntaxes to specify standalone extension(s) are:
 
@@ -2290,7 +2284,7 @@ The syntaxes to define inline extension(s) are:
     {name2} {card} <span class="optional">{flag(s)}</span> and
     {name3} {card} <span class="optional">{flag(s)}</span> ...</code></pre>
 
-In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local names created by the rule author. They are used to refer to that extension in later rules. By convention, the local names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase). These names are exported as slice names in the generated SD.
+In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local names created by the rule author. They are used to refer to that extension in later rules. By convention, the local names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase). These names are exported as slice names in the generated StructureDefinition.
 
 > **Note:** Contains rules can also be applied to modifierExtension arrays; simply replace `extension` with `modifierExtension`.
 
@@ -2741,13 +2735,13 @@ FSH rules can be used to restrict the datatype(s) of an element. The syntaxes ar
 
 * <element> only {datatype1} or {datatype2} or {datatype3}...
 
-* <element> only Reference({ResourceOrProfile})
+* <element> only Reference({Resource/Profile})
 
-* <element> only Reference({ResourceOrProfile1} or {ResourceOrProfile2} or {ResourceOrProfile3}...)
+* <element> only Reference({Resource/Profile1} or {Resource/Profile2} or {Resource/Profile3}...)
 
-* <element> only Canonical({ResourceOrProfile})
+* <element> only Canonical({Resource/Profile})
 
-* <element> only Canonical({ResourceOrProfile1} or {ResourceOrProfile2} or {ResourceOrProfile3}...)
+* <element> only Canonical({Resource/Profile1} or {Resource/Profile2} or {Resource/Profile3}...)
 ```
 
 Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource.
@@ -2844,7 +2838,6 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 |  OID   | Object Identifier
 | $SCT | Common FSH alias for SNOMED Clinical Terms
 |  SU  | Flag denoting "include in summary"
-|  SD  | StructureDefinition
 |  TU  | Flag denoting trial use element
 | UCUM  | Unified Code for Units of Measure
 | URL    | Uniform Resource Locator
