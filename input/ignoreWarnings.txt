@@ -1,1 +1,3 @@
 == Suppressed Messages ==
+# SUPPRESS MESSAGES ABOUT VALID COUNTRY CODE SYSTEM M49 
+INFORMATION: ImplementationGuide/hl7.fhir.uv.shorthand: ImplementationGuide.jurisdiction[0].coding[0]: Code System URI 'http://unstats.un.org/unsd/methods/m49/m49.htm' is unknown so the code cannot be validated
