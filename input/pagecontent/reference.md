@@ -49,9 +49,9 @@ Syntax expressions use the following conventions:
   * An asterisk, followed by
   * Any element or a path to any element, followed by
   * The word `only`, followed by
-  * A list including at least one valid datatype.
+  * A list including at least one valid datatype, with additional datatypes separated by the word `or` (see below).
 
-Here are some examples of angle brackets and curly braces in this IG:
+The following tables contain additional examples of angle brackets and curly braces used in this IG:
 
 | Angle Brackets | Substitute: | Example(s) |
 |--------|--------|---------|
@@ -80,7 +80,7 @@ Here are some examples of angle brackets and curly braces in this IG:
 | `{ValueSet}` | The name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
 {: .grid }
 
->**Note:** When listing multiple items, consecutive elements and paths are always separated by `and`, consecutive flags are always separated by white spaces, and consecutive datatypes area always separated by `or`. When listing multiple References, the `or` is placed *inside* the Reference(), e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
+>**Note:** When listing multiple items, consecutive elements and paths are always separated by `and`, consecutive flags are always separated by white spaces, and consecutive datatypes are always separated by `or`. When listing multiple References, the `or` is placed *inside* the Reference(), e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
 
 ### FSH Foundations
 
@@ -176,13 +176,11 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({ResourceOrProfile})`. A name, id, or URL can be used to identify the resource or profile. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
-In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance.
-
-If there are no restrictions on the type of Resource or Profile an element can refer to, this is expressed as `Reference(Any)`.
+In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance. If a reference value in an instance does not resolve to another instance, the specified reference value will be retained as-is.
 
 #### Canonicals
 
-FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
 When syntax allows for multiple Canonicals, the items are separated by `or` placed *inside* the parentheses, e.g. `Canonical(ActivityDefinition or PlanDefinition)`, **not** `Canonical(ActivityDefinition) or Canonical(PlanDefinition)`.
 
@@ -245,7 +243,7 @@ This syntax is also used with CodeableConcepts (see [Assignments with the Codeab
 * A Coding from ICD10-CM, assuming the alias $ICD for that code system:
 
   ```
-  $ICD#C004  "Malignant neoplasm of lower lip, inner aspect"
+  $ICD#C004 "Malignant neoplasm of lower lip, inner aspect"
   ```
   
 * A Coding with an explicit version specified with bar syntax:
@@ -259,7 +257,7 @@ This syntax is also used with CodeableConcepts (see [Assignments with the Codeab
 FSH provides a shorthand that allows three aspects of a Quantity to be set simultaneously:
 
 * The numerical quantity (`Quantity.value`)
-* The units of measure (`Quantity.code`)
+* The units of measure (`Quantity.system` and `Quantity.code`)
 * Optionally, the human-readable displayed units (`Quantity.unit`)
 
 The grammar is either:
@@ -332,7 +330,7 @@ Item identifiers (ids) MUST be unique within the scope of its item type in the F
 
 FSH allows internal and external items to be referred to by name, id, or canonical URL.  
 
-A FSH item within the same project SHOULD be referred to by the name or id given in the item's [declaration statement](#declaration-statements). Core FHIR resources SHOULD be referred to by name, e.g., `Patient` or `Observation`. Items from external IGs and extensions, profiles, code systems, and value sets in core FHIR SHOULD be referred to by their canonical URLs, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal item takes precedence, and external item MUST be referred to by its canonical URL.
+A FSH item within the same project SHOULD be referred to by the name or id given in the item's [declaration statement](#declaration-statements). Core FHIR resources SHOULD be referred to by name, e.g., `Patient` or `Observation`. Items from external IGs and extensions, profiles, code systems, and value sets in core FHIR SHOULD be referred to by their canonical URLs, since this approach minimizes the chance of name collisions. In cases where an external name or id clashes with an internal name or id, then the internal item takes precedence, and the external item MUST be referred to by its canonical URL.
 
 ### FSH Paths
 
@@ -352,11 +350,19 @@ In the following, the various types of path references are discussed. Some examp
 
 The path to a top-level element is denoted by the element's name. Because paths are used within the context of a FSH definition or instance, the path MUST NOT include the resource name. For example, when defining a profile of Observation, the path to Observation.code is just `code`.
 
+**Example:**
+
+* The path to the status of a MedicationRequest:
+
+  ```
+  status
+  ```
+
 #### Nested Element Paths
 
 To refer to nested elements, the path lists the properties in order, separated by a dot (`.`). Since the resource can be inferred from the context, the resource name is not included in the path.
 
-**Example:**
+**Examples:**
 
 * The path to the lot number of a Medication:
 
@@ -430,13 +436,13 @@ Numerical indices apply only to arrays that can be populated with concrete value
 
 **Examples:**
 
-* Path to first element in Patient.name field:
+* Path to first element in Patient.name field within an instance of Patient:
 
   ```
   name[0]
   ```
 
-* Path to a patient's second given name in the first name field:
+* Path to a patient's second given name in the first name field within an instance of Patient:
 
   ```
   name[0].given[1]
@@ -454,9 +460,9 @@ Numerical array references can be replaced with so-called "soft indexing." In so
 
 Similar to numerical indices, soft indices should only be used when populating or referencing arrays in instances, or when using [caret paths](#caret-paths).
 
-Soft indexing is useful when populating long arrays, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle and CapabilityStatement have arrays may contain scores of items. Managing indices can become tedious and error prone when adding or removing items in the middle of a long list.
+Soft indexing is useful when populating long arrays, allowing elements to be inserted, deleted, or moved without updating numerical indices. Complex resources such as Bundle and CapabilityStatement have arrays that may contain scores of items. Managing indices can become tedious and error prone when adding or removing items in the middle of a long list.
 
-Another use case for soft indexing involves [parameterized rule sets](#parameterized-rule-sets). Rule sets provide a way to avoid repeating the same pattern of rules when populating an array ([see example](#parameterized-rule-sets)).
+Another use case for soft indexing involves [rule sets](#defining-rule-sets). Rule sets provide a way to avoid repeating the same pattern of rules when populating an array ([see example](#parameterized-rule-sets)).
 
 For nested arrays, several sequences of soft indices can run simultaneously. The sequence of indices at different levels of nesting are independent and do not interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` is at index [0]. (An analogy is using a keyboard's Enter key to advance to a new line that initially has no characters.)
 
@@ -680,9 +686,9 @@ The following keywords (case-sensitive) are defined:
 |----------|---------|---------|
 | Description | Provides a human-readable description | string or markdown |
 | Expression | Provides a FHIR path expression in an invariant | FHIRPath string |
-| Id | Provides a identifier for an item | id |
+| Id | Provides an identifier for an item | id |
 | InstanceOf | Names the profile or resource an instance instantiates | name or id or url |
-| Parent | Names the base class for a profile or extension | name or id or url |
+| Parent | Names the base definition for a profile or extension | name or id or url |
 | Severity | Specifies whether violation of an invariant represents an error or a warning | code |
 | Source | Provides the profile the mapping applies to | name |
 | Target | Provides the standard being mapped to | uri |
@@ -791,8 +797,8 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 * There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
 * The definition of the term, provided as the second string following the code, is RECOMMENDED but not required.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
-* Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
-* [Assignment rules](#assignment-rules) can be applied to CodeSystems, but only in the context of caret paths (to set metadata).
+* <span style="background-color: #fff5e6;">{%include tu.html%} Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).</span>
+* <span style="background-color: #fff5e6;">{%include tu.html%} [Assignment rules](#assignment-rules) can be applied to CodeSystems, but only in the context of caret paths (to set metadata).</span>
 
 **Example:**
 
@@ -919,6 +925,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Id:             us-core-ethnicity
   Title:          "US Core Ethnicity Extension"
   Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. The ethnicity codes used to represent these concepts are based upon the [CDC ethnicity and Ethnicity Code Set Version 1.0](http://www.cdc.gov/phin/resources/vocabulary/index.html) which includes over 900 concepts for representing race and ethnicity of which 43 reference ethnicity.  The ethnicity concepts are grouped by and pre-mapped to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."
+  // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
   * extension contains
       ombCategory 0..1 MS and
       detailed 0..* and
@@ -952,9 +959,9 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` (default) means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
 * `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
-* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array.
+* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array).
 
-Instances inherit values from their StructureDefinition (i.e. assigned codes, extensions) if those values are required. Assignment rules are used to set additional values.
+Instances inherit values from their StructureDefinition (i.e. assigned codes, assigned booleans) if those values are required. Assignment rules are used to set additional values.
 
 Rules types that apply to Instances are: [Assignment](#assignment-rules), [Insert](#insert-rules), and [Path](#path-rules). No other rule types are allowed.
 
@@ -979,7 +986,6 @@ Rules types that apply to Instances are: [Assignment](#assignment-rules), [Inser
   ```
   Instance:   DrDavidAnydoc
   InstanceOf: http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
-  Title:  "Dr. David Anydoc"
   Usage:  #inline
   * name.family = "Anydoc"
   * name.given = "David"
@@ -1069,7 +1075,7 @@ Rules types that apply to Instances are: [Assignment](#assignment-rules), [Inser
 
 The FSH language is designed to support creation of SDs for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
 
-These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement`. The CapabilityStatement is populated using assignment statements.
+These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement` with `Usage: #definition`. The CapabilityStatement is populated using assignment statements. <span style="background-color: #fff5e6;">Authors may choose to use {%include tu.html%}  [parameterized rule sets](#parameterized-rule-sets) to reduce repetition of common patterns in conformance resources.</span>
 
 #### Defining Invariants
 
@@ -1089,11 +1095,11 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
 * Define an invariant found in US Core using FSH:
 
   ```
-  Invariant:  us-core-8
+  Invariant:   us-core-8
   Description: "Patient.name.given or Patient.name.family or both SHALL be present"
-  Expression: "family.exists() or given.exists()"
-  Severity:   #error
-  XPath:      "f:given or f:family"
+  Expression:  "family.exists() or given.exists()"
+  Severity:    #error
+  XPath:       "f:given or f:family"
   ```
 
 #### Defining Logical Models
@@ -1282,7 +1288,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 
 #### Defining Rule Sets
 
-Rule sets provide the ability to define a group rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. If rules within a rule set are [indented](#indented-rules), the full paths are resolved from the indentation before the rule set is applied. Therefore, the indentation used in the rule set will not have any meaning in the target.
+Rule sets provide the ability to define a group of rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. The first rule in a rule set MUST NOT be indented. <span style="background-color: #fff5e6;">Rules after the first rule may be {%include tu.html%} [indented](#indented-rules) but do not affect any rules outside of the rule set (i.e., inserting a rule set never affects the rule paths after the `insert` rule).</span>
 
 All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
 
@@ -1467,7 +1473,7 @@ The following restrictions apply to rules:
 * All rules must begin on a new line.
 * The asterisk symbol must be followed by at least one space.
 * The asterisk cannot be preceded by non-whitespace characters on a line.
-* The asterisk cannot be preceded by whitespace characters, <span style="background-color: #fff5e6;">unless using [indented rule syntax](#indented-rules).</span>
+* The asterisk cannot be preceded by whitespace characters, <span style="background-color: #fff5e6;">unless using {%include tu.html%} [indented rule syntax](#indented-rules).</span>
 
 The following table is a summary of the rule syntax.
 
@@ -1485,7 +1491,7 @@ The following table is a summary of the rule syntax.
 | [Exclude](#exclude-rules) |`* exclude {Coding}`<br/>`* exclude codes from valueset {ValueSet}`<br/><code>* exclude codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code>|
 | [Flag](#flag-rules) |`* <element(s)> {flag(s)}` |
 | [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding} <br/> * <span class="optional">include</span> codes from valueset {ValueSet} <br/> * <span class="optional">include</span> codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code> |
-| [Insert](#insert-rules)|<code>* insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span><br/>{%include tu.html%}* &lt;element&gt; insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span></code> |
+| [Insert](#insert-rules)|<code>* insert {RuleSet}<br/>{%include tu.html%}* insert {RuleSet}({parameter1}<span class="optional">, {parameter2}, ...</span>)<br/>{%include tu.html%}* &lt;element&gt; insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span></code> |
 | [Local Code](#local-code-rules) |<code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code> |
 | [Mapping](#mapping-rules)|<code>* <span class="optional">&lt;element&gt;</span> -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span></code> |
 | [Obeys](#obeys-rules) | <code>* <span class="optional">&lt;element&gt;</span> obeys {Invariant} <span class="optional">and {Invariant2} and {Invariant3}...</span></code> |
@@ -1730,7 +1736,7 @@ Note the following:
 * Flags and longer definition are optional.
 * The longer definition can also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
-* When multiple types are specified, the element path must end with \[x] unless all types are References.
+* When multiple types are specified, the element path must end with \[x] unless all types are References or all types are Canonicals.
 
 **Examples:**
 
@@ -1798,7 +1804,7 @@ The left side of this expression follows the [FSH path grammar](#fsh-paths). The
 Assignment rules have two very different interpretations, depending on context:
 
 * In instances, assignment rules set the **value** of the target element. Note that whenever an element is accessed via a [caret path](#caret-paths), it is actually accessing the definitional instance (for example, the StructureDefinition of the profile). Therefore, assignments involving caret paths also set the **value** of the target element.
-* Assignment rules in profiles and extensions establish **constraints** on instances conforming to the profile or extension. The requirement is expressed as a pattern of values that must be present in the instance. In this context, and assignment rule does not set the value of the element, but instead, establishes a **constraint** on that value.
+* Assignment rules in profiles and extensions establish **constraints** on instances conforming to the profile or extension. The requirement is expressed as a pattern of values that must be present in the instance. In this context, an assignment rule does not set the value of the element, but instead, establishes a **constraint** on that value.
 
 This is best illustrated by example. Consider the following assignment (assuming code is a CodeableConcept):
 
@@ -1810,9 +1816,9 @@ If this statement appears in an instance of an Observation, then the values of c
 
 If the identical statement appears in a profile on Observation, it signals that the StructureDefinition should be configured such that the code element of a conformant instance must have a Coding with the system http://loinc.org and the code 69548-6. (In fact, the StructureDefinition does not even *have* a code element to populate.)
 
-> **Note**: In the profiling context, typically only the system and code are important conformance criteria. If a display text is included, it will be part of the conformance criteria.
+> **Note**: In the profiling context, typically only the system and code are important conformance criteria for a Coding or CodeableConcept property. If a display text is included, it will be part of the conformance criteria.
 
-In the latter case of establishing a constraint in a profile, the constraint pattern considered "open" by default, in the sense that the element in question might have content in addition to the prescribed value, such as alternative codes in a CodeableConcept. If conformance to a profile requires a precise match to the pattern (which is rare), then the following syntax can be used:
+In the latter case of establishing a constraint in a profile, the constraint pattern is considered "open" by default, in the sense that the element in question might have content in addition to the prescribed value, such as alternative codes in a CodeableConcept. If conformance to a profile requires a precise match to the pattern (which is rare), then the following syntax can be used:
 
 ```
 * <element> = {value} (exactly)
@@ -1936,7 +1942,7 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
 
 ##### Assignments with the CodeableConcept Data Type
 
-A CodeableConcept consists of an array of Codings and a text. To populate the array, array indices, denoted by brackets, are used. The shorthand is:
+A CodeableConcept consists of an array of Codings and a text. To populate the array in an instance, array indices, denoted by brackets, are used. The shorthand is:
 
 <pre><code>* &lt;CodeableConcept&gt;.coding[{index}] = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
@@ -2017,7 +2023,7 @@ FSH provides a shorthand that allows quantities, units of measure, and display s
 
 A similar shorthand can be used for other code systems by specifying the unit using the standard FSH code syntax:
 
-<pre><code>&lt;Quantity&gt; = {decimal} {CodeSystem}|{version string}#{code} <span class="optional">"{units display string}"</span></code></pre>
+<pre><code>&lt;Quantity&gt; = {decimal} {CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{units display string}"</span></code></pre>
 
 Alternatively, the value and units can also be set independently. To assign a value, use the Quantity.value property:
 
@@ -2128,11 +2134,11 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
 {%include tu-div.html%}
 
-The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. Making use of CodeableReference involves no new FSH syntax.
+The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly. Making use of CodeableReference involves no new FSH syntax.
 
 **Examples:**
 
-* Constrain Substance.code, which is datatype `CodeableReference(SubstanceDefinition)`:
+* Constrain Substance.code, which is datatype `CodeableReference(SubstanceDefinition)` in FHIR R5:
 
   ```
   Profile: LatexSubstance
@@ -2188,6 +2194,12 @@ The [binding rules defined in FHIR](https://www.hl7.org/fhir/R4/profiling.html#b
 
   ```
   * gender from $AdGen
+  ```
+
+* Bind to a value set by its name when it is defined in the same FSH project:
+
+  ```
+  * code from CancerConditionVS (extensible)
   ```
 
 #### Cardinality Rules
@@ -2276,7 +2288,7 @@ The syntaxes to define inline extension(s) are:
     {name2} {card} <span class="optional">{flag(s)}</span> and
     {name3} {card} <span class="optional">{flag(s)}</span> ...</code></pre>
 
-In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local names created by the rule author. They are used to refer to that extension in later rules. By convention, the local names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
+In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local names created by the rule author. They are used to refer to that extension in later rules. By convention, the local names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase). These names are exported as slice names in the generated SD.
 
 > **Note:** Contains rules can also be applied to modifierExtension arrays; simply replace `extension` with `modifierExtension`.
 
@@ -2344,7 +2356,7 @@ The slicing logic parameters are specified using [caret paths](#caret-paths). Th
 
 **Example:**
 
-* Provide slicing logic for slices on Observation.component that are be distinguished by their code:
+* Provide slicing logic for slices on Observation.component that are to be distinguished by their code:
 
   ```
   * component ^slicing.discriminator.type = #pattern
@@ -2366,7 +2378,7 @@ The second step in slicing is to populate the array that is to be sliced, using 
     {name3} {card} <span class="optional">{flag(s)}</span> ...
 </code></pre>
 
-In this pattern, `<array>` is a path to the element that is to be sliced and to which the slicing rules defined in step (1) will applied. The names (`name`, `name1`, etc.) are created by the rule author to describe the slice in the context of the profile. These names are used to refer to the slice in later rules. By convention, the slice names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
+In this pattern, `<array>` is a path to the element that is to be sliced and MUST match the path on which the slicing rules were defined in step (1). The names (`name`, `name1`, etc.) are created by the rule author to describe the slice in the context of the profile. These names are used to refer to the slice in later rules. By convention, the slice names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase).
 
 Each slice will match or constrain the datatype of the array it slices. In particular:
 
@@ -2557,7 +2569,7 @@ Insert a simple rule set by using the name of the rule set:
 
 To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
-<pre><code>* insert {RuleSet}<span class="optional">(value1, value2, value3...)</span>
+<pre><code>* insert {RuleSet}(value1<span class="optional">, value2, value3...</span>)
 </code></pre>
 
 As indicated, the list of values is enclosed with parentheses `()` and separated by commas `,`. If you need to put literal `)` or `,` characters inside values, escape them with a backslash: `\)` and `\,`, respectively. White space separating values is optional, and removed before the value is applied to the rule set definition.
@@ -2776,7 +2788,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 </div>
 
-* Restrict Observation.performer (nominally Reference(Practitioner | PractitionerRole | Organization | CareTeam | Patient | RelatedPerson) to allow only Practitioner:
+* Restrict Observation.performer (nominally Reference(Practitioner \| PractitionerRole \| Organization \| CareTeam \| Patient \| RelatedPerson)) to allow only Practitioner:
 
   ```
   * performer only Reference(Practitioner)
@@ -2800,7 +2812,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
-* Restrict PlanDefinition.action.definition[x], nominally a choice of uri or canonical(ActivityDefinition | PlanDefinition | Questionnaire), to allow only the canonical of an ActivityDefinition:
+* Restrict PlanDefinition.action.definition[x], nominally a choice of uri or canonical(ActivityDefinition \| PlanDefinition \| Questionnaire), to allow only the canonical of an ActivityDefinition:
 
   ```
   * action.definition[x] only Canonical(ActivityDefinition)
@@ -2830,6 +2842,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 |  OID   | Object Identifier
 | $SCT | Common FSH alias for SNOMED Clinical Terms
 |  SU  | Flag denoting "include in summary"
+|  SD  | StructureDefinition
 |  TU  | Flag denoting trial use element
 | UCUM  | Unified Code for Units of Measure
 | URL    | Uniform Resource Locator
