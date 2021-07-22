@@ -2484,7 +2484,7 @@ Exclude rules are used to remove codes from value sets. Exclude rules appear onl
 
 Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
 
-<span class="caption" id="t1">Table 14. Flags and their meaning</span>
+<span class="caption" id="t1">Table 13. Flags and their meaning</span>
 
 | FHIR Flag | FSH Flag | Meaning |
 |------|-----|----|
