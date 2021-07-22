@@ -1,3 +1,5 @@
+{%include styles.html%}
+
 <br/>
 <span style="background-color: LightYellow;">NOTE: Information on this page is [informative content](https://www.hl7.org/fhir/versions.html#std-process).</span>
 <br/>
