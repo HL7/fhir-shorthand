@@ -12,9 +12,11 @@ The FSH specification uses syntax expressions to illustrate the FSH language. Wh
 
 Syntax expressions use the following conventions:
 
+<span class="caption" id="t1">Table 1. Syntax expressions</span>
+
 | Style | Explanation | Example |
 |:------------|:------|:---------|
-| `code` | Font used for code fragments, such as FSH keywords, FSH statements, and FSH syntax expressions  | `* status = #open` |
+| `this is FSH` | Font used for FSH fragments, such as keywords, statements, and syntax expressions  | `* status = #open` |
 | `{ }` | Substitution: If a datatype, replace with a value; if an item, replace with a name, id, or URL | `{decimal}` |
 | `< >` | Indicates an element or path to an element with the given datatype should be substituted | `<CodeableConcept>` |
 | <code><span class="optional">orange</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
@@ -50,11 +52,13 @@ Syntax expressions use the following conventions:
   * An asterisk, followed by
   * Any element or a path to any element, followed by
   * The word `only`, followed by
-  * A list including at least one valid datatype, with additional datatypes separated by the word `or` (see below).
+  * A list including at least one valid datatype, with additional datatypes separated by the word `or` (see [Table 3](#t3)).
 
 The following tables contain additional examples of angle brackets and curly braces used in this IG:
 
-| Angle Brackets | Substitute: | Example(s) |
+<span class="caption" id="t2">Table 2. Interpretation of paths in syntax expressions</span>
+
+| Syntax term | Substitute... | Example(s) |
 |--------|--------|---------|
 | `<bindable>` | An element or path to an element whose datatype allows it to be bound to a value set | `code` |
 | `<CodeableConcept>`  | An element or path to an element whose datatype is CodeableConcept |  `category`  |
@@ -63,7 +67,9 @@ The following tables contain additional examples of angle brackets and curly bra
 | `<Extension>` | An element or path to an element whose datatype is Extension | `extension` <br/> `modifierExtension` <br/> `bodySite.extension` |
 {: .grid }
 
-| Curly Braces | Substitute: | Example(s) |
+<span class="caption" id="t3">Table 3. Interpretation of substitutions in syntax expressions</span>
+
+| Syntax term | Substitute... | Example(s) |
 |--------|--------|---------|
 | `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
 | `{code}`  | A code | `#active` |
@@ -650,21 +656,23 @@ Declaration statements follow the syntax:
 
 A declaration is always the first statement in an item definition. The value represents the item's name or identifier (id), depending on the item's type, as shown in the table below:
 
+<span class="caption" id="t4">Table 4. Declarations defined by FSH</span>
+
 <div class = "shadeRow6 shadeRow9">
 
-| Declaration | Purpose | Data Type |
+| Declaration | Creates... | Data Type |
 |----------|---------|---------|
-| [Alias](#defining-aliases)           | Declares an alias for a URL or OID | expression |
-| [CodeSystem](#defining-code-systems) | Declares a new code system | name |
-| [Extension](#defining-extensions)    | Declares a new extension | name |
-| [Instance](#defining-instances)      | Declares a new instance | id |
-| [Invariant](#defining-invariants)    | Declares a new invariant | id |
-| {%include tu.html%} [Logical](#defining-logical-models) | Declares a new logical model | name |
-| [Mapping](#defining-mappings)        | Declares a new mapping | id |
-| [Profile](#defining-profiles)        | Declares a new profile | name |
-| {%include tu.html%} [Resource](#defining-resources) | Declares a new resource | name |
-| [RuleSet](#defining-rule-sets)       | Declares a set of rules that can be reused | name |
-| [ValueSet](#defining-value-sets)     | Declares a new value set | name |
+| [Alias](#defining-aliases)           | An alias for a URL or OID | expression |
+| [CodeSystem](#defining-code-systems) | A code system | name |
+| [Extension](#defining-extensions)    | An extension | name |
+| [Instance](#defining-instances)      | An instance | id |
+| [Invariant](#defining-invariants)    | An invariant | id |
+| {%include tu.html%} [Logical](#defining-logical-models) | A logical model | name |
+| [Mapping](#defining-mappings)        | A mapping | id |
+| [Profile](#defining-profiles)        | A profile | name |
+| {%include tu.html%} [Resource](#defining-resources) | A custom resource | name |
+| [RuleSet](#defining-rule-sets)       | A set of rules that can be reused | name |
+| [ValueSet](#defining-value-sets)     | A value set | name |
 {: .grid }
 
 </div>
@@ -678,6 +686,8 @@ Keyword statements directly follow the declaration and precede any rules. Keywor
 ```
 
 The following keywords (case-sensitive) are defined:
+
+<span class="caption" id="t5">Table 5. Keywords defined by FSH</span>
 
 | Keyword | Purpose | Data Type |
 |----------|---------|---------|
@@ -697,6 +707,8 @@ The following keywords (case-sensitive) are defined:
 In the above, `name` refers to a valid [item name](#item-names) and `id` to an [item identifier](#item-identifiers).
 
 Depending on the type of item being defined, keywords may be required, suggested, optional, or prohibited. The following table shows the relationship between declarations and keywords:
+
+<span class="caption" id="t6">Table 6. Relationships between declarations and keywords in FSH</span>
 
 <div class="shadeRow6 shadeRow9">
 
@@ -722,6 +734,8 @@ Depending on the type of item being defined, keywords may be required, suggested
 ##### Rule Statements
 
 A number of rules may follow the keyword statements. The grammar and meaning of different rule types are discussed in the [FSH Rules](#fsh-rules) section. Without defining the rule types here, the following table shows the applicability of rule types to item types:
+
+<span class="caption" id="t7">Table 7. Relationships between FSH items and FSH rules</span>
 
 <div class = "shadeCol7 shadeCol10 shadeRow1 shadeRow15 unshadeHead unshadeHead7 unshadeHead10">
 
@@ -1077,6 +1091,8 @@ These conformance resources are created using FSH instance grammar. For example,
 
 Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, <span style="background-color: #fff5e6;">{%include tu.html%} logical models, or resources </span> via [obeys rules](#obeys-rules).
 
+<span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
+
 | Keyword | Usage | Corresponding element in ElementDefinition | Data Type | Required |
 |-------|------------|--------------|-------|----|
 | Invariant | Identifier for the invariant | constraint.key | id | yes |
@@ -1149,6 +1165,8 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 [Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of a StructureDefinition, intended to help implementers understand the StructureDefinition in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
 
 To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required, and `Title` and `Description` are OPTIONAL.
+
+<span class="caption" id="t9">Table 9. Keywords used to define Mappings</span>
 
 | Keyword | Usage | StructureDefinition element |
 |-------|------------|--------------|
@@ -1399,6 +1417,8 @@ The contents of a value set are defined by a set of rules. There are four types 
 
 > **Note:** In value set rules, the word `include` is OPTIONAL.
 
+<span class="caption" id="t10">Table 10. Summary of value set include rules</span>
+
 | To include... | Syntax | Example |
 |-------|---------|----------|
 | A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
@@ -1410,6 +1430,8 @@ The contents of a value set are defined by a set of rules. There are four types 
 > **Note:** Filters are code system dependent. See [below](#filters) for further discussion.
 
 Analogous rules can be used to leave out certain codes, with the word `exclude` replacing the word `include`:
+
+<span class="caption" id="t11">Table 11. Summary of value set exclude rules</span>
 
 | To exclude... | Syntax | Example |
 |-------|---------|----------|
@@ -1472,6 +1494,8 @@ The following restrictions apply to rules:
 * The asterisk cannot be preceded by whitespace characters, <span style="background-color: #fff5e6;">unless using {%include tu.html%} [indented rule syntax](#indented-rules).</span>
 
 The following table is a summary of the rule syntax.
+
+<span class="caption" id="t12">Table 12. Summary of FSH rule types</span>
 
 <div class = "shadeRow1 shadeRow15 unshadeHead">
 
@@ -2459,6 +2483,8 @@ Exclude rules are used to remove codes from value sets. Exclude rules appear onl
 #### Flag Rules
 
 Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
+
+<span class="caption" id="t1">Table 13. Flags and their meaning</span>
 
 | FHIR Flag | FSH Flag | Meaning |
 |------|-----|----|
