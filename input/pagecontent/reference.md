@@ -1,5 +1,9 @@
 {%include styles.html%}
 
+<br/>
+<span style="background-color: LightYellow;">Candidate for Normative except where noted trial use {%include tu.html%}.</span>
+<br/>
+
 This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended primarily as a reference, not a tutorial. For tutorials and additional documentation please consult the [Overview](overview.html) or go to [fshschool.org](https://fshschool.org).
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
