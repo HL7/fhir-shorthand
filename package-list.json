@@ -14,7 +14,7 @@
     },
     {
       "version": "1.2.0",
-      "date": "2020-08-13",
+      "date": "2021-08-13",
       "desc": "HL7 Mixed Normative/Trial Use Ballot",
       "path": "http://hl7.org/fhir/uv/shorthand/2021Sep",
       "status": "ballot",
