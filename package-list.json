@@ -6,14 +6,21 @@
     "category" : "Technical Infrastructure",
     "list" : [
     {
+      "version" : "current",
+      "desc" : "Continuous Integration Build (latest in version control)",
+      "path" : "http://build.fhir.org/ig/HL7/fhir-shorthand",
+      "status" : "ci-build",
+      "current" : true
+    },
+    {
       "version": "1.2.0",
-      "date": "2020-07-23",
+      "date": "2020-08-13",
       "desc": "HL7 Mixed Normative/Trial Use Ballot",
       "path": "http://hl7.org/fhir/uv/shorthand/2021Sep",
       "status": "ballot",
       "sequence": "N1",
       "fhirversion": "4.0.1",
-      "current": true
+      "current": false
     },
     {
       "version": "1.0.0",
