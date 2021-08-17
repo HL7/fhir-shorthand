@@ -2,7 +2,7 @@
 <ImplementationGuide xmlns="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hl7.org/fhir ../input-cache/schemas-r5/fhir-single.xsd">
   <id value="hl7.fhir.uv.shorthand"/>
   <url value="http://hl7.org/fhir/uv/shorthand/ImplementationGuide/hl7.fhir.uv.shorthand"/>
-  <version value="1.2.0"/>
+  <version value="1.2.1"/>
   <name value="FHIRShorthand"/>
   <title value="FHIR Shorthand"/>
   <status value="draft"/>
@@ -47,7 +47,7 @@
     </page>
     <parameter>
       <code value="releaselabel"/>
-      <value value="Mixed Normative/Trial Use Ballot"/>
+      <value value="Current Build (Post-September 2021 Ballot)"/>
     </parameter>
     <parameter>
       <code value="copyrightyear"/>
