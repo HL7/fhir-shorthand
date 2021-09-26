@@ -23,7 +23,7 @@ Syntax expressions use the following conventions:
 | `this is FSH` | Font used for FSH fragments, such as keywords, statements, and syntax expressions  | `* status = #open` |
 | `{ }` | Substitution: If a datatype, replace with a value; if an item, replace with a name, id, or URL | `{decimal}` |
 | `< >` | Indicates an element or path to an element with the given datatype should be substituted | `<CodeableConcept>` |
-| <code><span class="optional">orange</span></code> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
+| <span class="optional">orange color</span> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
 | `...` | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
 | `/` | A choice of items | `Resource/Profile` |
 | **bold** | A directory path or file name | **example-1.fsh** |
@@ -80,13 +80,13 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{CodeableConcept}`  | A CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
 | `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
 | `{decimal}` | A decimal number | `124.0` |
-| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html), including a Reference or canonical | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
-| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html), including Reference(s) and canonical(s), separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
+| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) defined in project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html) defined in project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | One of the [FSH flags](#flag-rules) |  `MS` |
 | `{flag(s)}` | One or more flags, separated by whitespace | `MS SU ?!` |
 | `{Invariant}` | The id of an Invariant | `us-core-8` |
-| `{Resource}` | The name, id, or canonical URL (or alias) of any Resource | `Condition` |
+| `{Resource}` | The name, id, or canonical URL (or alias) of any Resource defined in project's FHIR version | `Condition` |
 | `{Resource/Profile}` | The name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
 | `{rule}` | Any FSH rule | `* category 1..1 MS` |
 | `{RuleSet}` | The name of a RuleSet | `MyRuleSet` |
@@ -101,7 +101,7 @@ The following tables contain additional examples of angle brackets and curly bra
 
 A major organizing construct is the FSH project. Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
 
-#### Files
+#### Items
 
 Content in one FSH project MAY be contained in one or more FSH files. Files MUST use the **.fsh** extension. It is up to implementations to define the association between FSH files and FSH projects.
 
@@ -127,7 +127,9 @@ Dependencies between a FSH project and other IGs MUST be declared. The form of t
 
 #### Formal Grammar
 
-[FSH has a formal grammar](#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/). The grammar is looser than the language specification since many things, such as datatype agreement, are not enforced by the grammar. If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
+The grammar of FSH has been captured in [ANTLR4](https://www.antlr.org/) (see [Appendix](#appendix-formal-grammar)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
+
+If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
 #### Reserved Words
 
@@ -171,13 +173,13 @@ These comments can take up multiple lines.
 */
 ```
 
-The formal grammar for FSH discards all comments during import; they are not retained or used during IG generation. Implementations are free to modify the grammar to allow retention of comments.
+The ANTLR implementation given in [the Appendix](#appendix-formal-grammar) discards comments, however, implementations are free use approaches that process comments.
 
 #### Primitives
 
-The primitive datatypes and value formats in FSH are identical to the [primitive types and value formats in FHIR](https://www.hl7.org/fhir/R4/datatypes.html#primitive). References in this document to code, id, oid, etc. refer to the primitive datatypes defined in FHIR.
+The primitive datatypes and value formats in FSH are those defined in version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://www.hl7.org/fhir/R4/datatypes.html#primitive) in the referred FHIR version.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes. Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
 
 #### References
 
@@ -211,7 +213,7 @@ FSH represents Codings as follows:
 
 <pre><code>{CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
-As [indicated by italics](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical datatype in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
+As [indicated by orange-colored text](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical datatype in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
 This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
 
@@ -327,7 +329,7 @@ When processing triple-quoted strings, the following approach is used:
 
 Item names SHOULD follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names MUST be between 1 and 255 characters, begin with an uppercase letter, and contain only letters, numbers, and "_". By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
 
-Alias names MAY begin with `$`. Choosing alias names beginning with `$` allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
+As a best practice, alias names SHOULD begin with `$` since following this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
 
 #### Item Identifiers
 
@@ -1124,9 +1126,7 @@ Invariants are defined using the keywords `Invariant`, `Description`, `Expressio
 
 Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](http://hl7.org/fhir/R4/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
 
-Logical models are defined in FSH using the keyword `Logical`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
-
-If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements should use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Authors may also specify another logical model, a resource, or a complex datatype as a logical model's parent.
+Logical models are defined using the declaration `Logical`. The keywords `Id`, `Title`, and `Description` are RECOMMENDED. The use of `Parent` is OPTIONAL. If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements should use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Authors may also specify another logical model, a resource, or a complex datatype as a logical model's parent.
 
 Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
@@ -1143,7 +1143,8 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
   ```
   Logical:        Human
   Title:          "Human Being"
-  Description:    "A member of the Homo sapien species."
+  Description:    "A member of the Homo sapiens species."
+  Id:             human-logical-model
   * name 0..* SU HumanName "Name(s) of the human" "The names by which the human is or has been known"
   * birthDate 0..1 SU dateTime "The date of birth, if known"
       "The date on which the person was born. Approximations may be used if exact date is unknown."
@@ -1157,6 +1158,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
   Logical:        FamilyMember
   Title:          "Family Member"
   Description:    "A reference to a human's family member."
+  Id:             human-family-member
   * human 1..1 SU Reference(Human) "Family member" "A reference to the human family member"
   * biological 0..1 boolean "Biologically related?"
       "A family member may not be biologically related due to adoption, blended families, etc."
@@ -1168,7 +1170,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 
 [Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of a StructureDefinition, intended to help implementers understand the StructureDefinition in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
 
-To create a mapping, the keywords `Mapping`, `Source`, and `Target` are required, and `Title` and `Description` are OPTIONAL.
+To create a mapping, the declaration `Mapping` and the keywords `Source`, and `Target` are REQUIRED, and `Title` and `Description` are RECOMMENDED.
 
 <span class="caption" id="t9">Table 9. Keywords used to define Mappings</span>
 
@@ -1230,7 +1232,7 @@ A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rul
 
 #### Defining Profiles
 
-To define a profile, the keywords `Profile` and `Parent` are required, and `Id`, `Title`, and `Description` are OPTIONAL. Rules defining the profile follow immediately after the keyword section.
+To define a profile, the declaration `Profile` and keyword `Parent` are REQUIRED, and `Id`, `Title`, and `Description` are RECOMMENDED. Rules defining the profile follow immediately after the keyword section.
 
 Rules types that apply to Profiles are: [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Contains (standalone extensions)](#contains-rules-for-extensions), [Contains (slicing)](#contains-rules-for-slicing), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). Note that [inline extensions](#contains-rules-for-extensions) are not permitted in profiles.
 
@@ -1257,9 +1259,7 @@ Custom resources allow authors to define new structures representing arbitrary c
 
 Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
 
-Resources are defined in FSH using the keyword `Resource`. The keywords `Parent`, `Id`, `Title`, and `Description` are OPTIONAL.
-
-Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html) and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource. If no `Parent` is specified, DomainResource is used as the default parent.
+Resources are defined using the declaration `Resource`. The keywords `Id`, `Title`, and `Description` are RECOMMENDED. The use of `Parent` is OPTIONAL. If no `Parent` is specified, DomainResource is used as the default parent. Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html) and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource.
 
 Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
@@ -1312,7 +1312,7 @@ All types of rules can be used in rule sets, including [insert rules](#insert-ru
 
 ##### Simple Rule Sets
 
-Simple rule sets are defined by using the keyword `RuleSet` and do not include parameters:
+Simple rule sets are defined by using the declaration `RuleSet` followed by a user-selected name:
 
 ```
 RuleSet: {name}
@@ -1336,7 +1336,7 @@ RuleSet: {name}
 
 {%include tu-div.html%}
 
-Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the keyword `RuleSet` and include a comma-separated list of parameters enclosed in parentheses:
+Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the declaration `RuleSet` followed by a user-selected name and then a comma-separated list of parameters enclosed in parentheses:
 
 <pre><code>RuleSet: {name}(parameter1<span class="optional">, parameter2, parameter3...</span>)
 {rule1}
@@ -1413,7 +1413,7 @@ Each parameter represents a value that can be substituted into the rules when th
 
 A value set is a group of coded values representing acceptable values for a FHIR element whose datatype is code, Coding, CodeableConcept, Quantity, string, or url.
 
-Value sets are defined using the declarative keyword `ValueSet`, with OPTIONAL keywords `Id`, `Title` and `Description`.
+Value sets are defined using the declaration `ValueSet`, with RECOMMENDED keywords `Id`, `Title` and `Description`.
 
 Codes MUST be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
@@ -2480,6 +2480,38 @@ The slice content rules MUST appear *after* the contains rule that creates the s
 
 At minimum, each slice MUST be constrained such that it can be uniquely identified via the discriminator (see Step 1). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
 
+**Complete Slicing Example**
+
+* Slice the components of an Observation to represent the dimensions of a tumor
+
+```
+Profile: TumorSize
+Parent:  Observation
+Id: example-tumor-size
+Title: "Tumor Size"
+Description:  "Records the one to three dimensions of a tumor"
+* code = LNC#21889-1 //"Size Tumor"
+// other rules omitted
+* component ^slicing.discriminator.type = #pattern
+* component ^slicing.discriminator.path = "code"
+* component ^slicing.rules = #open
+* component ^slicing.description = "Slice based on the component.code pattern"
+// Contains rule
+* component contains tumorLongestDimension 1..1 and tumorOtherDimension 0..2
+// Set properties of each slice
+* component[tumorLongestDimension] ^short = "Longest tumor dimension"
+* component[tumorLongestDimension] ^definition = "The longest tumor dimension in cm or mm."
+* component[tumorLongestDimension].code = LNC#33728-7 // "Size.maximum dimension in Tumor"
+* component[tumorLongestDimension].value[x] only Quantity
+* component[tumorLongestDimension].valueQuantity from TumorSizeUnitsVS (required)   // value set defined elsewhere
+* component[tumorOtherDimension] ^short = "Other tumor dimension(s)"
+* component[tumorOtherDimension] ^definition = "The second or third tumor dimension in cm or mm."
+* component[tumorOtherDimension] ^comment = "Additional tumor dimensions should be ordered from largest to smallest."
+* component[tumorOtherDimension].code = LNC#33729-5 // "Size additional dimension in Tumor"
+* component[tumorOtherDimension].value[x] only Quantity
+* component[tumorOtherDimension].valueQuantity from TumorSizeUnitsVS (required)
+```
+
 #### Exclude Rules
 
 Exclude rules are used to remove codes from value sets. Exclude rules appear only in ValueSet items. For more details on exclude rules, see [Defining Value Sets](#defining-value-sets).
@@ -2714,7 +2746,7 @@ Mapping rules are used to define relationships between different specifications.
 * <element> obeys {Invariant1} and {Invariant2}...
 ```
 
-The first case applies the invariant to the profile as a whole. The second case applies the invariant to a single element. The third case applies multiple invariants to the profile as a whole, and the fourth case applies multiple invariants to a single element.
+The first two cases apply the invariant to the profile as a whole. The third and fourth cases apply the invariant to a single element. The second case applies multiple invariants to the profile as a whole, and the last case applies multiple invariants to an element.
 
 The referenced invariant and its properties MUST be declared somewhere within the same FSH project, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
@@ -2870,6 +2902,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 |  SU  | Flag denoting "include in summary"
 |  TU  | Flag denoting trial use element
 | UCUM  | Unified Code for Units of Measure
+| $UCUM  | Common FSH alias for Unified Code for Units of Measure
 | URL    | Uniform Resource Locator
 | XML   | Extensible Markup Language
 {: .grid }
