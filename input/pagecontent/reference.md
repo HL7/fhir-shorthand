@@ -976,7 +976,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
 
 #### Defining Instances
 
-Instances are defined using the declaration `Instance` with the REQUIRED keyword `InstanceOf`, RECOMMENDED keywords `Title` and `Description`, and OPTIONAL keyword `Usage`. `InstanceOf` plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` MAY be the name, id, or url for any profile, resource, or complex datatype defined internally or externally.
+Instances are defined using the declaration `Instance`, with the REQUIRED keyword `InstanceOf`, RECOMMENDED keywords `Title` and `Description`, and OPTIONAL keyword `Usage`. `InstanceOf` plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` MAY be the name, id, or url for any profile, resource, or complex datatype defined internally or externally.
 
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
