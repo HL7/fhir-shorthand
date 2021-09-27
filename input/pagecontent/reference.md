@@ -179,7 +179,7 @@ The ANTLR implementation given in [the Appendix](#appendix-formal-grammar) disca
 
 #### Primitives
 
-The primitive datatypes and value formats in FSH are those defined in version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://www.hl7.org/fhir/R4/datatypes.html#primitive) in the referred FHIR version.
+The primitive datatypes and value formats in FSH are those defined in the version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://www.hl7.org/fhir/R4/datatypes.html#primitive) in the referred FHIR version.
 
 FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
 
