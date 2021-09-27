@@ -45,7 +45,7 @@ FSH items represent FHIR artifacts such as profiles, value sets, and extensions.
 
 #### Declarations
 
-Declarations are statements that occur first in every FSH item that introduce and name new items. There are [eleven declarations in FSH](reference.html#declaration-statements). Frequently-used declarations include `Profile`, `Extension`, `ValueSet`, and `Instance`. Here are two examples of declaration statements:
+Declarations introduce and name new FSH items. Declarations are always the first statement in a FSH item. There are [eleven declarations in FSH](reference.html#declaration-statements). Frequently-used declarations include `Profile`, `Extension`, `ValueSet`, and `Instance`. Here are two examples of declaration statements:
 
 ```
 Profile: CancerDiseaseStatus
@@ -57,7 +57,7 @@ ValueSet: ConditionStatusTrendVS
 
 #### Keywords
 
-Following the declaration, each FSH Item has a set of required and optional keywords, as detailed in the [FSH Language Reference](reference.html#keyword-statements). This example uses the keywords `Parent`, `Id`, `Title`, and `Description` following the `Profile` declaration:
+Following the declaration, each FSH item has a set of required and optional keywords, as detailed in the [FSH Language Reference](reference.html#keyword-statements). This example uses the keywords `Parent`, `Id`, `Title`, and `Description` following the `Profile` declaration:
 
 ```
 Profile: CancerDiseaseStatus
