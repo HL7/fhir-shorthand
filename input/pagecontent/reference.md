@@ -1521,7 +1521,7 @@ The following table is a summary of the rule syntax.
 | [Contains (slicing)](#contains-rules-for-extensions) | <code>* &lt;array&gt; contains {name} {card} <span class="optional">{flag(s)} <br/>   and {name2} {card} {flag2} <br/>   and {name3} {card} {flag(s)}...</span></code> |
 | [Exclude](#exclude-rules) |`* exclude {Coding}`<br/>`* exclude codes from valueset {ValueSet}`<br/><code>* exclude codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code>|
 | [Flag](#flag-rules) |`* <element(s)> {flag(s)}` |
-| [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding} <br/> * <span class="optional">include</span> codes from valueset {ValueSet} <br/> * <span class="optional">include</span> codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code> |
+| [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding} <br/>* <span class="optional">include</span> codes from valueset {ValueSet} <br/>* <span class="optional">include</span> codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code> |
 | [Insert](#insert-rules)|<code>* insert {RuleSet}<br/>{%include tu.html%}* insert {RuleSet}({parameter1}<span class="optional">, {parameter2}, ...</span>)<br/>{%include tu.html%}* &lt;element&gt; insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span></code> |
 | [Local Code](#local-code-rules) |<code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code> |
 | [Mapping](#mapping-rules)|<code>* <span class="optional">&lt;element&gt;</span> -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span></code> |
@@ -2938,9 +2938,9 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 | XML   | Extensible Markup Language
 {: .grid }
 
-### Appendix: Formal Grammar
+### Appendix: Formal Grammar (informative)
 
-The following is an implementation of FSH described in [ANTLR4](https://www.antlr.org/). The following parser and lexer includes elements of the FSH language marked as {%include tu.html%}. Note that the names defined in the grammar do not correspond to those used in the language specification.
+The following is an implementation of FSH language parser described in [ANTLR4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification takes precedence. This grammar implementation is provided for informational purposes and is not normative.
 
 #### Parser Grammar
 
