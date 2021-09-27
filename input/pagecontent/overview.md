@@ -57,7 +57,7 @@ ValueSet: ConditionStatusTrendVS
 
 #### Keywords
 
-Following the declaration, each FSH Item has a set of required and optional keywords, as detailed in the [FSH Language Reference](reference.html#keyword-statements). This example uses the keywords `Parent`, `Id`, `Title`, and `Description` following the `Profile` declaration:
+Following the declaration, each FSH item has a set of required and optional keywords, as detailed in the [FSH Language Reference](reference.html#keyword-statements). This example uses the keywords `Parent`, `Id`, `Title`, and `Description` following the `Profile` declaration:
 
 ```
 Profile: CancerDiseaseStatus
