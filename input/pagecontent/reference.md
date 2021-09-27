@@ -869,6 +869,7 @@ Additional levels to any depth SHALL be added in the same manner.
   CodeSystem: AnteaterCS
   Id: anteater-code-system
   Title: "Anteater Code System"
+  Description: "A code system for anteater taxonomy with hierarchical codes"
   * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
   * #Anteater #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
   * #Anteater #Tamandua #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
@@ -882,6 +883,7 @@ Additional levels to any depth SHALL be added in the same manner.
   CodeSystem: AnteaterCS
   Id: anteater-code-system
   Title: "Anteater Code System"
+  Description: "A code system for anteater taxonomy with hierarchical codes"
   * #Anteater "Anteater" "Members of suborder Vermilingua, distinguished by its propensity to eat ants"
     * #Tamandua "Members of genus Tamandua" "The Tamandua genus of anteaters, mainly found in forests and grasslands"
       * #NorthernTamandua "Northern Tamandua" "The northern species of Tamandua anteaters"
@@ -1146,9 +1148,9 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 
   ```
   Logical:        Human
+  Id:             human-being-logical-model
   Title:          "Human Being"
   Description:    "A member of the Homo sapiens species."
-  Id:             human-logical-model
   * name 0..* SU HumanName "Name(s) of the human" "The names by which the human is or has been known"
   * birthDate 0..1 SU dateTime "The date of birth, if known"
       "The date on which the person was born. Approximations may be used if exact date is unknown."
@@ -1160,9 +1162,9 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
     * sibling 0..* FamilyMember "Sibling" "Other children of the human's mother and/or father."
 
   Logical:        FamilyMember
+  Id:             family-member
   Title:          "Family Member"
-  Description:    "A reference to a human's family member."
-  Id:             human-family-member
+  Description:    "A reference to a family member (not necessarily biologically related)."
   * human 1..1 SU Reference(Human) "Family member" "A reference to the human family member"
   * biological 0..1 boolean "Biologically related?"
       "A family member may not be biologically related due to adoption, blended families, etc."
@@ -1223,8 +1225,8 @@ A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rul
   Mapping:  USCorePatientToArgonaut
   Source:   USCorePatient
   Target:   "http://unknown.org/Argonaut-DQ-DSTU2"
-  Title:    "Argonaut DSTU2"
   Id:       argonaut-dq-dstu2
+  Title:    "Argonaut DSTU2"
   * -> "Patient"
   * extension[USCoreRaceExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-race]"
   * extension[USCoreEthnicityExtension] -> "Patient.extension[http://fhir.org/guides/argonaut/StructureDefinition/argo-ethnicity]"
@@ -1279,6 +1281,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 
   ```
   Resource:       EmergencyVehicle
+  Id:             emergency-vehicle
   Title:          "Emergency Vehicle"
   Description:    "An emergency vehicle, such as an ambulance or fire truck."
   * identifier 0..* SU Identifier
@@ -2147,6 +2150,7 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
   ```
   Instance: EveAnyperson   // this is the id of the example instance
   InstanceOf: Patient
+  Description: "Eve Anyperson"
   Usage: #example
   * name.given = "Eve"
   * name.family = "Anyperson"
@@ -2171,6 +2175,8 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   ```
   Profile: LatexSubstance
   Parent: Substance
+  Id:     latex-substance
+  Description: "A substance consisting of or containing latex"
   // restrict the CodeableConcept aspect to a code in the LatexCodeVS value set:
   * code from LatexCodeVS (required)
   // restrict Reference aspect to an instance of SubstanceDefinition conforming to the LatexSubstanceDefinition profile:
@@ -2182,6 +2188,8 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   ```
   Instance:   LatexSubstanceExample
   InstanceOf: LatexSubstance
+  Title:  "Natural Rubber"
+  Description: "Natural rubber latex substance"
   * code.concept = $SCT#1003754000 "Natural rubber latex (substance)"
   * code.reference = Reference(NaturalLatexSubstanceDefinitionExample)
   ```
@@ -2596,6 +2604,9 @@ Insert a simple rule set by using the name of the rule set:
   ```
   Profile: MyPatientProfile
   Parent: Patient
+  Id: my-patient-profile
+  Title: "My Patient Profile"
+  Description: "An example patient profile."
   * insert RuleSet1
   * deceased[x] only boolean
   // More profile rules
@@ -2606,6 +2617,9 @@ Insert a simple rule set by using the name of the rule set:
   ```
   Profile: MyPatientProfile
   Parent: Patient
+  Id: my-patient-profile
+  Title: "My Patient Profile"
+  Description: "An example patient profile."
   * ^status = #draft
   * ^experimental = true
   * ^publisher = "Elbonian Medical Society"
@@ -2616,14 +2630,20 @@ Insert a simple rule set by using the name of the rule set:
 * Use rule sets to define two different national profiles, using a common clinical profile:
 
   ```
-  Profile: USCoreBreastRadiologyObservationProfile
+  Profile: USBreastRadiologyObservationProfile
   Parent: BreastRadiologyObservationProfile
+  Id: us-breast-radiology
+  Title: "US Breast Radiology Profile"
+  Description: "Breast Radiology Profile with US-specific constraints"
   * insert USObservationRuleSet
   ```
 
   ```
   Profile: FranceBreastRadiologyObservationProfile
   Parent: BreastRadiologyObservationProfile
+  Id: france-breast-radiology
+  Title: "France Breast Radiology Profile"
+  Description: "Breast Radiology Profile with France-specific constraints"
   * insert FranceObservationRuleSet
   ```
 
@@ -2653,6 +2673,8 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   ```
   Instance: MrSmith
   InstanceOf: Patient
+  Title: "Mr. Smith"
+  Description: "The patient Robert Smith"
   // some rules
   * insert Name(Robert, Smith)
   * insert Name(Rob, Smith)
@@ -2665,6 +2687,8 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   ```
   Instance: MrSmith
   InstanceOf: Patient
+  Title: "Mr. Smith"
+  Description: "The patient Robert Smith"
   // some rules
   * name[0].given = "Robert"
   * name[0].family = "Smith"
@@ -2699,6 +2723,7 @@ When the rule set is expanded, the path of the element is prepended to the path 
 
   Profile: MyPatientProfile
   Parent: Patient
+  // skip some keywords and rules
   * name insert NameRules
   * deceased[x] only boolean
   // More profile rules
@@ -2709,6 +2734,7 @@ When the rule set is expanded, the path of the element is prepended to the path 
   ```
   Profile: MyPatientProfile
   Parent: Patient
+  // skip some keywords and rules
   * name 
     * insert NameRules
   * deceased[x] only boolean
@@ -2720,6 +2746,7 @@ When the rule set is expanded, the path of the element is prepended to the path 
   ```
   Profile: MyPatientProfile
   Parent: Patient
+  // skip some keywords and rules
   * name.family MS
   * name.given MS
   * deceased[x] only boolean
