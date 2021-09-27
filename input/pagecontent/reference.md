@@ -2940,7 +2940,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 ### Appendix: Formal Grammar (informative)
 
-The following is an implementation of FSH language parser described in [ANTLR4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification takes precedence. This grammar implementation is provided for informational purposes and is not normative.
+The following is an implementation of a FSH language parser described in [ANTLR4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification takes precedence. This grammar implementation is provided for informational purposes and is not normative.
 
 #### Parser Grammar
 
