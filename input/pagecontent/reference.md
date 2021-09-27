@@ -79,8 +79,8 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{code}`  | A code | `#active` |
 | `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
 | `{decimal}` | A decimal number | `124.0` |
-| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) defined in the project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
-| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html) defined in the project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
+| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) or [FHIR resource type](https://www.hl7.org/fhir/resourcelist.html) defined in the project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html) or [FHIR resource types](https://www.hl7.org/fhir/resourcelist.html) defined in the project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | One of the [FSH flags](#flag-rules) |  `MS` |
 | `{flag(s)}` | One or more flags, separated by whitespace | `MS SU ?!` |
@@ -187,13 +187,28 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A resource of profile SHALL be identifiable by name, id, or URL. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
-In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance. If a reference value in an instance does not resolve to another instance, the specified reference value will be retained as-is.
-
+In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance. In this case, since `JaneDoe` is a Patient instance, `Reference(JaneDoe)` is resolved to `Patient/JaneDoe`. If a reference value in an instance does not reference an existing instance, the value is used directly. For example, if the subject of an Observation is `Reference(Alice)`, and Alice does not name a Patient instance, the reference resolves to `Alice`.
 #### Canonicals
 
-FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical()` stands for the canonical URL of the referenced item. For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
+FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical()` stands for the canonical URL of the referenced item. 
+
+For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
 When syntax allows for multiple Canonicals, the items are separated by `or` placed *inside* the parentheses, e.g. `Canonical(ActivityDefinition or PlanDefinition)`, **not** `Canonical(ActivityDefinition) or Canonical(PlanDefinition)`.
+
+**Examples:**
+
+* The canonical URL of the example [Yes/No/Don't Know value set](https://www.hl7.org/fhir/valueset-example-yesnodontknow.json.html):
+
+  ```
+  Canonical(yesnodontknow)
+  ```
+
+* The canonical URL of a locally defined value set named `ExampleValueSet`:
+
+  ```
+  Canonical(ExampleValueSet)
+  ```
 
 #### Codes and Codings
 
@@ -2718,7 +2733,7 @@ Rule sets can be inserted in the context of a path. The context is specified by 
 <pre><code>* &lt;element&gt; insert {RuleSet}<span class="optional">(value1, value2, value3...)</span>
 </code></pre>
 
-Alternately, the context can be given by indenting the insert rule under another rule that provides a path context (see [indented rules](#indented-rules)).
+Alternately, the context can be given by indenting the insert rule under another rule that provides a path context (see [indented rules](#indented-rules)). The path context from the rule which the insert rule is indented below will be applied to all rules being inserted.
 
 When the rule set is expanded, the path of the element is prepended to the path of all rules in the rule set.
 
