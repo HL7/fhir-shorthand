@@ -12,7 +12,7 @@ Portions of the specification designated as "Trial Use" are indicated by {%inclu
 
 ### Notational Conventions
 
-The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar)), most readers will find the syntax expressions more instructive.
+The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar-informative)), most readers will find the syntax expressions more instructive.
 
 Syntax expressions use the following conventions:
 
@@ -79,13 +79,13 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{code}`  | A code | `#active` |
 | `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
 | `{decimal}` | A decimal number | `124.0` |
-| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) defined in project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
-| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html) defined in project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
+| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) defined in the project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html) defined in the project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | One of the [FSH flags](#flag-rules) |  `MS` |
 | `{flag(s)}` | One or more flags, separated by whitespace | `MS SU ?!` |
 | `{Invariant}` | The id of an Invariant | `us-core-8` |
-| `{Resource}` | The name, id, or canonical URL (or alias) of any Resource defined in project's FHIR version | `Condition` |
+| `{Resource}` | The name, id, or canonical URL (or alias) of any Resource defined in the project's FHIR version | `Condition` |
 | `{Resource/Profile}` | The name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
 | `{RuleSet}` | The name of a RuleSet | `MyRuleSet` |
 | `{ValueSet}` | The name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
@@ -95,17 +95,17 @@ The following tables contain additional examples of angle brackets and curly bra
 
 ### FSH Projects
 
-A fundamental organizing construct is the FSH project, which defines the set of FSH items to be considered together. Typically, one FSH project equates to one FHIR Implementation Guide (IG). The necessary parts of a FSH project are as follows:
+A fundamental organizing construct is the FSH project, which defines the set of FSH items to be considered together. Typically, one FSH project equates to one FHIR Implementation Guide (IG). The parts of a FSH project are as follows:
 
 #### Canonical URL
 
 Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made.
 
-#### FSH Items
+#### Items
 
-A FSH project SHALL contain one or more [FSH items](#fsh-items). FSH items can exist in various formats, for example, in text files, databases, or web forms. It is up to implementations to define the association between FSH items and FSH projects. The order of items, regardless of format, SHALL NOT affect the interpretation of those items.
+A FSH project SHALL contain one or more [FSH items](#fsh-items) used to represent and create FHIR artifacts. FSH items can exist in various formats, for example, in text files, databases, or web forms. It is up to implementations to define the association between FSH items and FSH projects. The order of items, regardless of format, SHALL NOT affect the interpretation of those items.
 
-Text files containing FSH items MUST use the **.fsh** extension. Items from all files in one project SHALL be considered globally pooled for the purposes of FSH. Changing the order of items within a **.fsh** file or moving FSH items between files SHALL NOT affect the interpretation of the content. 
+Text files containing FSH items MUST use the **.fsh** extension. Items from all files in one project SHALL be considered globally pooled for the purposes of FSH. Changing the order of items within a **.fsh** file or moving FSH items between files SHALL NOT affect the interpretation of the content.
 
 #### FHIR Version
 
@@ -123,13 +123,13 @@ Dependencies between a FSH project and other IGs MUST be declared. The form of t
 
 #### Other Project Contents
 
-Projects MAY contain other items involved in creating FHIR IGs, such as narrative content and configuration information.
+Projects MAY contain other content involved in creating FHIR IGs, such as narrative text, pictures, and configuration information. This additional content is not defined in this specification, but may be specified by implementations.
 
 ### FSH Language Basics
 
 #### Formal Grammar
 
-The grammar of FSH has been described using [ANTLR4](https://www.antlr.org/) (see [Appendix](#appendix-formal-grammar)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
+The grammar of FSH has been described using [ANTLR4](https://www.antlr.org/) (see [Appendix](#appendix-formal-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
 
 If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
@@ -175,13 +175,13 @@ These comments can take up multiple lines.
 */
 ```
 
-The ANTLR implementation given in [the Appendix](#appendix-formal-grammar) discards comments, however, implementations are free use approaches that process comments.
+The ANTLR implementation given in [the Appendix](#appendix-formal-grammar-informative) discards comments, however, implementations are free to use approaches that process comments.
 
 #### Primitives
 
-The primitive datatypes and value formats in FSH are those defined in version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://www.hl7.org/fhir/R4/datatypes.html#primitive) in the referred FHIR version.
+The primitive datatypes and value formats in FSH are those defined in the version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://www.hl7.org/fhir/R4/datatypes.html#primitive) in the referred FHIR version.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r, \n, and \t. Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (unicode U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r (unicode U+000D), \n (U+000A), and \t (U+0009). Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
 
 #### References
 
@@ -335,9 +335,13 @@ By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)]
 
 Beginning alias names with `$` is a good practice, since this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
 
+> **Note:** Instances have identifiers rather than names, so instance declarations should follow the recommendations for [Item Identifiers](#item-identifiers).
+
 #### Item Identifiers
 
-Item identifiers (ids) MUST be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is best to use a unique id for every item in a FSH project. If no id is provided by a FSH author, implementations MAY create an id. It is RECOMMENDED that the id be based on the item's name, with _ replaced by -, and the overall length truncated to 64 characters (per the requirements of the [FHIR id datatype](https://www.hl7.org/fhir/R4/datatypes.html#primitive)).
+Item identifiers (ids) MUST be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is best to use a unique id for every item in a FSH project. If no id is provided by a FSH author, implementations MAY create an id.
+
+By convention, ids SHOULD be lowercase with words separated by hyphens. The overall length MUST NOT be more than 64 characters (per the requirements of the [FHIR id datatype](https://www.hl7.org/fhir/R4/datatypes.html#primitive)). If the item has a name, the id SHOULD be based on the item's name, with _ replaced by -, changed to lowercase, and truncated if necessary.
 
 #### Referring to Items
 
@@ -531,7 +535,6 @@ For nested arrays, several sequences of soft indices can run simultaneously. The
   * name[2].family = "Smith"
   ```
 
-
 #### Sliced Array Paths
 
 FHIR allows lists in profiles and extensions to be compartmentalized into sublists called "slices". To address a specific slice, follow the path with square brackets containing the slice name. Since slices are most often unordered, slice names rather than array indices SHOULD be used. Note that slice names (like other [FSH item names](#item-names)) cannot be purely numerical, so slice names cannot be confused with indices.
@@ -602,7 +605,14 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#fsh-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
+FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHALL NOT be used with the following paths, because they are otherwise addressed through FSH rules:
+
+* ^snapshot.element[n] (in Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, and Resource</span>)
+* ^differential.element[n] (in Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, and Resource</span>)
+* ^compose.include[n] (in ValueSet)
+* ^compose.exclude[n] (in ValueSet)
+
+Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
 For a path to an element of a StructureDefinition, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -2502,7 +2512,7 @@ Parent:  Observation
 Id: example-tumor-size
 Title: "Tumor Size"
 Description:  "Records the one to three dimensions of a tumor"
-* code = LNC#21889-1 //"Size Tumor"
+* code = $LNC#21889-1 //"Size Tumor"
 // other rules omitted
 * component ^slicing.discriminator.type = #pattern
 * component ^slicing.discriminator.path = "code"
@@ -2513,13 +2523,13 @@ Description:  "Records the one to three dimensions of a tumor"
 // Set properties of each slice
 * component[tumorLongestDimension] ^short = "Longest tumor dimension"
 * component[tumorLongestDimension] ^definition = "The longest tumor dimension in cm or mm."
-* component[tumorLongestDimension].code = LNC#33728-7 // "Size.maximum dimension in Tumor"
+* component[tumorLongestDimension].code = $LNC#33728-7 // "Size.maximum dimension in Tumor"
 * component[tumorLongestDimension].value[x] only Quantity
 * component[tumorLongestDimension].valueQuantity from TumorSizeUnitsVS (required)   // value set defined elsewhere
 * component[tumorOtherDimension] ^short = "Other tumor dimension(s)"
 * component[tumorOtherDimension] ^definition = "The second or third tumor dimension in cm or mm."
 * component[tumorOtherDimension] ^comment = "Additional tumor dimensions should be ordered from largest to smallest."
-* component[tumorOtherDimension].code = LNC#33729-5 // "Size additional dimension in Tumor"
+* component[tumorOtherDimension].code = $LNC#33729-5 // "Size additional dimension in Tumor"
 * component[tumorOtherDimension].value[x] only Quantity
 * component[tumorOtherDimension].valueQuantity from TumorSizeUnitsVS (required)
 ```
@@ -2777,7 +2787,7 @@ Mapping rules are used to define relationships between different specifications.
 * <element> obeys {Invariant1} and {Invariant2}...
 ```
 
-The first two cases apply the invariant to the profile as a whole. The third and fourth cases apply the invariant to a single element. The second case applies multiple invariants to the profile as a whole, and the last case applies multiple invariants to an element.
+The first case applies the invariant to the profile as a whole. The second case applies multiple invariants to the profile as a whole. The third case applies the invariant to a single element, and the fourth case applies multiple invariants to a single element.
 
 The referenced invariant and its properties MUST be declared somewhere within the same FSH project, using the `Invariant` keyword. See [Defining Invariants](#defining-invariants).
 
