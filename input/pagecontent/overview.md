@@ -45,7 +45,7 @@ FSH items are defined in three parts: (1) a declaration, (2) a set of keywords, 
 
 #### Declarations
 
-Declarations are statements that occur first in every FSH item that introduce and name new items. There are [eleven declarations in FSH](reference.html#declaration-statements). Frequently-used declarations include `Profile`, `Extension`, `ValueSet`, and `Instance`. Here are two examples of declaration statements:
+Declarations introduce and name new FSH items. Declarations are always the first statement in a FSH item. There are [eleven declarations in FSH](reference.html#declaration-statements). Frequently-used declarations include `Profile`, `Extension`, `ValueSet`, and `Instance`. Here are two examples of declaration statements:
 
 ```
 Profile: CancerDiseaseStatus
