@@ -4,15 +4,13 @@
 <span style="background-color: LightYellow;">NOTE: Information on this page is [informative content](https://www.hl7.org/fhir/versions.html#std-process).</span>
 <br/>
 
-FHIR Shorthand (FSH) is a domain-specific language for defining the contents of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as GitHub.
+FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts involved in creation of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as GitHub.
 
-### FHIR Shorthand Language
+### FHIR Shorthand Language Basics
 
 The complete FSH language is formally described in the [FHIR Shorthand Language Reference](reference.html). Here we present just enough to get a taste of FSH.
 
-#### Basics
-
-* **Grammar**: [FSH has a formal grammar](reference.html#appendix-formal-grammar) defined in [ANTLR4](https://www.antlr.org/).
+* **Grammar**: [FSH has a formal grammar](reference.html#appendix-formal-grammar-informative) defined in [ANTLR4](https://www.antlr.org/).
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive), and also include <span style="background-color: #fff5e6;">{%include tu.html%} datatypes proposed for inclusion in FHIR R5 ([integer64](https://build.fhir.org/datatypes.html#primitive) and [CodeableReference](https://build.fhir.org/references.html#codeablereference))</span>.
 * **Whitespace**: Repeated whitespace has meaning within FSH files only within string literals and when used for <span style="background-color: #fff5e6;">{%include tu.html%} [indenting rules](reference.html#indented-rules)</span>. In all other contexts, repeated whitespace is not meaningful.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
@@ -41,35 +39,33 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
   $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
 
-#### Defining Items in FSH
+### Defining Items in FSH
 
-Keywords are used to make declarations that introduce new items. Here is an example using the `Profile` declaration, with keywords that define the parent profile, identifier, and other properties:
+FSH items represent FHIR artifacts such as profiles, value sets, and extensions. They are defined in three parts: (1) a declaration, (2) a set of keywords, and (3) a set of rules.
+
+#### Declarations
+
+Declarations introduce and name new FSH items. Declarations are always the first statement in a FSH item. There are [eleven declarations in FSH](reference.html#declaration-statements). Frequently-used declarations include `Profile`, `Extension`, `ValueSet`, and `Instance`. Here are two examples of declaration statements:
 
 ```
-Profile:  CancerDiseaseStatus
+Profile: CancerDiseaseStatus
+```
+
+```
+ValueSet: ConditionStatusTrendVS
+```
+
+#### Keywords
+
+Following the declaration, each FSH item has a set of required and optional keywords, as detailed in the [FSH Language Reference](reference.html#keyword-statements). This example uses the keywords `Parent`, `Id`, `Title`, and `Description` following the `Profile` declaration:
+
+```
+Profile: CancerDiseaseStatus
 Parent:   Observation
 Id:       mcode-cancer-disease-status
 Title:    "Cancer Disease Status"
 Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
 ```
-
-Keywords that declare new items (like the `Profile` keyword in the previous example) must occur first in any set of keywords. There are [eleven declarative keywords in FSH](reference.html#fsh-items):
-
-* Alias
-* CodeSystem
-* Extension
-* Instance
-* Invariant
-* <span style="background-color: #fff5e6;">{%include tu.html%} Logical</span>
-* Mapping
-* Profile
-* <span style="background-color: #fff5e6;">{%include tu.html%} Resource</span>
-* RuleSet
-* ValueSet
-
-Note that not every type of FSH item has a direct FHIR equivalent; Alias and RuleSet are strictly FSH constructs, while Mappings and Invariants appear only as elements within a SD. Each type of item has a different set of required and optional keywords, detailed in the [FSH Language Reference](reference.html#fsh-items).
-
-These are not the only [conformance resources in FHIR](https://www.hl7.org/fhir/R4/conformance-module.html). Others include CapabilityStatement, OperationDefinition, SearchParameter, and CompartmentDefinition. Currently, you can create any of these types as instances; for example, using `InstanceOf: CapabilityStatement`. RuleSets can simplify definition of these items. For examples of rule sets, see [FSH Online](https://fshschool.org/FSHOnline).
 
 #### Rules
 
@@ -125,7 +121,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
   * component contains systolicBP 1..1 and diastolicBP 1..1
   ```
 
-  The syntax for extensions is similar, except a modified syntax that assigns local name to the extension is typically must be used:
+  The syntax for extensions is similar, except a modified syntax that assigns local name to the extension must be used:
 
   ```
   // Adding standard FHIR extensions in an AllergyIntolerance profile:
@@ -292,7 +288,7 @@ A few things to note about this example:
 
 ### FSH in Practice
 
-This section presents an overview of how the FSH language is put into practice using [SUSHI](https://fshschool.org). [SUSHI](https://fshschool.org/docs/sushi/) (an acronym for "**S**USHI **U**nshortens **SH**orthand **I**nputs") is a reference implementation of a FSH compiler that translates FSH into FHIR artifacts such as profiles, extensions, and value sets.
+This section presents an overview of how the FSH language is put into practice using [SUSHI](https://fshschool.org). [SUSHI](https://fshschool.org/docs/sushi/) (an acronym for "**S**USHI **U**nshortens **SH**orthand **I**nputs") is a reference implementation and _de facto_ standard for a FSH compiler that translates FSH into FHIR artifacts such as profiles, extensions, and value sets.
 
 The discussion in this section refers to the numbers in the following figure:
 
