@@ -24,7 +24,7 @@ Syntax expressions use the following conventions:
 | `{ }` | Substitution: If a datatype, replace with a value; if an item, replace with a name, id, or URL | `{decimal}` |
 | `< >` | Indicates an element or path to an element with the given datatype should be substituted | `<CodeableConcept>` |
 | <span class="optional">orange color</span> | An optional item in a syntax expression | <code><span class="optional">{flag}</span></code> |
-| `...` | Indicates a pattern that can be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
+| `...` | Indicates a pattern that MAY be repeated | <code>{flag1} {flag2} {flag3}&nbsp;...</code> |
 | `/` | A choice of items | `Resource/Profile` |
 | **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
@@ -77,7 +77,6 @@ The following tables contain additional examples of angle brackets and curly bra
 |--------|--------|---------|
 | `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
 | `{code}`  | A code | `#active` |
-| `{CodeableConcept}`  | A CodeableConcept | `http://loinc.org#8480-6 "Systolic blood pressure"` |
 | `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
 | `{decimal}` | A decimal number | `124.0` |
 | `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) defined in project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
@@ -88,32 +87,31 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{Invariant}` | The id of an Invariant | `us-core-8` |
 | `{Resource}` | The name, id, or canonical URL (or alias) of any Resource defined in project's FHIR version | `Condition` |
 | `{Resource/Profile}` | The name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
-| `{rule}` | Any FSH rule | `* category 1..1 MS` |
 | `{RuleSet}` | The name of a RuleSet | `MyRuleSet` |
 | `{ValueSet}` | The name, id, or canonical URL (or alias) of a ValueSet | `http://hl7.org/fhir/ValueSet/address-type` |
 {: .grid }
 
 >**Note:** When listing multiple items, consecutive elements and paths are always separated by `and`, consecutive flags are always separated by white spaces, and consecutive datatypes are always separated by `or`. When listing multiple References, the `or` is placed *inside* the Reference, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`
 
-### FSH Foundations
+### FSH Projects
 
-#### Projects
+A fundamental organizing construct is the FSH project, which defines the set of FSH items to be considered together. Typically, one FSH project equates to one FHIR Implementation Guide (IG). The necessary parts of a FSH project are as follows:
 
-A major organizing construct is the FSH project. Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made. Typically, one FSH project equates to one FHIR Implementation Guide (IG).
+#### Canonical URL
 
-#### Items
+Each project MUST have an associated canonical URL, used for constructing canonical URLs for items created in the project. It is up to implementations to decide how this association is made.
 
-Content in one FSH project MAY be contained in one or more FSH files. Files MUST use the **.fsh** extension. It is up to implementations to define the association between FSH files and FSH projects.
+#### FSH Items
 
-The allocation of items to files is not meaningful in FSH, and items from all files in one project can be considered globally pooled for the purposes of FSH. Items can appear in any order within **.fsh** files, and items can be moved inside and between **.fsh** files within the same project without affecting the interpretation of the content.
+A FSH project SHALL contain one or more [FSH items](#fsh-items). FSH items can exist in various formats, for example, in text files, databases, or web forms. It is up to implementations to define the association between FSH items and FSH projects. The order of items, regardless of format, SHALL NOT affect the interpretation of those items.
 
-> **Note:** FSH can also be contained in other ways, such as in a database or in a form field, and still be valid FSH. We assume FSH files for presentation purposes.
+Text files containing FSH items MUST use the **.fsh** extension. Items from all files in one project SHALL be considered globally pooled for the purposes of FSH. Changing the order of items within a **.fsh** file or moving FSH items between files SHALL NOT affect the interpretation of the content. 
 
 #### FHIR Version
 
-Each FSH project MUST declare the version of FHIR it depends upon. The form of this declaration is outside the scope of the FSH specification, and SHOULD be managed by implementations. The FSH specification is not explicitly FHIR-version dependent, but implementations MAY support only a specific version or versions of FHIR.
+Each FSH project MUST specify the version of FHIR it depends upon. It is up to implementations to decide how projects declare their FHIR version. Implementations MAY support only a specific version or versions of FHIR.
 
-The FSH language specification has been designed around FHIR R4 and later. Compatibility with previous versions has not been evaluated. FSH depends primarily on normative parts of the FHIR R4 specification (in particular, StructureDefinition and primitive datatypes).
+The FSH language specification has been designed around FHIR R4 and later. FSH depends primarily on normative parts of the FHIR R4 specification (e.g., StructureDefinition and datatypes), and not on specific Resources, Profiles, Value Sets or Extensions. As a result, many FHIR version differences can be ignored. However, because the FSH specification refers to FHIR data types and definitional artifacts, there is no way to absolutely divorce FSH from specific FHIR versions.
 
 {%include tu-div.html%}
 FSH supports new pre-release FHIR R5 datatypes integer64 and CodeableReference on a trial use basis.
@@ -123,11 +121,15 @@ FSH supports new pre-release FHIR R5 datatypes integer64 and CodeableReference o
 
 Dependencies between a FSH project and other IGs MUST be declared. The form of this declaration is outside the scope of the FSH language and SHOULD be managed by implementations. In this Guide, these are referred to as "external" IGs.
 
+#### Other Project Contents
+
+Projects MAY contain other items involved in creating FHIR IGs, such as narrative content and configuration information.
+
 ### FSH Language Basics
 
 #### Formal Grammar
 
-The grammar of FSH has been captured in [ANTLR4](https://www.antlr.org/) (see [Appendix](#appendix-formal-grammar)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
+The grammar of FSH has been described using [ANTLR4](https://www.antlr.org/) (see [Appendix](#appendix-formal-grammar)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
 
 If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
@@ -143,7 +145,7 @@ The following words are reserved, with or without white spaces inside the parent
 
 #### Whitespace
 
-Repeated whitespace has meaning within FSH files only within string literals <span style="background-color: #fff5e6;">and when used for [indenting rules](reference.html#indented-rules) {%include tu.html%}</span>. In all other contexts, repeated whitespace is not meaningful. Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning in FSH only within string literals <span style="background-color: #fff5e6;">and when used for [indenting rules](reference.html#indented-rules) {%include tu.html%}</span>. In all other contexts, repeated whitespace is not meaningful. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -183,7 +185,7 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 
 #### References
 
-FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A name, id, or URL can be used to identify the resource or profile. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
+FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A resource of profile SHALL be identifiable by name, id, or URL. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
 In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. For instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance. If a reference value in an instance does not resolve to another instance, the specified reference value will be retained as-is.
 
@@ -277,7 +279,7 @@ or
 
 <pre><code>{decimal} {CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{display}"</span></code></pre>
 
-The first shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`). The second shorthand can be used when the units are not UCUM. Alternatively, the value and units can be assigned independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+The first shorthand only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). As a side effect of using this grammar, the code system (`Quantity.system`) will be automatically set to the UCUM code system (`http://unitsofmeasure.org`). The second shorthand MAY be used when the units are not UCUM. Alternatively, the value and units MAY be assigned independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
 
 **Examples:**
 
@@ -295,7 +297,7 @@ The first shorthand only applies if the units are expressed in [Unified Code for
 
 #### Triple-Quoted Strings
 
-While line breaks are supported using normal strings, FSH also supports different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in the FSH file. As an example, an author might use a triple-quoted string to write markdown so that the markdown is neatly indented:
+While line breaks are supported using normal strings, FSH also supports different processing for strings demarcated with three double quotation marks `"""`. This feature can help authors to maintain consistent indentation in FSH items. As an example, an author might use a triple-quoted string to write markdown so that the markdown is neatly indented:
 
 ```
 * ^purpose = """
@@ -327,9 +329,11 @@ When processing triple-quoted strings, the following approach is used:
 
 #### Item Names
 
-Item names SHOULD follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). Names MUST be between 1 and 255 characters, begin with an uppercase letter, and contain only letters, numbers, and "_". By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
+Item names SHOULD follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). All names MUST be between 1 and 255 characters. Alias names SHOULD begin with `$`, otherwise, names MUST begin with an uppercase letter and contain only letters, numbers, and underscores ("_").
 
-As a best practice, alias names SHOULD begin with `$` since following this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
+By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
+
+Beginning alias names with `$` is a good practice, since this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
 
 #### Item Identifiers
 
@@ -465,7 +469,7 @@ Numerical indices apply only to arrays that can be populated with concrete value
 
 #### Array Paths using Soft Indexing
 
-Numerical array references can be replaced with so-called "soft indexing." In soft indexing, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numerical indices to be mixed.
+Numerical array references MAY be replaced with so-called "soft indexing." In soft indexing, `[+]` is used to increment the last referenced index by 1, and `[=]` is used to reference the same index that was last referenced. When an array is empty, `[+]` refers to the first element (`[0]`). FSH also allows for soft and numerical indices to be mixed.
 
 Similar to numerical indices, soft indices should only be used when populating or referencing arrays in instances, or when using [caret paths](#caret-paths).
 
@@ -552,7 +556,7 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
 
 #### Extension Paths
 
-Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions can be identified by that slice name, or the extension's URL.
+Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions MAY be identified by slice name or the extension's URL.
 
 The path to an extension is constructed by combining the path to the extension array with a reference to slice name in square brackets:
 
@@ -598,7 +602,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths can be used in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#fsh-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
+FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHOULD be reserved for situations not addressed through [FSH Keywords](#fsh-items) or external configuration files. Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
 For a path to an element of a StructureDefinition, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
 
@@ -767,7 +771,7 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 
 </div>
 
-**KEY:** Y = Rule type can be used, L = All flags except must support (MS) are supported, C = Assignments can be applied only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
+**KEY:** Y = Rule type MAY be used, L = All flags except must support (MS) are supported, C = Assignments apply only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
 
 #### Defining Aliases
 
@@ -803,7 +807,7 @@ It is sometimes necessary to define new codes inside an IG that are not drawn fr
 
 > **Note:** Defining local codes is not best practice, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it might be necessary to define them -- at least temporarily -- as local codes.
 
-Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
+Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keywords `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
 
 ```
 * #{code} "{display string}" "{definition string}"
@@ -811,11 +815,11 @@ Creating a code system uses the keywords `CodeSystem`, `Id`, `Title` and `Descri
 
 **Notes:**
 
-* There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` keyword.
+* There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` declaration.
 * The definition of the term, provided as the second string following the code, is RECOMMENDED but not required.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
 * <span style="background-color: #fff5e6;">{%include tu.html%} Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).</span>
-* <span style="background-color: #fff5e6;">{%include tu.html%} [Assignment rules](#assignment-rules) can be applied to CodeSystems, but only in the context of caret paths (to set metadata).</span>
+* <span style="background-color: #fff5e6;">{%include tu.html%} [Assignment rules](#assignment-rules) SHALL apply only to caret paths in CodeSystems.</span>
 
 **Example:**
 
@@ -853,9 +857,9 @@ Another way to define child codes is to indent (by two spaces per level) their d
   * #{child code} "{display string}" "{definition string}"
 ```
 
-Additional levels to any depth can be added in the same manner.
+Additional levels to any depth SHALL be added in the same manner.
 
-> **Note:** When defining hierarchical codes, parent codes must be defined before their children.
+> **Note:** When defining hierarchical codes, parent codes MUST be defined before their children.
 
 **Examples:**
 
@@ -887,7 +891,7 @@ Additional levels to any depth can be added in the same manner.
 
 ##### Code Metadata
 
-Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
+Within a CodeSystem definition, the caret syntax MAY be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
 
 For a path to a code within a code system, use this syntax:
 
@@ -970,7 +974,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
 
 #### Defining Instances
 
-Instances are defined using the keywords `Instance`, `InstanceOf`, `Title`, `Usage` and `Description`. The `InstanceOf` is required, and plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` can be the name, id, or url for any profile, resource, or complex datatype defined internally or externally.
+Instances are defined using the declaration `Instance` with the REQUIRED keyword `InstanceOf`, RECOMMENDED keywords `Title` and `Description`, and OPTIONAL keyword `Usage`. `InstanceOf` plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` MAY be the name, id, or url for any profile, resource, or complex datatype defined internally or externally.
 
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
@@ -1095,7 +1099,7 @@ These conformance resources are created using FSH instance grammar. For example,
 
 #### Defining Invariants
 
-Invariants are defined using the keywords `Invariant`, `Description`, `Expression`, `Severity`, and `XPath`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, <span style="background-color: #fff5e6;">{%include tu.html%} logical models, or resources </span> via [obeys rules](#obeys-rules).
+Invariants are defined using the declaration `Invariant`, with REQUIRED keywords `Description` and `Severity`, and OPTIONAL keywords `XPath` and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, <span style="background-color: #fff5e6;">{%include tu.html%} logical models, or resources </span> via [obeys rules](#obeys-rules).
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
@@ -1130,9 +1134,9 @@ Logical models are defined using the declaration `Logical`. The keywords `Id`, `
 
 Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
-* Binding, cardinality, and type rules can be applied only to elements defined by the item (not inherited elements).
-* Flag rules cannot include MS flags.
-* Assignment rules can only be used to set certain metadata via caret rules.  
+* Binding, cardinality, and type rules SHALL be applied only to elements defined by the item (not inherited elements).
+* Flag rules SHALL NOT include MS flags.
+* Assignment rules SHALL be used only with caret paths.  
 
 The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R4/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
 
@@ -1263,9 +1267,9 @@ Resources are defined using the declaration `Resource`. The keywords `Id`, `Titl
 
 Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
-* Binding, cardinality, and type rules can be applied only to elements defined by the item (not inherited elements).
-* Flag rules cannot include MS flags.
-* Assignment rules can only be used to set certain metadata via caret rules.  
+* Binding, cardinality, and type rules SHALL be applied only to elements defined by the item (not inherited elements).
+* Flag rules SHALL NOT include MS flags.
+* Assignment rules SHALL be used only with caret paths.
 
 The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R4/elementdefinition.html#interpretation). Assignments MUST NOT set elements that are prohibited in that table. For example, the table indicates that setting maxLength or mustSupport is prohibited.
 
@@ -1306,9 +1310,9 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 
 #### Defining Rule Sets
 
-Rule sets provide the ability to define a group of rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. The first rule in a rule set MUST NOT be indented. <span style="background-color: #fff5e6;">Rules after the first rule may be {%include tu.html%} [indented](#indented-rules) but do not affect any rules outside of the rule set (i.e., inserting a rule set never affects the rule paths after the `insert` rule).</span>
+Rule sets provide the ability to define a group of rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. The first rule in a rule set MUST NOT be indented. <span style="background-color: #fff5e6;">Rules after the first rule MAY be {%include tu.html%} [indented](#indented-rules) but do not affect any rules outside of the rule set (i.e., inserting a rule set never affects the rule paths after the `insert` rule).</span>
 
-All types of rules can be used in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
+All types of rules SHALL be usable in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
 
 ##### Simple Rule Sets
 
@@ -1344,7 +1348,7 @@ Rule sets can also specify one or more parameters as part of their definition. P
 // More rules
 </code></pre>
 
-Each parameter represents a value that can be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. In the rules, the places where substitutions should occur are indicated by enclosing a parameter name in curly braces `{}`. Spaces are allowed inside the curly braces: `{parameter1}` and `{ parameter1 }` are both valid substitution sequences for a parameter named `parameter1`. A parameter may occur more than once in the rule set definition.
+Each parameter represents a value that SHALL be substituted into the rules when the rule set is inserted. See the [insert rules](#insert-rules) section for details on how to pass parameter values when inserting a rule set. In the rules, the places where substitutions should occur are indicated by enclosing a parameter name in curly braces `{}`. Spaces are allowed inside the curly braces: `{parameter1}` and `{ parameter1 }` are both valid substitution sequences for a parameter named `parameter1`. A parameter may occur more than once in the rule set definition.
 
 **Examples:**
 
@@ -1445,7 +1449,7 @@ Analogous rules can be used to leave out certain codes, with the word `exclude` 
 | Filtered codes from a code system | `* exclude codes from system {CodeSystem} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
 {: .grid }
 
-In addition, [assignment rules](#assignment-rules) can be applied to value sets, but only in the context of caret paths (to set metadata).
+In addition, [assignment rules](#assignment-rules) SHALL be applicable to value sets only in the context of caret paths.
 
 ##### Filters
 
@@ -1492,10 +1496,10 @@ Rules are the mechanism in FSH for populating and constraining items by setting 
 
 The following restrictions apply to rules:
 
-* All rules must begin on a new line.
-* The asterisk symbol must be followed by at least one space.
-* The asterisk cannot be preceded by non-whitespace characters on a line.
-* The asterisk cannot be preceded by whitespace characters, <span style="background-color: #fff5e6;">unless using {%include tu.html%} [indented rule syntax](#indented-rules).</span>
+* All rules MUST begin on a new line.
+* The asterisk symbol MUST be followed by at least one space.
+* The asterisk MUST NOT be preceded by non-whitespace characters on a line.
+* The asterisk MUST NOT be preceded by whitespace characters, <span style="background-color: #fff5e6;">unless using {%include tu.html%} [indented rule syntax](#indented-rules).</span>
 
 The following table is a summary of the rule syntax.
 
@@ -1508,7 +1512,7 @@ The following table is a summary of the rule syntax.
 | {%include tu.html%} [Add Element](#add-element-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span></code> |
 | [Assignment](#assignment-rules) |<code>* &lt;element&gt; = {value} <span class="optional">(exactly)</span></code> |
 | [Binding](#binding-rules) |<code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code> |
-| [Cardinality](#cardinality-rules) |<code>* &lt;element&gt; <span class="optional">{min}</span>..<span class="optional">{max}</span> // min, max, or both must be present </code> |
+| [Cardinality](#cardinality-rules) |<code>* &lt;element&gt; <span class="optional">{min}</span>..<span class="optional">{max}</span> // min, max, or both MUST be present </code> |
 | [Contains (inline extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {Extension} {card} <span class="optional">{flag(s)} <br/>   and {Extension2} {card} {flag(s)}  <br/>   and {Extension3} {card} {flag(s)}...</span></code> |
 | [Contains (standalone extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {Extension} named {name} {card} <span class="optional">{flag(s)} <br/>   and {Extension2} named {name2} {card} {flag(s)}  <br/>   and {Extension3} named {name3} {card} {flag(s)}...</span></code> |
 | [Contains (slicing)](#contains-rules-for-extensions) | <code>* &lt;array&gt; contains {name} {card} <span class="optional">{flag(s)} <br/>   and {name2} {card} {flag2} <br/>   and {name3} {card} {flag(s)}...</span></code> |
@@ -1553,11 +1557,11 @@ It is possible for a user to specify contradictory rules, for example, two rules
 
 {%include tu-div.html%}
 
-Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by prepending the path from the previous less-indented rule or rules. The level of indentation can be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
+Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by prepending the path from the previous less-indented rule or rules. The level of indentation MAY be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
 
-Two spaces represent one level of indentation. This is not configurable. Rules can only be indented in increments of two spaces. They can be un-indented by any multiple of two spaces.
+Two spaces SHALL represent one level of indentation. Rules SHALL only be indented in increments of two spaces and un-indented by any multiple of two spaces.
 
-[Path rules](#path-rules) are rules containing only a path. They can be used to set a path as context for subsequent rules, without any other effect.
+[Path rules](#path-rules) are rules containing only a path. They are be used to set a path as context for subsequent rules, without any other effect.
 
 Some types of rules, for example [flag rules](#flag-rules), can involve multiple paths. If multiple paths are specified in a rule that sets context for subsequent rules (such as a flag rule with multiple targets), the last path is used as context. When multiple paths are specified in an indented rule, context is applied to all paths. See examples below for details.
 
@@ -2196,8 +2200,8 @@ The strengths are the same as the [binding strengths defined in FHIR](https://ww
 
 The [binding rules defined in FHIR](https://www.hl7.org/fhir/R4/profiling.html#binding) are applicable to FSH. In particular:
 
-* When constraining an existing binding, the binding strength can only stay the same or be strengthened (e.g., a preferred binding can be replaced with an extensible or required binding).
-* A required value set can be replaced by another required value set if the codes in the new value set are a subset of the codes in the original value set.
+* When constraining an existing binding, the binding strength can only stay the same or be strengthened (e.g., a preferred binding MAY be replaced with an extensible or required binding).
+* A required value set MAY be replaced by another required value set if the codes in the new value set are a subset of the codes in the original value set.
 * For extensible bindings, the new value set can contain codes not in the existing value set, but additional codes MUST NOT have meanings covered by codes in the base value set.
 
 **Examples:**
@@ -2465,7 +2469,7 @@ The final step is to define the properties of each slice. FSH requires slice con
 
 The slice content rules MUST appear *after* the contains rule that creates the slices.
 
-**Examples:**
+**Example:**
 
 * Constrain the content of the systolicBP and diastolicBP slices:
 
@@ -2478,11 +2482,11 @@ The slice content rules MUST appear *after* the contains rule that creates the s
   * component[diastolicBP].valueQuantity = $UCUM#mm[Hg] "mmHg"
   ```
 
-At minimum, each slice MUST be constrained such that it can be uniquely identified via the discriminator (see Step 1). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
+At minimum, each slice MUST be constrained such that it is uniquely identifiable via the discriminator (see Step 1). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
 
-**Complete Slicing Example**
+**Complete Slicing Example:**
 
-* Slice the components of an Observation to represent the dimensions of a tumor
+* Slice the components of an Observation to represent the dimensions of a tumor:
 
 ```
 Profile: TumorSize
@@ -2909,7 +2913,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 ### Appendix: Formal Grammar
 
-The following is the grammar of FSH described in [ANTLR4](https://www.antlr.org/). The following parser and lexer includes elements of the FSH language marked as {%include tu.html%}.
+The following is an implementation of FSH described in [ANTLR4](https://www.antlr.org/). The following parser and lexer includes elements of the FSH language marked as {%include tu.html%}. Note that the names defined in the grammar do not correspond to those used in the language specification.
 
 #### Parser Grammar
 
