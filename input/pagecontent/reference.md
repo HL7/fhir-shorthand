@@ -605,12 +605,10 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHALL NOT be used with the following paths, because they are otherwise addressed through FSH rules:
+FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHALL NOT be used with the following paths, because the order of elements in these paths may vary between implementations:
 
-* ^snapshot.element[n] (in Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, and Resource</span>)
-* ^differential.element[n] (in Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, and Resource</span>)
-* ^compose.include[n] (in ValueSet)
-* ^compose.exclude[n] (in ValueSet)
+* `snapshot.element` and `differential.element` in Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, and Resource</span> items
+* `compose.include` and `compose.exclude` in ValueSet items
 
 Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
