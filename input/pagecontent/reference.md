@@ -1564,7 +1564,7 @@ Indentation before a rule is used to set a context for the [path](#fsh-paths) on
 
 Two spaces SHALL represent one level of indentation. Rules SHALL only be indented in increments of two spaces and un-indented by any multiple of two spaces.
 
-[Path rules](#path-rules) are rules containing only a path. They are be used to set a path as context for subsequent rules, without any other effect.
+[Path rules](#path-rules) are rules containing only a path. They are used to set a path as context for subsequent rules, without any other effect.
 
 Some types of rules, for example [flag rules](#flag-rules), can involve multiple paths. If multiple paths are specified in a rule that sets context for subsequent rules (such as a flag rule with multiple targets), the last path is used as context. When multiple paths are specified in an indented rule, context is applied to all paths. See examples below for details.
 
