@@ -198,13 +198,13 @@ When syntax allows for multiple Canonicals, the items are separated by `or` plac
 
 **Examples:**
 
-* The canonical URL of the example [Yes/No/Don't Know value set](https://www.hl7.org/fhir/valueset-example-yesnodontknow.json.html):
+* This evaluates to "http://hl7.org/fhir/ValueSet/yesnodontknow", the canonical URL of the [Yes/No/Don't Know value set](https://www.hl7.org/fhir/valueset-example-yesnodontknow.json.html):
 
   ```
   Canonical(yesnodontknow)
   ```
 
-* The canonical URL of a locally defined value set named `ExampleValueSet`:
+* Assuming the current FSH project has a canonical URL of "http://example.org", and `ExampleValueSet` is a defined value set within the FSH project with an id of `example-value-set`, this evaluates to "http://example.org/ValueSet/example-value-set":
 
   ```
   Canonical(ExampleValueSet)
