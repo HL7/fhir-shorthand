@@ -12,7 +12,7 @@ Portions of the specification designated as "Trial Use" are indicated by {%inclu
 
 ### Notational Conventions
 
-The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-formal-grammar-informative)), most readers will find the syntax expressions more instructive.
+The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-fsh-grammar-informative)), most readers will find the syntax expressions more instructive.
 
 Syntax expressions use the following conventions:
 
@@ -127,9 +127,9 @@ Projects MAY contain other content involved in creating FHIR IGs, such as narrat
 
 ### FSH Language Basics
 
-#### Formal Grammar
+#### Grammar
 
-The grammar of FSH has been described using [ANTLR4](https://www.antlr.org/) (see [Appendix](#appendix-formal-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
+The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [Appendix](#appendix-fsh-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
 
 If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
@@ -175,7 +175,7 @@ These comments can take up multiple lines.
 */
 ```
 
-The ANTLR implementation given in [the Appendix](#appendix-formal-grammar-informative) discards comments, however, implementations are free to use approaches that process comments.
+The ANTLR implementation given in [the Appendix](#appendix-fsh-grammar-informative) discards comments, however, implementations are free to use approaches that process comments.
 
 #### Primitives
 
@@ -2672,6 +2672,8 @@ Insert a simple rule set by using the name of the rule set:
 
 ##### Inserting Parameterized Rule Sets
 
+{%include tu-div.html%}
+
 To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
 <pre><code>* insert {RuleSet}(value1<span class="optional">, value2, value3...</span>)
@@ -2721,6 +2723,8 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   * name[2].family = "Smith"
   // more rules
   ```
+
+</div>
 
 ##### Inserting Rule Sets with Path Context
 
@@ -2940,7 +2944,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 | Abbreviation | Description |
 |-----|----|
-| ANTLR4  | ANother Tool for Language Recognition, version 4
+| ANTLR  | ANother Tool for Language Recognition
 | D  | Flag denoting draft status
 | FHIR  | Fast Healthcare Interoperability Resources
 | FSH   | FHIR Shorthand
@@ -2961,9 +2965,9 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 | XML   | Extensible Markup Language
 {: .grid }
 
-### Appendix: Formal Grammar (informative)
+### Appendix: FSH Grammar (informative)
 
-The following is an implementation of a FSH language parser described in [ANTLR4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification takes precedence. This grammar implementation is provided for informational purposes and is not normative.
+The following is an implementation of a FSH language parser described in [ANTLR v4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification takes precedence. This grammar implementation is provided for informational purposes and is not normative.
 
 #### Parser Grammar
 
