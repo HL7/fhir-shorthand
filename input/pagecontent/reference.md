@@ -188,6 +188,7 @@ FSH strings support the escape sequences that FHIR already defines as valid in i
 FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A resource of profile SHALL be identifiable by name, id, or URL. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
 In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. Inside instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance. In this case, since `JaneDoe` is a Patient instance, `Reference(JaneDoe)` is resolved to `Patient/JaneDoe`. If a reference value in an instance does not reference an existing instance, the value is used directly. For example, if the subject of an Observation is `Reference(Alice)`, and Alice does not name a Patient instance, the reference resolves to `Alice`.
+
 #### Canonicals
 
 FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical()` stands for the canonical URL of the referenced item. 
@@ -198,17 +199,25 @@ When syntax allows for multiple Canonicals, the items are separated by `or` plac
 
 **Examples:**
 
-* This evaluates to "http://hl7.org/fhir/ValueSet/yesnodontknow", the canonical URL of the [Yes/No/Don't Know value set](https://www.hl7.org/fhir/valueset-example-yesnodontknow.json.html):
+* The canonical URL for the FHIR [Yes/No/Don't Know value set](https://www.hl7.org/fhir/valueset-example-yesnodontknow.html), which evaluates to "http://hl7.org/fhir/ValueSet/yesnodontknow":
 
   ```
   Canonical(yesnodontknow)
   ```
 
-* Assuming the current FSH project has a canonical URL of "http://example.org", and `ExampleValueSet` is a defined value set within the FSH project with an id of `example-value-set`, this evaluates to "http://example.org/ValueSet/example-value-set":
+* Assuming the current FSH project has a canonical URL of "http://example.org", and `ExampleValueSet` is a defined value set within the FSH project with an id of `example-value-set`, the following expression evaluates to "http://example.org/ValueSet/example-value-set":
 
   ```
   Canonical(ExampleValueSet)
   ```
+
+* Adding a specific version to the argument of a Canonical expression results in the stated version appended to the canonical URL. So this:
+
+  ```
+  Canonical(us-core-allergyintolerance|3.1.1)
+  ```
+
+  evaluates to this: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance|3.1.1"
 
 #### Codes and Codings
 
