@@ -44,6 +44,11 @@
         <title value="Language Reference"/>
         <generation value="markdown"/>
       </page>
+      <page>
+        <nameUrl value="change_log.html"/>
+        <title value="Change Log"/>
+        <generation value="markdown"/>
+      </page>
     </page>
     <parameter>
       <code value="releaselabel"/>
