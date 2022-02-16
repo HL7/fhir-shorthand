@@ -3,7 +3,7 @@
     "title" : "FHIR Shorthand",
     "canonical" : "http://hl7.org/fhir/uv/shorthand",
     "introduction" : "FHIR Shorthand (FSH) is a domain-specific language (DSL) for defining the content of FHIR Implementation Guides (IG).",
-    "category" : "Technical Infrastructure",
+    "category" : "Administration",
     "list" : [
     {
       "version" : "current",
@@ -18,7 +18,7 @@
       "fhirversion": "4.0.1",
       "desc": "FHIR Shorthand, version 2.0.0",
       "path": "http://hl7.org/fhir/uv/shorthand/N1",
-      "status": "Mixed Normative/STU",
+      "status": "normative+trial-use",
       "sequence": "N1",
       "current": false
     },
