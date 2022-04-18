@@ -1785,6 +1785,7 @@ Authors define logical models and resources by adding new elements to their defi
 The syntax of the rules to add a new element are as follows:
 
 <pre><code>* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span>
+* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> contentReference {contentUrl} "{short}" <span class="optional">"{definition}"</span>
 </code></pre>
 
 where `{datatype(s)}` can be one of the following:
@@ -1793,9 +1794,13 @@ where `{datatype(s)}` can be one of the following:
 * References to one or more resources or profiles, <code>Reference({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 * Canonicals for one or more resources or profiles, <code>Canonical({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 
+and where `{contentUrl}` is a URL referencing the element whose properties will be used to define this element. This type of element definition is typically used with recursively nested elements, such as [Questionnaire.item.item](https://www.hl7.org/fhir/R4/questionnaire-definitions.html#Questionnaire.item.item). Refer to the [ElementDefinition documentation](http://hl7.org/fhir/R4/elementdefinition-definitions.html#ElementDefinition.contentReference) for more information about using `contentReference`.
+
 Note the following:
 
-* An add element rule **at minimum** must specify an element path, cardinality, type, and short description.
+* An add element rule **at minimum** must specify:
+  * an element path, cardinality, type, and short description, OR
+  * an element path, cardinality, the `contentReference` keyword, content reference URL, and short description.
 * Flags and longer definition are optional.
 * The longer definition can also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
@@ -1813,6 +1818,12 @@ Note the following:
 
   ```
   * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted."
+  ```
+
+* Add an element defined by a `contentReference`, which receives the content rules of the referenced element:
+
+  ```
+  * email 0..* contentReference http://example.org/StructureDefinition/AnotherResource#AnotherResource.email "The person's email addresses"
   ```
 
 * Add a reference-typed element with a longer definition:
@@ -2997,7 +3008,7 @@ logical:            KW_LOGICAL name sdMetadata* lrRule*;
 resource:           KW_RESOURCE name sdMetadata* lrRule*;
 sdMetadata:         parent | id | title | description;
 sdRule:             cardRule | flagRule | valueSetRule | fixedValueRule | containsRule | onlyRule | obeysRule | caretValueRule | insertRule | pathRule;
-lrRule:             sdRule | addElementRule;
+lrRule:             sdRule | addElementRule | addCRElementRule;
 
 instance:           KW_INSTANCE name instanceMetadata* instanceRule*;
 instanceMetadata:   instanceOf | title | description | usage;
@@ -3011,10 +3022,10 @@ vsMetadata:         id | title | description;
 vsRule:             vsComponent | caretValueRule | insertRule;
 codeSystem:         KW_CODESYSTEM name csMetadata* csRule*;
 csMetadata:         id | title | description;
-csRule:             concept | codeCaretValueRule | insertRule;
+csRule:             concept | codeCaretValueRule | codeInsertRule;
 
 ruleSet:            KW_RULESET RULESET_REFERENCE ruleSetRule+;
-ruleSetRule:        sdRule | addElementRule | concept | codeCaretValueRule | vsComponent;
+ruleSetRule:        sdRule | addElementRule | addCRElementRule | concept | codeCaretValueRule | codeInsertRule | vsComponent | mappingRule;
 
 paramRuleSet:       KW_RULESET PARAM_RULESET_REFERENCE paramRuleSetContent;
 paramRuleSetContent:   STAR
@@ -3058,6 +3069,8 @@ caretValueRule:     STAR path? caretPath EQUAL value;
 codeCaretValueRule: STAR CODE* caretPath EQUAL value;
 mappingRule:        STAR path? ARROW STRING STRING? CODE?;
 insertRule:         STAR path? KW_INSERT (RULESET_REFERENCE | PARAM_RULESET_REFERENCE);
+codeInsertRule:     STAR CODE* KW_INSERT (RULESET_REFERENCE | PARAM_RULESET_REFERENCE);
+addCRElementRule:   STAR path CARD flag* KW_CONTENTREFERENCE (SEQUENCE | CODE) STRING (STRING | MULTILINE_STRING)?;
 addElementRule:     STAR path CARD flag* targetType (KW_OR targetType)* STRING (STRING | MULTILINE_STRING)?;
 pathRule:           STAR path;
 
@@ -3148,6 +3161,7 @@ KW_VSREFERENCE:     'valueset';
 KW_SYSTEM:          'system';
 KW_EXACTLY:         '(' WS* 'exactly' WS* ')';
 KW_INSERT:          'insert' -> pushMode(RULESET_OR_INSERT);
+KW_CONTENTREFERENCE:'contentReference';
 
 // SYMBOLS
 EQUAL:              '=';
