@@ -1456,7 +1456,7 @@ Value sets are defined using the declaration `ValueSet`, with RECOMMENDED keywor
 
 Codes MUST be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
-The contents of a value set are defined by a set of rules. There are four types of rules to populate a value set:
+The contents of a value set are defined by a set of rules. There are four basic types of rules to populate a value set:
 
 > **Note:** In value set rules, the word `include` is OPTIONAL.
 
@@ -1469,6 +1469,49 @@ The contents of a value set are defined by a set of rules. There are four types 
 | All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}</code> | `* include codes from system http://snomed.info/sct` |
 | Filtered codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem} where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept is-a #254837009` |
 {: .grid }
+
+These basic rules can be combined and extended. When using codes from a value set, the rule may refer to more than one value set. The rule may also refer to a code system and one or more value sets. When a rule refers to more than one value set, or has a code system and one or more value sets, the applicable codes are those present in _all_ listed value set(s) (and the system, if present).  To instead add all the codes in _any_ of the value set(s) or system (that is, the _union_ of the value set(s) and system), specify them in separate rules.
+
+**Examples:**
+
+* Include codes present in all listed value sets:
+
+<code>* <span class="optional">include</span> codes from valueset {ValueSet1} and {ValueSet2} <span class="optional">and {ValueSet3} ...</span></code>
+
+  ```
+  * include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time
+    and http://hl7.org/fhir/ValueSet/age-units
+  ```
+
+* Include codes present in the system and all listed value sets:
+
+<code>* <span class="optional">include</span> codes from system {CodeSystem} and valueset {ValueSet1} and {ValueSet2} <span class="optional">and {ValueSet3} ...</span></code>
+
+  ```
+  * include codes from system $UCUM
+    and valueset http://hl7.org/fhir/ValueSet/units-of-time
+    and http://hl7.org/fhir/ValueSet/age-units
+  ```
+
+* Include filtered codes from a code system and all listed value sets:
+
+<code>* <span class="optional">include</span> codes from system {CodeSystem} and valueset {ValueSet1} <span class="optional">and {ValueSet2} ...</span> where {filter1} <span class="optional">and {filter2}...</span></code>
+
+  ```
+  * include codes from system $SCT
+    and valueset http://hl7.org/fhir/ValueSet/dataelement-sdcobjectclassproperty
+    where concept is-a #254837009
+  ```
+
+> **Note:** When a rule has both a system and one or more value sets, it is acceptable to list the system before or after the value sets. All value sets must still be listed together. For example, the two following rules are valid and equivalent:
+  ```
+  * include codes from system $UCUM and valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units
+  * include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units and system $UCUM
+  ```
+But the following rule is invalid:
+  ```
+  * include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and system $UCUM and valueset http://hl7.org/fhir/ValueSet/age-units
+  ```
 
 > **Note:** Filters are code system dependent. See [below](#filters) for further discussion.
 
