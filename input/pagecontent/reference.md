@@ -2802,6 +2802,11 @@ Alternately, the context can be given by indenting the insert rule under another
 
 When the rule set is expanded, the path of the element is prepended to the path of all rules in the rule set.
 
+When defining a Code System, rule sets can be inserted in the context of a concept. The context is specific by giving the concept (or hierarchy of concepts, for child codes) prior to the insert rule:
+
+<pre><code>* &lt;concept&gt; insert {RuleSet}<span class="optional">(value1, value2, value3...)</span>
+</code></pre>
+
 **Examples:**
 
 * Insert a rule set into a profile specifying an element:
@@ -2841,6 +2846,48 @@ When the rule set is expanded, the path of the element is prepended to the path 
   * name.given MS
   * deceased[x] only boolean
   // More profile rules
+  ```
+
+* Insert a rule set into a code system specifying a concept:
+
+  ```
+  RuleSet: DesignationRules
+  * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * ^designation[0].language = #en
+
+  CodeSystem: MyCodeSystem
+  // skip some keywords and rules
+  * #code-one "Code one"
+  * #code-one insert DesignationRules
+  * #code-one #child-code "Child code"
+  * #code-one #child-code insert DesignationRules
+  // more code system rules
+  ```
+
+  An equivalent way to write the code system is:
+
+  ```
+  CodeSystem: MyCodeSystem
+  // skip some keywords and rules
+  * #code-one "Code one"
+    * insert DesignationRules
+    * #child-code "Child code"
+      * insert DesignationRules
+  // more code system rules
+  ```
+
+  Both of the above are equivalent to:
+
+  ```
+  CodeSystem: MyCodeSystem
+  // skip some keywords and rules
+  * #code-one "Code one"
+  * #code-one ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * #code-one ^designation[0].language = #en
+  * #code-one #child-code "Child code"
+  * #code-one #child-code ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * #code-one #child-code ^designation[0].language = #en
+  // more code system rules
   ```
 
 </div>
