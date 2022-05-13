@@ -1456,7 +1456,7 @@ Value sets are defined using the declaration `ValueSet`, with RECOMMENDED keywor
 
 Codes MUST be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
-The contents of a value set are defined by a set of rules. There are four types of rules to populate a value set:
+The contents of a value set are defined by "include" rules, which have the following syntax:
 
 > **Note:** In value set rules, the word `include` is OPTIONAL.
 
@@ -1467,10 +1467,37 @@ The contents of a value set are defined by a set of rules. There are four types 
 | A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}</code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}</code> | `* include codes from system http://snomed.info/sct` |
+| Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code>* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}</span> and valueset {ValueSet1}<span class="optional"> and {ValueSet2}...</span></code> | <code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units</code> |
 | Filtered codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem} where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept is-a #254837009` |
 {: .grid }
 
-> **Note:** Filters are code system dependent. See [below](#filters) for further discussion.
+
+> **Note 1:**  When a single include rule includes more than item (code system or value set), the applicable codes are those present in _all_ listed items.
+
+> **Note 2:**  To add codes from multiple code systems or value sets (i.e., the union not the intersection), specify them in separate `include` rules.
+
+> **Note 3:** When an `include` rule has both a system and more than one value set, the code system must be first or last.
+
+> **Note 4:**  An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
+
+> **Note 5:** Filters are code system dependent. See [below](#filters) for further discussion.
+
+
+**Examples:**
+
+* Include codes in the intersection of time and age units:
+
+  ```
+  * include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time
+    and http://hl7.org/fhir/ValueSet/age-units
+  ```
+
+* Include only the v2 codes in the name-assembly-order value set:
+
+  ```
+  * include codes from system http://terminology.hl7.org/CodeSystem/v2-0444 and valueset http://hl7.org/fhir/ValueSet/name-assembly-order
+  ```
+
 
 Analogous rules can be used to leave out certain codes, with the word `exclude` replacing the word `include`:
 
@@ -1785,6 +1812,7 @@ Authors define logical models and resources by adding new elements to their defi
 The syntax of the rules to add a new element are as follows:
 
 <pre><code>* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span>
+* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> contentReference {contentUrl} "{short}" <span class="optional">"{definition}"</span>
 </code></pre>
 
 where `{datatype(s)}` can be one of the following:
@@ -1793,9 +1821,13 @@ where `{datatype(s)}` can be one of the following:
 * References to one or more resources or profiles, <code>Reference({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 * Canonicals for one or more resources or profiles, <code>Canonical({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 
+and where `{contentUrl}` is a URI referencing the element whose properties will be used to define this element.This type of element definition is typically used with recursively nested elements, such as [Questionnaire.item.item](https://www.hl7.org/fhir/R4/questionnaire-definitions.html#Questionnaire.item.item), which is defined by reference to `#Questionnaire.item`. Another example is [Observation.component.referenceRange](https://www.hl7.org/fhir/observation-definitions.html#Observation.component.referenceRange), which is defined by reference to `#Observation.referenceRange`. Refer to the [ElementDefinition documentation](http://hl7.org/fhir/R4/elementdefinition-definitions.html#ElementDefinition.contentReference) for more information.
+
 Note the following:
 
-* An add element rule **at minimum** must specify an element path, cardinality, type, and short description.
+* An add element rule **at minimum** must specify:
+  * an element path, cardinality, type, and short description, OR
+  * an element path, cardinality, the `contentReference` keyword, a content reference URI, and short description.
 * Flags and longer definition are optional.
 * The longer definition can also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
@@ -1813,6 +1845,12 @@ Note the following:
 
   ```
   * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted."
+  ```
+
+* Add an element defined by a `contentReference`, which receives the content rules of the referenced element:
+
+  ```
+  * email 0..* contentReference http://example.org/StructureDefinition/AnotherResource#AnotherResource.email "The person's email addresses"
   ```
 
 * Add a reference-typed element with a longer definition:
@@ -2748,6 +2786,11 @@ Alternately, the context can be given by indenting the insert rule under another
 
 When the rule set is expanded, the path of the element is prepended to the path of all rules in the rule set.
 
+When defining a Code System, rule sets can be inserted in the context of a concept. The context is specific by giving the concept (or hierarchy of concepts, for child codes) prior to the insert rule:
+
+<pre><code>* &lt;concept&gt; insert {RuleSet}<span class="optional">(value1, value2, value3...)</span>
+</code></pre>
+
 **Examples:**
 
 * Insert a rule set into a profile specifying an element:
@@ -2787,6 +2830,48 @@ When the rule set is expanded, the path of the element is prepended to the path 
   * name.given MS
   * deceased[x] only boolean
   // More profile rules
+  ```
+
+* Insert a rule set into a code system specifying a concept:
+
+  ```
+  RuleSet: DesignationRules
+  * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * ^designation[0].language = #en
+
+  CodeSystem: MyCodeSystem
+  // skip some keywords and rules
+  * #code-one "Code one"
+  * #code-one insert DesignationRules
+  * #code-one #child-code "Child code"
+  * #code-one #child-code insert DesignationRules
+  // more code system rules
+  ```
+
+  An equivalent way to write the code system is:
+
+  ```
+  CodeSystem: MyCodeSystem
+  // skip some keywords and rules
+  * #code-one "Code one"
+    * insert DesignationRules
+    * #child-code "Child code"
+      * insert DesignationRules
+  // more code system rules
+  ```
+
+  Both of the above are equivalent to:
+
+  ```
+  CodeSystem: MyCodeSystem
+  // skip some keywords and rules
+  * #code-one "Code one"
+  * #code-one ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * #code-one ^designation[0].language = #en
+  * #code-one #child-code "Child code"
+  * #code-one #child-code ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * #code-one #child-code ^designation[0].language = #en
+  // more code system rules
   ```
 
 </div>
@@ -2997,7 +3082,7 @@ logical:            KW_LOGICAL name sdMetadata* lrRule*;
 resource:           KW_RESOURCE name sdMetadata* lrRule*;
 sdMetadata:         parent | id | title | description;
 sdRule:             cardRule | flagRule | valueSetRule | fixedValueRule | containsRule | onlyRule | obeysRule | caretValueRule | insertRule | pathRule;
-lrRule:             sdRule | addElementRule;
+lrRule:             sdRule | addElementRule | addCRElementRule;
 
 instance:           KW_INSTANCE name instanceMetadata* instanceRule*;
 instanceMetadata:   instanceOf | title | description | usage;
@@ -3011,10 +3096,10 @@ vsMetadata:         id | title | description;
 vsRule:             vsComponent | caretValueRule | insertRule;
 codeSystem:         KW_CODESYSTEM name csMetadata* csRule*;
 csMetadata:         id | title | description;
-csRule:             concept | codeCaretValueRule | insertRule;
+csRule:             concept | codeCaretValueRule | codeInsertRule;
 
 ruleSet:            KW_RULESET RULESET_REFERENCE ruleSetRule+;
-ruleSetRule:        sdRule | addElementRule | concept | codeCaretValueRule | vsComponent;
+ruleSetRule:        sdRule | addElementRule | addCRElementRule | concept | codeCaretValueRule | codeInsertRule | vsComponent | mappingRule;
 
 paramRuleSet:       KW_RULESET PARAM_RULESET_REFERENCE paramRuleSetContent;
 paramRuleSetContent:   STAR
@@ -3058,6 +3143,8 @@ caretValueRule:     STAR path? caretPath EQUAL value;
 codeCaretValueRule: STAR CODE* caretPath EQUAL value;
 mappingRule:        STAR path? ARROW STRING STRING? CODE?;
 insertRule:         STAR path? KW_INSERT (RULESET_REFERENCE | PARAM_RULESET_REFERENCE);
+codeInsertRule:     STAR CODE* KW_INSERT (RULESET_REFERENCE | PARAM_RULESET_REFERENCE);
+addCRElementRule:   STAR path CARD flag* KW_CONTENTREFERENCE (SEQUENCE | CODE) STRING (STRING | MULTILINE_STRING)?;
 addElementRule:     STAR path CARD flag* targetType (KW_OR targetType)* STRING (STRING | MULTILINE_STRING)?;
 pathRule:           STAR path;
 
@@ -3148,6 +3235,7 @@ KW_VSREFERENCE:     'valueset';
 KW_SYSTEM:          'system';
 KW_EXACTLY:         '(' WS* 'exactly' WS* ')';
 KW_INSERT:          'insert' -> pushMode(RULESET_OR_INSERT);
+KW_CONTENTREFERENCE:'contentReference';
 
 // SYMBOLS
 EQUAL:              '=';
