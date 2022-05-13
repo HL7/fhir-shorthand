@@ -1467,7 +1467,7 @@ The contents of a value set are defined by "include" rules, which have the follo
 | A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}</code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
 | All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}</code> | `* include codes from system http://snomed.info/sct` |
-| Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code>* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}</span> and valueset {ValueSet1}<span class="optional">and {ValueSet2}...</span></code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units` |
+| Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code>* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}</span> and valueset {ValueSet1}<span class="optional">and {ValueSet2}...</span></code> | <code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units</code> |
 | Filtered codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem} where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept is-a #254837009` |
 {: .grid }
 
