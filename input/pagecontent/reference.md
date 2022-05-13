@@ -1473,9 +1473,13 @@ The contents of a value set are defined by "include" rules, which have the follo
 
 
 > **Note 1:**  When a single include rule includes more than item (code system or value set), the applicable codes are those present in _all_ listed items.
+
 > **Note 2:**  To add codes from multiple code systems or value sets (i.e., the union not the intersection), specify them in separate `include` rules.
-> **Note 3:** When an `include` rule has both a system and more than one value set, the code system must be first or last. 
-> **Note 4:**  An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set)
+
+> **Note 3:** When an `include` rule has both a system and more than one value set, the code system must be first or last.
+
+> **Note 4:**  An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
+
 > **Note 5:** Filters are code system dependent. See [below](#filters) for further discussion.
 
 
