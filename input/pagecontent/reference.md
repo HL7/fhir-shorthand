@@ -1536,7 +1536,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
   ValueSet: HistologyMorphologyBehaviorVS
   Id: mcode-histology-morphology-behavior-vs
   Title: "Histology Morphology Behavior Value Set"
-  Description: "Codes representing the structure, arrangement, and behavioral characteristics of malignant neoplasms, and cancer cells.
+  Description: "Codes representing the structure, arrangement, and behavioral characteristics of malignant neoplasms, and cancer cells."
   * include codes from system $SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
   * include codes from system $SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
   * include codes from system $SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
