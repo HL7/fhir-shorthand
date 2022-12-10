@@ -762,7 +762,7 @@ Depending on the type of item being defined, keywords may be required, suggested
 [Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
 [Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
 {%include tu.html%} [Logical](#defining-logical-models)  |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Mapping](#defining-mappings)            |     |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
+[Mapping](#defining-mappings)            |  S  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
 [Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
 {%include tu.html%}  [Resource](#defining-resources)    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
@@ -1208,7 +1208,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
 
 [Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of a StructureDefinition, intended to help implementers understand the StructureDefinition in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
 
-To create a mapping, the declaration `Mapping` and the keywords `Source`, and `Target` are REQUIRED, and `Title` and `Description` are RECOMMENDED.
+To create a mapping, the declaration `Mapping` and the keywords `Source`, and `Target` are REQUIRED, and `Id`, `Title` and `Description` are RECOMMENDED.
 
 <span class="caption" id="t9">Table 9. Keywords used to define Mappings</span>
 
