@@ -1431,7 +1431,7 @@ The contents of a value set are defined by "include" rules, which have the follo
 
 <span class="caption" id="t10">Table 10. Summary of value set include rules</span>
 
-| To include... | Syntax | Example |
+| To&#160;include... | Syntax | Example |
 |-------|---------|----------|
 | A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}</code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
