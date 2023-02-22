@@ -137,15 +137,13 @@ If there is discrepancy between the grammar and the FSH language description, th
 
 FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
-The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Mapping:`, `Profile:`, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
-
-<span style="background-color: #fff5e6;"> {%include tu.html%} `Logical:` and `Resource:` are reserved on trial use basis.</span>
+The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Logical:`, `Mapping:`, `Profile:`, `Resource:`, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
 
 The following words are reserved, with or without white spaces inside the parentheses: `(example)`, `(preferred)`, `(extensible)`, `(required)`, `(exactly)`.
 
 #### Whitespace
 
-Repeated whitespace has meaning in FSH only within string literals <span style="background-color: #fff5e6;">and when used for [indenting rules](reference.html#indented-rules) {%include tu.html%}</span>. In all other contexts, repeated whitespace is not meaningful. Whitespace insensitivity can be used to improve readability. For example:
+Repeated whitespace has meaning in FSH only within string literals and when used for [indenting rules](reference.html#indented-rules). In all other contexts, repeated whitespace is not meaningful. Whitespace insensitivity can be used to improve readability. For example:
 
 ```
 * component contains appearanceScore 0..3 and pulseScore 0..3 and grimaceScore 0..3 and activityScore 0..3 and respirationScore 0..3
@@ -629,9 +627,9 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, Resource</span>, ValueSet, and CodeSystem. Caret syntax SHALL NOT be used with the following paths, because the order of elements in these paths may vary between implementations:
+FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, Logical, Resource, ValueSet, and CodeSystem. Caret syntax SHALL NOT be used with the following paths, because the order of elements in these paths may vary between implementations:
 
-* `snapshot.element` and `differential.element` in Profile, Extension, <span style="background-color: #fff5e6;">{%include tu.html%} Logical, and Resource</span> items
+* `snapshot.element` and `differential.element` in Profile, Extension, Logical, and Resource items
 * `compose.include` and `compose.exclude` in ValueSet items
 
 Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
@@ -700,8 +698,6 @@ A declaration is always the first statement in an item definition. The value rep
 
 <span class="caption" id="t4">Table 4. Declarations defined by FSH</span>
 
-<div class = "shadeRow6 shadeRow9">
-
 | Declaration | Creates... | Data Type |
 |----------|---------|---------|
 | [Alias](#defining-aliases)           | An alias for a URL or OID | expression |
@@ -709,15 +705,13 @@ A declaration is always the first statement in an item definition. The value rep
 | [Extension](#defining-extensions)    | An extension | name |
 | [Instance](#defining-instances)      | An instance | id |
 | [Invariant](#defining-invariants)    | An invariant | id |
-| {%include tu.html%} [Logical](#defining-logical-models) | A logical model | name |
+| [Logical](#defining-logical-models) | A logical model | name |
 | [Mapping](#defining-mappings)        | A mapping | id |
 | [Profile](#defining-profiles)        | A profile | name |
-| {%include tu.html%} [Resource](#defining-resources) | A custom resource | name |
+| [Resource](#defining-resources) | A custom resource | name |
 | [RuleSet](#defining-rule-sets)       | A set of rules that can be reused | name |
 | [ValueSet](#defining-value-sets)     | A value set | name |
 {: .grid }
-
-</div>
 
 ##### Keyword Statements
 
@@ -752,8 +746,6 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 <span class="caption" id="t6">Table 6. Relationships between declarations and keywords in FSH</span>
 
-<div class="shadeRow6 shadeRow9">
-
 |         Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
 |----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
 [Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
@@ -761,15 +753,13 @@ Depending on the type of item being defined, keywords may be required, suggested
 [Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
 [Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-{%include tu.html%} [Logical](#defining-logical-models)  |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Logical](#defining-logical-models)      |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Mapping](#defining-mappings)            |  S  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
 [Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
-{%include tu.html%}  [Resource](#defining-resources)    |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
+[Resource](#defining-resources)          |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
 [Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
 [Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
 {: .grid }
-
-</div>
 
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
 
@@ -779,11 +769,9 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 
 <span class="caption" id="t7">Table 7. Relationships between FSH items and FSH rules</span>
 
-<div class = "shadeCol7 shadeCol10 shadeRow1 shadeRow15 unshadeHead unshadeHead7 unshadeHead10">
-
-|              Item →<br/>Rule Type ↓ | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | [Logical](#defining-logical-models)<br/>{%include tu.html%} | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | [Resource](#defining-resources)<br/>{%include tu.html%} | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
+|              Item →<br/>Rule Type ↓ | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
 |--------------------------------------------------------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
-| {%include tu.html%} [Add Element](#add-element-rules)               |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
+| [Add Element](#add-element-rules)                                  |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
 | [Assignment](#assignment-rules)                                    |       | C           | Y         | Y        |           | C       |         | Y       | C        | Y        | C         |
 | [Binding](#binding-rules)                                          |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
 | [Cardinality](#cardinality-rules)                                  |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
@@ -794,14 +782,12 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 | [Flag](#flag-rules)                                                |       |             | Y         |          |           | L       |         | Y       | L        | Y        |           |
 | [Include](#include-rules)                                          |       |             |           |          |           |         |         |         |          | Y        | Y         |
 | [Insert](#insert-rules)                                            |       | Y           | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        | Y         |
-| [Local Code](#local-code-rules)                                   |       | Y           |           |          |           |         |         |         |          | Y        |           |
+| [Local Code](#local-code-rules)                                    |       | Y           |           |          |           |         |         |         |          | Y        |           |
 | [Mapping](#mapping-rules)                                          |       |             |           |          |           |         | Y       |         |          | Y        |           |
 | [Obeys](#obeys-rules)                                              |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
-| {%include tu.html%} [Path](#path-rules)                            |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
+| [Path](#path-rules)                                                |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
 | [Type](#type-rules)                                                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
 {: .grid }
-
-</div>
 
 **KEY:** Y = Rule type MAY be used, L = All flags except must support (MS) are supported, C = Assignments apply only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
 
@@ -850,8 +836,8 @@ Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keyword
 * There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` declaration.
 * The definition of the term, provided as the second string following the code, is RECOMMENDED but not required.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
-* <span style="background-color: #fff5e6;">{%include tu.html%} Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).</span>
-* <span style="background-color: #fff5e6;">{%include tu.html%} [Assignment rules](#assignment-rules) SHALL apply only to caret paths in CodeSystems.</span>
+* Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
+* [Assignment rules](#assignment-rules) SHALL apply only to caret paths in CodeSystems.
 
 **Example:**
 
@@ -874,7 +860,6 @@ Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keyword
 
 ##### Defining Code Systems with Hierarchical Codes
 
-{%include tu-div.html%}
 Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
 
 ```
@@ -946,8 +931,6 @@ For a path to a code within a code system, use this syntax:
   ```
   #active #recurrence ^property[0].code
   ```
-
-</div>
 
 #### Defining Extensions
 
@@ -1129,11 +1112,11 @@ Rules types that apply to Instances are: [Assignment](#assignment-rules), [Inser
 
 The FSH language is designed to support creation of StructureDefinitions for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
 
-These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement` with `Usage: #definition`. The CapabilityStatement is populated using assignment statements. <span style="background-color: #fff5e6;">Authors may choose to use {%include tu.html%}  [parameterized rule sets](#parameterized-rule-sets) to reduce repetition of common patterns in conformance resources.</span>
+These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement` with `Usage: #definition`. The CapabilityStatement is populated using assignment statements. Authors may choose to use [parameterized rule sets](#parameterized-rule-sets) to reduce repetition of common patterns in conformance resources.
 
 #### Defining Invariants
 
-Invariants are defined using the declaration `Invariant`, with REQUIRED keywords `Description` and `Severity`, and OPTIONAL keywords `XPath` and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, <span style="background-color: #fff5e6;">{%include tu.html%} logical models, or resources </span> via [obeys rules](#obeys-rules).
+Invariants are defined using the declaration `Invariant`, with REQUIRED keywords `Description` and `Severity`, and OPTIONAL keywords `XPath` and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
@@ -1159,8 +1142,6 @@ Invariants are defined using the declaration `Invariant`, with REQUIRED keywords
   ```
 
 #### Defining Logical Models
-
-{%include tu-div.html%}
 
 Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](http://hl7.org/fhir/R4/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
 
@@ -1201,8 +1182,6 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
   * biological 0..1 boolean "Biologically related?"
       "A family member may not be biologically related due to adoption, blended families, etc."
   ```
-
-</div>
 
 #### Defining Mappings
 
@@ -1291,8 +1270,6 @@ Rules types that apply to Profiles are: [Assignment](#assignment-rules), [Bindin
 
 #### Defining Resources
 
-{%include tu-div.html%}
-
 Custom resources allow authors to define new structures representing arbitrary content. Resources are defined similar to [logical models](#defining-logical-models), but are intended to support data exchange using FHIR's RESTful API mechanisms. The capability to define resources may be used by HL7 to define core FHIR resources or by other organizations to define proprietary resources for their own internal use. Potentially, they also can be used to represent and maintain existing core FHIR resources.
 
 Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
@@ -1341,11 +1318,9 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
       "Devices on board the vehicle."
   ```
 
-</div>
-
 #### Defining Rule Sets
 
-Rule sets provide the ability to define a group of rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. The first rule in a rule set MUST NOT be indented. <span style="background-color: #fff5e6;">Rules after the first rule MAY be {%include tu.html%} [indented](#indented-rules) but do not affect any rules outside of the rule set (i.e., inserting a rule set never affects the rule paths after the `insert` rule).</span>
+Rule sets provide the ability to define a group of rules as an independent entity. Through [insert rules](#insert-rules), they can be incorporated into a compatible target. FSH behaves as if the rules in a rule set are copied into the target. As such, the inserted rules have to make sense where they are inserted. Once defined, a single rule set can be used in multiple places. The first rule in a rule set MUST NOT be indented. Rules after the first rule MAY be [indented](#indented-rules) but do not affect any rules outside of the rule set (i.e., inserting a rule set never affects the rule paths after the `insert` rule).
 
 All types of rules SHALL be usable in rule sets, including [insert rules](#insert-rules), enabling the nesting of rule sets in other rule sets. However, circular dependencies are not allowed.
 
@@ -1372,8 +1347,6 @@ RuleSet: {name}
   ```
 
 ##### Parameterized Rule Sets
-
-{%include tu-div.html%}
 
 Rule sets can also specify one or more parameters as part of their definition. Parameterized rule sets are defined by using the declaration `RuleSet` followed by a user-selected name and then a comma-separated list of parameters enclosed in parentheses:
 
@@ -1446,8 +1419,6 @@ Each parameter represents a value that SHALL be substituted into the rules when 
   * insert Question(tr3, What countries did you visit?, code, true)
   ```
 
-</div>
-
 #### Defining Value Sets
 
 A value set is a group of coded values representing acceptable values for a FHIR element whose datatype is code, Coding, CodeableConcept, Quantity, string, or url.
@@ -1462,7 +1433,7 @@ The contents of a value set are defined by "include" rules, which have the follo
 
 <span class="caption" id="t10">Table 10. Summary of value set include rules</span>
 
-| To include... | Syntax | Example |
+| To&#160;include... | Syntax | Example |
 |-------|---------|----------|
 | A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
 | All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}</code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
@@ -1561,17 +1532,16 @@ The following restrictions apply to rules:
 * All rules MUST begin on a new line.
 * The asterisk symbol MUST be followed by at least one space.
 * The asterisk MUST NOT be preceded by non-whitespace characters on a line.
-* The asterisk MUST NOT be preceded by whitespace characters, <span style="background-color: #fff5e6;">unless using {%include tu.html%} [indented rule syntax](#indented-rules).</span>
+* The asterisk MUST NOT be preceded by whitespace characters, unless using [indented rule syntax](#indented-rules).
 
 The following table is a summary of the rule syntax.
 
 <span class="caption" id="t12">Table 12. Summary of FSH rule types</span>
 
-<div class = "shadeRow1 shadeRow15 unshadeHead">
 
 | Rule Type | Syntax |
 | --- | --- |
-| {%include tu.html%} [Add Element](#add-element-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span></code> |
+| [Add Element](#add-element-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span></code> |
 | [Assignment](#assignment-rules) |<code>* &lt;element&gt; = {value} <span class="optional">(exactly)</span></code> |
 | [Binding](#binding-rules) |<code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code> |
 | [Cardinality](#cardinality-rules) |<code>* &lt;element&gt; <span class="optional">{min}</span>..<span class="optional">{max}</span> // min, max, or both MUST be present </code> |
@@ -1580,16 +1550,15 @@ The following table is a summary of the rule syntax.
 | [Contains (slicing)](#contains-rules-for-extensions) | <code>* &lt;array&gt; contains {name} {card} <span class="optional">{flag(s)} <br/>   and {name2} {card} {flag2} <br/>   and {name3} {card} {flag(s)}...</span></code> |
 | [Exclude](#exclude-rules) |`* exclude {Coding}`<br/>`* exclude codes from valueset {ValueSet}`<br/><code>* exclude codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code>|
 | [Flag](#flag-rules) |`* <element(s)> {flag(s)}` |
-| [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding} <br/>* <span class="optional">include</span> codes from valueset {ValueSet} <br/>* <span class="optional">include</span> codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code> |
-| [Insert](#insert-rules)|<code>* insert {RuleSet}<br/>{%include tu.html%}* insert {RuleSet}({parameter1}<span class="optional">, {parameter2}, ...</span>)<br/>{%include tu.html%}* &lt;element&gt; insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span></code> |
+| [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding}</cod><br/><code>* <span class="optional">include</span> codes from valueset {ValueSet}</code><br/><code>* <span class="optional">include</span> codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code> |
+| [Insert](#insert-rules)|<code>* insert {RuleSet}</code><br/><code>* insert {RuleSet}({parameter1}<span class="optional">, {parameter2}, ...</span>)</code><br/><code>* &lt;element&gt; insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span></code> |
 | [Local Code](#local-code-rules) |<code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code> |
 | [Mapping](#mapping-rules)|<code>* <span class="optional">&lt;element&gt;</span> -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span></code> |
 | [Obeys](#obeys-rules) | <code>* <span class="optional">&lt;element&gt;</span> obeys {Invariant} <span class="optional">and {Invariant2} and {Invariant3}...</span></code> |
-| {%include tu.html%} [Path](#path-rules)  | `* <element>`|
+| [Path](#path-rules)  | `* <element>`|
 | [Type](#type-rules) | <code>* &lt;element&gt; only {datatype(s)} |
 {: .grid }
 
-</div>
 
 ##### Rule Order
 
@@ -1616,8 +1585,6 @@ In cases with no explicit or logical restrictions on rule ordering, users MAY li
 It is possible for a user to specify contradictory rules, for example, two rules constraining the cardinality of an element to different values, or constraining an element to different datatypes. Implementations SHOULD detect such contradictions and issue appropriate warning or error messages.
 
 #### Indented Rules
-
-{%include tu-div.html%}
 
 Indentation before a rule is used to set a context for the [path](#fsh-paths) on that rule. When one rule is indented below another, the full path of the indented rule or rules is obtained by prepending the path from the previous less-indented rule or rules. The level of indentation MAY be reduced to indicate that a rule should not use the context of the preceding rule. The full path of all rules is resolved from the context specified by indentation before any rules are applied.
 
@@ -1801,11 +1768,7 @@ When indented rules are combined with [soft indexing](#array-paths-using-soft-in
     * family 1..1
   ```
 
-</div>
-
 #### Add Element Rules
-
-{%include tu-div.html%}
 
 Authors define logical models and resources by adding new elements to their definitions. The add element rule is only applicable for logical models and resources. It cannot be used when defining profiles or extensions.
 
@@ -1887,8 +1850,6 @@ Note the following:
     * breed 1..* CodeableConcept "Breed of service animal" "The dominant breed or breeds of the service animal."
     * startDate 0..1 date "Date the service animal began work" "The date on which the service animal began working for the person."
   ```
-
-</div>
 
 #### Assignment Rules
 
@@ -2719,8 +2680,6 @@ Insert a simple rule set by using the name of the rule set:
 
 ##### Inserting Parameterized Rule Sets
 
-{%include tu-div.html%}
-
 To insert a parameterized rule set, use the rule set name with a list of one or more parameter values:
 
 <pre><code>* insert {RuleSet}(value1<span class="optional">, value2, value3...</span>)
@@ -2771,11 +2730,7 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   // more rules
   ```
 
-</div>
-
 ##### Inserting Rule Sets with Path Context
-
-{%include tu-div.html%}
 
 Rule sets can be inserted in the context of a path. The context is specified by giving the path prior to the insert rule:
 
@@ -2874,8 +2829,6 @@ When defining a Code System, rule sets can be inserted in the context of a conce
   // more code system rules
   ```
 
-</div>
-
 #### Local Code Rules
 
 Local codes rules are used to define codes in code systems. Local code rules appear only in CodeSystem items. For more details on local code rules, see [Defining Code Systems](#defining-code-systems).
@@ -2918,8 +2871,6 @@ The referenced invariant and its properties MUST be declared somewhere within th
 
 #### Path Rules
 
-{%include tu-div.html%}
-
 Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
 
 ```
@@ -2937,8 +2888,6 @@ A path rule has no impact on the element it refers to. The only purpose of the p
     * given MS
     * family MS
   ```
-
-</div>
 
 #### Type Rules
 
