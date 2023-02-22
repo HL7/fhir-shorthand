@@ -12,7 +12,7 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
 
 * **Grammar**: [FSH has a formal grammar](reference.html#appendix-fsh-grammar-informative) defined in [ANTLR](https://www.antlr.org/).
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive), and also include <span style="background-color: #fff5e6;">{%include tu.html%} datatypes proposed for inclusion in FHIR R5 ([integer64](https://build.fhir.org/datatypes.html#primitive) and [CodeableReference](https://build.fhir.org/references.html#codeablereference))</span>.
-* **Whitespace**: Repeated whitespace has meaning within FSH files only within string literals and when used for <span style="background-color: #fff5e6;">{%include tu.html%} [indenting rules](reference.html#indented-rules)</span>. In all other contexts, repeated whitespace is not meaningful.
+* **Whitespace**: Repeated whitespace has meaning within FSH files only within string literals and when used for [indenting rules](reference.html#indented-rules). In all other contexts, repeated whitespace is not meaningful.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set an element named `active` to `true`:
 
