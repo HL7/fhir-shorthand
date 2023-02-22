@@ -113,7 +113,9 @@ Each FSH project MUST specify the version of FHIR it depends upon. It is up to i
 
 The FSH language specification has been designed around FHIR R4 and later. FSH depends primarily on normative parts of the FHIR R4 specification (e.g., StructureDefinition and datatypes), and not on specific Resources, Profiles, Value Sets or Extensions. As a result, many FHIR version differences can be ignored. However, because the FSH specification refers to FHIR data types and definitional artifacts, there is no way to absolutely divorce FSH from specific FHIR versions.
 
+{%include tu-div.html%}
 FSH supports new pre-release FHIR R5 datatypes integer64 and CodeableReference on a trial use basis.
+</div>
 
 #### External IGs
 
@@ -1922,11 +1924,15 @@ When assigning values to an instance, the `(exactly)` modifier has no meaning an
   * recordedDate = "2013-06-08T09:57:34.2112Z"
   ```
 
+{%include tu-div.html%}
+
 * Assignment of an integer64 (note: this datatype was introduced in FHIR v4.2.0): 
 
   ```
   * extension[my-extension].valueInteger64 = 1234567890
   ```
+
+</div>
 
 ##### Assignments with the Coding Data Type
 
@@ -2189,6 +2195,8 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
 ##### Assignments with the CodeableReference Data Type
 
+{%include tu-div.html%}
+
 The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly. Making use of CodeableReference involves no new FSH syntax.
 
 **Examples:**
@@ -2217,13 +2225,15 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   * code.reference = Reference(NaturalLatexSubstanceDefinitionExample)
   ```
 
+</div>
+
 #### Binding Rules
 
 Binding is the process of associating a coded element with a set of possible values. The syntaxes to bind a value set, or alter an inherited binding, use the reserved word `from`:
 
 <pre><code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code></pre>
 
-The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1). In FHIR R5, CodeableReference is also bindable.
+The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1). In FHIR R5, <span style="background-color: #fff5e6;">{%include tu.html%} CodeableReference</span> is also bindable.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required. If strength is not specified, a required binding is assumed.
 
@@ -2927,11 +2937,15 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   * onset[x] only Age or AgeRange or DateRange
   ```
 
+{%include tu-div.html%}
+
 * Restrict value[x] to the integer64 type (note: this datatype was introduced in FHIR v4.2.0):
 
   ```
   * value[x] only integer64
   ```
+
+</div>
 
 * Restrict Observation.performer (nominally Reference(Practitioner \| PractitionerRole \| Organization \| CareTeam \| Patient \| RelatedPerson)) to allow only Practitioner:
 
