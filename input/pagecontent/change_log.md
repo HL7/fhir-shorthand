@@ -1,6 +1,6 @@
 ### FHIR Shorthand 3.0.0-ballot (HL7 Mixed Normative / Trial Use Ballot 1)
 
-The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following changes as **NORMATIVE** features. These features have been thoroughly tested by the community after being introduced as trial use in FHIR Shorthand 2.0.0 and are not expected to change in the future.
+The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following changes as **NORMATIVE** features. These features have been thoroughly tested by the community after being introduced as trial use in FHIR Shorthand 2.0.0 and are expected to remain stable in the future.
 
 * Parameterized rule sets ([3.5.11.2](reference.html#parameterized-rule-sets), [3.6.11.2](reference.html#inserting-parameterized-rule-sets))
 * Indented rules ([3.6.1](reference.html#indented-rules))
