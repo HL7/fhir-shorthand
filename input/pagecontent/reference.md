@@ -78,7 +78,7 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{card}` | A [cardinality expression](#cardinality-rules) |  `0..1` |
 | `{code}`  | A code | `#active` |
 | `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
-| `{decimal}` | A decimal number | `124.0` |
+| `{decimal}` | A decimal number, optionally including an exponent | `124.0` <br/> `58.3E-5` |
 | `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) or [FHIR resource type](https://www.hl7.org/fhir/resourcelist.html) defined in the project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
 | `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html) or [FHIR resource types](https://www.hl7.org/fhir/resourcelist.html) defined in the project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
