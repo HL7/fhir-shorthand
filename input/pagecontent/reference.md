@@ -3015,5 +3015,3 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 The latest version of the parser grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0-beta.2/antlr/src/main/antlr/FSH.g4).
 
 The latest version of the lexer grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0-beta.2/antlr/src/main/antlr/FSHLexer.g4).
-
-Both are implemented in SUSHI `v3.0.0-beta.2` and included as part of the released version of SUSHI, which is available through [npm](https://www.npmjs.com/package/fsh-sushi/v/3.0.0-beta.2) and on [GitHub](https://github.com/FHIR/sushi/releases/tag/v3.0.0-beta.2).
