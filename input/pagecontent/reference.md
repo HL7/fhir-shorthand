@@ -2687,6 +2687,10 @@ To insert a parameterized rule set, use the rule set name with a list of one or 
 
 As indicated, the list of values is enclosed with parentheses `()` and separated by commas `,`. If you need to put literal `)` or `,` characters inside values, escape them with a backslash: `\)` and `\,`, respectively. White space separating values is optional, and removed before the value is applied to the rule set definition.
 
+{%include tu-div.html%}
+Alternatively, a parameter value may be surrounded by double square brackets `[[` `]]`. Literal `)` and `,` characters within the double square brackets do not need to be escaped with a backslash, unless appearing after `]]` characters. Note that the full value must be surrounded with double square brackets in order for this type of processing to occur.
+</div>
+
 The values provided are substituted into the named rule set to create the rules that will be applied. The number of values provided must match the number of parameters specified in the rule set definition.
 
 Any FSH syntax errors that arise as a result of the value substitution are handled the same way as FSH syntax errors in the declaration of a rule set without parameters. The value substitution is performed without checking the types of the values being substituted or the semantic validity of the resulting rules. Any invalid rules resulting from inserting a parameterized rule set will be detected at the same time as invalid rules resulting from inserting a simple rule set.
@@ -2729,6 +2733,42 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   * name[2].family = "Smith"
   // more rules
   ```
+
+{%include tu-div.html%}
+* Use the parameterized rule set, Variable, to add variable definitions to an instance of TestScript:
+
+  ```
+  RuleSet: Variable(name, expression)
+  * variable[+].name = "{name}"
+  * variable[=].expression = "{expression}"
+  ```
+
+  ```
+  Instance: MyTest
+  InstanceOf: TestScript
+  Title: "My Test Script"
+  Description: "A small test with a few FHIRPath expressions"
+  // some rules
+  * insert Variable( firstObservation, [[component.all(valueSampledData.exists())]] )
+  * insert Variable (testResponse, [[resource.repeat(item).answer.value.extension.value.aggregate($this+$total,0)]])
+  // more rules
+  ```
+
+  When the rule set is expanded and soft indices are resolved, this is equivalent to:
+
+  ```
+  Instance: MyTest
+  InstanceOf: TestScript
+  Title: "My Test Script"
+  Description: "A small test with a few FHIRPath expressions"
+  // some rules
+  * variable[0].name = "firstObservation"
+  * variable[0].expression = "component.all(valueSampledData.exists())"
+  * variable[1].name = "testResponse"
+  * variable[1].expression = "resource.repeat(item).answer.value.extension.value.aggregate($this+$total,0)"
+  // more rules
+  ```
+</div>
 
 ##### Inserting Rule Sets with Path Context
 
