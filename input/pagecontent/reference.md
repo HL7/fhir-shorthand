@@ -785,7 +785,7 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 | [Local Code](#local-code-rules)                                    |       | Y           |           |          |           |         |         |         |          | Y        |           |
 | [Mapping](#mapping-rules)                                          |       |             |           |          |           |         | Y       |         |          | Y        |           |
 | [Obeys](#obeys-rules)                                              |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
-| [Path](#path-rules)                                                |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
+| [Path](#path-rules)                                                |       |             | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        |           |
 | [Type](#type-rules)                                                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
 {: .grid }
 
@@ -2871,13 +2871,16 @@ The referenced invariant and its properties MUST be declared somewhere within th
 
 #### Path Rules
 
-Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
+Path rules are used to set the context for subsequent [indented rules](#indented-rules).
 
 ```
 * <element>
 ```
 
-A path rule has no impact on the element it refers to. The only purpose of the path rule is to set context.
+{%include tu-div.html%}
+Path rules can also be used to include optional fixed values of a path in an Instance and indicate the order for slices to appear in an Instance. Path rules have no impact on all other FSH entity types; the only purpose of the path rule on those entities is to set context.
+</div>
+
 
 **Examples:**
 
@@ -2888,6 +2891,38 @@ A path rule has no impact on the element it refers to. The only purpose of the p
     * given MS
     * family MS
   ```
+
+{%include tu-div.html%}
+* Include optional fixed values of a path in an Instance:
+
+  Given a profile where name.given is optional and has a fixed value, such as:
+
+  ```
+  * name.given = "Doe"
+  ```
+
+  an Instance of that profile can include the fixed value "Doe" by including the following path rule:
+
+  ```
+  * name.given
+  ```
+
+* Indicate the order for slices to appear in an Instance:
+
+  Given a profile that has a required "lab" slice on category, such as:
+
+  ```
+  * category contains lab 1..1
+  * category[lab] = $OBSCAT#laboratory
+  ```
+
+  an Instance of that profile can specify that the "lab" slice should come before other values on category by including the following path rule before other rules:
+
+  ```
+  * category[lab]
+  * category[+] = $EX#example
+  ```
+</div>
 
 #### Type Rules
 
