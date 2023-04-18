@@ -563,6 +563,8 @@ FHIR allows lists in profiles and extensions to be compartmentalized into sublis
 
 To access a slice of a slice (a resliced array), follow the first pair of brackets with a second pair containing the resliced slice name.
 
+Since slices are sublists, a sliced array path technically points to the *first* item in the sublist (e.g., index 0 of the slice's sublist). Other items in the sublist can be accessed by appending square-bracketed integer indices (e.g., `[1]`) or soft indices (e.g., `[+]`) to the end of the sliced array path. In this case, indices are relative to the first item in the slice.
+
 **Examples:**
 
 * Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
@@ -577,6 +579,14 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
   component[respirationScore][oneMinuteScore].code
 
   component[respirationScore][fiveMinuteScore].code
+  ```
+
+* Paths to the resources of the second and third entries in the medications slice of a profiled Bundle:
+
+  ```
+  entry[medications][1].resource
+
+  entry[medications][+].resource
   ```
 
 #### Extension Paths
