@@ -2878,7 +2878,7 @@ Path rules are used to set the context for subsequent [indented rules](#indented
 ```
 
 {%include tu-div.html%}
-Path rules can also be used to include optional fixed values of a path in an Instance and indicate the order for slices to appear in an Instance. Path rules have no impact on all other FSH entity types; the only purpose of the path rule on those entities is to set context.
+Path rules can also be used to indicate the order for slices to appear in an Instance and to include optional fixed values of a path in an Instance. Path rules have no impact on all other FSH entity types; the only purpose of the path rule on those entities is to set context.
 </div>
 
 
@@ -2893,20 +2893,6 @@ Path rules can also be used to include optional fixed values of a path in an Ins
   ```
 
 {%include tu-div.html%}
-* Include optional fixed values of a path in an Instance:
-
-  Given a profile where name.family is optional and has a fixed value, such as:
-
-  ```
-  * name.family = "Smith"
-  ```
-
-  an Instance of that profile can include the fixed value "Smith" by including the following path rule:
-
-  ```
-  * name.family
-  ```
-
 * Indicate the order for slices to appear in an Instance:
 
   Given a profile that has a required "lab" slice on category, such as:
@@ -2922,6 +2908,34 @@ Path rules can also be used to include optional fixed values of a path in an Ins
   * category[lab]
   * category[+] = $EX#example
   ```
+
+* Include optional fixed values of a path in an Instance:
+
+  * Given a profile where name.family is optional and has a fixed value, such as:
+
+    ```
+    * name.family = "Smith"
+    ```
+
+    an Instance of that profile can include the fixed value "Smith" by including the following path rule:
+
+    ```
+    * name.family
+    ```
+
+  * Given a profile with an optional element that has child elements with required fixed values, such as:
+
+    ```
+    * name 0..*
+    * name.family 1..1
+    * name.family = "Smith"
+    ```
+
+    an Instance of that profile can include a name with the fixed value "Smith" by including the following path rule:
+
+    ```
+    * name
+    ```
 </div>
 
 #### Type Rules
