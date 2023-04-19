@@ -2895,16 +2895,16 @@ Path rules can also be used to include optional fixed values of a path in an Ins
 {%include tu-div.html%}
 * Include optional fixed values of a path in an Instance:
 
-  Given a profile where name.given is optional and has a fixed value, such as:
+  Given a profile where name.family is optional and has a fixed value, such as:
 
   ```
-  * name.given = "Doe"
+  * name.family = "Smith"
   ```
 
-  an Instance of that profile can include the fixed value "Doe" by including the following path rule:
+  an Instance of that profile can include the fixed value "Smith" by including the following path rule:
 
   ```
-  * name.given
+  * name.family
   ```
 
 * Indicate the order for slices to appear in an Instance:
