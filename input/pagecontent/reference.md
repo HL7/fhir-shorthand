@@ -563,6 +563,8 @@ FHIR allows lists in profiles and extensions to be compartmentalized into sublis
 
 To access a slice of a slice (a resliced array), follow the first pair of brackets with a second pair containing the resliced slice name.
 
+Since slices are sublists, a sliced array path technically points to the *first* item in the sublist (e.g., index 0 of the slice's sublist). Other items in the sublist can be accessed by appending square-bracketed integer indices (e.g., `[1]`) or soft indices (e.g., `[+]`) to the end of the sliced array path. In this case, indices are relative to the first item in the slice.
+
 **Examples:**
 
 * Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
@@ -577,6 +579,14 @@ To access a slice of a slice (a resliced array), follow the first pair of bracke
   component[respirationScore][oneMinuteScore].code
 
   component[respirationScore][fiveMinuteScore].code
+  ```
+
+* Paths to the resources of the second and third entries in the medications slice of a profiled Bundle:
+
+  ```
+  entry[medications][1].resource
+
+  entry[medications][+].resource
   ```
 
 #### Extension Paths
@@ -785,7 +795,7 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 | [Local Code](#local-code-rules)                                    |       | Y           |           |          |           |         |         |         |          | Y        |           |
 | [Mapping](#mapping-rules)                                          |       |             |           |          |           |         | Y       |         |          | Y        |           |
 | [Obeys](#obeys-rules)                                              |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
-| [Path](#path-rules)                                                |       |             | Y         | Y        |           | Y       |         | Y       | Y        | Y        |           |
+| [Path](#path-rules)                                                |       |             | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        |           |
 | [Type](#type-rules)                                                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
 {: .grid }
 
@@ -2913,13 +2923,16 @@ The referenced invariant and its properties MUST be declared somewhere within th
 
 #### Path Rules
 
-Path rules are only used to set the context for subsequent [indented rules](#indented-rules).
+Path rules are used to set the context for subsequent [indented rules](#indented-rules).
 
 ```
 * <element>
 ```
 
-A path rule has no impact on the element it refers to. The only purpose of the path rule is to set context.
+{%include tu-div.html%}
+Path rules can also be used to indicate the order for slices to appear in an Instance and to include optional fixed values of a path in an Instance. Path rules have no impact on all other FSH entity types; the only purpose of the path rule on those entities is to set context.
+</div>
+
 
 **Examples:**
 
@@ -2930,6 +2943,52 @@ A path rule has no impact on the element it refers to. The only purpose of the p
     * given MS
     * family MS
   ```
+
+{%include tu-div.html%}
+* Indicate the order for slices to appear in an Instance:
+
+  Given a profile that has a required "lab" slice on category, such as:
+
+  ```
+  * category contains lab 1..1
+  * category[lab] = $OBSCAT#laboratory
+  ```
+
+  an Instance of that profile can specify that the "lab" slice should come before other values on category by including the following path rule before other rules:
+
+  ```
+  * category[lab]
+  * category[+] = $EX#example
+  ```
+
+* Include optional fixed values of a path in an Instance:
+
+  * Given a profile where name.family is optional and has a fixed value, such as:
+
+    ```
+    * name.family = "Smith"
+    ```
+
+    an Instance of that profile can include the fixed value "Smith" by including the following path rule:
+
+    ```
+    * name.family
+    ```
+
+  * Given a profile with an optional element that has child elements with required fixed values, such as:
+
+    ```
+    * name 0..*
+    * name.family 1..1
+    * name.family = "Smith"
+    ```
+
+    an Instance of that profile can include a name with the fixed value "Smith" by including the following path rule:
+
+    ```
+    * name
+    ```
+</div>
 
 #### Type Rules
 
