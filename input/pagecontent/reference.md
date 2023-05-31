@@ -737,6 +737,7 @@ The following keywords (case-sensitive) are defined:
 
 | Keyword | Purpose | Data Type |
 |----------|---------|---------|
+| Context {%include tu.html%} | Specifies context for extensions | FHIRPath strings and element paths |
 | Description | Provides a human-readable description | string or markdown |
 | Expression | Provides a FHIR path expression in an invariant | FHIRPath string |
 | Id | Provides an identifier for an item | id |
@@ -756,19 +757,19 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 <span class="caption" id="t6">Table 6. Relationships between declarations and keywords in FSH</span>
 
-|         Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
-|----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
-[Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
-[Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
-[Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
-[Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-[Logical](#defining-logical-models)      |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Mapping](#defining-mappings)            |  S  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
-[Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
-[Resource](#defining-resources)          |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
-[Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
+|         Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression | Context {%include tu.html%}|
+|----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|---------|
+[Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |         |
+[Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |         |
+[Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |    S    |
+[Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |         |
+[Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |         |
+[Logical](#defining-logical-models)      |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |         |
+[Mapping](#defining-mappings)            |  S  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |         |
+[Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |         |
+[Resource](#defining-resources)          |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |         |
+[Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |         |
+[Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |         |
 {: .grid }
 
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
@@ -998,6 +999,72 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Description:    "As of 2019, certain US states only allow M or F on birth certificates."
   * valueCode from BinaryBirthSexValueSet (required)
   ```
+
+{%include tu-div.html%}
+The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/defining-extensions.html#context) of an Extension. The value should be a quoted string when specifying a `fhirpath` context. The value should be an unquoted path that includes the name, id, or URL of the resource that contains the element being set as the context when specifying an `element` or `extension` context. Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is recommended.
+
+**Examples:**
+
+* Defining an extension with a `fhirpath` context
+
+  ```
+  Extension: MyExtension
+  Context: "(Condition | Observation).code"
+  ```
+
+* Defining an extension with an `element` context on a core FHIR resource
+
+  ```
+  Extension: MyExtension
+  Context: Patient.contact.telecom
+  ```
+
+* Defining an extension with an `element` context on a Profile defined in FSH
+
+  ```
+  Profile: MyPatient
+  Parent: Patient
+  // rules on the Profile omitted
+
+  Extension: MyExtension
+  Context: MyPatient.contact.telecom
+  ```
+
+* Defining an extension with an `element` context that references the element's containing resource by URL. Note that the path uses square brackets to refer to a slice.
+
+  ```
+  Extension: MyExtension
+  Context: http://hl7.org/fhir/us/core/StructureDefinition/us-core-careplan#category[AssessPlan].coding
+  ```
+
+* Defining an extension with an `extension` context
+
+  ```
+  Extension: MyExtension
+  Context: http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
+  // The extension could also be referenced by id:
+  // Context: capabilitystatement-search-parameter-combination
+  ```
+
+* Defining an extension with an `extension` context, where the context is part of a complex extension
+
+  ```
+  Extension: MyExtension
+  Context: http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination#required
+  // For a deeply-nested complex extension, separate each included extension's URL with a . character:
+  // Context: http://example.org/StructureDefinition/some-complex-extension#required.use
+  ```
+  
+* Defining an extension with an `extension` context, referencing the extension by name or id
+
+  ```
+  Extension: MyExtension
+  Context: capabilitystatement-search-parameter-combination#required
+  // This context could also be specified as a FSH path, starting with the extension's name or id:
+  // Context: capabilitystatement-search-parameter-combination.extension[required]
+  ```
+
+</div>
 
 #### Defining Instances
 
