@@ -1001,7 +1001,20 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   ```
 
 {%include tu-div.html%}
-The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/defining-extensions.html#context) of an Extension. The value should be a quoted string when specifying a `fhirpath` context. The value should be an unquoted path that includes the name, id, or URL of the resource that contains the element being set as the context when specifying an `element` or `extension` context. Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is recommended.
+The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/defining-extensions.html#context) of an Extension. The value should be a quoted string when specifying a `fhirpath` context. The value should be an unquoted path that includes the name, id, or URL of the resource that contains the element being set as the context when specifying an `element` or `extension` context. Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is recommended. The following is a list of allowed formats for contexts:
+
+Specifying a `fhirpath` context:
+  <pre><code>Context: "{fhirpath expression}"</code></pre>
+
+Specifying an `element` or `extension` context using a StructureDefinition's name or id:
+  <pre><code>Context: {StructureDefinition name or id}<span class="optional">.{FSH path}</span></code></pre>
+
+Specifying an `element` or `extension` context for using a StructureDefinition's URL:
+  <pre><code>Context: {StructureDefinition url}<span class="optional">#{FSH path}</span></code></pre>
+An alias may be used in place of the URL.
+
+Specifying multiple contexts as a comma-separated list:
+  <pre><code>Context: {context 1}<span class="optional">, {context 2}, {context 3}...</span></code></pre>
 
 **Examples:**
 
@@ -1030,11 +1043,14 @@ The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/d
   Context: MyPatient.contact.telecom
   ```
 
-* Defining an extension with an `element` context that references the element's containing resource by URL. Note that the path uses square brackets to refer to a slice.
+* Defining an extension with an `element` context that references an element whose path includes a slice. Note that the path uses square brackets to refer to a slice.
 
   ```
   Extension: MyExtension
-  Context: http://hl7.org/fhir/us/core/StructureDefinition/us-core-careplan#category[AssessPlan].coding
+  Context: USCoreCarePlanProfile.category[AssessPlan].coding
+  // You can also use the id or the URL
+  // Context: us-core-careplan.category[AssessPlan].coding
+  // Context: http://hl7.org/fhir/us/core/StructureDefinition/us-core-careplan#category[AssessPlan].coding
   ```
 
 * Defining an extension with an `extension` context
@@ -1042,26 +1058,43 @@ The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/d
   ```
   Extension: MyExtension
   Context: http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
-  // The extension could also be referenced by id:
+  // The extension could also be referenced by name or id:
+  // Context: CSSearchParameterCombination
   // Context: capabilitystatement-search-parameter-combination
   ```
 
-* Defining an extension with an `extension` context, where the context is part of a complex extension
+* Defining an extension with an `extension` context that is part of a complex extension, referencing the extension by name or id
 
   ```
   Extension: MyExtension
-  Context: http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination#required
-  // For a deeply-nested complex extension, separate each included extension's URL with a . character:
-  // Context: http://example.org/StructureDefinition/some-complex-extension#required.use
-  ```
-  
-* Defining an extension with an `extension` context, referencing the extension by name or id
-
-  ```
-  Extension: MyExtension
-  Context: capabilitystatement-search-parameter-combination#required
-  // This context could also be specified as a FSH path, starting with the extension's name or id:
+  Context: CSSearchParameterCombination.extension[required]
+  // Using the id also works:
   // Context: capabilitystatement-search-parameter-combination.extension[required]
+  ```
+
+* Defining an extension with an `extension` context that is part of a complex extension, referencing the extension by url
+
+  ```
+  Extension: MyExtension
+  Context: http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination#extension[required]
+  ```
+
+* Defining an extension with an `extension` context by using an alias:
+
+  ```
+  Alias: $COMBINATION = http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
+  
+  Extension: MyExtension
+  Context: $COMBINATION#extension[required]
+  ```
+
+* Defining multiple contexts and using an alias:
+
+  ```
+  Alias: $COMBINATION = http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
+  
+  Extension: MyExtension
+  Context: $COMBINATION#extension[required], $COMBINATION#extension[optional], "(Condition | Observation).code"
   ```
 
 </div>
