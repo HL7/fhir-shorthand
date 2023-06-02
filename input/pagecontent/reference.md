@@ -962,6 +962,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Id:   us-core-birthsex
   Title:  "US Core Birth Sex Extension"
   Description: "A code classifying the person's sex assigned at birth as specified by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."
+  Context: Patient
   // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
   * value[x] only code
   * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
@@ -974,6 +975,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Id:             us-core-ethnicity
   Title:          "US Core Ethnicity Extension"
   Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. The ethnicity codes used to represent these concepts are based upon the [CDC ethnicity and Ethnicity Code Set Version 1.0](http://www.cdc.gov/phin/resources/vocabulary/index.html) which includes over 900 concepts for representing race and ethnicity of which 43 reference ethnicity.  The ethnicity concepts are grouped by and pre-mapped to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."
+  Context: Patient, RelatedPerson, Person, Practitioner, FamilyMemberHistory
   // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
   * extension contains
       ombCategory 0..1 MS and
@@ -1001,7 +1003,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   ```
 
 {%include tu-div.html%}
-The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/defining-extensions.html#context) of an Extension. The value should be a quoted string when specifying a `fhirpath` context. The value should be an unquoted path that includes the name, id, or URL of the resource that contains the element being set as the context when specifying an `element` or `extension` context. Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is recommended. The following is a list of allowed formats for contexts:
+The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string . When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
 
 Specifying a `fhirpath` context:
   <pre><code>Context: "{fhirpath expression}"</code></pre>
