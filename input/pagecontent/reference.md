@@ -1089,7 +1089,7 @@ Specifying multiple contexts as a comma-separated list:
 
   ```
   Alias: $COMBINATION = http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
-
+  
   Extension: MyExtension
   Context: $COMBINATION#extension[required]
   ```
@@ -1098,7 +1098,7 @@ Specifying multiple contexts as a comma-separated list:
 
   ```
   Alias: $COMBINATION = http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
-
+  
   Extension: MyExtension
   Context: $COMBINATION#extension[required], $COMBINATION#extension[optional], "(Condition | Observation).code"
   ```
