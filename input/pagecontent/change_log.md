@@ -13,6 +13,7 @@ The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) int
 
 The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following substantive changes as **TRIAL USE** features. Many of these features have been tested by the community, but some may undergo changes in the future.
 
+* Specifying Extension context using the Context keyword ([3.5.4](reference.html#defining-extensions))
 * Inserting parameterized rule sets with values in double square brackets ([3.6.11.2](reference.html#inserting-parameterized-rule-sets))
 * Path rules can be used to add optional fixed values and set slice order on Instances ([3.6.15](reference.html#path-rules))
 

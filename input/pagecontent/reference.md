@@ -737,6 +737,7 @@ The following keywords (case-sensitive) are defined:
 
 | Keyword | Purpose | Data Type |
 |----------|---------|---------|
+| Context {%include tu.html%} | Specifies context for extensions | FHIRPath strings and element paths |
 | Description | Provides a human-readable description | string or markdown |
 | Expression | Provides a FHIR path expression in an invariant | FHIRPath string |
 | Id | Provides an identifier for an item | id |
@@ -756,19 +757,19 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 <span class="caption" id="t6">Table 6. Relationships between declarations and keywords in FSH</span>
 
-|         Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression |
-|----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|
-[Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |
-[Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
-[Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |
-[Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |
-[Logical](#defining-logical-models)      |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Mapping](#defining-mappings)            |  S  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |
-[Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |
-[Resource](#defining-resources)          |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |
-[Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |
-[Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |
+|         Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression | Context {%include tu.html%}|
+|----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|---------|
+[Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |         |
+[Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |         |
+[Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |    S    |
+[Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |         |
+[Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |         |
+[Logical](#defining-logical-models)      |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |         |
+[Mapping](#defining-mappings)            |  S  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |         |
+[Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |         |
+[Resource](#defining-resources)          |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |         |
+[Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |         |
+[Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |         |
 {: .grid }
 
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
@@ -961,6 +962,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Id:   us-core-birthsex
   Title:  "US Core Birth Sex Extension"
   Description: "A code classifying the person's sex assigned at birth as specified by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."
+  Context: Patient
   // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
   * value[x] only code
   * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
@@ -973,6 +975,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Id:             us-core-ethnicity
   Title:          "US Core Ethnicity Extension"
   Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. The ethnicity codes used to represent these concepts are based upon the [CDC ethnicity and Ethnicity Code Set Version 1.0](http://www.cdc.gov/phin/resources/vocabulary/index.html) which includes over 900 concepts for representing race and ethnicity of which 43 reference ethnicity.  The ethnicity concepts are grouped by and pre-mapped to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."
+  Context: Patient, RelatedPerson, Person, Practitioner, FamilyMemberHistory
   // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
   * extension contains
       ombCategory 0..1 MS and
@@ -998,6 +1001,107 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Description:    "As of 2019, certain US states only allow M or F on birth certificates."
   * valueCode from BinaryBirthSexValueSet (required)
   ```
+
+{%include tu-div.html%}
+The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string . When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
+
+Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is recommended. The following is a list of allowed formats for contexts:
+
+Specifying a `fhirpath` context:
+  <pre><code>Context: "{fhirpath expression}"</code></pre>
+
+Specifying an `element` or `extension` context using a StructureDefinition's name or id:
+  <pre><code>Context: {StructureDefinition name or id}<span class="optional">.{FSH path}</span></code></pre>
+
+Specifying an `element` or `extension` context for using a StructureDefinition's URL:
+  <pre><code>Context: {StructureDefinition url}<span class="optional">#{FSH path}</span></code></pre>
+An alias may be used in place of the URL.
+
+Specifying multiple contexts as a comma-separated list:
+  <pre><code>Context: {context 1}<span class="optional">, {context 2}, {context 3}...</span></code></pre>
+
+**Examples:**
+
+* Defining an extension with a `fhirpath` context
+
+  ```
+  Extension: MyExtension
+  Context: "(Condition | Observation).code"
+  ```
+
+* Defining an extension with an `element` context on a core FHIR resource
+
+  ```
+  Extension: MyExtension
+  Context: Patient.contact.telecom
+  ```
+
+* Defining an extension with an `element` context on a Profile defined in FSH
+
+  ```
+  Profile: MyPatient
+  Parent: Patient
+  // rules on the Profile omitted
+
+  Extension: MyExtension
+  Context: MyPatient.contact.telecom
+  ```
+
+* Defining an extension with an `element` context that references an element whose path includes a slice. Note that the path uses square brackets to refer to a slice.
+
+  ```
+  Extension: MyExtension
+  Context: USCoreCarePlanProfile.category[AssessPlan].coding
+  // You can also use the id or the URL
+  // Context: us-core-careplan.category[AssessPlan].coding
+  // Context: http://hl7.org/fhir/us/core/StructureDefinition/us-core-careplan#category[AssessPlan].coding
+  ```
+
+* Defining an extension with an `extension` context
+
+  ```
+  Extension: MyExtension
+  Context: http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
+  // The extension could also be referenced by name or id:
+  // Context: CSSearchParameterCombination
+  // Context: capabilitystatement-search-parameter-combination
+  ```
+
+* Defining an extension with an `extension` context that is part of a complex extension, referencing the extension by name or id
+
+  ```
+  Extension: MyExtension
+  Context: CSSearchParameterCombination.extension[required]
+  // Using the id also works:
+  // Context: capabilitystatement-search-parameter-combination.extension[required]
+  ```
+
+* Defining an extension with an `extension` context that is part of a complex extension, referencing the extension by url
+
+  ```
+  Extension: MyExtension
+  Context: http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination#extension[required]
+  ```
+
+* Defining an extension with an `extension` context by using an alias:
+
+  ```
+  Alias: $COMBINATION = http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
+  
+  Extension: MyExtension
+  Context: $COMBINATION#extension[required]
+  ```
+
+* Defining multiple contexts and using an alias:
+
+  ```
+  Alias: $COMBINATION = http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination
+  
+  Extension: MyExtension
+  Context: $COMBINATION#extension[required], $COMBINATION#extension[optional], "(Condition | Observation).code"
+  ```
+
+</div>
 
 #### Defining Instances
 
