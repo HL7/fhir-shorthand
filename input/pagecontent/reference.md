@@ -84,7 +84,7 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | One of the [FSH flags](#flag-rules) |  `MS` |
 | `{flag(s)}` | One or more flags, separated by whitespace | `MS SU ?!` |
-| `{Invariant}` | The id of an Invariant | `us-core-8` |
+| `{Invariant}` | The id of an Invariant | `us-core-6` |
 | `{Resource}` | The name, id, or canonical URL (or alias) of any Resource defined in the project's FHIR version | `Condition` |
 | `{Resource/Profile}` | The name, id, or canonical URL (or alias) of any Resource or Profile | `Condition` <br/> `http://hl7.org/fhir/us/core/StructureDefinition/us-core-location` |
 | `{RuleSet}` | The name of a RuleSet | `MyRuleSet` |
@@ -757,22 +757,24 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 <span class="caption" id="t6">Table 6. Relationships between declarations and keywords in FSH</span>
 
-|         Keyword →<br/>Declaration ↓ | Id | Description | Title | Parent | InstanceOf | Usage | Source | Target | Severity | XPath | Expression | Context {%include tu.html%}|
-|----------------------------------------|-----|-------------|-------|--------|------------|-------|--------|--------|----------|-------|------------|---------|
-[Alias](#defining-aliases)               |     |             |       |        |            |       |        |        |          |       |            |         |
-[Code System](#defining-code-systems)    |  S  |     S       |   S   |        |            |       |        |        |          |       |            |         |
-[Extension](#defining-extensions)        |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |    S    |
-[Instance](#defining-instances)          |     |     S       |   S   |        |     R      |   O   |        |        |          |       |            |         |
-[Invariant](#defining-invariants)        |     |     R       |       |        |            |       |        |        |    R     |    O  |    O       |         |
-[Logical](#defining-logical-models)      |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |         |
-[Mapping](#defining-mappings)            |  S  |     S       |   S   |        |            |       |   R    |   R    |          |       |            |         |
-[Profile](#defining-profiles)            |  S  |     S       |   S   |   R    |            |       |        |        |          |       |            |         |
-[Resource](#defining-resources)          |  S  |     S       |   S   |   O    |            |       |        |        |          |       |            |         |
-[Rule Set](#defining-rule-sets)          |     |             |       |        |            |       |        |        |          |       |            |         |
-[Value Set](#defining-value-sets)        |  S  |     S       |   S   |        |            |       |        |        |          |       |            |         |
+|            Keyword →<br/>Declaration ↓ | Id  | Description   | Title | Parent | InstanceOf | Usage | Source | Target | Severity      | Expression | XPath | Context {%include tu.html%}|
+|----------------------------------------|-----|---------------|-------|--------|------------|-------|--------|--------|---------------|------------|-------|---------|
+[Alias](#defining-aliases)               |     |               |       |        |            |       |        |        |               |            |       |         |
+[Code System](#defining-code-systems)    |  S  |     S         |   S   |        |            |       |        |        |               |            |       |         |
+[Extension](#defining-extensions)        |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |    S    |
+[Instance](#defining-instances)          |     |     S         |   S   |        |     R      |   O   |        |        |               |            |       |         |
+[Invariant](#defining-invariants)        |     | S<sup>*</sup> |       |        |            |       |        |        | O<sup>*</sup> |     O      |   O   |         |
+[Logical](#defining-logical-models)      |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |
+[Mapping](#defining-mappings)            |  S  |     S         |   S   |        |            |       |   R    |   R    |               |            |       |         |
+[Profile](#defining-profiles)            |  S  |     S         |   S   |   R    |            |       |        |        |               |            |       |         |
+[Resource](#defining-resources)          |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |
+[Rule Set](#defining-rule-sets)          |     |               |       |        |            |       |        |        |               |            |       |         |
+[Value Set](#defining-value-sets)        |  S  |     S         |   S   |        |            |       |        |        |               |            |       |         |
 {: .grid }
 
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
+
+{%include tu-span.html%} <sup>*</sup>If not specified, a corresponding assignment rule (for `human` or `severity`) must specify the value instead.</span>
 
 ##### Rule Statements
 
@@ -781,23 +783,23 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 <span class="caption" id="t7">Table 7. Relationships between FSH items and FSH rules</span>
 
 |              Item →<br/>Rule Type ↓ | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
-|--------------------------------------------------------------------|-------|-------------|-----------|----------|-----------|---------|---------|---------|----------|----------|-----------|
-| [Add Element](#add-element-rules)                                  |       |             |           |          |           | Y       |         |         | Y        | Y        |           |
-| [Assignment](#assignment-rules)                                    |       | C           | Y         | Y        |           | C       |         | Y       | C        | Y        | C         |
-| [Binding](#binding-rules)                                          |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
-| [Cardinality](#cardinality-rules)                                  |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
-| [Contains (inline extensions)](#contains-rules-for-extensions)     |       |             | Y         |          |           |         |         |         |          | Y        |           |
-| [Contains (standalone extensions)](#contains-rules-for-extensions) |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
-| [Contains (slicing)](#contains-rules-for-slicing)                  |       |             | Y         |          |           |         |         | Y       |          | Y        |           |
-| [Exclude](#exclude-rules)                                          |       |             |           |          |           |         |         |         |          | Y        | Y         |
-| [Flag](#flag-rules)                                                |       |             | Y         |          |           | L       |         | Y       | L        | Y        |           |
-| [Include](#include-rules)                                          |       |             |           |          |           |         |         |         |          | Y        | Y         |
-| [Insert](#insert-rules)                                            |       | Y           | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        | Y         |
-| [Local Code](#local-code-rules)                                    |       | Y           |           |          |           |         |         |         |          | Y        |           |
-| [Mapping](#mapping-rules)                                          |       |             |           |          |           |         | Y       |         |          | Y        |           |
-| [Obeys](#obeys-rules)                                              |       |             | Y         |          |           | Y       |         | Y       | Y        | Y        |           |
-| [Path](#path-rules)                                                |       |             | Y         | Y        |           | Y       | Y       | Y       | Y        | Y        |           |
-| [Type](#type-rules)                                                |       |             | Y         |          |           | A       |         | Y       | A        | Y        |           |
+|--------------------------------------------------------------------|---|---|---|---|------------------------------------|---|---|---|---|---|---|
+| [Add Element](#add-element-rules)                                  |   |   |   |   |                                    | Y |   |   | Y | Y |   |
+| [Assignment](#assignment-rules)                                    |   | C | Y | Y | {%include tu-span.html%} Y </span> | C |   | Y | C | Y | C |
+| [Binding](#binding-rules)                                          |   |   | Y |   |                                    | A |   | Y | A | Y |   |
+| [Cardinality](#cardinality-rules)                                  |   |   | Y |   |                                    | A |   | Y | A | Y |   |
+| [Contains (inline extensions)](#contains-rules-for-extensions)     |   |   | Y |   |                                    |   |   |   |   | Y |   |
+| [Contains (standalone extensions)](#contains-rules-for-extensions) |   |   | Y |   |                                    |   |   | Y |   | Y |   |
+| [Contains (slicing)](#contains-rules-for-slicing)                  |   |   | Y |   |                                    |   |   | Y |   | Y |   |
+| [Exclude](#exclude-rules)                                          |   |   |   |   |                                    |   |   |   |   | Y | Y |
+| [Flag](#flag-rules)                                                |   |   | Y |   |                                    | L |   | Y | L | Y |   |
+| [Include](#include-rules)                                          |   |   |   |   |                                    |   |   |   |   | Y | Y |
+| [Insert](#insert-rules)                                            |   | Y | Y | Y | {%include tu-span.html%} Y </span> | Y | Y | Y | Y | Y | Y |
+| [Local Code](#local-code-rules)                                    |   | Y |   |   |                                    |   |   |   |   | Y |   |
+| [Mapping](#mapping-rules)                                          |   |   |   |   |                                    |   | Y |   |   | Y |   |
+| [Obeys](#obeys-rules)                                              |   |   | Y |   |                                    | Y |   | Y | Y | Y |   |
+| [Path](#path-rules)                                                |   |   | Y | Y | {%include tu-span.html%} Y </span> | Y | Y | Y | Y | Y |   |
+| [Type](#type-rules)                                                |   |   | Y |   |                                    | A |   | Y | A | Y |   |
 {: .grid }
 
 **KEY:** Y = Rule type MAY be used, L = All flags except must support (MS) are supported, C = Assignments apply only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
@@ -1230,30 +1232,48 @@ These conformance resources are created using FSH instance grammar. For example,
 
 #### Defining Invariants
 
-Invariants are defined using the declaration `Invariant`, with REQUIRED keywords `Description` and `Severity`, and OPTIONAL keywords `XPath` and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. An invariant definition cannot have rules. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
+Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>*</sup>, `Severity`<sup>*</sup>, `XPath` and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
-| Keyword | Usage | Corresponding element in ElementDefinition | Data Type | Required |
-|-------|------------|--------------|-------|----|
-| Invariant | Identifier for the invariant | constraint.key | id | yes |
-| Description | Human description of constraint | constraint.human | string  | yes |
-| Expression | FHIRPath expression of constraint | constraint.expression | FHIRPath string | no |
-| Severity | Either #error or #warning, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/R4/valueset-constraint-severity.html) | constraint.severity | code | yes |
-| XPath | XPath expression of constraint | constraint.xpath | XPath string | no |
+| Keyword | Usage | Corresponding element in <br/> ElementDefinition.constraint | Data Type | Required |
+|-------------|-----------------------------------|------------|-----------------|----------------|
+| Invariant   | Identifier for the invariant      | key        | id              | yes            |
+| Description | Human description of constraint   | human      | string          | no<sup>*</sup> |
+| Expression  | FHIRPath expression of constraint | expression | FHIRPath string | no             |
+| Severity    | Either #error or #warning, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/R4/valueset-constraint-severity.html) | severity | code | no<sup>*</sup> |
+| XPath       | XPath expression of constraint    | xpath      | XPath string    | no             |
 {: .grid }
+
+{%include tu-div.html%}
+Authors may also specify ElementDefinition.constraint elements via [assignment rules](#assignment-rules). This approach is particularly useful for specifying constraint extensions such as the [Best Practice](https://hl7.org/fhir/extensions/StructureDefinition-elementdefinition-bestpractice.html) extension. Invariant definitions also allow [path rules](#path-rules) and [insert rules](#insert-rules).
+
+<sup>*</sup>If the `Description` keyword is not specified, then the definition must contain an assignment rule for the `human` element. If the `Severity` keyword is not specified, then the definition must contain an assignment rule for the `severity` element.
+</div>
 
 **Example:**
 
-* Define an invariant found in US Core using FSH:
+* Define a simplified version of an invariant found in US Core using FSH Invariant keywords only:
 
   ```
-  Invariant:   us-core-8
+  Invariant:   us-core-6
   Description: "Patient.name.given or Patient.name.family or both SHALL be present"
-  Expression:  "family.exists() or given.exists()"
   Severity:    #error
+  Expression:  "family.exists() or given.exists()"
   XPath:       "f:given or f:family"
   ```
+
+{%include tu-div.html%}
+* Define a simplified version of an invariant found in US Core using FSH Invariant keywords and rules:
+
+  ```
+  Invariant:   us-core-6
+  Description: "Patient.name.given or Patient.name.family or both SHALL be present"
+  * severity = #error
+  * expression = "family.exists() or given.exists()"
+  * xpath = "f:given or f:family"
+  ```
+</div>
 
 #### Defining Logical Models
 
@@ -1979,7 +1999,7 @@ The left side of this expression follows the [FSH path grammar](#fsh-paths). The
 
 Assignment rules have two very different interpretations, depending on context:
 
-* In instances, assignment rules set the **value** of the target element. Note that whenever an element is accessed via a [caret path](#caret-paths), it is actually accessing the definitional instance (for example, the StructureDefinition of the profile). Therefore, assignments involving caret paths also set the **value** of the target element.
+* In instances {%include tu-span.html%} and invariants</span>, assignment rules set the **value** of the target element. Note that whenever an element is accessed via a [caret path](#caret-paths), it is actually accessing the definitional instance (for example, the StructureDefinition of the profile). Therefore, assignments involving caret paths also set the **value** of the target element.
 * Assignment rules in profiles and extensions establish **constraints** on instances conforming to the profile or extension. The requirement is expressed as a pattern of values that must be present in the instance. In this context, an assignment rule does not set the value of the element, but instead, establishes a **constraint** on that value.
 
 This is best illustrated by example. Consider the following assignment (assuming code is a CodeableConcept):
@@ -2347,7 +2367,7 @@ Binding is the process of associating a coded element with a set of possible val
 
 <pre><code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code></pre>
 
-The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1). In FHIR R5, <span style="background-color: #fff5e6;">{%include tu.html%} CodeableReference</span> is also bindable.
+The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1). In FHIR R5, {%include tu-span.html%} CodeableReference</span> is also bindable.
 
 The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required. If strength is not specified, a required binding is assumed.
 
