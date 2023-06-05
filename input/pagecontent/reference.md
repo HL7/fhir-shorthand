@@ -741,7 +741,7 @@ The following keywords (case-sensitive) are defined:
 | Description | Provides a human-readable description | string or markdown |
 | Expression | Provides a FHIR path expression in an invariant | FHIRPath string |
 | Id | Provides an identifier for an item | id |
-| InstanceOf | Names the profile or resource an instance instantiates | name or id or url |
+| InstanceOf | Names the profile, resource, or logical model<sup>*</sup> an instance instantiates | name or id or url |
 | Parent | Names the base definition for a profile or extension | name or id or url |
 | Severity | Specifies whether violation of an invariant represents an error or a warning | code |
 | Source | Provides the profile the mapping applies to | name |
@@ -750,6 +750,8 @@ The following keywords (case-sensitive) are defined:
 | Usage | Specifies how an instance is intended to be used in the IG | code |
 | XPath | Provides the XPath in an invariant | XPath string |
 {: .grid }
+
+<span style="background-color: #fff5e6;"><sup>*</sup> Defining instances of logical models in FSH is {%include tu.html%}.</span>
 
 In the above, `name` refers to a valid [item name](#item-names) and `id` to an [item identifier](#item-identifiers).
 
@@ -1107,17 +1109,17 @@ Specifying multiple contexts as a comma-separated list:
 
 #### Defining Instances
 
-Instances are defined using the declaration `Instance`, with the REQUIRED keyword `InstanceOf`, RECOMMENDED keywords `Title` and `Description`, and OPTIONAL keyword `Usage`. `InstanceOf` plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` MAY be the name, id, or url for any profile, resource, or complex datatype defined internally or externally.
+Instances are defined using the declaration `Instance`, with the REQUIRED keyword `InstanceOf`, RECOMMENDED keywords `Title` and `Description`, and OPTIONAL keyword `Usage`. `InstanceOf` plays a role analogous to the `Parent` of a profile. The value of `InstanceOf` MAY be the name, id, or url for any profile, resource, {%include tu-span.html%} logical model</span>, or complex datatype defined internally or externally.
 
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
-* `Usage: #example` (default) means the instance is intended as an illustration of a profile, and will be presented on the Examples tab for the corresponding profile.
+* `Usage: #example` (default) means the instance is intended as an illustration of a profile or {%include tu-span.html%} logical model</span>, and will be presented on the Examples tab for the corresponding entity.
 * `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
 * `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array).
 
 Instances inherit values from their StructureDefinition (i.e. assigned codes, assigned booleans) if those values are required. Assignment rules are used to set additional values.
 
-Rules types that apply to Instances are: [Assignment](#assignment-rules), [Insert](#insert-rules), and [Path](#path-rules). No other rule types are allowed.
+Rule types that apply to Instances are: [Assignment](#assignment-rules), [Insert](#insert-rules), and [Path](#path-rules). No other rule types are allowed.
 
 **Examples:**
 
@@ -1226,7 +1228,7 @@ Rules types that apply to Instances are: [Assignment](#assignment-rules), [Inser
 
 ##### Defining Instances of Other Conformance Resources
 
-The FSH language is designed to support creation of StructureDefinitions for Profiles and Extensions, ValueSets, and CodeSystems. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
+The FSH language is designed to support creation of StructureDefinitions for Profiles, Extensions, ValueSets, CodeSystems, Resources, and Logicals. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
 
 These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement` with `Usage: #definition`. The CapabilityStatement is populated using assignment statements. Authors may choose to use [parameterized rule sets](#parameterized-rule-sets) to reduce repetition of common patterns in conformance resources.
 
@@ -1281,13 +1283,9 @@ Logical models allow authors to define new structures representing arbitrary con
 
 Logical models are defined using the declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent.
 
-Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
+Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
 
-* Binding, cardinality, and type rules SHALL be applied only to elements defined by the item (not inherited elements).
-* Flag rules SHALL NOT include MS flags.
-* Assignment rules SHALL be used only with caret paths.  
-
-The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R4/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
+In addition, authors should consult FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
 
 **Example:**
 
