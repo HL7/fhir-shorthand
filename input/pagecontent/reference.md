@@ -3235,6 +3235,6 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 
 [SUSHI](https://github.com/FHIR/sushi) provides an implementation of a FSH language parser described in [ANTLR v4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification takes precedence. This grammar implementation is provided for informational purposes and is not normative.
 
-The latest version of the parser grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0-beta.2/antlr/src/main/antlr/FSH.g4).
+The latest version of the parser grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/FSH.g4) and [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/MiniFSH.g4).
 
-The latest version of the lexer grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0-beta.2/antlr/src/main/antlr/FSHLexer.g4).
+The latest version of the lexer grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/FSHLexer.g4) and [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/MiniFSHLexer.g4).
