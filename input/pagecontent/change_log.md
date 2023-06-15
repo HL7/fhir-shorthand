@@ -19,6 +19,7 @@ The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) int
 * Logical model definitions may now use assignment rules and constrain inherited elements ([3.5.7](reference.html#defining-logical-models))
 * Inserting parameterized rule sets with values in double square brackets ([3.6.11.2](reference.html#inserting-parameterized-rule-sets))
 * Path rules can be used to add optional fixed values and set slice order on Instances ([3.6.15](reference.html#path-rules))
+* CodeableReference keyword can be used in add element rules ([3.6.2](reference.html#add-element-rules)) and type rules ([3.6.16](reference.html#type-rules))
 
 Additional minor changes to the specification include the following:
 
