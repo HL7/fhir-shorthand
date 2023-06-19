@@ -737,6 +737,7 @@ The following keywords (case-sensitive) are defined:
 
 | Keyword | Purpose | Data Type |
 |----------|---------|---------|
+| Characteristics {%include tu.html %} | Specifies characteristics for logical models | codes |
 | Context {%include tu.html%} | Specifies context for extensions | FHIRPath strings and element paths |
 | Description | Provides a human-readable description | string or markdown |
 | Expression | Provides a FHIR path expression in an invariant | FHIRPath string |
@@ -759,19 +760,19 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 <span class="caption" id="t6">Table 6. Relationships between declarations and keywords in FSH</span>
 
-|            Keyword →<br/>Declaration ↓ | Id  | Description   | Title | Parent | InstanceOf | Usage | Source | Target | Severity      | Expression | XPath | Context {%include tu.html%}|
-|----------------------------------------|-----|---------------|-------|--------|------------|-------|--------|--------|---------------|------------|-------|---------|
-[Alias](#defining-aliases)               |     |               |       |        |            |       |        |        |               |            |       |         |
-[Code System](#defining-code-systems)    |  S  |     S         |   S   |        |            |       |        |        |               |            |       |         |
-[Extension](#defining-extensions)        |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |    S    |
-[Instance](#defining-instances)          |     |     S         |   S   |        |     R      |   O   |        |        |               |            |       |         |
-[Invariant](#defining-invariants)        |     | S<sup>*</sup> |       |        |            |       |        |        | O<sup>*</sup> |     O      |   O   |         |
-[Logical](#defining-logical-models)      |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |
-[Mapping](#defining-mappings)            |  S  |     S         |   S   |        |            |       |   R    |   R    |               |            |       |         |
-[Profile](#defining-profiles)            |  S  |     S         |   S   |   R    |            |       |        |        |               |            |       |         |
-[Resource](#defining-resources)          |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |
-[Rule Set](#defining-rule-sets)          |     |               |       |        |            |       |        |        |               |            |       |         |
-[Value Set](#defining-value-sets)        |  S  |     S         |   S   |        |            |       |        |        |               |            |       |         |
+|            Keyword →<br/>Declaration ↓ | Id  | Description   | Title | Parent | InstanceOf | Usage | Source | Target | Severity      | Expression | XPath | Context {%include tu.html%}| Characteristics {%include tu.html%}|
+|----------------------------------------|-----|---------------|-------|--------|------------|-------|--------|--------|---------------|------------|-------|---------|-----------------|
+[Alias](#defining-aliases)               |     |               |       |        |            |       |        |        |               |            |       |         |                 |
+[Code System](#defining-code-systems)    |  S  |     S         |   S   |        |            |       |        |        |               |            |       |         |                 |
+[Extension](#defining-extensions)        |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |    S    |                 |
+[Instance](#defining-instances)          |     |     S         |   S   |        |     R      |   O   |        |        |               |            |       |         |                 |
+[Invariant](#defining-invariants)        |     | S<sup>*</sup> |       |        |            |       |        |        | O<sup>*</sup> |     O      |   O   |         |                 |
+[Logical](#defining-logical-models)      |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |        S        |
+[Mapping](#defining-mappings)            |  S  |     S         |   S   |        |            |       |   R    |   R    |               |            |       |         |                 |
+[Profile](#defining-profiles)            |  S  |     S         |   S   |   R    |            |       |        |        |               |            |       |         |                 |
+[Resource](#defining-resources)          |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |                 |
+[Rule Set](#defining-rule-sets)          |     |               |       |        |            |       |        |        |               |            |       |         |                 |
+[Value Set](#defining-value-sets)        |  S  |     S         |   S   |        |            |       |        |        |               |            |       |         |                 |
 {: .grid }
 
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
@@ -1314,6 +1315,34 @@ In addition, authors should consult FHIR's [interpretation of ElementDefinition 
   * biological 0..1 boolean "Biologically related?"
       "A family member may not be biologically related due to adoption, blended families, etc."
   ```
+
+{%include tu-div.html%}
+The keyword `Characteristics` can be used to specify the type characteristics of the logical model being defined. These characteristics are represented on the logical model using the [TypeCharacteristicCodes extension](https://hl7.org/fhir/extensions/CodeSystem-type-characteristics-code.html), which has values bound to the [TypeCharacteristicCodes value set](https://hl7.org/fhir/extensions/ValueSet-type-characteristics-code.html). The type characteristic to set is specified as a code in that value set. Do not provide the the system when specifying these codes.
+
+Multiple type characteristics can be specified by using a comma-separated list. Using the `Characteristics` keyword instead of using rules to directly assign this extension to the logical model's `extension` list is recommended. The following is an allowed list of formats for characteristics:
+
+Specifying a single characteristic:
+  <pre><code>Characteristics: {code}</code></pre>
+
+Specifying multiple characteristics as a comma-separated list:
+  <pre><code>Characteristics: {code 1}<span class="optional">, {code 2}, {code 3}...</span></code></pre>
+
+**Examples:**
+
+* Defining a logical model with a single type characteristic
+
+  ```
+  Logical: MyLogical
+  Characteristics: #can-bind
+  ```
+
+* Defining a logical model with multiple type characteristics
+
+  ```
+  Logical: MyLogical
+  Characteristics: #has-range, #has-units, #is-continuous
+  ```
+</div>
 
 #### Defining Mappings
 
