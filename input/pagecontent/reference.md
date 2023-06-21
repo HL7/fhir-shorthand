@@ -2344,7 +2344,7 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   // restrict the CodeableConcept aspect to a code in the LatexCodeVS value set:
   * code from LatexCodeVS (required)
   // restrict Reference aspect to an instance of SubstanceDefinition conforming to the LatexSubstanceDefinition profile:
-  * code only Reference(LatexSubstanceDefinition)
+  * code only CodeableReference(LatexSubstanceDefinition)
   ```
 
 * Assign the concept and reference aspects of a CodeableReference:
