@@ -135,11 +135,13 @@ If there is discrepancy between the grammar and the FSH language description, th
 
 #### Reserved Words
 
-FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `contentReference`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
-The following words are reserved, with or without white spaces prior to the colon: `Alias:`, `CodeSystem:`, `Extension:`, `Instance:`, `Invariant:`, `Logical:`, `Mapping:`, `Profile:`, `Resource:`, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
+The following words are reserved, with or without white spaces prior to the colon: `Alias:`, {%include tu-span.html%}`Characteristics:`</span>, `CodeSystem:`, {%include tu-span.html%}`Context:`</span>, `Extension:`, `Instance:`, `Invariant:`, `Logical:`, `Mapping:`, `Profile:`, `Resource:`, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
 
 The following words are reserved, with or without white spaces inside the parentheses: `(example)`, `(preferred)`, `(extensible)`, `(required)`, `(exactly)`.
+
+The following words are reserved when followed by an opening parenthesis `(` with or without whitespace preceeding it, a sequence of text, and then a closing parenthesis `)`: `Canonical`, {%include tu-span.html%}`CodeableReference`</span>, `Reference`.
 
 #### Whitespace
 
