@@ -2330,7 +2330,7 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
 {%include tu-div.html%}
 
-The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly. Making use of CodeableReference involves no new FSH syntax.
+The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly.
 
 **Examples:**
 
@@ -3221,7 +3221,7 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
 * Restrict MedicationRequest.reason, a choice of CodeableReference(Condition \| Observation), to allow only a CodeableReference to an Observation
 
   ```
-  * reasion only CodeableReference(Observation)
+  * reason only CodeableReference(Observation)
   ```
 
 * Restrict CarePlan.activity.performedActivity to a CodeableReference of an Encounter or a Procedure:
