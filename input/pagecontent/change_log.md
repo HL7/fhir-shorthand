@@ -26,6 +26,7 @@ Additional minor changes to the specification include the following:
 * Add element rules with content references ([3.6.2](reference.html#add-element-rules))
 * Minor correction to indicate Path Rules may be used on Mappings (Table 7 in [3.5.1.3](reference.html#rule-statements))
 * Additional explanation and examples for using `include` ([3.5.12](reference.html#defining-value-sets))
+* Include Reference and Canonical in the reserved words list ([3.3.2](reference.html#reserved-words))
 
 ### FHIR Shorthand 2.0.0 (HL7 Mixed Normative / Trial Use Release 1)
 
