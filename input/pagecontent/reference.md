@@ -2554,7 +2554,7 @@ In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) 
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](https://hl7.org/fhir/R5/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](https://hl7.org/fhir/R5/profiling.html#discriminator).
 
-The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, or profile conformance.
+The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, position of the sliced element (R5 and up), or profile conformance.
 
 **Example:**
 
