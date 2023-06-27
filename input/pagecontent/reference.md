@@ -1917,6 +1917,7 @@ where `{datatype(s)}` can be one of the following:
 * A primitive or complex datatype name, or multiple datatypes separated with `or`,
 * References to one or more resources or profiles, <code>Reference({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 * Canonicals for one or more resources or profiles, <code>Canonical({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
+* {%include tu-span.html%} CodeableReferences to one or more resources or profiles, <code>CodeableReference({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code></span>
 
 and where `{contentUrl}` is a URI referencing the element whose properties will be used to define this element.This type of element definition is typically used with recursively nested elements, such as [Questionnaire.item.item](https://www.hl7.org/fhir/R4/questionnaire-definitions.html#Questionnaire.item.item), which is defined by reference to `#Questionnaire.item`. Another example is [Observation.component.referenceRange](https://www.hl7.org/fhir/observation-definitions.html#Observation.component.referenceRange), which is defined by reference to `#Observation.referenceRange`. Refer to the [ElementDefinition documentation](http://hl7.org/fhir/R4/elementdefinition-definitions.html#ElementDefinition.contentReference) for more information.
 
@@ -2331,7 +2332,7 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
 {%include tu-div.html%}
 
-The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly. Making use of CodeableReference involves no new FSH syntax.
+The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly.
 
 **Examples:**
 
@@ -2345,7 +2346,7 @@ The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeableref
   // restrict the CodeableConcept aspect to a code in the LatexCodeVS value set:
   * code from LatexCodeVS (required)
   // restrict Reference aspect to an instance of SubstanceDefinition conforming to the LatexSubstanceDefinition profile:
-  * code only Reference(LatexSubstanceDefinition)
+  * code only CodeableReference(LatexSubstanceDefinition)
   ```
 
 * Assign the concept and reference aspects of a CodeableReference:
@@ -3132,6 +3133,16 @@ FSH rules can be used to restrict the datatype(s) of an element. The syntaxes ar
 * <element> only Canonical({Resource/Profile1} or {Resource/Profile2} or {Resource/Profile3}...)
 ```
 
+{%include tu-div.html%}
+FSH rules can also be used to restrict the target types of CodeableReference elements. The syntaxes are:
+
+```
+* <element> only CodeableReference({Resource/Profile})
+
+* <element> only CodeableReference({Resource/Profile1} or {Resource/Profile2} or {Resource/Profile3}...)
+```
+</div>
+
 Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource.
 
 Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/R4/profiling.html), the datatype(s) in a type rule MUST always be more restrictive than the original datatype. For example, if the parent datatype is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
@@ -3207,6 +3218,20 @@ Following [standard profiling rules established in FHIR](https://www.hl7.org/fhi
   ```
   * action.definition[x] only Canonical(ActivityDefinition or PlanDefinition)
   ```
+
+{%include tu-div.html%}
+* Restrict MedicationRequest.reason, a choice of CodeableReference(Condition \| Observation), to allow only a CodeableReference to an Observation
+
+  ```
+  * reason only CodeableReference(Observation)
+  ```
+
+* Restrict CarePlan.activity.performedActivity to a CodeableReference of an Encounter or a Procedure:
+
+  ```
+  * activity.performedActivity only CodeableReference(Encounter or Procedure)
+  ```
+</div>
 
 ### Appendix: Abbreviations
 
