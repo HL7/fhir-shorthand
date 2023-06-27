@@ -1236,7 +1236,7 @@ These conformance resources are created using FSH instance grammar. For example,
 
 #### Defining Invariants
 
-Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>*</sup>, `Severity`<sup>*</sup>, `XPath` and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
+Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>*</sup>, `Severity`<sup>*</sup>, `XPath` (FHIR R4 only) and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
@@ -1246,7 +1246,7 @@ Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `
 | Description | Human description of constraint   | human      | string          | no<sup>*</sup> |
 | Expression  | FHIRPath expression of constraint | expression | FHIRPath string | no             |
 | Severity    | Either #error or #warning, as defined in [ConstraintSeverity](https://hl7.org/fhir/R5/valueset-constraint-severity.html) | severity | code | no<sup>*</sup> |
-| XPath       | XPath expression of constraint    | xpath      | XPath string    | no             |
+| XPath       | XPath expression of constraint _(Note: FHIR R5 no longer supports XPath)_ | xpath | XPath string | no |
 {: .grid }
 
 {%include tu-div.html%}
@@ -1257,7 +1257,7 @@ Authors may also specify ElementDefinition.constraint elements via [assignment r
 
 **Example:**
 
-* Define a simplified version of an invariant found in US Core using FSH Invariant keywords only:
+* Define a simplified version of an invariant found in US Core (for FHIR R4) using FSH Invariant keywords only:
 
   ```
   Invariant:   us-core-6
@@ -1268,7 +1268,7 @@ Authors may also specify ElementDefinition.constraint elements via [assignment r
   ```
 
 {%include tu-div.html%}
-* Define a simplified version of an invariant found in US Core using FSH Invariant keywords and rules:
+* Define a simplified version of an invariant found in US Core (for FHIR R4) using FSH Invariant keywords and rules:
 
   ```
   Invariant:   us-core-6
