@@ -1319,7 +1319,7 @@ In addition, authors should consult FHIR's [interpretation of ElementDefinition 
 {%include tu-div.html%}
 The keyword `Characteristics` can be used to specify the type characteristics of the logical model being defined. These characteristics are represented on the logical model using the [Structure Type Characteristics extension](https://hl7.org/fhir/extensions/StructureDefinition-structuredefinition-type-characteristics.html) with a code value from the [TypeCharacteristicCodes value set](https://hl7.org/fhir/extensions/ValueSet-type-characteristics-code.html). Authors SHOULD use the `Characteristics` keyword instead of directly assigning this extension using assignment rules.
 
-Multiple type characteristics can be specified by using a comma-separated list. Using the `Characteristics` keyword instead of using rules to directly assign this extension to the logical model's `extension` list is recommended. The following is an allowed list of formats for characteristics:
+When specifying characteristics using the `Characteristics` keyword, do not include the code system, as it is implied. Multiple characteristics can be specified by using a comma-separated list of codes. The following is an allowed list of formats for characteristics:
 
 Specifying a single characteristic:
   <pre><code>Characteristics: {code}</code></pre>
