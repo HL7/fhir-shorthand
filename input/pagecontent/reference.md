@@ -767,7 +767,7 @@ Depending on the type of item being defined, keywords may be required, suggested
 [Extension](#defining-extensions)        |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |    S    |                 |
 [Instance](#defining-instances)          |     |     S         |   S   |        |     R      |   O   |        |        |               |            |       |         |                 |
 [Invariant](#defining-invariants)        |     | S<sup>*</sup> |       |        |            |       |        |        | O<sup>*</sup> |     O      |   O   |         |                 |
-[Logical](#defining-logical-models)      |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |        S        |
+[Logical](#defining-logical-models)      |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |        O        |
 [Mapping](#defining-mappings)            |  S  |     S         |   S   |        |            |       |   R    |   R    |               |            |       |         |                 |
 [Profile](#defining-profiles)            |  S  |     S         |   S   |   R    |            |       |        |        |               |            |       |         |                 |
 [Resource](#defining-resources)          |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |                 |
