@@ -79,8 +79,8 @@ The following tables contain additional examples of angle brackets and curly bra
 | `{code}`  | A code | `#active` |
 | `{CodeSystem}` | The name, id, or URL of a code system | `http://terminology.hl7.org/CodeSystem/v2-0776` <br/> `v2-0776` // id <br/> `ItemStatus` // name |
 | `{decimal}` | A decimal number, optionally including an exponent | `124.0` <br/> `58.3E-5` |
-| `{datatype}` | A [FHIR datatype](https://www.hl7.org/fhir/datatypes.html) or [FHIR resource type](https://www.hl7.org/fhir/resourcelist.html) defined in the project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
-| `{datatype(s)}` | One or more [FHIR datatypes](https://www.hl7.org/fhir/datatypes.html) or [FHIR resource types](https://www.hl7.org/fhir/resourcelist.html) defined in the project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
+| `{datatype}` | A [FHIR datatype](https://hl7.org/fhir/R5/datatypes.html) or [FHIR resource type](https://hl7.org/fhir/R5/resourcelist.html) defined in the project's FHIR version | `decimal` <br/> `ContactPoint`<br/> `Reference(Patient)` |
+| `{datatype(s)}` | One or more [FHIR datatypes](https://hl7.org/fhir/R5/datatypes.html) or [FHIR resource types](https://hl7.org/fhir/R5/resourcelist.html) defined in the project's FHIR version, separated by `or` | `Quantity or CodeableConcept`<br/>`Reference(Patient or Practitioner)`<br/>`Canonical(ActivityDefinition)` |
 | `{Extension}` |  The name, id, or canonical URL (or alias) of an Extension | `duration` <br/> `allergyintolerance-duration` <br/> `http://hl7.org/fhir/StructureDefinition/allergyintolerance-duration` |
 | `{flag}`  | One of the [FSH flags](#flag-rules) |  `MS` |
 | `{flag(s)}` | One or more flags, separated by whitespace | `MS SU ?!` |
@@ -179,19 +179,19 @@ The ANTLR implementation given in [the Appendix](#appendix-fsh-grammar-informati
 
 #### Primitives
 
-The primitive datatypes and value formats in FSH are those defined in the version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://www.hl7.org/fhir/R4/datatypes.html#primitive) in the referred FHIR version.
+The primitive datatypes and value formats in FSH are those defined in the version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://hl7.org/fhir/R5/datatypes.html#primitive) in the referred FHIR version.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://www.hl7.org/fhir/R4/datatypes.html#primitive): \r (unicode U+000D), \n (U+000A), and \t (U+0009). Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
+FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://hl7.org/fhir/R5/datatypes.html#primitive): \r (unicode U+000D), \n (U+000A), and \t (U+0009). Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
 
 #### References
 
-FHIR elements can contain [references to other Resources](https://www.hl7.org/fhir/R4/references.html#2.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A resource of profile SHALL be identifiable by name, id, or URL. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
+FHIR elements can contain [references to other Resources](https://hl7.org/fhir/R5/references.html#2.1.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A resource of profile SHALL be identifiable by name, id, or URL. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](https://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items are separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
 In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. Inside instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe names a Patient instance. In this case, since `JaneDoe` is a Patient instance, `Reference(JaneDoe)` is resolved to `Patient/JaneDoe`. If a reference value in an instance does not reference an existing instance, the value is used directly. For example, if the subject of an Observation is `Reference(Alice)`, and Alice does not name a Patient instance, the reference resolves to `Alice`.
 
 #### Canonicals
 
-FHIR elements can reference other resources by their [canonical URL](https://www.hl7.org/fhir/R4/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical()` stands for the canonical URL of the referenced item. 
+FHIR elements can reference other resources by their [canonical URL](https://hl7.org/fhir/R5/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical()` stands for the canonical URL of the referenced item. 
 
 For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
@@ -199,7 +199,7 @@ When syntax allows for multiple Canonicals, the items are separated by `or` plac
 
 **Examples:**
 
-* The canonical URL for the FHIR [Yes/No/Don't Know value set](https://www.hl7.org/fhir/valueset-example-yesnodontknow.html), which evaluates to "http://hl7.org/fhir/ValueSet/yesnodontknow":
+* The canonical URL for the FHIR [Yes/No/Don't Know value set](https://hl7.org/fhir/R5/valueset-example-yesnodontknow.html), which evaluates to "http://hl7.org/fhir/ValueSet/yesnodontknow":
 
   ```
   Canonical(yesnodontknow)
@@ -251,7 +251,7 @@ This syntax is also used with CodeableConcepts (see [Assignments with the Codeab
   #postal
   ```
 
-* The code <= from the [Quantity Comparator value set](http://hl7.org/fhir/R4/valueset-quantity-comparator.html):
+* The code <= from the [Quantity Comparator value set](https://hl7.org/fhir/R5/valueset-quantity-comparator.html):
 
   ```
   #<=
@@ -353,7 +353,7 @@ When processing triple-quoted strings, the following approach is used:
 
 #### Item Names
 
-Item names SHOULD follow [FHIR naming guidance](http://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.name). All names MUST be between 1 and 255 characters. Alias names SHOULD begin with `$`, otherwise, names MUST begin with an uppercase letter and contain only letters, numbers, and underscores ("_").
+Item names SHOULD follow [FHIR naming guidance](https://hl7.org/fhir/R5/structuredefinition-definitions.html#StructureDefinition.name). All names MUST be between 1 and 255 characters. Alias names SHOULD begin with `$`, otherwise, names MUST begin with an uppercase letter and contain only letters, numbers, and underscores ("_").
 
 By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
 
@@ -365,7 +365,7 @@ Beginning alias names with `$` is a good practice, since this convention allows 
 
 Item identifiers (ids) MUST be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is best to use a unique id for every item in a FSH project. If no id is provided by a FSH author, implementations MAY create an id.
 
-By convention, ids SHOULD be lowercase with words separated by hyphens. The overall length MUST NOT be more than 64 characters (per the requirements of the [FHIR id datatype](https://www.hl7.org/fhir/R4/datatypes.html#primitive)). If the item has a name, the id SHOULD be based on the item's name, with _ replaced by -, changed to lowercase, and truncated if necessary.
+By convention, ids SHOULD be lowercase with words separated by hyphens. The overall length MUST NOT be more than 64 characters (per the requirements of the [FHIR id datatype](https://hl7.org/fhir/R5/datatypes.html#primitive)). If the item has a name, the id SHOULD be based on the item's name, with _ replaced by -, changed to lowercase, and truncated if necessary.
 
 #### Referring to Items
 
@@ -425,13 +425,13 @@ Elements can offer a choice of reference types. In the FHIR specification, these
 
 **Examples:**
 
-* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://www.hl7.org/fhir/R4/diagnosticreport.html), whose acceptable datatypes are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
+* Path to the Reference(Practitioner) option of [DiagnosticReport.performer](https://hl7.org/fhir/R5/diagnosticreport.html), whose acceptable datatypes are Reference(Practitioner), Reference(PractitionerRole), Reference(Organization) or Reference(CareTeam):
 
   ```
   performer[Practitioner]
   ```
 
-* Path to the Reference(US Core Organization) option of the performer element in [US Core DiagnosticReport Lab](http://hl7.org/fhir/us/core/StructureDefinition-us-core-diagnosticreport-lab.html), using the canonical URL:
+* Path to the Reference(US Core Organization) option of the performer element in [US Core DiagnosticReport Lab](https://hl7.org/fhir/us/core/StructureDefinition-us-core-diagnosticreport-lab.html), using the canonical URL:
 
   ```
   performer[http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization]
@@ -445,7 +445,7 @@ Elements can offer a choice of reference types. In the FHIR specification, these
 
 #### Data Type Choice [x] Paths
 
-FHIR represents an element with a choice of datatypes using the style foo[x]. For example, Condition.onset[x] can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](http://hl7.org/fhir/R4/formats.html#choice), to refer to one of these datatypes, replace the `[x]` with the datatype name, capitalizing the first letter. For Condition.onset[x], the individual choices are onsetDateTime, onsetAge, onsetPeriod, onsetRange, and onsetString.
+FHIR represents an element with a choice of datatypes using the style foo[x]. For example, Condition.onset[x] can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](https://hl7.org/fhir/R5/formats.html#choice), to refer to one of these datatypes, replace the `[x]` with the datatype name, capitalizing the first letter. For Condition.onset[x], the individual choices are onsetDateTime, onsetAge, onsetPeriod, onsetRange, and onsetString.
 
 > **Note:** foo[x] choices are NOT represented as foo[dateTime], foo[Period], etc.
 
@@ -951,7 +951,7 @@ For a path to a code within a code system, use this syntax:
 
 #### Defining Extensions
 
-Defining extensions is similar to [defining profiles](#defining-profiles), except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension).
+Defining extensions is similar to [defining profiles](#defining-profiles), except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://hl7.org/fhir/R5/extensibility.html#extension).
 
 All extensions have the same structure, but extensions can either have a value (i.e. a value[x] element) or sub-extensions, but not both. To create a simple extension, the value[x] element should be constrained. To create a complex extension, the extension array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
 
@@ -961,7 +961,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
 
 **Examples:**
 
-* How the [US Core BirthSex extension](http://hl7.org/fhir/us/core/StructureDefinition-us-core-birthsex.html) (a simple extension) would be defined in FSH:
+* How the [US Core BirthSex extension](https://hl7.org/fhir/us/core/StructureDefinition-us-core-birthsex.html) (a simple extension) would be defined in FSH:
 
   ```
   Extension: USCoreBirthSexExtension
@@ -974,7 +974,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
   ```
 
-* How [US Core Ethnicity extension](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-ethnicity.html) (a complex extension with inline sub-extensions) would be defined in FSH:
+* How [US Core Ethnicity extension](https://hl7.org/fhir/us/core/StructureDefinition-us-core-ethnicity.html) (a complex extension with inline sub-extensions) would be defined in FSH:
 
   ```
   Extension:      USCoreEthnicityExtension
@@ -1009,7 +1009,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   ```
 
 {%include tu-div.html%}
-The keyword `Context` can be used to specify the [context](http://hl7.org/fhir/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string . When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
+The keyword `Context` can be used to specify the [context](https://hl7.org/fhir/R5/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string . When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
 
 Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is recommended. The following is a list of allowed formats for contexts:
 
@@ -1117,7 +1117,7 @@ The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` (default) means the instance is intended as an illustration of a profile or {%include tu-span.html%} logical model</span>, and will be presented on the Examples tab for the corresponding entity.
 * `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
-* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://www.hl7.org/fhir/domainresource.html) in the `contained` array, or in a [Bundle](https://www.hl7.org/fhir/bundle.html) in the `entry.resource` array).
+* `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://hl7.org/fhir/R5/domainresource.html) in the `contained` array, or in a [Bundle](https://hl7.org/fhir/R5/bundle.html) in the `entry.resource` array).
 
 Instances inherit values from their StructureDefinition (i.e. assigned codes, assigned booleans) if those values are required. Assignment rules are used to set additional values.
 
@@ -1230,7 +1230,7 @@ Rule types that apply to Instances are: [Assignment](#assignment-rules), [Insert
 
 ##### Defining Instances of Other Conformance Resources
 
-The FSH language is designed to support creation of StructureDefinitions for Profiles, Extensions, ValueSets, CodeSystems, Resources, and Logicals. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://www.hl7.org/fhir/R4/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://www.hl7.org/fhir/R4/capabilitystatement.html), [OperationDefinition](https://www.hl7.org/fhir/R4/operationdefinition.html), [SearchParameter](https://www.hl7.org/fhir/R4/searchparameter.html), and [CompartmentDefinition](https://www.hl7.org/fhir/R4/compartmentdefinition.html).
+The FSH language is designed to support creation of StructureDefinitions for Profiles, Extensions, ValueSets, CodeSystems, Resources, and Logicals. Tools like [SUSHI](https://fshschool.org/docs/sushi/) address the creation of the ImplementationGuide resource, which is important for producing an IG. However, there are other [conformance resources](https://hl7.org/fhir/R5/conformance-module.html) involved with IG creation not explicitly supported by FSH. These include [CapabilityStatement](https://hl7.org/fhir/R5/capabilitystatement.html), [OperationDefinition](https://hl7.org/fhir/R5/operationdefinition.html), [SearchParameter](https://hl7.org/fhir/R5/searchparameter.html), and [CompartmentDefinition](https://hl7.org/fhir/R5/compartmentdefinition.html).
 
 These conformance resources are created using FSH instance grammar. For example, to create a CapabilityStatement, use `InstanceOf: CapabilityStatement` with `Usage: #definition`. The CapabilityStatement is populated using assignment statements. Authors may choose to use [parameterized rule sets](#parameterized-rule-sets) to reduce repetition of common patterns in conformance resources.
 
@@ -1245,7 +1245,7 @@ Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `
 | Invariant   | Identifier for the invariant      | key        | id              | yes            |
 | Description | Human description of constraint   | human      | string          | no<sup>*</sup> |
 | Expression  | FHIRPath expression of constraint | expression | FHIRPath string | no             |
-| Severity    | Either #error or #warning, as defined in [ConstraintSeverity](https://www.hl7.org/fhir/R4/valueset-constraint-severity.html) | severity | code | no<sup>*</sup> |
+| Severity    | Either #error or #warning, as defined in [ConstraintSeverity](https://hl7.org/fhir/R5/valueset-constraint-severity.html) | severity | code | no<sup>*</sup> |
 | XPath       | XPath expression of constraint    | xpath      | XPath string    | no             |
 {: .grid }
 
@@ -1281,13 +1281,13 @@ Authors may also specify ElementDefinition.constraint elements via [assignment r
 
 #### Defining Logical Models
 
-Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](http://hl7.org/fhir/R4/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
+Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](https://hl7.org/fhir/R5/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
 
-Logical models are defined using the declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](http://hl7.org/fhir/2021May/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](http://hl7.org/fhir/R4/element.html) as the logical model's parent instead. Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent.
+Logical models are defined using the declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead. Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent.
 
 Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
 
-In addition, authors should consult FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
+In addition, authors should consult FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
 
 **Example:**
 
@@ -1319,7 +1319,7 @@ In addition, authors should consult FHIR's [interpretation of ElementDefinition 
 
 #### Defining Mappings
 
-[Mappings](https://www.hl7.org/fhir/R4/mappings.html) are an optional part of a StructureDefinition, intended to help implementers understand the StructureDefinition in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://www.hl7.org/fhir/R4/mapping-language.html) and the [StructureMap resource](https://www.hl7.org/fhir/R4/structuremap.html).
+[Mappings](https://hl7.org/fhir/R5/mappings.html) are an optional part of a StructureDefinition, intended to help implementers understand the StructureDefinition in relation to other standards. While it is possible to define mappings using escape (caret) syntax, FSH provides a more concise approach. These mappings are informative and are not to be confused with the computable mappings provided by [FHIR Mapping Language](https://hl7.org/fhir/R5/mapping-language.html) and the [StructureMap resource](https://hl7.org/fhir/R5/structuremap.html).
 
 To create a mapping, the declaration `Mapping` and the keywords `Source`, and `Target` are REQUIRED, and `Id`, `Title` and `Description` are RECOMMENDED.
 
@@ -1344,7 +1344,7 @@ The mappings themselves are declared in rules with the following syntaxes:
 
 The first type of rule applies to mapping the profile as a whole to the target specification. The second type of rule maps a specific element to the target. No other types of rules are allowed.
 
-The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](http://www.hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://www.hl7.org/fhir/R4/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code MUST come from FHIR's [MimeType value set](https://www.hl7.org/fhir/R4/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
+The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](https://hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://hl7.org/fhir/R5/elementdefinition.html) (map corresponds to mapping.map, mime-type to mapping.language, and comment to mapping.comment). The mime type code MUST come from FHIR's [MimeType value set](https://hl7.org/fhir/R5/valueset-mimetypes.html). For further information, the reader is referred to the FHIR definitions of these elements.
 
 >**Note:** Unlike setting the mapping.map directly in the StructureDefinition, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
@@ -1408,7 +1408,7 @@ Custom resources allow authors to define new structures representing arbitrary c
 
 Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
 
-Resources are defined using the declaration `Resource`. The keywords `Id`, `Title`, and `Description` are RECOMMENDED. The use of `Parent` is OPTIONAL. If no `Parent` is specified, DomainResource is used as the default parent. Only [DomainResource](http://hl7.org/fhir/R4/domainresource.html) and [Resource](http://hl7.org/fhir/R4/resource.html) are allowed as parents of a resource.
+Resources are defined using the declaration `Resource`. The keywords `Id`, `Title`, and `Description` are RECOMMENDED. The use of `Parent` is OPTIONAL. If no `Parent` is specified, DomainResource is used as the default parent. Only [DomainResource](https://hl7.org/fhir/R5/domainresource.html) and [Resource](https://hl7.org/fhir/R5/resource.html) are allowed as parents of a resource.
 
 Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
@@ -1416,7 +1416,7 @@ Rules defining the resource follow immediately after the keyword section. Rules 
 * Flag rules SHALL NOT include MS flags.
 * Assignment rules SHALL be used only with caret paths.
 
-The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](http://hl7.org/fhir/R4/elementdefinition.html#interpretation). Assignments MUST NOT set elements that are prohibited in that table. For example, the table indicates that setting maxLength or mustSupport is prohibited.
+The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements that are prohibited in that table. For example, the table indicates that setting maxLength or mustSupport is prohibited.
 
 **Example:**
 
@@ -1620,11 +1620,11 @@ In addition, [assignment rules](#assignment-rules) SHALL be applicable to value 
 
 ##### Filters
 
-A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](http://hl7.org/fhir/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( http://hl7.org/fhir/valueset.html#csnote).
+A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](https://hl7.org/fhir/R5/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( https://hl7.org/fhir/R5/valueset.html#csnote).
 
 **Examples** 
 
-* Define a value set using [extensional](https://www.hl7.org/fhir/R4/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
+* Define a value set using [extensional](https://hl7.org/fhir/R5/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
 
   ```
   ValueSet: BodyWeightPreconditionVS
@@ -1919,7 +1919,7 @@ where `{datatype(s)}` can be one of the following:
 * Canonicals for one or more resources or profiles, <code>Canonical({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 * {%include tu-span.html%} CodeableReferences to one or more resources or profiles, <code>CodeableReference({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code></span>
 
-and where `{contentUrl}` is a URI referencing the element whose properties will be used to define this element.This type of element definition is typically used with recursively nested elements, such as [Questionnaire.item.item](https://www.hl7.org/fhir/R4/questionnaire-definitions.html#Questionnaire.item.item), which is defined by reference to `#Questionnaire.item`. Another example is [Observation.component.referenceRange](https://www.hl7.org/fhir/observation-definitions.html#Observation.component.referenceRange), which is defined by reference to `#Observation.referenceRange`. Refer to the [ElementDefinition documentation](http://hl7.org/fhir/R4/elementdefinition-definitions.html#ElementDefinition.contentReference) for more information.
+and where `{contentUrl}` is a URI referencing the element whose properties will be used to define this element.This type of element definition is typically used with recursively nested elements, such as [Questionnaire.item.item](https://hl7.org/fhir/R5/questionnaire-definitions.html#Questionnaire.item.item), which is defined by reference to `#Questionnaire.item`. Another example is [Observation.component.referenceRange](https://hl7.org/fhir/R5/observation-definitions.html#Observation.component.referenceRange), which is defined by reference to `#Observation.referenceRange`. Refer to the [ElementDefinition documentation](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.contentReference) for more information.
 
 Note the following:
 
@@ -2301,7 +2301,7 @@ For assignment of a resource to the value of an element directly:
 * <Resource> = {Resource}
 ```
 
-As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the URL is the preferred way to reference an instance for the resource types on which it is defined. One advantage is that the URL can include a version. For an internal FSH-defined instance, referring to an instance by its id (as defined in the `Instance` declaration) is more typical (see examples).
+As [advised in FHIR](https://hl7.org/fhir/R5/references.html#canonical), the URL is the preferred way to reference an instance for the resource types on which it is defined. One advantage is that the URL can include a version. For an internal FSH-defined instance, referring to an instance by its id (as defined in the `Instance` declaration) is more typical (see examples).
 
 **Examples:**
 
@@ -2332,7 +2332,7 @@ As [advised in FHIR](https://www.hl7.org/fhir/R4/references.html#canonical), the
 
 {%include tu-div.html%}
 
-The [CodeableReference](https://hl7.org/fhir/2020Feb/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly.
+The [CodeableReference](https://hl7.org/fhir/R5/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly.
 
 **Examples:**
 
@@ -2368,11 +2368,11 @@ Binding is the process of associating a coded element with a set of possible val
 
 <pre><code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code></pre>
 
-The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](http://hl7.org/fhir/R4/terminologies.html#4.1). In FHIR R5, {%include tu-span.html%} CodeableReference</span> is also bindable.
+The bindable types in FHIR are [code, Coding, CodeableConcept, Quantity, string, and uri](https://hl7.org/fhir/R5/terminologies.html#4.1). In FHIR R5, {%include tu-span.html%} CodeableReference</span> is also bindable.
 
-The strengths are the same as the [binding strengths defined in FHIR](https://www.hl7.org/fhir/R4/valueset-binding-strength.html), namely: example, preferred, extensible, and required. If strength is not specified, a required binding is assumed.
+The strengths are the same as the [binding strengths defined in FHIR](https://hl7.org/fhir/R5/valueset-binding-strength.html), namely: example, preferred, extensible, and required. If strength is not specified, a required binding is assumed.
 
-The [binding rules defined in FHIR](https://www.hl7.org/fhir/R4/profiling.html#binding) are applicable to FSH. In particular:
+The [binding rules defined in FHIR](https://hl7.org/fhir/R5/profiling.html#binding) are applicable to FSH. In particular:
 
 * When constraining an existing binding, the binding strength can only stay the same or be strengthened (e.g., a preferred binding MAY be replaced with an extensible or required binding).
 * A required value set MAY be replaced by another required value set if the codes in the new value set are a subset of the codes in the original value set.
@@ -2420,7 +2420,7 @@ To change the cardinality, the grammar is:
 
 As in FHIR, min and max are non-negative integers, and max can also be *, representing unbounded. It is valid to include both the min and max, even if one of them remains the same as in the original cardinality. In this case, FSH implementations SHOULD only generate constraints for the changed values.
 
-Cardinalities MUST follow [rules of FHIR profiling](https://www.hl7.org/fhir/R4/conformance-rules.html#cardinality), namely that the min and max cardinalities comply within the constraints of the parent.
+Cardinalities MUST follow [rules of FHIR profiling](https://hl7.org/fhir/R5/conformance-rules.html#cardinality), namely that the min and max cardinalities comply within the constraints of the parent.
 
 For convenience and compactness, cardinality rules can be combined with [flag rules](#flag-rules) via the following grammar:
 
@@ -2464,7 +2464,7 @@ For convenience and compactness, cardinality rules can be combined with [flag ru
 
 #### Contains Rules for Extensions
 
-Extensions are created by adding elements to extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://www.hl7.org/fhir/R4/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
+Extensions are created by adding elements to extension arrays. Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. The structure of extensions is defined by FHIR (see [Extension element](https://hl7.org/fhir/R5/extensibility.html#extension)). Profiling extensions is discussed in [Defining Extensions](#defining-extensions).
 
 Extensions are specified using the `contains` keyword. There are two types of extensions, *standalone* and *inline*:
 
@@ -2496,17 +2496,17 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
 
 **Examples:**
 
-* Add standalone FHIR extensions [patient-disability](http://hl7.org/fhir/R4/extension-patient-disability.html) and [patient-genderIdentity](http://hl7.org/fhir/StructureDefinition/patient-genderIdentity) to a profile of the Patient resource, using the canonical URLs for the extensions:
+* Add standalone FHIR extensions [patient-disability](https://hl7.org/fhir/extensions/StructureDefinition-patient-disability.html) and [individual-genderIdentity](https://hl7.org/fhir/extensions/StructureDefinition-individual-genderIdentity.html) to a profile of the Patient resource, using the canonical URLs for the extensions:
 
   ```
-  * extension contains http://hl7.org/fhir/StructureDefinition/patient-disability named disability 0..1 MS and http://hl7.org/fhir/StructureDefinition/patient-genderIdentity named genderIdentity 0..1 MS
+  * extension contains http://hl7.org/fhir/StructureDefinition/patient-disability named disability 0..1 MS and http://hl7.org/fhir/StructureDefinition/individual-genderIdentity named genderIdentity 0..1 MS
   ```
 
 * The same statement, using aliases and whitespace flexibility for better readability:
 
   ```
   Alias: $Disability = http://hl7.org/fhir/StructureDefinition/patient-disability
-  Alias: $GenderIdentity = http://hl7.org/fhir/StructureDefinition/patient-genderIdentity
+  Alias: $GenderIdentity = http://hl7.org/fhir/StructureDefinition/individual-genderIdentity
   
   // intervening lines not shown
 
@@ -2528,7 +2528,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   * valueCodeableConcept from LateralityVS (required)
   ```
 
-* Show how the inline extensions defined in the [US Core Race](https://www.hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) extension would be defined using FSH:
+* Show how the inline extensions defined in the [US Core Race](https://hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) extension would be defined using FSH:
 
   ```
   * extension contains
@@ -2544,7 +2544,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
 
 #### Contains Rules for Slicing
 
-Slicing is an advanced, but necessary, feature of FHIR. It is helpful to have a basic understanding of [slicing](http://hl7.org/fhir/R4/profiling.html#slicing) and [discriminators](http://hl7.org/fhir/R4/profiling.html#discriminator) before attempting slicing in FSH.
+Slicing is an advanced, but necessary, feature of FHIR. It is helpful to have a basic understanding of [slicing](https://hl7.org/fhir/R5/profiling.html#slicing) and [discriminators](https://hl7.org/fhir/R5/profiling.html#discriminator) before attempting slicing in FSH.
 
 In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) define the slices, and (3) constrain each slice's contents.
 
@@ -2552,7 +2552,7 @@ In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) 
 
 ##### Step 1. Specify the Slicing Logic
 
-Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](http://www.hl7.org/fhir/R4/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](http://www.hl7.org/fhir/R4/profiling.html#discriminator).
+Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](https://hl7.org/fhir/R5/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](https://hl7.org/fhir/R5/profiling.html#discriminator).
 
 The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, or profile conformance.
 
@@ -2696,7 +2696,7 @@ Exclude rules are used to remove codes from value sets. Exclude rules appear onl
 
 #### Flag Rules
 
-Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), and the symbols used to describe them, are as follows:
+Flags are a set of information about the element that impacts how implementers handle them. The [flags defined in FHIR](https://hl7.org/fhir/R5/formats.html#table), and the symbols used to describe them, are as follows:
 
 <span class="caption" id="t1">Table 13. Flags and their meaning</span>
 
@@ -3016,7 +3016,7 @@ Mapping rules are used to define relationships between different specifications.
 
 #### Obeys Rules
 
-[Invariants](https://www.hl7.org/fhir/R4/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath](https://www.hl7.org/fhir/R4/fhirpath.html) or [XPath](https://developer.mozilla.org/en-US/docs/Web/XPath) expressions. An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The syntax for applying invariants in profiles is:
+[Invariants](https://hl7.org/fhir/R5/conformance-rules.html#constraints) are constraints that apply to one or more values in instances, expressed as [FHIRPath](https://hl7.org/fhir/R5/fhirpath.html) or [XPath](https://developer.mozilla.org/en-US/docs/Web/XPath) expressions. An invariant can apply to an instance as a whole or a single element. Multiple invariants can be applied to an instance as a whole or to a single element. The syntax for applying invariants in profiles is:
 
 ```
 * obeys {Invariant}
@@ -3145,7 +3145,7 @@ FSH rules can also be used to restrict the target types of CodeableReference ele
 
 Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource.
 
-Following [standard profiling rules established in FHIR](https://www.hl7.org/fhir/R4/profiling.html), the datatype(s) in a type rule MUST always be more restrictive than the original datatype. For example, if the parent datatype is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
+Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5/profiling.html), the datatype(s) in a type rule MUST always be more restrictive than the original datatype. For example, if the parent datatype is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
 
 **Examples:**
 
