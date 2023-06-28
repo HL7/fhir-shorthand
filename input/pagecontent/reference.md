@@ -593,12 +593,18 @@ Since slices are sublists, a sliced array path technically points to the *first*
 
 #### Extension Paths
 
-Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions MAY be identified by slice name or the extension's URL.
+Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is specified in an extension array within a profile or extension definition, a name (technically, a slice name) is assigned. Extensions MAY be identified by slice name or the extension's URL.
 
-The path to an extension is constructed by combining the path to the extension array with a reference to slice name in square brackets:
+The path to an extension is constructed by combining the path to the extension array with a reference to a slice name in square brackets:
 
 ```
 <Extension>[{name or id or URL}]
+```
+
+Since an extension array in an instance may contain multiple extensions of the same type, additional instances of the extension can be accessed using a square-bracketed index:
+
+```
+<Extension>[{name or id or URL}][{index}]
 ```
 
 For locally-defined extensions, using the slice name is the simplest choice. For externally-defined extensions, the canonical URL can be easier to find than the slice name.
