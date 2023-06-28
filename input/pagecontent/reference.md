@@ -1116,7 +1116,7 @@ Instances are defined using the declaration `Instance`, with the REQUIRED keywor
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` (default) means the instance is intended as an illustration of a profile or {%include tu-span.html%} logical model</span>, and will be presented on the Examples tab for the corresponding entity.
-* `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
+* `Usage: #definition` means the instance is a formal item (i.e., not an example) in the IG, such as an instance of a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
 * `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://hl7.org/fhir/R5/domainresource.html) in the `contained` array, or in a [Bundle](https://hl7.org/fhir/R5/bundle.html) in the `entry.resource` array).
 
 Instances inherit values from their StructureDefinition (i.e. assigned codes, assigned booleans) if those values are required. Assignment rules are used to set additional values.
