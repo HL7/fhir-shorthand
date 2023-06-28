@@ -3143,7 +3143,7 @@ FSH rules can also be used to restrict the target types of CodeableReference ele
 ```
 </div>
 
-Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource.
+Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource. In some cases, the right-hand side of a type rule may have a combination of datatype, Reference, Canonical, and {%include tu-span.html%}CodeableReference<span> targets.
 
 Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5/profiling.html), the datatype(s) in a type rule MUST always be more restrictive than the original datatype. For example, if the parent datatype is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
 
@@ -3205,6 +3205,13 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
 
   ```
   * performer[Practitioner] only Reference(PrimaryCareProvider)
+  ```
+
+* Restrict the performer Reference datatype to the LiteralReference profile and its target types to Practitioner or PractitionerRole. Note that the first rule restricts the Reference datatype and the second rule restricts the types it can refer to:
+
+  ```
+  * performer only LiteralReference
+  * performer only Reference(PrimaryCarePhysician or EmergencyRoomPhysician)
   ```
 
 * Restrict PlanDefinition.action.definition[x], nominally a choice of uri or canonical(ActivityDefinition \| PlanDefinition \| Questionnaire), to allow only the canonical of an ActivityDefinition:
