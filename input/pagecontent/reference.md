@@ -1629,7 +1629,7 @@ In addition, [assignment rules](#assignment-rules) SHALL be applicable to value 
 
 ##### Filters
 
-A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](https://hl7.org/fhir/R5/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( https://hl7.org/fhir/R5/valueset.html#csnote).
+A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](https://hl7.org/fhir/R5/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. Depending on the filter, the `value` may be a code (e.g., `#123-A`), boolean (e.g., `true`), string (e.g., `"inherited"`), or regular expression (e.g., `/A\.[0-9]+/`). For choices for the most common code systems, see the [FHIR documentation on filters](https://hl7.org/fhir/R5/valueset.html#csnote).
 
 **Examples** 
 
