@@ -1576,13 +1576,16 @@ The contents of a value set are defined by "include" rules, which have the follo
 
 <span class="caption" id="t10">Table 10. Summary of value set include rules</span>
 
-| To&#160;include... | Syntax | Example |
+
+
+
+| To&#160;include... | Syntax | Examples |
 |-------|---------|----------|
-| A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}</code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}</code> | `* include codes from system http://snomed.info/sct` |
-| Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code>* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}</span> and valueset {ValueSet1}<span class="optional"> and {ValueSet2}...</span></code> | <code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units</code> |
-| Filtered codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem} where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept is-a #254837009` |
+| A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"`<br/><br/>`* http://snomed.info/sct#961000205106 "Wearing street clothes, no shoes"`<br/><br/><code style="white-space: normal">* http://snomed.info/sct|http://snomed.info/sct/731000124108#961000205106 "Wearing street clothes, no shoes"</code> |
+| All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}<span class="optional">|{version string}</span></code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`<br/><br/>`* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason|5.0.0` |
+| All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version string}</span></code> | `* include codes from system http://snomed.info/sct`<br/><br/>`* include codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108` |
+| Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code style="white-space: normal">* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}|{version string}</span> and valueset {ValueSet1}<span class="optional">|{version1 string}</span><span class="optional"> and {ValueSet2}|{version2 string}...</span></code> | <code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units</code><br/><br/><code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time|5.0.0 and http://hl7.org/fhir/ValueSet/age-units|5.0.0</code> |
+| Filtered codes from a code system | <code style="white-space: normal">* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept is-a #254837009`<br/><br/>`* include codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* include codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
 {: .grid }
 
 
@@ -1617,12 +1620,12 @@ Analogous rules can be used to leave out certain codes, with the word `exclude` 
 
 <span class="caption" id="t11">Table 11. Summary of value set exclude rules</span>
 
-| To exclude... | Syntax | Example |
+| To exclude... | Syntax | Examples |
 |-------|---------|----------|
-| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from another value set | `* exclude codes from valueset {ValueSet}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | `* exclude codes from system {CodeSystem}` | `* exclude codes from system http://snomed.info/sct` |
-| Filtered codes from a code system | `* exclude codes from system {CodeSystem} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
+| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"`<br/><br/>`* exclude http://snomed.info/sct#961000205106 "Wearing street clothes, no shoes"`<br/><br/><code style="white-space: normal">* exclude http://snomed.info/sct|http://snomed.info/sct/731000124108#961000205106 "Wearing street clothes, no shoes"</code> |
+| All codes from another value set | <code>* exclude codes from valueset {ValueSet}<span class="optional">|{version string}</span></code> | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`<br/><br/>`* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason|5.0.0` |
+| All codes from a code system | <code>* exclude codes from system {CodeSystem}<span class="optional">|{version string}</span></code> | `* exclude codes from system http://snomed.info/sct`<br/><br/>`* exclude codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108` |
+| Filtered codes from a code system | <code style="white-space: normal">* exclude codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter}</code> | `* exclude codes from system $SCT where concept is-a #254837009`<br/><br/>`* exclude codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* exclude codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
 {: .grid }
 
 In addition, [assignment rules](#assignment-rules) SHALL be applicable to value sets only in the context of caret paths.
