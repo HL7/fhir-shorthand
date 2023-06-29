@@ -28,6 +28,7 @@ Additional minor changes to the specification include the following:
 * Minor correction to indicate Path Rules may be used on Mappings (Table 7 in [3.5.1.3](reference.html#rule-statements))
 * Additional explanation and examples for using `include` ([3.5.12](reference.html#defining-value-sets))
 * Include Reference and Canonical in the reserved words list ([3.3.2](reference.html#reserved-words))
+* Update all links for core FHIR to point to FHIR R5
 
 ### FHIR Shorthand 2.0.0 (HL7 Mixed Normative / Trial Use Release 1)
 

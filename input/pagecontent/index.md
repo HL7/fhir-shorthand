@@ -1,7 +1,7 @@
 {%include styles.html%}
 
 <br/>
-<span style="background-color: LightYellow;">NOTE: Information on this page is [informative content](https://www.hl7.org/fhir/versions.html#std-process).</span>
+<span style="background-color: LightYellow;">NOTE: Information on this page is [informative content](https://hl7.org/fhir/versions.html#std-process).</span>
 <br/>
 
 <img src="FHIR-Shorthand-Logo.png" alt="FHIR Shorthand Logo" width="300px" style="float:none; margin: 0px 0px 0px 0px;" />
@@ -39,7 +39,7 @@ The FSH IG includes the following information:
 
 The following material, useful for learning and applying FHIR Shorthand but not part of the language specification, is found on [FSHSchool.org](https://fshschool.org/):
 
-1. [SUSHI User Guide](https://fshschool.org/docs/sushi/) -- SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation and _de facto_ standard interpreter/compiler for FHIR Shorthand. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://www.hl7.org/fhir/R4/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
+1. [SUSHI User Guide](https://fshschool.org/docs/sushi/) -- SUSHI ("SUSHI Unshortens ShortHand Inputs") is a reference implementation and _de facto_ standard interpreter/compiler for FHIR Shorthand. SUSHI produces [Health Level Seven (HL7®) Fast Healthcare Interoperability Resources (FHIR®)](https://hl7.org/fhir/R5/overview.html) profiles, extensions, and other artifacts needed to create FHIR Implementation Guides (IG).
 1. [GoFSH User Guide](https://fshschool.org/docs/gofsh/) -- GoFSH is a tool that turns FHIR artifacts into FSH. Using GoFSH, existing FHIR artifacts or complete Implementation Guides can be transformed into FSH, automatically.
 1. [FHIR Shorthand Tutorials](https://fshschool.org/docs/tutorials/) -- A step-by-step hands-on introduction to producing an Implementation Guide (IG) with FHIR Shorthand and SUSHI.
 1. [FSH Online](https://fshschool.org/FSHOnline/#/) -- A coding playground for FSH, an online environment that allows you to write FSH and convert it to FHIR artifacts, convert FHIR artifacts to FSH, access examples, and share FSH code with others.

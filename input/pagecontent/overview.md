@@ -1,7 +1,7 @@
 {%include styles.html%}
 
 <br/>
-<span style="background-color: LightYellow;">NOTE: Information on this page is [informative content](https://www.hl7.org/fhir/versions.html#std-process).</span>
+<span style="background-color: LightYellow;">NOTE: Information on this page is [informative content](https://hl7.org/fhir/versions.html#std-process).</span>
 <br/>
 
 FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts involved in creation of FHIR Implementation Guides (IG). The language is specifically designed for this purpose, simple and compact, and allows the author to express their intent with fewer concerns about underlying FHIR mechanics. FSH can be created and updated using any text editor, and because it is text, it enables distributed, team-based development using source code control tools such as GitHub.
@@ -11,7 +11,7 @@ FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts i
 The complete FSH language is formally described in the [FHIR Shorthand Language Reference](reference.html). Here we present just enough to get a taste of FSH.
 
 * **Grammar**: [FSH has a formal grammar](reference.html#appendix-fsh-grammar-informative) defined in [ANTLR](https://www.antlr.org/).
-* **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R4](http://hl7.org/fhir/R4/datatypes.html#primitive), and also include <span style="background-color: #fff5e6;">{%include tu.html%} datatypes proposed for inclusion in FHIR R5 ([integer64](https://build.fhir.org/datatypes.html#primitive) and [CodeableReference](https://build.fhir.org/references.html#codeablereference))</span>.
+* **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R5](https://hl7.org/fhir/R5/datatypes.html#primitive).
 * **Whitespace**: Repeated whitespace has meaning within FSH files only within string literals and when used for [indenting rules](reference.html#indented-rules). In all other contexts, repeated whitespace is not meaningful.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
 * **Asterisk Character**: A leading asterisk is used to denote FSH rules. For example, here is a rule to set an element named `active` to `true`:
@@ -89,7 +89,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
   * valueQuantity = UCUM#mm "millimeters"
   ```
 
-* **Binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR R4's binding strengths](http://hl7.org/fhir/R4/valueset-binding-strength.html): example, preferred, extensible, or required. For example:
+* **Binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR's binding strengths](https://hl7.org/fhir/R5/valueset-binding-strength.html): example, preferred, extensible, or required. For example:
 
   ```
   * gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)
@@ -131,7 +131,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
       allergyintolerance-resolutionAge named resolutionAge 0..1
   ```
 
-* **Flag rules** add bits of information about elements impacting how implementers should handle them. The flags are those [defined in FHIR](http://hl7.org/fhir/R4/formats.html#table), except FSH uses `MS` for must-support and `SU` for summary. For example:
+* **Flag rules** add bits of information about elements impacting how implementers should handle them. The flags are those [defined in FHIR](https://hl7.org/fhir/R5/formats.html#table), except FSH uses `MS` for must-support and `SU` for summary. For example:
 
   ```
   * communication MS SU
@@ -252,7 +252,7 @@ In this section, we will walk through a realistic example of FSH, line by line. 
 ```
 
 * Lines 1 and 2 define aliases for the LOINC and SNOMED-CT code systems.
-* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and according to FHIR, should be "[usable by machine processing applications such as code generation](http://www.hl7.org/fhir/structuredefinition.html#resource)".
+* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and according to FHIR, should be "[usable by machine processing applications such as code generation](https://hl7.org/fhir/structuredefinition.html#resource)".
 * Line 5 says that this profile will be based on Observation.
 * Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
