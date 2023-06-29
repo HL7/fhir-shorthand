@@ -28,6 +28,14 @@ Additional minor changes to the specification include the following:
 * Minor correction to indicate Path Rules may be used on Mappings (Table 7 in [3.5.1.3](reference.html#rule-statements))
 * Additional explanation and examples for using `include` ([3.5.12](reference.html#defining-value-sets))
 * Include Reference and Canonical in the reserved words list ([3.3.2](reference.html#reserved-words))
+* Indicate that R5 removed support for xpath invariants ([3.5.6](reference.html#defining-invariants))
+* Indicate that slices can be discriminated by position in R5 ([3.6.7.1](reference.html#step-1-specify-the-slicing-logic))
+* Provide example of constraining Reference datatype and its targets ([3.6.16](reference.html#type-rules))
+* Clarify that extension paths may also have bracketed indices ([3.4.8](reference.html#extension-paths))
+* Clarify correct and incorrect definition and use of aliases ([3.5.2](reference.html#defining-aliases))
+* Clarify that `Usage: #definition` can be used to define any formal item in an IG ([3.5.5](reference.html#defining-instances))
+* Clarify value set rules syntax for versions code systems and value sets ([3.5.12](reference.html#defining-value-sets))
+* Clarify allowed value types in value set filter expressions ([3.5.12.1](reference.html#filters))
 * Update all links for core FHIR to point to FHIR R5
 
 ### FHIR Shorthand 2.0.0 (HL7 Mixed Normative / Trial Use Release 1)
