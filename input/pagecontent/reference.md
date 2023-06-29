@@ -1617,17 +1617,14 @@ The contents of a value set are defined by "include" rules, which have the follo
 | Filtered codes from a code system | <code style="white-space: normal">* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept descendant-of #254837009`<br/><br/>`* include codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* include codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
 {: .grid }
 
+**Notes:**
 
-> **Note 1:**  When a single include rule includes more than item (code system or value set), the applicable codes are those present in _all_ listed items.
-
-> **Note 2:**  To add codes from multiple code systems or value sets (i.e., the union not the intersection), specify them in separate `include` rules.
-
-> **Note 3:** When an `include` rule has both a system and more than one value set, the code system must be first or last.
-
-> **Note 4:**  An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
-
-> **Note 5:** Filters are code system dependent. See [below](#filters) for further discussion.
-
+* When a single include rule includes more than item (code system or value set), the applicable codes are those present in _all_ listed items.
+* To add codes from multiple code systems or value sets (i.e., the union not the intersection), specify them in separate `include` rules.
+* When an `include` rule has both a system and more than one value set, the code system must be first or last.
+* An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
+* Filters are code system dependent. See [below](#filters) for further discussion.
+* {%include tu-span.html%} Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).</span>
 
 **Examples:**
 
@@ -1693,6 +1690,70 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
   ```
 
 > **Note:** Intensional and extensional forms can be used together in a single value set definition.
+
+{%include tu-div.html%}
+
+##### Concept Metadata
+
+Within a ValueSet definition, the caret syntax MAY be used to set metadata attributes for individual concepts (e.g., elements of ValueSet.compose.include.concept.designation).
+
+To assign metadata values for concepts that are included in the value set, authors SHOULD specify one or more indented caret path assignment rules below the rule that includes the concept:
+<pre><code>* <span class="optional">include</span> {Coding}
+  * ^&lt;element1 of corresponding concept&gt; = {value1}
+  <span class="optional">* ^&lt;element2 of corresponding concept&gt; = {value2}</span>
+</code></pre>
+
+To assign metadata values for concepts that are excluded in the value set, authors SHOULD specify one or more indented caret path assignment rules below the rule that excludes the concept:
+<pre><code>* exclude {Coding}
+  * ^&lt;element1 of corresponding concept&gt; = {value1}
+  <span class="optional">* ^&lt;element2 of corresponding concept&gt; = {value2}</span>
+</code></pre>
+
+If authors do not wish to use indented caret path rules, they MAY specify the code followed by a caret path assignment:
+<pre><code>* {Coding} ^&lt;element1 of corresponding concept&gt; = {value1}
+<span class="optional">* {Coding} ^&lt;element2 of corresponding concept&gt; = {value2}</span>
+</code></pre>
+
+> **Note:** A concept must be included or excluded _before_ caret rule assignments can be used to set its metadata. When a single rule contains a concept followed by a caret path assignment, the assignment pertains to the concept wherever it is found in the composition (whether included or excluded).
+
+**Examples:**
+
+* To set the designation.use of the included concept `$SCT#971000205103`:
+
+  ```
+  * $SCT#971000205103 "Wearing street clothes with shoes"
+    * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  ```
+
+* To set the designation.use of the included concept `$SCT#971000205103` using the `include` keyword:
+
+  ```
+  * include $SCT#971000205103 "Wearing street clothes with shoes"
+    * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  ```
+
+* To set the designation.use of the included concept `$SCT#971000205103` by repeating the code:
+
+  ```
+  * $SCT#971000205103 "Wearing street clothes with shoes"
+  * $SCT#971000205103 ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  ```
+
+* To set the designation.use of the excluded concept `$SCT#951000205108`:
+
+  ```
+  * exclude $SCT#951000205108 "Wearing underwear or less"
+    * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  ```
+
+* To set the designation.use of the excluded concept `$SCT#951000205108` by repeating the code:
+
+  ```
+  * exclude $SCT#951000205108 "Wearing underwear or less"
+  * $SCT#951000205108 ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  ```
+
+</div>
 
 ### FSH Rules
 
