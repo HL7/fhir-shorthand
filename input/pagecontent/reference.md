@@ -1718,39 +1718,46 @@ If authors do not wish to use indented caret path rules, they MAY specify the co
 
 **Examples:**
 
-* To set the designation.use of the included concept `$SCT#971000205103`:
+* To specify a `designation` for the fully specified name of the included concept `$SCT#84162001`:
 
   ```
-  * $SCT#971000205103 "Wearing street clothes with shoes"
+  * $SCT#84162001  "Cold"
     * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+    * ^designation[0].value = "Cold sensation quality (qualifier value)"
   ```
 
-* To set the designation.use of the included concept `$SCT#971000205103` using the `include` keyword:
+* To specify a `designation` for the fully specified name of the included concept `$LNC#55423-8` using the `include` keyword:
 
   ```
-  * include $SCT#971000205103 "Wearing street clothes with shoes"
+  * include $LNC#55423-8 "Number of steps"
     * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+    * ^designation[0].value = "Number of steps in Unspecified Time, Pedometer"
   ```
 
-* To set the designation.use of the included concept `$SCT#971000205103` by repeating the code:
+* To specify a `designation` for a synonym of the included concept `$SCT#32849002` by repeating the code:
 
   ```
-  * $SCT#971000205103 "Wearing street clothes with shoes"
-  * $SCT#971000205103 ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * $SCT#84162001  "Esophageal structure"
+  * $SCT#84162001  ^designation[0].use = $SCT#900000000000013009 "Synonym (core metadata concept)"
+  * $SCT#84162001  ^designation[0].language = urn:ietf:bcp:47#en-GB
+  * $SCT#84162001  ^designation[0].value = "Oesophageal structure"
   ```
 
-* To set the designation.use of the excluded concept `$SCT#951000205108`:
+* To specify a `designation` for a synonym of the excluded concept `$SCT#22298006`:
 
   ```
-  * exclude $SCT#951000205108 "Wearing underwear or less"
-    * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * exclude $SCT#22298006 "Myocardial infarction (disorder)"
+    * ^designation[0].use = $SCT#900000000000013009 "Synonym (core metadata concept)"
+    * ^designation[0].language = urn:ietf:bcp:47#en-US
+    * ^designation[0].value = "Heart attack"
   ```
 
-* To set the designation.use of the excluded concept `$SCT#951000205108` by repeating the code:
+* To specify a `designation` for the fully specified name of the excluded concept `$SCT#54987000` by repeating the code:
 
   ```
-  * exclude $SCT#951000205108 "Wearing underwear or less"
-  * $SCT#951000205108 ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * exclude $SCT#54987000 "Choledochoplasty"
+  * $SCT#54987000 ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * $SCT#54987000 ^designation[0].value = "Repair of common bile duct (procedure)"
   ```
 
 </div>
