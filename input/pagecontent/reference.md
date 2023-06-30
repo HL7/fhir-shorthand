@@ -114,7 +114,7 @@ Each FSH project MUST specify the version of FHIR it depends upon. It is up to i
 The FSH language specification has been designed around FHIR R4 and later. FSH depends primarily on normative parts of the FHIR R4 specification (e.g., StructureDefinition and datatypes), and not on specific Resources, Profiles, Value Sets or Extensions. As a result, many FHIR version differences can be ignored. However, because the FSH specification refers to FHIR data types and definitional artifacts, there is no way to absolutely divorce FSH from specific FHIR versions.
 
 {%include tu-div.html%}
-FSH supports new pre-release FHIR R5 datatypes integer64 and CodeableReference on a trial use basis.
+FSH supports new FHIR R5 datatypes integer64 and CodeableReference on a trial use basis.
 </div>
 
 #### External IGs
@@ -135,7 +135,7 @@ If there is discrepancy between the grammar and the FSH language description, th
 
 #### Reserved Words
 
-FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, `contentReference`, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
+FSH has a number of reserved words, symbols, and patterns. Reserved words and symbols with special meaning in FSH are: `contains`, `named`, `and`, `only`, `or`, `obeys`, `true`, `false`, `include`, `exclude`, `codes`, `where`, `valueset`, `system`, `from`, `insert`, {%include tu-span.html%}`contentReference`</span>, `!?`, `MS`, `SU`, `N`, `TU`, `D`, `=`, `*`, `:`, `->`, `.`,`[`, `]`.
 
 The following words are reserved, with or without white spaces prior to the colon: `Alias:`, {%include tu-span.html%}`Characteristics:`</span>, `CodeSystem:`, {%include tu-span.html%}`Context:`</span>, `Extension:`, `Instance:`, `Invariant:`, `Logical:`, `Mapping:`, `Profile:`, `Resource:`, `RuleSet:`, `ValueSet:`, `Description:`, `Expression:`, `Id:`, `InstanceOf:`, `Parent:`, `Severity:`, `Source:`, `Target:`, `Title:`, `Usage:`, `XPath:`.
 
@@ -984,6 +984,8 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
   ```
 
+> **Note:** The use of the `Context` keyword in the example above is {%include tu.html%}.
+
 * How [US Core Ethnicity extension](https://hl7.org/fhir/us/core/StructureDefinition-us-core-ethnicity.html) (a complex extension with inline sub-extensions) would be defined in FSH:
 
   ```
@@ -1006,6 +1008,9 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   * extension[text] ^short = "Ethnicity text"
   * extension[text].value[x] only string
   ```
+
+> **Note:** The use of the `Context` keyword in the example above is {%include tu.html%}.
+
 
 * Define an extension with an explicit parent, constraining the US Core Birth Sex extension for US states that do not recognize non-binary birth sex:
 
@@ -1298,6 +1303,8 @@ Logical models are defined using the declaration `Logical`, with RECOMMENDED key
 Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
 
 In addition, authors should consult FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
+
+> **Note:** Prior versions of FHIR Shorthand forbid logical model definitions from constraining inherited elements or using assignment rules to fix element values. These capabilities are now permitted as {%include tu.html%} features of FSH.
 
 **Example:**
 
@@ -1949,9 +1956,7 @@ Authors define logical models and resources by adding new elements to their defi
 
 The syntax of the rules to add a new element are as follows:
 
-<pre><code>* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span>
-* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> contentReference {contentUrl} "{short}" <span class="optional">"{definition}"</span>
-</code></pre>
+<pre><code>* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span></code></pre>
 
 where `{datatype(s)}` can be one of the following:
 
@@ -1960,13 +1965,21 @@ where `{datatype(s)}` can be one of the following:
 * Canonicals for one or more resources or profiles, <code>Canonical({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code>
 * {%include tu-span.html%} CodeableReferences to one or more resources or profiles, <code>CodeableReference({Resource/Profile1} <span class="optional">or {Resource/Profile2} or {Resource/Profile3}...</span>)</code></span>
 
-and where `{contentUrl}` is a URI referencing the element whose properties will be used to define this element.This type of element definition is typically used with recursively nested elements, such as [Questionnaire.item.item](https://hl7.org/fhir/R5/questionnaire-definitions.html#Questionnaire.item.item), which is defined by reference to `#Questionnaire.item`. Another example is [Observation.component.referenceRange](https://hl7.org/fhir/R5/observation-definitions.html#Observation.component.referenceRange), which is defined by reference to `#Observation.referenceRange`. Refer to the [ElementDefinition documentation](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.contentReference) for more information.
+{%include tu-div.html%}
+
+To add an element that uses a [contentReference](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.contentReference) to refer to another element, use the following syntax:
+
+<pre><code>* &lt;element&gt; {min}..{max} <span class="optional">{flag(s)}</span> contentReference {contentUrl} "{short}" <span class="optional">"{definition}"</span></code></pre>
+
+where `{contentUrl}` is a URI referencing the element whose properties will be used to define this element. This type of element definition is typically used with recursively nested elements, such as [Questionnaire.item.item](https://hl7.org/fhir/R5/questionnaire-definitions.html#Questionnaire.item.item), which is defined by reference to `#Questionnaire.item`. Another example is [Observation.component.referenceRange](https://hl7.org/fhir/R5/observation-definitions.html#Observation.component.referenceRange), which is defined by reference to `#Observation.referenceRange`. Refer to the [ElementDefinition documentation](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.contentReference) for more information.
+
+</div>
 
 Note the following:
 
 * An add element rule **at minimum** must specify:
   * an element path, cardinality, type, and short description, OR
-  * an element path, cardinality, the `contentReference` keyword, a content reference URI, and short description.
+  * {%include tu-span.html%} an element path, cardinality, the `contentReference` keyword, a content reference URI, and short description.</span>
 * Flags and longer definition are optional.
 * The longer definition can also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
@@ -1985,12 +1998,15 @@ Note the following:
   ```
   * email 0..* SU string "The person's email addresses" "Email addresses by which the person may be contacted."
   ```
+{%include tu-div.html%}
 
 * Add an element defined by a `contentReference`, which receives the content rules of the referenced element:
 
   ```
   * email 0..* contentReference http://example.org/StructureDefinition/AnotherResource#AnotherResource.email "The person's email addresses"
   ```
+
+</div>
 
 * Add a reference-typed element with a longer definition:
 
