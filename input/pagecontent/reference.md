@@ -937,7 +937,7 @@ Additional levels to any depth SHALL be added in the same manner.
 
 ##### Code Metadata
 
-Within a CodeSystem definition, the caret syntax MAY be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
+Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
 
 For a path to a code within a code system, use this syntax:
 
@@ -1695,7 +1695,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 
 ##### Concept Metadata
 
-Within a ValueSet definition, the caret syntax MAY be used to set metadata attributes for individual concepts (e.g., elements of ValueSet.compose.include.concept.designation).
+Within a ValueSet definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of ValueSet.compose.include.concept.designation).
 
 To assign metadata values for concepts that are included in the value set, authors SHOULD specify one or more indented caret path assignment rules below the rule that includes the concept:
 <pre><code>* <span class="optional">include</span> {Coding}
@@ -1703,13 +1703,13 @@ To assign metadata values for concepts that are included in the value set, autho
   <span class="optional">* ^&lt;element2 of corresponding concept&gt; = {value2}</span>
 </code></pre>
 
-To assign metadata values for concepts that are excluded in the value set, authors SHOULD specify one or more indented caret path assignment rules below the rule that excludes the concept:
+To assign metadata values for concepts that are excluded in the value set, authors can specify one or more indented caret path assignment rules below the rule that excludes the concept:
 <pre><code>* exclude {Coding}
   * ^&lt;element1 of corresponding concept&gt; = {value1}
   <span class="optional">* ^&lt;element2 of corresponding concept&gt; = {value2}</span>
 </code></pre>
 
-If authors do not wish to use indented caret path rules, they MAY specify the code followed by a caret path assignment:
+Indented caret path assignment rules are preferred for clarity, but authors may choose to repeat the code and follow it with a caret path assignment instead:
 <pre><code>* {Coding} ^&lt;element1 of corresponding concept&gt; = {value1}
 <span class="optional">* {Coding} ^&lt;element2 of corresponding concept&gt; = {value2}</span>
 </code></pre>
