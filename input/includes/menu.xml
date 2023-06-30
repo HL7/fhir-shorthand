@@ -2,11 +2,11 @@
   <li><a href="index.html">Home</a></li>
   <li><a href="overview.html">Overview</a></li>
   <li><a href="reference.html">Language Reference</a></li>
+  <li><a href="FSHQuickReference.pdf">Quick Reference Card</a></li>
+   <li><a href="change_log.html">Change Log</a></li>
   <li class="dropdown">
     <a data-toggle="dropdown" href="#" class="dropdown-toggle">More<b class="caret"> </b></a>
     <ul class="dropdown-menu">
-      <li><a href="change_log.html">Change Log</a></li>
-      <li><a href="FSHQuickReference.pdf">Quick Reference (Cheat Sheet)</a></li>
       <li><a href="https://github.com/FHIR/sushi/tree/v3.0.0/antlr/src/main/antlr" target="_blank">FSH Grammar</a></li>
       <li><a href="full-ig.zip">Full Implementation Guide (zip file)</a></li>
     </ul>
