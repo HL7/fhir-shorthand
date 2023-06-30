@@ -1698,7 +1698,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 
 Within a ValueSet definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of ValueSet.compose.include.concept.designation).
 
-To assign metadata values for concepts that are included in the value set, authors SHOULD specify one or more indented caret path assignment rules below the rule that includes the concept:
+To assign metadata values for concepts that are included in the value set, authors can specify one or more indented caret path assignment rules below the rule that includes the concept:
 <pre><code>* <span class="optional">include</span> {Coding}
   * ^&lt;element1 of corresponding concept&gt; = {value1}
   <span class="optional">* ^&lt;element2 of corresponding concept&gt; = {value2}</span>
@@ -1715,7 +1715,7 @@ Indented caret path assignment rules are preferred for clarity, but authors may 
 <span class="optional">* {Coding} ^&lt;element2 of corresponding concept&gt; = {value2}</span>
 </code></pre>
 
-> **Note:** A concept must be included or excluded _before_ caret rule assignments can be used to set its metadata. When a single rule contains a concept followed by a caret path assignment, the assignment pertains to the concept wherever it is found in the composition (whether included or excluded).
+> **Note:** A concept MUST be included or excluded _before_ caret rule assignments can be used to set its metadata. When a single rule contains a concept followed by a caret path assignment, the assignment pertains to the concept wherever it is found in the composition (whether included or excluded).
 
 **Examples:**
 
