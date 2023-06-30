@@ -52,6 +52,22 @@ Note that the [Language Reference](reference.html) is the formal specification, 
 
 The sequence of releases of this specification is expressed in terms of three integers, x.y.z. An increment in z indicates minor, backward-compatible updates. An increment in y indicates new or modified language features, and potentially, non-backward-compatible changes. By HL7 convention, the major version number x typically does not increment until the release of a new balloted version. Implementations SHOULD indicate what version or versions of the FSH specification they implement.
 
+
+<!-- The following are hidden since they are irrelevant in a documentation-only IG but are required by IG Publisher -->
+<!-- See: https://chat.fhir.org/#narrow/stream/179252-IG-creation/topic/Orphaned.20xhtml.20fragments.3F/near/370611655 -->
+<div style="display:none">
+
+#### Cross Version Analysis
+{% include cross-version-analysis.xhtml %}
+#### Dependency Table
+{% include dependency-table.xhtml %}
+#### Globals Table
+{% include globals-table.xhtml %}
+#### IP Statements
+{% include ip-statements.xhtml %}
+
+</div>
+
 ### Issue Reporting and Contributions
 
 * FSH language issues and suggestions can be made [in the HL7 Jira](https://jira.hl7.org/issues/?jql=project%20%3D%20FHIR%20AND%20Specification%20%3D%20%22Shorthand%20(FHIR)%20%5BFHIR-shorthand%5D%22). When filing FSH language or IG issues, use project="FHIR" AND Specification = "Shorthand (FHIR) [FHIR-shorthand]".
