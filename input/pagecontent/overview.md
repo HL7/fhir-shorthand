@@ -300,7 +300,7 @@ The process for installing SUSHI is described [here](https://fshschool.org/docs/
 
 #### Create a New Project
 
-To set up a directory structure for your IG, run `sushi -i` at a command prompt. This will create the [specific project structure](https://fshschool.org/docs/sushi/project/) required by the IG Publisher. 
+To set up a directory structure for your IG, run `sushi init` at a command prompt. This will create the [specific project structure](https://fshschool.org/docs/sushi/project/) required by the IG Publisher. 
 
 #### Author FSH Files
 
