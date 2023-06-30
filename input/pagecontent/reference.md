@@ -593,12 +593,18 @@ Since slices are sublists, a sliced array path technically points to the *first*
 
 #### Extension Paths
 
-Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is added to an extension array, a name (technically, a slice name) is assigned. Extensions MAY be identified by slice name or the extension's URL.
+Extension arrays are found at the root level of every resource, nested inside every element, and recursively inside each extension. Extensions are elements in these arrays. When an extension is specified in an extension array within a profile or extension definition, a name (technically, a slice name) is assigned. Extensions MAY be identified by slice name or the extension's URL.
 
-The path to an extension is constructed by combining the path to the extension array with a reference to slice name in square brackets:
+The path to an extension is constructed by combining the path to the extension array with a reference to a slice name in square brackets:
 
 ```
 <Extension>[{name or id or URL}]
+```
+
+Since an extension array in an instance may contain multiple extensions of the same type, additional instances of the extension can be accessed using a square-bracketed index:
+
+```
+<Extension>[{name or id or URL}][{index}]
 ```
 
 For locally-defined extensions, using the slice name is the simplest choice. For externally-defined extensions, the canonical URL can be easier to find than the slice name.
@@ -810,18 +816,21 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 
 #### Defining Aliases
 
-Aliases allow the user to replace a lengthy url or oid with a short string. Aliases are for readability only, and do not change the meaning of rules. Typical uses of aliases are to represent code systems and canonical URLs.
+Aliases allow the user to replace a lengthy url, oid, or uuid with a short string. Aliases are for readability only, and do not change the meaning of rules. Typical uses of aliases are to represent code systems and canonical URLs.
 
 Alias definitions follow this syntax:
 
 ```
-Alias: {Alias name} = {url or oid}
+Alias: {Alias name} = {url or urn:oid or urn:uuid}
 ```
 
 Several things to note about aliases:
-
+ 
 * Aliases do not permit additional keywords or rules.
+* Aliases cannot be used as variables for arbitrary strings or names.
+* OIDs and UUIDs must be specified using the `urn:oid` or `urn:uuid` schemes.
 * Alias statements stand alone, and cannot be mixed into rule sets of other items.
+* Aliases can only be substituted where a full uri value is expected (e.g., they cannot be placed in the middle of a string).
 * Aliases are global within a FSH project.
 
 In contrast with other names in FSH (for profiles, extensions, etc.), alias names optionally begin with a dollar sign ($). If you define an alias with a leading $, implementations can more easily check for misspellings. For example, if you choose the alias name `$RaceAndEthnicity` and accidentally type `$RaceEthnicity`, implementations can easily detect there is no alias by that name. Without the $ sign, implementations are forced to look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
@@ -1116,7 +1125,7 @@ Instances are defined using the declaration `Instance`, with the REQUIRED keywor
 The `Usage` keyword specifies how the instance should be presented in the IG:
 
 * `Usage: #example` (default) means the instance is intended as an illustration of a profile or {%include tu-span.html%} logical model</span>, and will be presented on the Examples tab for the corresponding entity.
-* `Usage: #definition` means the instance is a conformance item that is an instance of a resource such as a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
+* `Usage: #definition` means the instance is a formal item (i.e., not an example) in the IG, such as an instance of a search parameter, operation definition, or questionnaire. These items will be presented on their own IG page.
 * `Usage: #inline` means the instance should not be instantiated as an independent resource, but can appear as part of another instance (for example, in any [DomainResource](https://hl7.org/fhir/R5/domainresource.html) in the `contained` array, or in a [Bundle](https://hl7.org/fhir/R5/bundle.html) in the `entry.resource` array).
 
 Instances inherit values from their StructureDefinition (i.e. assigned codes, assigned booleans) if those values are required. Assignment rules are used to set additional values.
@@ -1236,7 +1245,7 @@ These conformance resources are created using FSH instance grammar. For example,
 
 #### Defining Invariants
 
-Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>*</sup>, `Severity`<sup>*</sup>, `XPath` and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
+Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>*</sup>, `Severity`<sup>*</sup>, `XPath` (FHIR R4 only) and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
@@ -1246,7 +1255,7 @@ Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `
 | Description | Human description of constraint   | human      | string          | no<sup>*</sup> |
 | Expression  | FHIRPath expression of constraint | expression | FHIRPath string | no             |
 | Severity    | Either #error or #warning, as defined in [ConstraintSeverity](https://hl7.org/fhir/R5/valueset-constraint-severity.html) | severity | code | no<sup>*</sup> |
-| XPath       | XPath expression of constraint    | xpath      | XPath string    | no             |
+| XPath       | XPath expression of constraint _(Note: FHIR R5 no longer supports XPath)_ | xpath | XPath string | no |
 {: .grid }
 
 {%include tu-div.html%}
@@ -1257,7 +1266,7 @@ Authors may also specify ElementDefinition.constraint elements via [assignment r
 
 **Example:**
 
-* Define a simplified version of an invariant found in US Core using FSH Invariant keywords only:
+* Define a simplified version of an invariant found in US Core (for FHIR R4) using FSH Invariant keywords only:
 
   ```
   Invariant:   us-core-6
@@ -1268,7 +1277,7 @@ Authors may also specify ElementDefinition.constraint elements via [assignment r
   ```
 
 {%include tu-div.html%}
-* Define a simplified version of an invariant found in US Core using FSH Invariant keywords and rules:
+* Define a simplified version of an invariant found in US Core (for FHIR R4) using FSH Invariant keywords and rules:
 
   ```
   Invariant:   us-core-6
@@ -1567,13 +1576,16 @@ The contents of a value set are defined by "include" rules, which have the follo
 
 <span class="caption" id="t10">Table 10. Summary of value set include rules</span>
 
-| To&#160;include... | Syntax | Example |
+
+
+
+| To&#160;include... | Syntax | Examples |
 |-------|---------|----------|
-| A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* $SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}</code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}</code> | `* include codes from system http://snomed.info/sct` |
-| Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code>* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}</span> and valueset {ValueSet1}<span class="optional"> and {ValueSet2}...</span></code> | <code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units</code> |
-| Filtered codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem} where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept is-a #254837009` |
+| A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* include http://snomed.info/sct#961000205106 "Wearing street clothes, no shoes"`<br/><br/>`* $SCT#961000205106 "Wearing street clothes, no shoes"`<br/><br/><code style="white-space: normal">* http://snomed.info/sct|http://snomed.info/sct/731000124108#961000205106 "Wearing street clothes, no shoes"</code> |
+| All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}<span class="optional">|{version string}</span></code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`<br/><br/>`* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason|5.0.0` |
+| All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version string}</span></code> | `* include codes from system http://snomed.info/sct`<br/><br/>`* include codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108` |
+| Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code style="white-space: normal">* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}|{version string}</span> and valueset {ValueSet1}<span class="optional">|{version1 string}</span><span class="optional"> and {ValueSet2}|{version2 string}...</span></code> | <code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units</code><br/><br/><code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time|5.0.0 and http://hl7.org/fhir/ValueSet/age-units|5.0.0</code> |
+| Filtered codes from a code system | <code style="white-space: normal">* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept descendant-of #254837009`<br/><br/>`* include codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* include codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
 {: .grid }
 
 
@@ -1608,19 +1620,19 @@ Analogous rules can be used to leave out certain codes, with the word `exclude` 
 
 <span class="caption" id="t11">Table 11. Summary of value set exclude rules</span>
 
-| To exclude... | Syntax | Example |
+| To exclude... | Syntax | Examples |
 |-------|---------|----------|
-| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"` |
-| All codes from another value set | `* exclude codes from valueset {ValueSet}` | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason` |
-| All codes from a code system | `* exclude codes from system {CodeSystem}` | `* exclude codes from system http://snomed.info/sct` |
-| Filtered codes from a code system | `* exclude codes from system {CodeSystem} where {filter}` | `* exclude codes from system $SCT where concept is-a #254837009` |
+| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"`<br/><br/>`* exclude http://snomed.info/sct#961000205106 "Wearing street clothes, no shoes"`<br/><br/><code style="white-space: normal">* exclude http://snomed.info/sct|http://snomed.info/sct/731000124108#961000205106 "Wearing street clothes, no shoes"</code> |
+| All codes from another value set | <code>* exclude codes from valueset {ValueSet}<span class="optional">|{version string}</span></code> | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`<br/><br/>`* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason|5.0.0` |
+| All codes from a code system | <code>* exclude codes from system {CodeSystem}<span class="optional">|{version string}</span></code> | `* exclude codes from system http://snomed.info/sct`<br/><br/>`* exclude codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108` |
+| Filtered codes from a code system | <code style="white-space: normal">* exclude codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter}</code> | `* exclude codes from system $SCT where concept is-a #254837009`<br/><br/>`* exclude codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* exclude codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
 {: .grid }
 
 In addition, [assignment rules](#assignment-rules) SHALL be applicable to value sets only in the context of caret paths.
 
 ##### Filters
 
-A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](https://hl7.org/fhir/R5/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. For choices for the most common code systems, see the [FHIR documentation on filters]( https://hl7.org/fhir/R5/valueset.html#csnote).
+A filter is a logical statement in the form `{property} {operator} {value}`, where operator is chosen from the [FilterOperator value set](https://hl7.org/fhir/R5/ValueSet/filter-operator). Not all operators in that value set are valid for all code systems. The `property` and `value` are dependent on the code system. Depending on the filter, the `value` may be a code (e.g., `#123-A`), boolean (e.g., `true`), string (e.g., `"inherited"`), or regular expression (e.g., `/A\.[0-9]+/`). For choices for the most common code systems, see the [FHIR documentation on filters](https://hl7.org/fhir/R5/valueset.html#csnote).
 
 **Examples** 
 
@@ -2554,7 +2566,7 @@ In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) 
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](https://hl7.org/fhir/R5/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](https://hl7.org/fhir/R5/profiling.html#discriminator).
 
-The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, or profile conformance.
+The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, position of the sliced element (R5 and up), or profile conformance.
 
 **Example:**
 
@@ -3143,7 +3155,7 @@ FSH rules can also be used to restrict the target types of CodeableReference ele
 ```
 </div>
 
-Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource.
+Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, Condition.recorder has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices can be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource. In some cases, the right-hand side of a type rule may have a combination of datatype, Reference, Canonical, and {%include tu-span.html%}CodeableReference<span> targets.
 
 Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5/profiling.html), the datatype(s) in a type rule MUST always be more restrictive than the original datatype. For example, if the parent datatype is Quantity, it can be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but cannot be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, Condition.subject, defined as Reference(Patient or Group), can be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but cannot be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
 
@@ -3205,6 +3217,13 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
 
   ```
   * performer[Practitioner] only Reference(PrimaryCareProvider)
+  ```
+
+* Restrict the performer Reference datatype to the LiteralReference profile and its target types to Practitioner or PractitionerRole. Note that the first rule restricts the Reference datatype and the second rule restricts the types it can refer to:
+
+  ```
+  * performer only LiteralReference
+  * performer only Reference(PrimaryCarePhysician or EmergencyRoomPhysician)
   ```
 
 * Restrict PlanDefinition.action.definition[x], nominally a choice of uri or canonical(ActivityDefinition \| PlanDefinition \| Questionnaire), to allow only the canonical of an ActivityDefinition:
