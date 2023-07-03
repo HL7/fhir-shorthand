@@ -10,7 +10,7 @@
   <publisher value="HL7 International - FHIR Infrastructure Group"/>
   <contact>
     <telecom>
-      <system value="other"/>
+      <system value="url"/>
       <value value="http://hl7.org/Special/committees/fiwg"/>
     </telecom>
   </contact>
@@ -52,7 +52,7 @@
     </page>
     <parameter>
       <code value="releaselabel"/>
-      <value value="Mixed Normative-Trial Use"/>
+      <value value="ballot"/>
     </parameter>
     <parameter>
       <code value="copyrightyear"/>
