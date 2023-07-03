@@ -937,7 +937,7 @@ Additional levels to any depth SHALL be added in the same manner.
 
 ##### Code Metadata
 
-Within a CodeSystem definition, the caret syntax MAY be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
+Within a CodeSystem definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of CodeSystem.concept.designation and CodeSystem.concept.property).
 
 For a path to a code within a code system, use this syntax:
 
@@ -1617,24 +1617,21 @@ The contents of a value set are defined by "include" rules, which have the follo
 
 | To&#160;include... | Syntax | Examples |
 |-------|---------|----------|
-| A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* include http://snomed.info/sct#961000205106 "Wearing street clothes, no shoes"`<br/><br/>`* $SCT#961000205106 "Wearing street clothes, no shoes"`<br/><br/><code style="white-space: normal">* http://snomed.info/sct|http://snomed.info/sct/731000124108#961000205106 "Wearing street clothes, no shoes"</code> |
+| A single code | <code>* <span class="optional">include</span> {Coding}</code> | `* include http://snomed.info/sct#22298006 "Myocardial infarction (disorder)"`<br/><br/>`* $SCT#22298006 "Myocardial infarction (disorder)"`<br/><br/><code style="white-space: normal">* http://snomed.info/sct|http://snomed.info/sct/731000124108#22298006 "Myocardial infarction (disorder)"</code> |
 | All codes from another value set | <code>* <span class="optional">include</span> codes from valueset {ValueSet}<span class="optional">|{version string}</span></code> | `* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`<br/><br/>`* include codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason|5.0.0` |
 | All codes from a code system | <code>* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version string}</span></code> | `* include codes from system http://snomed.info/sct`<br/><br/>`* include codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108` |
 | Codes that lie in the _intersection_ of value set(s) and (optionally) a code system | <code style="white-space: normal">* <span class="optional">include</span> codes from <span class="optional">system {CodeSystem}|{version string}</span> and valueset {ValueSet1}<span class="optional">|{version1 string}</span><span class="optional"> and {ValueSet2}|{version2 string}...</span></code> | <code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time and http://hl7.org/fhir/ValueSet/age-units</code><br/><br/><code style="white-space: normal">* include codes from valueset http://hl7.org/fhir/ValueSet/units-of-time|5.0.0 and http://hl7.org/fhir/ValueSet/age-units|5.0.0</code> |
 | Filtered codes from a code system | <code style="white-space: normal">* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter1} <span class="optional">and {filter2}...</span></code> | `* include codes from system $SCT where concept descendant-of #254837009`<br/><br/>`* include codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* include codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
 {: .grid }
 
+**Notes:**
 
-> **Note 1:**  When a single include rule includes more than item (code system or value set), the applicable codes are those present in _all_ listed items.
-
-> **Note 2:**  To add codes from multiple code systems or value sets (i.e., the union not the intersection), specify them in separate `include` rules.
-
-> **Note 3:** When an `include` rule has both a system and more than one value set, the code system must be first or last.
-
-> **Note 4:**  An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
-
-> **Note 5:** Filters are code system dependent. See [below](#filters) for further discussion.
-
+* When a single include rule includes more than item (code system or value set), the applicable codes are those present in _all_ listed items.
+* To add codes from multiple code systems or value sets (i.e., the union not the intersection), specify them in separate `include` rules.
+* When an `include` rule has both a system and more than one value set, the code system must be first or last.
+* An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
+* Filters are code system dependent. See [below](#filters) for further discussion.
+* {%include tu-span.html%} Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).</span>
 
 **Examples:**
 
@@ -1658,7 +1655,7 @@ Analogous rules can be used to leave out certain codes, with the word `exclude` 
 
 | To exclude... | Syntax | Examples |
 |-------|---------|----------|
-| A single code | `* exclude {Coding}` | `* exclude $SCT#961000205106 "Wearing street clothes, no shoes"`<br/><br/>`* exclude http://snomed.info/sct#961000205106 "Wearing street clothes, no shoes"`<br/><br/><code style="white-space: normal">* exclude http://snomed.info/sct|http://snomed.info/sct/731000124108#961000205106 "Wearing street clothes, no shoes"</code> |
+| A single code | `* exclude {Coding}` | `* exclude $SCT#22298006 "Myocardial infarction (disorder)"`<br/><br/>`* exclude http://snomed.info/sct#22298006 "Myocardial infarction (disorder)"`<br/><br/><code style="white-space: normal">* exclude http://snomed.info/sct|http://snomed.info/sct/731000124108#22298006 "Myocardial infarction (disorder)"</code> |
 | All codes from another value set | <code>* exclude codes from valueset {ValueSet}<span class="optional">|{version string}</span></code> | `* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason`<br/><br/>`* exclude codes from valueset http://hl7.org/fhir/ValueSet/data-absent-reason|5.0.0` |
 | All codes from a code system | <code>* exclude codes from system {CodeSystem}<span class="optional">|{version string}</span></code> | `* exclude codes from system http://snomed.info/sct`<br/><br/>`* exclude codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108` |
 | Filtered codes from a code system | <code style="white-space: normal">* exclude codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter}</code> | `* exclude codes from system $SCT where concept is-a #254837009`<br/><br/>`* exclude codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* exclude codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
@@ -1675,12 +1672,13 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
 * Define a value set using [extensional](https://hl7.org/fhir/R5/valueset.html#int-ext) rules. This example demonstrates the optionality of the word `include`:
 
   ```
-  ValueSet: BodyWeightPreconditionVS
-  Title: "Body weight preconditions."
-  Description:  "Circumstances for body weight measurement."
-  * $SCT#971000205103 "Wearing street clothes with shoes"
-  * $SCT#961000205106 "Wearing street clothes, no shoes"
-  * $SCT#951000205108 "Wearing underwear or less"
+  ValueSet: BinetStageValueVS
+  Id: mcode-binet-stage-value-vs
+  Title: "Binet Stage Value Set"
+  Description: "Codes in the Binet staging system representing Chronic Lymphocytic Leukemia (CLL) stage."
+  * $NCIT#C80134 "Binet Stage A"
+  * $NCIT#C80135 "Binet Stage B"
+  * $NCIT#C80136 "Binet Stage C"
   ```
 
 * Define a value set using [intensional](https://blog.healthlanguage.com/the-difference-between-intensional-and-extensional-value-sets) rules:
@@ -1700,6 +1698,77 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
   ```
 
 > **Note:** Intensional and extensional forms can be used together in a single value set definition.
+
+{%include tu-div.html%}
+
+##### Concept Metadata
+
+Within a ValueSet definition, the caret syntax can be used to set metadata attributes for individual concepts (e.g., elements of ValueSet.compose.include.concept.designation).
+
+To assign metadata values for concepts that are included in the value set, authors can specify one or more indented caret path assignment rules below the rule that includes the concept:
+<pre><code>* <span class="optional">include</span> {Coding}
+  * ^&lt;element1 of corresponding concept&gt; = {value1}
+  <span class="optional">* ^&lt;element2 of corresponding concept&gt; = {value2}</span>
+</code></pre>
+
+To assign metadata values for concepts that are excluded in the value set, authors can specify one or more indented caret path assignment rules below the rule that excludes the concept:
+<pre><code>* exclude {Coding}
+  * ^&lt;element1 of corresponding concept&gt; = {value1}
+  <span class="optional">* ^&lt;element2 of corresponding concept&gt; = {value2}</span>
+</code></pre>
+
+Indented caret path assignment rules are preferred for clarity, but authors may choose to repeat the code and follow it with a caret path assignment instead:
+<pre><code>* {Coding} ^&lt;element1 of corresponding concept&gt; = {value1}
+<span class="optional">* {Coding} ^&lt;element2 of corresponding concept&gt; = {value2}</span>
+</code></pre>
+
+> **Note:** A concept MUST be included or excluded _before_ caret rule assignments can be used to set its metadata. When a single rule contains a concept followed by a caret path assignment, the assignment pertains to the concept wherever it is found in the composition (whether included or excluded).
+
+**Examples:**
+
+* To specify a `designation` for the fully specified name of the included concept `$SCT#84162001`:
+
+  ```
+  * $SCT#84162001  "Cold"
+    * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+    * ^designation[0].value = "Cold sensation quality (qualifier value)"
+  ```
+
+* To specify a `designation` for the fully specified name of the included concept `$LNC#55423-8` using the `include` keyword:
+
+  ```
+  * include $LNC#55423-8 "Number of steps"
+    * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+    * ^designation[0].value = "Number of steps in Unspecified Time, Pedometer"
+  ```
+
+* To specify a `designation` for a synonym of the included concept `$SCT#32849002` by repeating the code:
+
+  ```
+  * $SCT#84162001  "Esophageal structure"
+  * $SCT#84162001  ^designation[0].use = $SCT#900000000000013009 "Synonym (core metadata concept)"
+  * $SCT#84162001  ^designation[0].language = urn:ietf:bcp:47#en-GB
+  * $SCT#84162001  ^designation[0].value = "Oesophageal structure"
+  ```
+
+* To specify a `designation` for a synonym of the excluded concept `$SCT#22298006`:
+
+  ```
+  * exclude $SCT#22298006 "Myocardial infarction (disorder)"
+    * ^designation[0].use = $SCT#900000000000013009 "Synonym (core metadata concept)"
+    * ^designation[0].language = urn:ietf:bcp:47#en-US
+    * ^designation[0].value = "Heart attack"
+  ```
+
+* To specify a `designation` for the fully specified name of the excluded concept `$SCT#54987000` by repeating the code:
+
+  ```
+  * exclude $SCT#54987000 "Choledochoplasty"
+  * $SCT#54987000 ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  * $SCT#54987000 ^designation[0].value = "Repair of common bile duct (procedure)"
+  ```
+
+</div>
 
 ### FSH Rules
 
