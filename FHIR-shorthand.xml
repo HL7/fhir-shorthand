@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<specification xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ballotUrl="http://hl7.org/fhir/uv/shorthand/2021Sep" ciUrl="http://build.fhir.org/ig/HL7/fhir-shorthand" defaultVersion="2.0.0" defaultWorkgroup="fhir-i" gitUrl="https://github.com/HL7/fhir-shorthand" url="http://hl7.org/fhir/uv/shorthand">
+<version code="current" url="http://build.fhir.org/ig/HL7/fhir-shorthand"/>
+<version code="2.0.0" url="http://hl7.org/fhir/uv/shorthand/N1"/>
+<version code="1.2.0" url="http://hl7.org/fhir/uv/shorthand/2021Sep"/>
+<version code="1.0.0" url="http://hl7.org/fhir/uv/shorthand/STU1"/>
+<version code="0.12.0" deprecated="true" url="http://hl7.org/fhir/uv/shorthand/2020May"/>
+<artifactPageExtension value="-definitions"/>
+<artifactPageExtension value="-examples"/>
+<artifactPageExtension value="-mappings"/>
+<artifact deprecated="true" id="CodeSystem/shorthand-code-system" key="shorthand-code-system" name="Shorthand Code System"/>
+<artifact deprecated="true" id="ValueSet/shorthand-instance-tags" key="shorthand-instance-tags" name="Shorthand Instance Tags"/>
+<page key="NA" name="(NA)"/>
+<page key="many" name="(many)"/>
+<page key="artifacts" name="Artifacts Summary"/>
+<page key="change_log" name="Change Log"/>
+<page key="index" name="FHIR Shorthand"/>
+<page key="languagereference" name="Language Reference"/>
+<page key="overview" name="Overview"/>
+<page deprecated="true" key="quickreference" name="Quick Reference"/>
+<page deprecated="true" key="sushi" name="SUSHI"/>
+<page key="toc" name="Table of Contents"/>
+<page deprecated="true" key="tutorial" name="Tutorial"/>
+</specification>

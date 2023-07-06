@@ -55,7 +55,7 @@ The sequence of releases of this specification is expressed in terms of three in
 
 <!-- The following are hidden since they are irrelevant in a documentation-only IG but are required by IG Publisher -->
 <!-- See: https://chat.fhir.org/#narrow/stream/179252-IG-creation/topic/Orphaned.20xhtml.20fragments.3F/near/370611655 -->
-<div style="display:none">
+<div style="display:none" markdown="1">
 
 #### Cross Version Analysis
 {% include cross-version-analysis.xhtml %}

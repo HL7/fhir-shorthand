@@ -8,7 +8,7 @@ This chapter contains the formal specification of the FHIR Shorthand (FSH) langu
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
-Portions of the specification designated as "Trial Use" are indicated by {%include tu.html%} and <span style="background-color: #fff5e6;">background shading</span>. Remaining unmarked sections contain normative content.
+Portions of the specification designated as "Trial Use" are indicated by {%include tu.html%} and <span class="tuSpan">background shading</span>. Remaining unmarked sections contain normative content.
 
 ### Notational Conventions
 
@@ -760,7 +760,7 @@ The following keywords (case-sensitive) are defined:
 | XPath | Provides the XPath in an invariant | XPath string |
 {: .grid }
 
-<span style="background-color: #fff5e6;"><sup>*</sup> Defining instances of logical models in FSH is {%include tu.html%}.</span>
+<span class="tuSpan"><sup>*</sup> Defining instances of logical models in FSH is {%include tu.html%}.</span>
 
 In the above, `name` refers to a valid [item name](#item-names) and `id` to an [item identifier](#item-identifiers).
 
