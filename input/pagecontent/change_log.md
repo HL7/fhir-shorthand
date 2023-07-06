@@ -1,6 +1,6 @@
 ### FHIR Shorthand 3.0.0-ballot (HL7 Mixed Normative / Trial Use Ballot 1)
 
-The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following changes as **NORMATIVE** features. These features have been thoroughly tested by the community after being introduced as trial use in FHIR Shorthand 2.0.0 and are expected to remain stable in the future.
+The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following changes as **[NORMATIVE](https://hl7.org/fhir/versions.html#std-process)** features. These features have been thoroughly tested by the community after being introduced as trial use in FHIR Shorthand 2.0.0 and are expected to remain stable in the future.
 
 * Parameterized rule sets ([3.5.11.2](reference.html#parameterized-rule-sets), [3.6.11.2](reference.html#inserting-parameterized-rule-sets))
 * Indented rules ([3.6.1](reference.html#indented-rules))
@@ -11,7 +11,7 @@ The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) int
 * Concept-specific caret rules ([3.5.3.2](reference.html#code-metadata))
 * Inserting rule sets with path context ([3.6.11.3](reference.html#inserting-rule-sets-with-path-context))
 
-The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following substantive changes as **TRIAL USE** features. Many of these features have been tested by the community, but some may undergo changes in the future.
+The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following substantive changes as **[TRIAL USE](https://hl7.org/fhir/versions.html#std-process)** features. Many of these features have been tested by the community, but some may undergo changes in the future.
 
 * Specifying Extension context using the Context keyword ([3.5.4](reference.html#defining-extensions))
 * Authors may define instances of logical models ([3.5.5](reference.html#defining-instances))
@@ -46,12 +46,12 @@ There were no substantive changes in FHIR Shorthand 2.0.0 compared to the ballot
 
 ### FHIR Shorthand 1.2.0 (HL7 Mixed Normative / Trial Use Ballot 1)
 
-The FHIR Shorthand Mixed Normative / Trial Use Ballot (September 2021) introduced the following substantive changes as **NORMATIVE** features. These features have been thoroughly tested by the community and are not expected to change in the future.
+The FHIR Shorthand Mixed Normative / Trial Use Ballot (September 2021) introduced the following substantive changes as **[NORMATIVE](https://hl7.org/fhir/versions.html#std-process)** features. These features have been thoroughly tested by the community and are not expected to change in the future.
 
 * Soft indexing for array paths ([3.4.6](reference.html#array-paths-using-soft-indexing))
 * Extended Quantity syntax ([3.3.9](reference.html#quantities))
 
-The FHIR Shorthand Mixed Normative / Trial Use Ballot (September 2021) introduced the following substantive changes as **TRIAL USE** features. Many of these features have been tested by the community, but some may undergo changes in the future.
+The FHIR Shorthand Mixed Normative / Trial Use Ballot (September 2021) introduced the following substantive changes as **[TRIAL USE](https://hl7.org/fhir/versions.html#std-process)** features. Many of these features have been tested by the community, but some may undergo changes in the future.
 
 * Parameterized rule sets ([3.5.11.2](reference.html#parameterized-rule-sets), [3.6.11.2](reference.html#inserting-parameterized-rule-sets))
 * Indented rules ([3.6.1](reference.html#indented-rules))
