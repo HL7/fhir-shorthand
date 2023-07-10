@@ -12,7 +12,7 @@ Portions of the specification designated as [Trial Use](https://hl7.org/fhir/ver
 
 ### Notational Conventions
 
-The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix](#appendix-fsh-grammar-informative)), most readers will find the syntax expressions more instructive.
+The FSH specification uses syntax expressions to illustrate the FSH language. While FSH has a formal grammar (see [Appendix: FSH Grammar](#appendix-fsh-grammar-informative)), most readers will find the syntax expressions more instructive.
 
 Syntax expressions use the following conventions:
 
@@ -129,7 +129,7 @@ Projects MAY contain other content involved in creating FHIR IGs, such as narrat
 
 #### Grammar
 
-The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [FSH Grammar](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
+The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [Appendix: FSH Grammar](#appendix-fsh-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
 
 If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
