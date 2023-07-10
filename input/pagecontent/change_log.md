@@ -1,6 +1,6 @@
 ### FHIR Shorthand 3.0.0-ballot (HL7 Mixed Normative / Trial Use Ballot 1)
 
-The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) introduced the following changes as **[NORMATIVE](https://hl7.org/fhir/versions.html#std-process)** features. These features have been thoroughly tested by the community after being introduced as trial use in FHIR Shorthand 2.0.0 and are expected to remain stable in the future.
+The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) promoted the following features to **[NORMATIVE](https://hl7.org/fhir/versions.html#std-process)** status. These features have been thoroughly tested by the community after being introduced as trial use in FHIR Shorthand 2.0.0 and are expected to remain stable in the future.
 
 * Parameterized rule sets ([3.5.11.2](reference.html#parameterized-rule-sets), [3.6.11.2](reference.html#inserting-parameterized-rule-sets))
 * Indented rules ([3.6.1](reference.html#indented-rules))
@@ -23,7 +23,7 @@ The FHIR Shorthand 3.0.0 Mixed Normative / Trial Use Ballot (September 2023) int
 * CodeableReference keyword can be used in add element rules ([3.6.2](reference.html#add-element-rules)) and type rules ([3.6.16](reference.html#type-rules))
 * Specifying type characteristics of Logical models using the Characteristics keyword ([3.5.7](reference.html#defining-logical-models))
 
-Additional minor changes to the specification include the following:
+Additional minor changes and clarifications to the specification include the following:
 
 * Insert rules in the context of a concept ([3.6.11.3](reference.html#inserting-rule-sets-with-path-context))
 * Add element rules with content references ([3.6.2](reference.html#add-element-rules))
@@ -62,6 +62,8 @@ The FHIR Shorthand Mixed Normative / Trial Use Ballot (September 2021) introduce
 * Concept-specific caret rules ([3.5.3.2](reference.html#code-metadata))
 * Inserting rule sets with path context ([3.6.11.3](reference.html#indented-rules))
 * Support for integer64 and CodeableReference ([3.2.3](reference.html#fhir-version), [3.6.3.2](reference.html#assignments-with-primitive-data-types), [3.6.3.7](reference.html#assignments-with-the-codeablereference-data-type), [3.6.4](reference.html#binding-rules), [3.6.16](reference.html#type-rules))
+
+All other existing features originally introduced in FHIR Shorthand 1.0.0 were promoted to **[NORMATIVE](https://hl7.org/fhir/versions.html#std-process)** status.
 
 ### FHIR Shorthand 1.0.0 (HL7 Standard for Trial Use Release 1)
 
