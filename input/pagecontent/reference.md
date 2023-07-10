@@ -129,7 +129,7 @@ Projects MAY contain other content involved in creating FHIR IGs, such as narrat
 
 #### Grammar
 
-The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [Appendix](#appendix-fsh-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
+The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [FSH Grammar](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
 
 If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
@@ -3395,6 +3395,6 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
 
 [SUSHI](https://github.com/FHIR/sushi) provides an implementation of a FSH language parser described in [ANTLR v4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification takes precedence. This grammar implementation is provided for informational purposes and is not normative.
 
-The latest version of the parser grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/FSH.g4) and [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/MiniFSH.g4).
+The latest version of the parser grammar can be found [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/FSH.g4) and [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/MiniFSH.g4).
 
-The latest version of the lexer grammar can be found [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/FSHLexer.g4) and [here](https://github.com/FHIR/sushi/blob/v3.0.0/antlr/src/main/antlr/MiniFSHLexer.g4).
+The latest version of the lexer grammar can be found [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/FSHLexer.g4) and [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/MiniFSHLexer.g4).

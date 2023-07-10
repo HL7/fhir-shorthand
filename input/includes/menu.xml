@@ -7,7 +7,7 @@
   <li class="dropdown">
     <a data-toggle="dropdown" href="#" class="dropdown-toggle">More<b class="caret"> </b></a>
     <ul class="dropdown-menu">
-      <li><a href="https://github.com/FHIR/sushi/tree/v3.0.0/antlr/src/main/antlr" target="_blank">FSH Grammar</a></li>
+      <li><a href="https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr" target="_blank">FSH Grammar</a></li>
       <li><a href="full-ig.zip">Full Implementation Guide (zip file)</a></li>
     </ul>
   </li>

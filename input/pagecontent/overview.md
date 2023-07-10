@@ -10,7 +10,7 @@ FHIR Shorthand (FSH) is a domain-specific language for defining FHIR artifacts i
 
 The complete FSH language is formally described in the [FHIR Shorthand Language Reference](reference.html). Here we present just enough to get a taste of FSH.
 
-* **Grammar**: [FSH has a formal grammar](reference.html#appendix-fsh-grammar-informative) defined in [ANTLR](https://www.antlr.org/).
+* **Grammar**: [FSH has a formal grammar](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr) defined in [ANTLR](https://www.antlr.org/).
 * **Data types**: The primitive and complex data types and value formats in FSH are identical to the [primitive types and value formats in FHIR R5](https://hl7.org/fhir/R5/datatypes.html#primitive).
 * **Whitespace**: Repeated whitespace has meaning within FSH files only within string literals and when used for [indenting rules](reference.html#indented-rules). In all other contexts, repeated whitespace is not meaningful.
 * **Comments**: FSH uses `//` as leading delimiter for single-line comments, and the pair `/*`  `*/` to delimit multiple line comments.
