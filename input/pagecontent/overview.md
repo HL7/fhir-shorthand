@@ -61,9 +61,9 @@ Following the declaration, each FSH item has a set of required and optional keyw
 
 ```
 Profile: CancerDiseaseStatus
-Parent:   Observation
-Id:       mcode-cancer-disease-status
-Title:    "Cancer Disease Status"
+Parent:  Observation
+Id:      mcode-cancer-disease-status
+Title:   "Cancer Disease Status"
 Description: "A clinician's qualitative judgment on the current trend of the cancer, e.g., whether it is stable, worsening (progressing), or improving (responding)."
 ```
 
@@ -296,7 +296,7 @@ The discussion in this section refers to the numbers in the following figure:
 
 #### Install SUSHI
 
-The process for installing SUSHI is described [here](https://fshschool.org/docs/sushi/installation/). A text editor is also needed. [Visual Studio Code](https://code.visualstudio.com/) has a useful [FSH plug-in](https://bit.ly/3fUsIk7) that knows FSH syntax and colorizes text accordingly.
+The process for installing SUSHI is described [here](https://fshschool.org/docs/sushi/installation/). A text editor is also needed. [Visual Studio Code](https://code.visualstudio.com/) has a useful [FSH plug-in](https://marketplace.visualstudio.com/items?itemName=MITRE-Health.vscode-language-fsh) that knows FSH syntax and colorizes text accordingly.
 
 #### Create a New Project
 
@@ -317,7 +317,7 @@ Before running SUSHI, you must have a [configuration file named **sushi-config.y
 
 When SUSHI runs (3), it gathers all FSH files from the given input directory's **input/fsh** subdirectory (1), and writes generated FHIR JSON artifacts to a given output directory (4). The input and output directories appear as SUSHI command line arguments. If unspecified, the input directory will default to the current directory, and outputs will be written to **./fsh-generated**.
 
-SUSHI can be run from the command line or invoked as part of the [HL7 FHIR IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) (6). The latter requires some additional configuration information and other IG data (5). If there are no FSH files in the project's **[root]/input/fsh** folder(1), the IG Publisher will not run SUSHI. The generated SUSHI output is found in the **[root]/fsh-generated** directory (4), and the implementation guide itself (7) is located in **[root]/output/fsh**.
+SUSHI can be run from the command line or invoked as part of the [HL7 FHIR IG Publisher](https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation) (6). The latter requires some additional configuration information and other IG data (5). If there are no FSH files in the project's **[root]/input/fsh** folder(1), the IG Publisher will not run SUSHI. The generated SUSHI output is found in the **[root]/fsh-generated** directory (4), and the implementation guide itself (7) is located in **[root]/output**.
 
 For more information on the use of SUSHI and the IG Publisher, see [the SUSHI Documentation](https://fshschool.org/docs/sushi/).
 
