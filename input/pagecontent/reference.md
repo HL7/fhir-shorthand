@@ -1,7 +1,7 @@
 {%include styles.html%}
 
 <br/>
-<span style="background-color: LightYellow;">Candidate for Normative except where noted trial use {%include tu.html%}.</span>
+<span style="background-color: LightYellow;">Candidate for Normative or already Normative except where noted Trial Use {%include tu.html%}.</span>
 <br/>
 
 This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended primarily as a reference, not a tutorial. For tutorials and additional documentation please consult the [Overview](overview.html) or go to [fshschool.org](https://fshschool.org).
@@ -129,7 +129,7 @@ Projects MAY contain other content involved in creating FHIR IGs, such as narrat
 
 #### Grammar
 
-The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [Appendix: FSH Grammar](#appendix-fsh-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of for the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
+The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [Appendix: FSH Grammar](#appendix-fsh-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
 
 If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
 
@@ -217,7 +217,7 @@ When syntax allows for multiple Canonicals, the items are separated by `or` plac
   Canonical(us-core-allergyintolerance|3.1.1)
   ```
 
-  evaluates to this: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance|3.1.1"
+  evaluates to this: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance\|3.1.1"
 
 #### Codes and Codings
 
@@ -613,7 +613,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 **Examples:**
 
-* Path to the value of the birth sex extension in US Core Patient, whose local name is birthsex:
+* Path to the value of the birth sex extension in US Core Patient, whose local slice name is birthsex:
 
   ```
   extension[birthsex].valueCode
@@ -652,7 +652,7 @@ FSH uses the caret (^) symbol to access elements of definitional items correspon
 
 Examples of elements that require the caret syntax include StructureDefinition.experimental, StructureDefinition.abstract and ValueSet.purpose. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
-For a path to an element of a StructureDefinition, excluding the differential and snapshot, use the following syntax inside a Profile or Extension:
+For a path to an element of a StructureDefinition, excluding the differential and snapshot, use the following syntax inside a Profile, Extension, Logical, or Resource:
 
 ```
 ^<element of StructureDefinition>
@@ -981,7 +981,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Context: Patient
   // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
   * value[x] only code
-  * valueCode from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
+  * value[x] from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
   ```
 
 > **Note:** The use of the `Context` keyword in the example above is {%include tu.html%}.
@@ -1001,10 +1001,10 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
       text 1..1 MS
   * extension[ombCategory] ^short = "Hispanic or Latino|Not Hispanic or Latino"
   * extension[ombCategory].value[x] only Coding
-  * extension[ombCategory].valueCoding from OmbEthnicityCategories (required) // OmbEthnicityCategories is a value set defined by US Core
+  * extension[ombCategory].value[x] from OmbEthnicityCategories (required) // OmbEthnicityCategories is a value set defined by US Core
   * extension[detailed] ^short = "Extended ethnicity codes"
   * extension[detailed].value[x] only Coding
-  * extension[detailed].valueCoding from DetailedEthnicity (required) // DetailedEthnicity is defined in US Core
+  * extension[detailed].value[x] from DetailedEthnicity (required) // DetailedEthnicity is defined in US Core
   * extension[text] ^short = "Ethnicity text"
   * extension[text].value[x] only string
   ```
@@ -1020,13 +1020,13 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Id:             binary-birthsex
   Title:          "Binary Birth Sex Extension"
   Description:    "As of 2019, certain US states only allow M or F on birth certificates."
-  * valueCode from BinaryBirthSexValueSet (required)
+  * value[x] from BinaryBirthSexValueSet (required)
   ```
 
 {%include tu-div.html%}
 The keyword `Context` can be used to specify the [context](https://hl7.org/fhir/R5/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string . When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
 
-Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is recommended. The following is a list of allowed formats for contexts:
+Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is RECOMMENDED. The following is a list of allowed formats for contexts:
 
 Specifying a `fhirpath` context:
   <pre><code>Context: "{fhirpath expression}"</code></pre>
@@ -1054,10 +1054,17 @@ Specifying multiple contexts as a comma-separated list:
 
   ```
   Extension: MyExtension
+  Context: Patient
+  ```
+
+* Defining an extension with an `element` context on a specific element in a core FHIR resource
+
+  ```
+  Extension: MyExtension
   Context: Patient.contact.telecom
   ```
 
-* Defining an extension with an `element` context on a Profile defined in FSH
+* Defining an extension with an `element` context on a specific element in a Profile defined in FSH
 
   ```
   Profile: MyPatient
@@ -1300,7 +1307,7 @@ Logical models allow authors to define new structures representing arbitrary con
 
 Logical models are defined using the declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead. Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent.
 
-Rules defining the logical model follow immediately after the keyword section. Rules types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
+Rules defining the logical model follow immediately after the keyword section. Rule types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
 
 In addition, authors should consult FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
 
@@ -1311,10 +1318,11 @@ In addition, authors should consult FHIR's [interpretation of ElementDefinition 
 * Define a logical model for a human and their family members:
 
   ```
-  Logical:        Human
-  Id:             human-being-logical-model
-  Title:          "Human Being"
-  Description:    "A member of the Homo sapiens species."
+  Logical:         Human
+  Id:              human-being-logical-model
+  Title:           "Human Being"
+  Description:     "A member of the Homo sapiens species."
+  Characteristics: #can-be-target
   * name 0..* SU HumanName "Name(s) of the human" "The names by which the human is or has been known"
   * birthDate 0..1 SU dateTime "The date of birth, if known"
       "The date on which the person was born. Approximations may be used if exact date is unknown."
@@ -1333,6 +1341,8 @@ In addition, authors should consult FHIR's [interpretation of ElementDefinition 
   * biological 0..1 boolean "Biologically related?"
       "A family member may not be biologically related due to adoption, blended families, etc."
   ```
+
+> **Note:** The use of the `Characteristics` keyword in the example above is {%include tu.html%}.
 
 {%include tu-div.html%}
 The keyword `Characteristics` can be used to specify the type characteristics of the logical model being defined. These characteristics are represented on the logical model using the [Structure Type Characteristics extension](https://hl7.org/fhir/extensions/StructureDefinition-structuredefinition-type-characteristics.html) with a code value from the [TypeCharacteristicCodes value set](https://hl7.org/fhir/extensions/ValueSet-type-characteristics-code.html). Authors SHOULD use the `Characteristics` keyword instead of directly assigning this extension using assignment rules.
@@ -1444,7 +1454,7 @@ Rules types that apply to Profiles are: [Assignment](#assignment-rules), [Bindin
   Description:    "The setting where an individual was exposed to a contagion."
   * code = $LNC#81267-7 // Setting of exposure to illness
   * value[x] only CodeableConcept
-  * valueCodeableConcept from https://loinc.org/vs/LL3991-8 (extensible)
+  * value[x] from https://loinc.org/vs/LL3991-8 (extensible)
   ```
 
 #### Defining Resources
@@ -1626,7 +1636,7 @@ The contents of a value set are defined by "include" rules, which have the follo
 
 **Notes:**
 
-* When a single include rule includes more than item (code system or value set), the applicable codes are those present in _all_ listed items.
+* When a single include rule includes more than one item (code system or value set), the applicable codes are those present in _all_ listed items.
 * To add codes from multiple code systems or value sets (i.e., the union not the intersection), specify them in separate `include` rules.
 * When an `include` rule has both a system and more than one value set, the code system must be first or last.
 * An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
@@ -1745,10 +1755,10 @@ Indented caret path assignment rules are preferred for clarity, but authors may 
 * To specify a `designation` for a synonym of the included concept `$SCT#32849002` by repeating the code:
 
   ```
-  * $SCT#84162001  "Esophageal structure"
-  * $SCT#84162001  ^designation[0].use = $SCT#900000000000013009 "Synonym (core metadata concept)"
-  * $SCT#84162001  ^designation[0].language = urn:ietf:bcp:47#en-GB
-  * $SCT#84162001  ^designation[0].value = "Oesophageal structure"
+  * $SCT#32849002  "Esophageal structure"
+  * $SCT#32849002  ^designation[0].use = $SCT#900000000000013009 "Synonym (core metadata concept)"
+  * $SCT#32849002  ^designation[0].language = urn:ietf:bcp:47#en-GB
+  * $SCT#32849002  ^designation[0].value = "Oesophageal structure"
   ```
 
 * To specify a `designation` for a synonym of the excluded concept `$SCT#22298006`:
@@ -1841,7 +1851,7 @@ Indentation before a rule is used to set a context for the [path](#fsh-paths) on
 
 Two spaces SHALL represent one level of indentation. Rules SHALL only be indented in increments of two spaces and un-indented by any multiple of two spaces.
 
-[Path rules](#path-rules) are rules containing only a path. They are used to set a path as context for subsequent rules, without any other effect.
+[Path rules](#path-rules) are rules containing only a path. They are primarily used to set a path as context for subsequent rules, without any other effect. {%include tu-span.html%} In FSH Instances, path rules may have other effects as well. See [path rules](#path-rules) for more information.</span>
 
 Some types of rules, for example [flag rules](#flag-rules), can involve multiple paths. If multiple paths are specified in a rule that sets context for subsequent rules (such as a flag rule with multiple targets), the last path is used as context. When multiple paths are specified in an indented rule, context is applied to all paths. See examples below for details.
 
@@ -2052,7 +2062,7 @@ Note the following:
 * Flags and longer definition are optional.
 * The longer definition can also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, the element's definition will be set to the same text as the specified short description.
-* When multiple types are specified, the element path must end with \[x] unless all types are References or all types are Canonicals.
+* When multiple types are specified, the element path must end with \[x] unless all types are References, all types are Canonicals, or {%include tu-span.html%} all types are CodeableReferences</span>.
 
 **Examples:**
 
@@ -2187,7 +2197,7 @@ When assigning values to an instance, the `(exactly)` modifier has no meaning an
 
 {%include tu-div.html%}
 
-* Assignment of an integer64 (note: this datatype was introduced in FHIR v4.2.0): 
+* Assignment of an integer64 (note: this datatype was introduced in FHIR R5): 
 
   ```
   * extension[my-extension].valueInteger64 = 1234567890
@@ -2490,7 +2500,7 @@ The [CodeableReference](https://hl7.org/fhir/R5/references.html#codeablereferenc
 
 #### Binding Rules
 
-Binding is the process of associating a coded element with a set of possible values. The syntaxes to bind a value set, or alter an inherited binding, use the reserved word `from`:
+Binding is the process of associating a coded element with a set of possible values. The syntax to bind a value set, or alter an inherited binding, uses the reserved word `from`:
 
 <pre><code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code></pre>
 
@@ -2651,7 +2661,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   Extension: Laterality
   Description: "Body side of a body location."
   * value[x] only CodeableConcept
-  * valueCodeableConcept from LateralityVS (required)
+  * value[x] from LateralityVS (required)
   ```
 
 * Show how the inline extensions defined in the [US Core Race](https://hl7.org/fhir/us/core/StructureDefinition-us-core-race.html) extension would be defined using FSH:
@@ -2663,7 +2673,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
       text 1..1 MS
   // rules defining the inline extensions would typically follow:
   * extension[ombCategory].value[x] only Coding
-  * extension[ombCategory].valueCoding from http://hl7.org/fhir/us/core/ValueSet/omb-race-category (required)
+  * extension[ombCategory].value[x] from http://hl7.org/fhir/us/core/ValueSet/omb-race-category (required)
   * extension[text].value[x] only string
   // etc.
   ```
@@ -2680,7 +2690,7 @@ In FSH, slicing is addressed in three steps: (1) specify the slicing logic, (2) 
 
 Slicing in FHIR requires authors to specify a [discriminator path, type, and rules](https://hl7.org/fhir/R5/profiling.html#discriminator). In addition, authors can optionally declare the slice as ordered or unordered (default: unordered), and/or provide a description. The meaning and allowable values are exactly [as defined in FHIR](https://hl7.org/fhir/R5/profiling.html#discriminator).
 
-The slicing logic parameters are specified using [caret paths](#caret-paths). The discriminator path identifies the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, position of the sliced element (R5 and up), or profile conformance.
+The slicing logic parameters are specified using [caret paths](#caret-paths) on the element to be sliced, which is typically a multi-cardinality (array) element. The discriminator path identifies the element used to distinguish each slice. The discriminator type determines how the slices are differentiated, e.g., by value, pattern, existence of the sliced element, datatype of sliced element, position of the sliced element (R5 and up), or profile conformance.
 
 **Example:**
 
@@ -2710,9 +2720,9 @@ In this pattern, `<array>` is a path to the element that is to be sliced and MUS
 
 Each slice will match or constrain the datatype of the array it slices. In particular:
 
-* If an array is a one of the FHIR datatypes, each slice will be the same datatype or a profile of it. For example, if Observation.identifier is sliced, each slice will have type Identifier or be constrained to a profile of the Identifier datatype.
-* If the sliced array is a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints can be applied to the slices.
-* If the array to be sliced is a Reference, then each slice MUST be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice must either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
+* If the sliced element is an array of a FHIR datatype, each slice will be the same datatype or a profile of it. For example, if Observation.identifier is sliced, each slice will have type Identifier or be constrained to a profile of the Identifier datatype.
+* If the sliced element is an array of a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints can be applied to the slices.
+* If the sliced element is an array of a Reference, then each slice MUST be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice must either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
 
 **Examples:**
 
@@ -2763,9 +2773,7 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 The final step is to define the properties of each slice. FSH requires slice contents to be defined inline. The rule syntax is the same as constraining any other element, but the [slice path syntax](#sliced-array-paths) is used to specify the path:
 
-```
-* <array>[{slice name}].<element> {constraint}
-```
+<pre><code>* &lt;array&gt;[{slice name}]<span class="optional">.&lt;element&gt;</span> {constraint}</code></pre>
 
 The slice content rules MUST appear *after* the contains rule that creates the slices.
 
@@ -2776,10 +2784,10 @@ The slice content rules MUST appear *after* the contains rule that creates the s
   ```
   * component[systolicBP].code = $LNC#8480-6 // Systolic blood pressure
   * component[systolicBP].value[x] only Quantity
-  * component[systolicBP].valueQuantity = $UCUM#mm[Hg] "mmHg"
+  * component[systolicBP].value[x] = $UCUM#mm[Hg] "mmHg"
   * component[diastolicBP].code = $LNC#8462-4 // Diastolic blood pressure
   * component[diastolicBP].value[x] only Quantity
-  * component[diastolicBP].valueQuantity = $UCUM#mm[Hg] "mmHg"
+  * component[diastolicBP].value[x] = $UCUM#mm[Hg] "mmHg"
   ```
 
 At minimum, each slice MUST be constrained such that it is uniquely identifiable via the discriminator (see Step 1). For example, if the discriminator path points to an element that is a CodeableConcept, and it discriminates by value or pattern, then each slice must constrain that CodeableConcept using an assignment rule or binding rule that uniquely distinguishes it from the other slices.
@@ -2807,13 +2815,13 @@ Description:  "Records the one to three dimensions of a tumor"
 * component[tumorLongestDimension] ^definition = "The longest tumor dimension in cm or mm."
 * component[tumorLongestDimension].code = $LNC#33728-7 // "Size.maximum dimension in Tumor"
 * component[tumorLongestDimension].value[x] only Quantity
-* component[tumorLongestDimension].valueQuantity from TumorSizeUnitsVS (required)   // value set defined elsewhere
+* component[tumorLongestDimension].value[x] from TumorSizeUnitsVS (required)   // value set defined elsewhere
 * component[tumorOtherDimension] ^short = "Other tumor dimension(s)"
 * component[tumorOtherDimension] ^definition = "The second or third tumor dimension in cm or mm."
 * component[tumorOtherDimension] ^comment = "Additional tumor dimensions should be ordered from largest to smallest."
 * component[tumorOtherDimension].code = $LNC#33729-5 // "Size additional dimension in Tumor"
 * component[tumorOtherDimension].value[x] only Quantity
-* component[tumorOtherDimension].valueQuantity from TumorSizeUnitsVS (required)
+* component[tumorOtherDimension].value[x] from TumorSizeUnitsVS (required)
 ```
 
 #### Exclude Rules
@@ -3301,7 +3309,7 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
 
 {%include tu-div.html%}
 
-* Restrict value[x] to the integer64 type (note: this datatype was introduced in FHIR v4.2.0):
+* Restrict value[x] to the integer64 type (note: this datatype was introduced in FHIR R5):
 
   ```
   * value[x] only integer64
