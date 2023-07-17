@@ -1,0 +1,11 @@
+{
+  "package-id": "hl7.fhir.uv.shorthand",
+  "version": "3.0.0-ballot",
+  "path": "https://hl7.org/fhir/uv/shorthand/2023Sep",
+  "mode": "working",
+  "status": "ballot",
+  "sequence": "Release 3",
+  "desc": "The FHIR Shorthand Release 3 ballot promotes most existing trial-use features to normative, introduces new trial-use features, and provides clarifications where necessary.",
+  "changes": "change_log.html#fhir-shorthand-300-ballot-hl7-mixed-normative--trial-use-ballot-1",
+  "first": false
+}
