@@ -1,7 +1,7 @@
 {
   "package-id": "hl7.fhir.uv.shorthand",
   "version": "3.0.0-ballot",
-  "path": "https://hl7.org/fhir/uv/shorthand/2023Sep",
+  "path": "http://hl7.org/fhir/uv/shorthand/2023Sep",
   "mode": "working",
   "status": "ballot",
   "sequence": "Release 3",

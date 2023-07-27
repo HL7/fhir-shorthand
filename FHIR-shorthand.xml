@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<specification xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ballotUrl="http://hl7.org/fhir/uv/shorthand/2021Sep" ciUrl="http://build.fhir.org/ig/HL7/fhir-shorthand" defaultVersion="2.0.0" defaultWorkgroup="fhir-i" gitUrl="https://github.com/HL7/fhir-shorthand" url="http://hl7.org/fhir/uv/shorthand">
+<specification xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ballotUrl="http://hl7.org/fhir/uv/shorthand/2023Sep" ciUrl="http://build.fhir.org/ig/HL7/fhir-shorthand" defaultVersion="2.0.0" defaultWorkgroup="fhir-i" gitUrl="https://github.com/HL7/fhir-shorthand" url="http://hl7.org/fhir/uv/shorthand">
 <version code="current" url="http://build.fhir.org/ig/HL7/fhir-shorthand"/>
+<version code="3.0.0-ballot" url="http://hl7.org/fhir/uv/shorthand/2023Sep"/>
 <version code="2.0.0" url="http://hl7.org/fhir/uv/shorthand/N1"/>
-<version code="1.2.0" url="http://hl7.org/fhir/uv/shorthand/2021Sep"/>
+<version code="1.2.0" deprecated="true" url="http://hl7.org/fhir/uv/shorthand/2021Sep"/>
 <version code="1.0.0" url="http://hl7.org/fhir/uv/shorthand/STU1"/>
 <version code="0.12.0" deprecated="true" url="http://hl7.org/fhir/uv/shorthand/2020May"/>
 <artifactPageExtension value="-definitions"/>
