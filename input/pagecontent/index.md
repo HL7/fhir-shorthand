@@ -36,7 +36,8 @@ The FSH IG includes the following information:
 1. [FHIR Shorthand Overview](overview.html) -- Introduction to FSH language and SUSHI (a reference implementation and _de facto_ standard FSH compiler) _(informative content)_.
 1. [FHIR Shorthand Language Reference](reference.html) -- The syntax and usage of the FHIR Shorthand language _(formal content)_.
 1. [Quick Reference Card](FSHQuickReference.pdf) -- A cheat sheet for FSH syntax and examples _(informative content)_.
-2. [Change Log](change_log.html) -- A history of changes to the FHIR Shorthand specification _(informative content)_.
+1. [Change Log](change_log.html) -- A history of changes to the FHIR Shorthand specification _(informative content)_.
+1. [FSH Grammar](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr) -- An [ANTLR v4](https://www.antlr.org/) representation of the FSH syntax _(informative content)_.
 
 The following material, useful for learning and applying FHIR Shorthand but not part of the language specification, is found on [FSHSchool.org](https://fshschool.org/):
 
