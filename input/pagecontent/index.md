@@ -20,7 +20,7 @@ Designation as a normative standard does not mean that the FSH language will cea
 
 FSH was created in response to the need in the FHIR community for scalable, fast, user-friendly tools for IG creation and maintenance. IG authors often struggle to implement profiling projects with efficiency, consistency, and quality. Project teams iterate over the formal definitions and examples many times during the IG development process. As such, an agile approach to refactoring and revision is invaluable.
 
-Before exploring the FSH approach, consider the alternative methods for IG development:
+Aside from FSH, alternative methods for IG development include:
 
 1. Hand-editing FHIR conformance artifacts such as StructureDefinition and ValueSet resources gives authors full control over every aspect of the resulting FHIR profiles and definitions, but is unwieldy and prone to errors, and suitable only for FHIR experts.
 1. The [Excel spreadsheet method](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Profile+Authoring) has existed since before FHIR 1.0 and has been used to produce sophisticated IGs such as [US Core](https://github.com/HL7/US-Core-R4). A downside is that version management is difficult; either the files are saved in binary form (.xslx) or as XML files, with the content mixed with formatting directives. According to [HL7 Confluence](https://confluence.hl7.org/display/FHIR/FHIR+Spreadsheet+Authoring), the spreadsheet method "is expected to be a near term solution with more sophisticated (and user-friendly) tooling currently under development," implying eventual deprecation of this approach.
