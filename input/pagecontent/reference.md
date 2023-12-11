@@ -191,7 +191,7 @@ In constructing profiles, references typically refer to resource or profile *typ
 
 #### Canonicals
 
-FHIR elements can reference other resources by their [canonical URL](https://hl7.org/fhir/R5/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical()` stands for the canonical URL of the referenced item. 
+FHIR elements can reference other resources by their [canonical URL](https://hl7.org/fhir/R5/references.html#canonical). A canonical reference refers to the standard URL associated with a FHIR item. For elements that require a canonical datatype, FSH accepts a URL or an expression in the form `Canonical({name or id or url})`. `Canonical({name or id or url})` resolves to the canonical URL of the referenced item.
 
 For items defined in the same FSH project, the canonical URL is constructed using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
