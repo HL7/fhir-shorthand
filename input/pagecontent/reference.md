@@ -162,6 +162,12 @@ can be reformatted as:
     respirationScore 0..3
 ```
 
+FSH syntax is agnostic regarding the type of whitespace used (e.g., spaces, tabs, non-breaking spaces, etc.), with the following exceptions:
+
+* FSH rules must be separated using a standard newline and/or carriage return
+* indented rules must be indented using standard space characters
+* whitespace within strings will be preserved as-is, except as noted for triple-quoted strings
+
 #### Comments
 
 FSH follows [JavaScript syntax](https://www.w3schools.com/js/js_comments.asp) for code comments:
