@@ -131,7 +131,7 @@ Projects MAY contain other content involved in creating FHIR IGs, such as narrat
 
 The grammar of FSH has been described using [ANTLR](https://www.antlr.org/) (see [Appendix: FSH Grammar](#appendix-fsh-grammar-informative)). The ANTLR grammar captures the syntax of FSH, but is not a complete specification of the language, since FSH defines the additional validation criteria for rules and items, and the behavior of rules in terms of FHIR artifacts.
 
-If there is discrepancy between the grammar and the FSH language description, the language description is considered correct until the discrepancy is clarified and addressed.
+If there is discrepancy between the grammar and the FSH language description, the language description takes precedence.
 
 #### Reserved Words
 
