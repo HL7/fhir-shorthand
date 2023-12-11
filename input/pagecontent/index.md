@@ -55,7 +55,7 @@ Note that the [Language Reference](reference.html) is the formal specification, 
 
 #### Version Number
 
-The sequence of releases of this specification is expressed in terms of three integers, x.y.z. An increment in z indicates minor, backward-compatible updates. An increment in y indicates new or modified language features, and potentially, non-backward-compatible changes. By HL7 convention, the major version number x typically does not increment until the release of a new balloted version. Implementations SHOULD indicate what version or versions of the FSH specification they implement.
+The sequence of releases of this specification is expressed in terms of three integers, x.y.z. An increment in z indicates minor, backward-compatible updates. An increment in y indicates new or modified language features, and potentially, non-backward-compatible changes. By HL7 convention, the major version number x typically does not increment until the release of a new balloted version. Implementers are encouraged to clearly indicate what version or versions of the FSH specification they implement.
 
 
 <!-- The following are hidden since they are irrelevant in a documentation-only IG but are required by IG Publisher -->
