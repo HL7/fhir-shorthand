@@ -349,7 +349,9 @@ When processing triple-quoted strings, the following approach is used:
 
 * If the first line or last line contains only whitespace (including newline), discard it.
 * If any other line contains only whitespace, truncate it to zero characters.
-* For all other non-whitespace lines, detect the smallest number of leading spaces and trim that from the beginning of every line.
+* For all other non-whitespace lines, detect the line with the least number of leading spaces, and trim that number of spaces from the beginning of every line.
+
+> **Note:** To ensure consistent implementation, authors SHOULD use standard spaces or tabs as leading spaces in triple-quoted strings.
 
 #### Item Names
 
