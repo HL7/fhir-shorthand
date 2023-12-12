@@ -1,7 +1,7 @@
 {%include styles.html%}
 
 <br/>
-<span style="background-color: LightYellow;">Candidate for Normative or already Normative except where noted Trial Use {%include tu.html%}.</span>
+<span style="background-color: LightYellow;">NOTE: Information on this page is normative content except where noted.</span>
 <br/>
 
 This chapter contains the formal specification of the FHIR Shorthand (FSH) language. It is intended primarily as a reference, not a tutorial. For tutorials and additional documentation please consult the [Overview](overview.html) or go to [fshschool.org](https://fshschool.org).
