@@ -16,7 +16,7 @@ The FHIR Shorthand 3.0.0 Mixed Normative/Trial Use Ballot (September 2023) intro
 * Specifying Extension context using the Context keyword ([3.5.4](reference.html#defining-extensions))
 * Authors may define instances of logical models ([3.5.5](reference.html#defining-instances))
 * Using rules in Invariant definitions ([3.5.6](reference.html#defining-invariants))
-* Assigning metadata values for concepts in value sets [3.5.12.2](reference.html#concept-metadata)
+* Assigning metadata values for concepts in value sets ([3.5.12.2](reference.html#concept-metadata))
 * Logical model definitions may now use assignment rules and constrain inherited elements ([3.5.7](reference.html#defining-logical-models))
 * Inserting parameterized rule sets with values in double square brackets ([3.6.11.2](reference.html#inserting-parameterized-rule-sets))
 * Path rules can be used to add optional fixed values and set slice order on Instances ([3.6.15](reference.html#path-rules))
