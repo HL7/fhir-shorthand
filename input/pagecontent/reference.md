@@ -393,6 +393,8 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * Metadata elements of definitional resources, such as the experimental and active elements of a StructureDefinition.
 * Properties of ElementDefinitions nested within a StructureDefinition, such as the maxLength property of string elements
 
+> **Note:** While FSH paths may resemble other path syntaxes used in FHIR (e.g., FHIRPath, ElementDefinition.id, ElementDefinition.path), they cannot be used in place of these. Attempts to use FSH paths within FHIRPath strings or as Element ids will lead to invalid FHIR output.
+
 In the following, the various types of path references are discussed. Some examples are presented using simple rules. For rule syntax and meaning, see [FSH Rules](#fsh-rules).
 
 #### Top-Level Paths
