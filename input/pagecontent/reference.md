@@ -111,7 +111,7 @@ Text files containing FSH items MUST use the **.fsh** extension. Items from all 
 
 Each FSH project MUST specify the version of FHIR it depends upon. It is up to implementations to decide how projects declare their FHIR version. Implementations MAY support only a specific version or versions of FHIR.
 
-The FSH language specification has been designed around FHIR R4 and later. FSH depends primarily on normative parts of the FHIR R4 specification (e.g., StructureDefinition and datatypes), and not on specific Resources, Profiles, Value Sets or Extensions. As a result, many FHIR version differences can be ignored. However, because the FSH specification refers to FHIR data types and definitional artifacts, there is no way to absolutely divorce FSH from specific FHIR versions.
+The FSH language specification has been designed around FHIR R4 and later. The core language constructs of FSH depend primarily on a small subset of normative definitions within the FHIR specification (e.g., StructureDefinition, ValueSet, CodeSystem, and datatypes). As a result, most differences in FHIR versions do not affect FSH features or syntax. FSH provides several points of flexibility, such as [FSH paths](#fsh-paths), to support authoring within the context of any FHIR version. Because the FSH specification refers to FHIR data types and definitional artifacts, however, there is no way to absolutely divorce FSH from specific FHIR versions.
 
 {%include tu-div.html%}
 FSH supports new FHIR R5 datatypes integer64 and CodeableReference on a trial use basis.
