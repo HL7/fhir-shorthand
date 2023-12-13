@@ -243,7 +243,7 @@ In general, the first syntax is sufficient. Quotes are only required when a code
 
 FSH represents Codings as follows:
 
-<pre><code>{CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
+<pre><code><span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
 As [indicated by orange-colored text](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical datatype in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
@@ -2226,6 +2226,12 @@ The only required part of this statement is the code (including the # sign), alt
 Whenever this type of rule is applied, whatever is on the right side **entirely replaces** the previous value of the Coding on the left side. For example, if a Coding has a value that includes a display string, and a subsequent assignment replaces the system and code but has no display string, the result is a Coding without a display string.
 
 **Examples:**
+
+* Assign a Coding that includes only a code:
+
+  ```
+  myCoding = #chol-mmol
+  ```
 
 * Assign a Coding that includes an explicit code system version:
 
