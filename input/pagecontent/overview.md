@@ -21,7 +21,7 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
   ```
 
 * **Escape Character**: FSH uses the backslash as the escape character in string literals. For example, use `\"` to embed a quotation mark in a string.
-* **Caret Character**: FSH uses [caret syntax](reference.html#caret-paths) to directly reference the definitional structure associated with an item. When defining a profile, the caret character `^` (also called circumflex) allows you to refer to elements in the SD. For example, to set the element StructureDefinition.experimental:
+* **Caret Character**: FSH uses [caret syntax](reference.html#caret-paths) to directly reference the definitional structure associated with an item. When defining a profile, the caret character `^` (also called circumflex) allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental:
 
   ```
   * ^experimental = false
@@ -257,7 +257,7 @@ In this section, we will walk through a realistic example of FSH, line by line. 
 * Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
-* Line 9 is the start of the rule section of the profile. It uses [caret syntax](reference.html#caret-paths) to set the status attribute in the SD produced for this profile.
+* Line 9 is the start of the rule section of the profile. It uses [caret syntax](reference.html#caret-paths) to set the status attribute in the StructureDefinition produced for this profile.
 * Line 10 adds an extension to the profile using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 31._
 * Line 11 binds the valueCodeableConcept of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 47._
 * Line 12 designates a list of elements (inherited from Observation) as must-support.
