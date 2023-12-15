@@ -27,7 +27,7 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
   * ^experimental = false
   ```
 
-* **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and object identifiers (OIDs). Once defined anywhere in a FSH project, the alias can be used anywhere a URL or OID is required or accepted. By convention, aliases often begin with $ character, for example:
+* **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and object identifiers (OIDs). Once defined anywhere in a FSH project, the alias can be used most places a URL or OID is required or accepted. See [Defining Aliases](reference.html#defining-aliases) for details. By convention, aliases often begin with $ character, for example:
 
   ```
   Alias: $SCT = http://snomed.info/sct
