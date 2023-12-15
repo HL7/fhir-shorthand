@@ -269,7 +269,7 @@ In this section, we will walk through a realistic example of FSH, line by line. 
 * Line 27 and 28 restrict the data type for elements that offer a choice of data types in the base resource.
 * Line 29 binds the remaining allowed data type for value[x], valueCodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 37._
 * Line 31 declares an extension named EvidenceType.
-* Line 32 assigns it an id.
+* Line 32 assigns an id to the extension.
 * Line 33 gives the extension a human-readable title.
 * Line 34 gives the extension a description that will appear on the extension's main page.
 * Line 35 begins the rule section for the extension, and restricts the data type of the value[x] element of the extension to a CodeableConcept.
