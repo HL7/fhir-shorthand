@@ -284,7 +284,7 @@ A few things to note about this example:
 
 * The order of the items (aliases, profile, value set, extension) doesn't matter. In FSH, you can refer to items defined before or after the current item. By convention, aliases appear at the beginning of a file.
 * The example assumes the items are all in one file, but they could be in separate files. The allocation of items to files is the author's choice. Aliases defined in one file can be used in other files.
-* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 10, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#fsh-paths).
+* Most of the rules refer to elements by their FHIR names, but when the rule refers to an element that is not at the top level, more complex paths are required. An example of a complex path occurs on line 11, `extension[evidenceType].valueCodeableConcept`. The Language Reference contains [further descriptions of paths](reference.html#fsh-paths).
 
 ### FSH in Practice
 
