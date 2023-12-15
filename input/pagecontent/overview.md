@@ -252,7 +252,7 @@ In this section, we will walk through a realistic example of FSH, line by line. 
 ```
 
 * Lines 1 and 2 define aliases for the LOINC and SNOMED-CT code systems.
-* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically title case and according to FHIR, should be "[usable by machine processing applications such as code generation](https://hl7.org/fhir/structuredefinition.html#resource)".
+* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically PascalCase (also known as UpperCamelCase) and according to FHIR, should be "[usable by machine processing applications such as code generation](https://hl7.org/fhir/structuredefinition.html#resource)".
 * Line 5 says that this profile will be based on Observation.
 * Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
