@@ -33,7 +33,7 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
   Alias: $SCT = http://snomed.info/sct
   ```
 
-* **Coded Data Types**: A leading hash sign (#) (*aka* number sign, pound sign, or octothorp) is used in FSH to denote a code taken from a formal terminology. FSH provides special grammar for expressing FHIR's coded data types (code, Coding, and CodeableConcept) that combines the code system, code, and (optionally) a display text. Here is a SNOMED-CT code in this syntax, using the previously-defined alias:
+* **Coded Data Types**: A leading hash sign (#) (*aka* number sign, pound sign, or octothorpe) is used in FSH to denote a code taken from a formal terminology. FSH provides special grammar for expressing FHIR's coded data types (code, Coding, and CodeableConcept) that combines the code system, code, and (optionally) a display text. Here is a SNOMED-CT code in this syntax, using the previously-defined alias:
 
   ```
   $SCT#363346000 "Malignant neoplastic disease (disorder)"
