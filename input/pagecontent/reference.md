@@ -1036,7 +1036,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
 {%include tu-div.html%}
 The keyword `Context` can be used to specify the [context](https://hl7.org/fhir/R5/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string . When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
 
-Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using rules to assign directly to the `context` list on the Extension is RECOMMENDED. The following is a list of allowed formats for contexts:
+Multiple contexts can be specified by using a comma-separated list. Using the `Context` keyword instead of using caret rules to assign directly to the `context` list on the Extension is RECOMMENDED. The following is a list of allowed formats for contexts:
 
 Specifying a `fhirpath` context:
   <pre><code>Context: "{fhirpath expression}"</code></pre>
