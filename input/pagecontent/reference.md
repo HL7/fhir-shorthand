@@ -971,7 +971,7 @@ For a path to a code within a code system, use this syntax:
 
 #### Defining Extensions
 
-Defining extensions is similar to [defining profiles](#defining-profiles), except that the parent of an extension is not required. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://hl7.org/fhir/R5/extensibility.html#extension).
+To define an extension, the declaration `Extension` is REQUIRED, the keywords `Id`, `Title`, and `Description` are RECOMMENDED, and `Parent` is OPTIONAL. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://hl7.org/fhir/R5/extensibility.html#extension).
 
 An extension can have either a value (i.e. a value[x] element) or sub-extensions, but not both. To create a simple extension, the value[x] element should be constrained. To create a complex extension, the extension array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
 
