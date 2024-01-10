@@ -841,7 +841,7 @@ Several things to note about aliases:
 * Aliases cannot be used as variables for arbitrary strings or names.
 * OIDs and UUIDs must be specified using the `urn:oid` or `urn:uuid` schemes.
 * Alias statements stand alone, and cannot be mixed into rule sets of other items.
-* Aliases can only be substituted where a full uri value is expected (e.g., they cannot be placed in the middle of a string).
+* Aliases can only be substituted where a full uri value is expected (e.g., they cannot be placed in the middle of a string or used to construct a larger url).
 * Aliases are global within a FSH project.
 
 In contrast with other names in FSH (for profiles, extensions, etc.), alias names optionally begin with a dollar sign ($). If you define an alias with a leading $, implementations can more easily check for misspellings. For example, if you choose the alias name `$RaceAndEthnicity` and accidentally type `$RaceEthnicity`, implementations can easily detect there is no alias by that name. Without the $ sign, implementations are forced to look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
