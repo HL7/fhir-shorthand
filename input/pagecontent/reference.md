@@ -862,7 +862,7 @@ It is sometimes necessary to define new codes inside an IG that are not drawn fr
 
 > **Note:** Defining local codes is not best practice, since those codes will not be part of recognized terminology systems. However, when existing vocabularies do not contain necessary codes, it might be necessary to define them -- at least temporarily -- as local codes.
 
-Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keywords `Id`, `Title` and `Description`. Codes are then added, one per rule, using the following syntax:
+Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keywords `Id`, `Title` and `Description`. Code system metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`). Codes are then added, one per rule, using the following syntax:
 
 ```
 * #{code} "{display string}" "{definition string}"
@@ -876,6 +876,7 @@ Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keyword
 * Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).
 * [Assignment rules](#assignment-rules) SHALL apply only to caret paths in CodeSystems.
 
+
 **Example:**
 
 * Define a code system for yoga poses:
@@ -885,6 +886,7 @@ Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keyword
   Id: yoga-code-system
   Title: "Yoga Code System"
   Description:  "A brief vocabulary of yoga-related terms."
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * #Sirsasana "Headstand"
       "An pose that involves standing on one's head."
   * #Halasana "Plough Pose"
@@ -971,7 +973,7 @@ For a path to a code within a code system, use this syntax:
 
 #### Defining Extensions
 
-To define an extension, the declaration `Extension` is REQUIRED, the keywords `Id`, `Title`, and `Description` are RECOMMENDED, and `Parent` is OPTIONAL. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://hl7.org/fhir/R5/extensibility.html#extension).
+To define an extension, the declaration `Extension` is REQUIRED, the keywords `Id`, `Title`, and `Description` are RECOMMENDED, and `Parent` is OPTIONAL. Extensions can also inherit from other extensions, but if the `Parent` keyword is omitted, the parent is assumed to be FHIR's [Extension element](https://hl7.org/fhir/R5/extensibility.html#extension). Extension metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
 An extension can have either a value (i.e. a value[x] element) or sub-extensions, but not both. To create a simple extension, the value[x] element should be constrained. To create a complex extension, the extension array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
 
@@ -989,7 +991,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Title:  "US Core Birth Sex Extension"
   Description: "A code classifying the person's sex assigned at birth as specified by the [Office of the National Coordinator for Health IT (ONC)](https://www.healthit.gov/newsroom/about-onc). This extension aligns with the C-CDA Birth Sex Observation (LOINC 76689-9)."
   Context: Patient
-  // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * value[x] only code
   * value[x] from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
   ```
@@ -1004,7 +1006,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   Title:          "US Core Ethnicity Extension"
   Description:    "Concepts classifying the person into a named category of humans sharing common history, traits, geographical origin or nationality. The ethnicity codes used to represent these concepts are based upon the [CDC ethnicity and Ethnicity Code Set Version 1.0](http://www.cdc.gov/phin/resources/vocabulary/index.html) which includes over 900 concepts for representing race and ethnicity of which 43 reference ethnicity.  The ethnicity concepts are grouped by and pre-mapped to the 2 OMB ethnicity categories: - Hispanic or Latino - Not Hispanic or Latino."
   Context: Patient, RelatedPerson, Person, Practitioner, FamilyMemberHistory
-  // publisher, contact, and other metadata could be defined here using caret syntax (omitted)
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * extension contains
       ombCategory 0..1 MS and
       detailed 0..* and
@@ -1315,7 +1317,7 @@ Authors may also specify ElementDefinition.constraint elements via [assignment r
 
 Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models can add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](https://hl7.org/fhir/R5/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
 
-Logical models are defined using the declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead. Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent.
+Logical models are defined using the declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead. Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent. Logical model metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
 Rules defining the logical model follow immediately after the keyword section. Rule types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
 
@@ -1333,6 +1335,7 @@ In addition, authors should consult FHIR's [interpretation of ElementDefinition 
   Title:           "Human Being"
   Description:     "A member of the Homo sapiens species."
   Characteristics: #can-be-target
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * name 0..* SU HumanName "Name(s) of the human" "The names by which the human is or has been known"
   * birthDate 0..1 SU dateTime "The date of birth, if known"
       "The date on which the person was born. Approximations may be used if exact date is unknown."
@@ -1448,7 +1451,7 @@ A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rul
 
 #### Defining Profiles
 
-To define a profile, the declaration `Profile` and keyword `Parent` are REQUIRED, and `Id`, `Title`, and `Description` are RECOMMENDED. Rules defining the profile follow immediately after the keyword section.
+To define a profile, the declaration `Profile` and keyword `Parent` are REQUIRED, and `Id`, `Title`, and `Description` are RECOMMENDED. Profile metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`). Rules defining the profile follow immediately after the keyword section.
 
 Rules types that apply to Profiles are: [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Contains (standalone extensions)](#contains-rules-for-extensions), [Contains (slicing)](#contains-rules-for-slicing), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). Note that [inline extensions](#contains-rules-for-extensions) are not permitted in profiles.
 
@@ -1462,6 +1465,7 @@ Rules types that apply to Profiles are: [Assignment](#assignment-rules), [Bindin
   Id:             known-exposure-setting
   Title:          "Known Exposure Setting Profile"
   Description:    "The setting where an individual was exposed to a contagion."
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * code = $LNC#81267-7 // Setting of exposure to illness
   * value[x] only CodeableConcept
   * value[x] from https://loinc.org/vs/LL3991-8 (extensible)
@@ -1473,7 +1477,7 @@ Custom resources allow authors to define new structures representing arbitrary c
 
 Custom (non-HL7) resources should not be used for formal exchange between organizations; only standard FHIR resources and profiles should be used for inter-organizational exchange of health data. As such, the the FHIR IG publisher does not support including custom resources in implementation guides.
 
-Resources are defined using the declaration `Resource`. The keywords `Id`, `Title`, and `Description` are RECOMMENDED. The use of `Parent` is OPTIONAL. If no `Parent` is specified, DomainResource is used as the default parent. Only [DomainResource](https://hl7.org/fhir/R5/domainresource.html) and [Resource](https://hl7.org/fhir/R5/resource.html) are allowed as parents of a resource.
+Resources are defined using the declaration `Resource`. The keywords `Id`, `Title`, and `Description` are RECOMMENDED. The use of `Parent` is OPTIONAL. If no `Parent` is specified, DomainResource is used as the default parent. Only [DomainResource](https://hl7.org/fhir/R5/domainresource.html) and [Resource](https://hl7.org/fhir/R5/resource.html) are allowed as parents of a resource. Resource metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
 Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
@@ -1492,6 +1496,7 @@ The latter restrictions stem from FHIR's [interpretation of ElementDefinition fo
   Id:             emergency-vehicle
   Title:          "Emergency Vehicle"
   Description:    "An emergency vehicle, such as an ambulance or fire truck."
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * identifier 0..* SU Identifier
       "Identifier(s) of the vehicle"
       "Vehicle identifiers may include VINs and serial numbers."
@@ -1622,7 +1627,7 @@ Each parameter represents a value that SHALL be substituted into the rules when 
 
 A value set is a group of coded values representing acceptable values for a FHIR element whose datatype is code, Coding, CodeableConcept, Quantity, string, or url.
 
-Value sets are defined using the declaration `ValueSet`, with RECOMMENDED keywords `Id`, `Title` and `Description`.
+Value sets are defined using the declaration `ValueSet`, with RECOMMENDED keywords `Id`, `Title` and `Description`. Value set metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
 Codes MUST be taken from one or more terminology systems (also called code systems or vocabularies). Codes cannot be defined inside a value set. If necessary, [you can define your own code system](#defining-code-systems).
 
@@ -1652,6 +1657,7 @@ The contents of a value set are defined by "include" rules, which have the follo
 * An `include` rule MUST not have more than one code system (the intersection of two code systems is the empty set).
 * Filters are code system dependent. See [below](#filters) for further discussion.
 * {%include tu-span.html%} Metadata attributes for individual concepts, such as designation, can be defined using [caret paths](#caret-paths).</span>
+
 
 **Examples:**
 
@@ -1696,6 +1702,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
   Id: mcode-binet-stage-value-vs
   Title: "Binet Stage Value Set"
   Description: "Codes in the Binet staging system representing Chronic Lymphocytic Leukemia (CLL) stage."
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * $NCIT#C80134 "Binet Stage A"
   * $NCIT#C80135 "Binet Stage B"
   * $NCIT#C80136 "Binet Stage C"
@@ -1708,6 +1715,7 @@ A filter is a logical statement in the form `{property} {operator} {value}`, whe
   Id: mcode-histology-morphology-behavior-vs
   Title: "Histology Morphology Behavior Value Set"
   Description: "Codes representing the structure, arrangement, and behavioral characteristics of malignant neoplasms, and cancer cells."
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * include codes from system $SCT where concept is-a #367651003 "Malignant neoplasm of primary, secondary, or uncertain origin (morphologic abnormality)"
   * include codes from system $SCT where concept is-a #399919001 "Carcinoma in situ - category (morphologic abnormality)"
   * include codes from system $SCT where concept is-a #399983006 "In situ adenomatous neoplasm - category (morphologic abnormality)"
