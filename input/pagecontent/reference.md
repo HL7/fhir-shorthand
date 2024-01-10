@@ -784,7 +784,7 @@ Depending on the type of item being defined, keywords may be required, suggested
 [Code System](#defining-code-systems)    |  S  |     S         |   S   |        |            |       |        |        |               |            |       |         |                 |
 [Extension](#defining-extensions)        |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |    S    |                 |
 [Instance](#defining-instances)          |     |     S         |   S   |        |     R      |   O   |        |        |               |            |       |         |                 |
-[Invariant](#defining-invariants)        |     | S<sup>*</sup> |       |        |            |       |        |        | O<sup>*</sup> |     O      |   O   |         |                 |
+[Invariant](#defining-invariants)        |     | S<sup>1</sup> |       |        |            |       |        |        | O<sup>2</sup> |     O      |   O   |         |                 |
 [Logical](#defining-logical-models)      |  S  |     S         |   S   |   O    |            |       |        |        |               |            |       |         |        O        |
 [Mapping](#defining-mappings)            |  S  |     S         |   S   |        |            |       |   R    |   R    |               |            |       |         |                 |
 [Profile](#defining-profiles)            |  S  |     S         |   S   |   R    |            |       |        |        |               |            |       |         |                 |
@@ -795,7 +795,9 @@ Depending on the type of item being defined, keywords may be required, suggested
 
 **KEY:**  R = required, S = suggested (SHOULD be used), O = optional, blank = prohibited
 
-{%include tu-span.html%} <sup>*</sup>If not specified, a corresponding assignment rule (for `human` or `severity`) must specify the value instead.</span>
+{%include tu-span.html%} <sup>1</sup>If the `Description` keyword is not specified in an `Invariant` definition, then an assignment rule for the `human` element must be specified instead.</span>
+<br/>
+{%include tu-span.html%} <sup>2</sup>If the `Severity` keyword is not specified in an `Invariant` definition, then an assignment rule for the `severity` element must be specified instead.</span>
 
 ##### Rule Statements
 
@@ -1270,23 +1272,25 @@ These conformance resources are created using FSH instance grammar. For example,
 
 #### Defining Invariants
 
-Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>*</sup>, `Severity`<sup>*</sup>, `XPath` (FHIR R4 only) and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
+Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>1</sup>, `Severity`<sup>2</sup>, `XPath` (FHIR R4 only) and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
 | Keyword | Usage | Corresponding element in <br/> ElementDefinition.constraint | Data Type | Required |
 |-------------|-----------------------------------|------------|-----------------|----------------|
 | Invariant   | Identifier for the invariant      | key        | id              | yes            |
-| Description | Human description of constraint   | human      | string          | no<sup>*</sup> |
+| Description | Human description of constraint   | human      | string          | no<sup>1</sup> |
 | Expression  | FHIRPath expression of constraint | expression | FHIRPath string | no             |
-| Severity    | Either #error or #warning, as defined in [ConstraintSeverity](https://hl7.org/fhir/R5/valueset-constraint-severity.html) | severity | code | no<sup>*</sup> |
+| Severity    | Either #error or #warning, as defined in [ConstraintSeverity](https://hl7.org/fhir/R5/valueset-constraint-severity.html) | severity | code | no<sup>2</sup> |
 | XPath       | XPath expression of constraint _(Note: FHIR R5 no longer supports XPath)_ | xpath | XPath string | no |
 {: .grid }
 
 {%include tu-div.html%}
 Authors may also specify ElementDefinition.constraint elements via [assignment rules](#assignment-rules). This approach is particularly useful for specifying constraint extensions such as the [Best Practice](https://hl7.org/fhir/extensions/StructureDefinition-elementdefinition-bestpractice.html) extension. Invariant definitions also allow [path rules](#path-rules) and [insert rules](#insert-rules).
 
-<sup>*</sup>If the `Description` keyword is not specified, then the definition must contain an assignment rule for the `human` element. If the `Severity` keyword is not specified, then the definition must contain an assignment rule for the `severity` element.
+<sup>1</sup>If the `Description` keyword is not specified, then the definition must contain an assignment rule for the `human` element.
+<br/>
+<sup>2</sup>If the `Severity` keyword is not specified, then the definition must contain an assignment rule for the `severity` element.
 </div>
 
 **Example:**
