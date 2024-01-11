@@ -655,7 +655,9 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 #### Caret Paths
 
-FSH uses the caret (^) symbol to access elements of definitional items corresponding to the current context. Caret paths SHALL be accepted in the following FSH items: Profile, Extension, Logical, Resource, ValueSet, and CodeSystem. Caret syntax SHALL NOT be used with the following paths, because the order of elements in these paths may vary between implementations:
+The FSH syntax provides a level of abstraction over FHIR resources. When authors define a Profile, Extension, Logical, or Resource using FSH, they are creating and modifying an instance of an underlying FHIR StructureDefinition. Similarly, when authors define a CodeSystem or ValueSet, they are creating and modifying an instance of a FHIR CodeSystem or FHIR ValueSet. While the basic FSH syntax maps to the core aspects of each of these FHIR definitional resources, it does not provide a complete mapping to every possible element within them.
+
+In order to address this gap, FSH allows authors to use the caret (`^`) symbol to access elements of definitional resources corresponding to the current item in context. Caret paths SHALL be accepted in FSH Profiles, Extensions, Logicals, and Resources to address elements in the underlying FHIR StructureDefinition resource; in FSH Invariants to address elements in the underlying ElementDefinition.constraint; in FSH ValueSets to address elements in the underlying FHIR ValueSet resource; in FSH CodeSystems to address elements in the underlying FHIR CodeSystem resource; and in FSH RuleSets, as long as the RuleSet is inserted in an item that allows caret paths. CaretPaths SHALL NOT be used with any other FSH item definition, including Instances, since Instances already directly manipulate FHIR resources. In addition, caret syntax SHALL NOT be used with the following paths, because the order of elements in these paths may vary between implementations:
 
 * `snapshot.element` and `differential.element` in Profile, Extension, Logical, and Resource items
 * `compose.include` and `compose.exclude` in ValueSet items
