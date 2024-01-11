@@ -799,6 +799,8 @@ Depending on the type of item being defined, keywords may be required, suggested
 <br/>
 {%include tu-span.html%} <sup>2</sup>If the `Severity` keyword is not specified in an `Invariant` definition, then an assignment rule for the `severity` element must be specified instead.</span>
 
+For additional information about the use of these keywords, consult the documentation pertaining to the specific item(s) to which they apply.
+
 ##### Rule Statements
 
 A number of rules may follow the keyword statements. The grammar and meaning of different rule types are discussed in the [FSH Rules](#fsh-rules) section. Without defining the rule types here, the following table shows the applicability of rule types to item types:
