@@ -2756,6 +2756,8 @@ Each slice will match or constrain the datatype of the array it slices. In parti
 * If the sliced element is an array of a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of Observation.component possess all the elements of Observation.component (code, value[x], dataAbsentReason, etc.). Constraints can be applied to the slices.
 * If the sliced element is an array of a Reference, then each slice MUST be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice must either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
 
+FSH implementations MUST add new slices to the StructureDefinition in the order in which they appear within the contains rule. When a FSH definition has multiple contains rules on the same path, these rules MUST be processed in the order in which they appear.
+
 **Examples:**
 
 * Slice the Observation.component array for blood pressure:
