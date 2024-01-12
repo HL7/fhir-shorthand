@@ -8,7 +8,7 @@ This chapter contains the formal specification of the FHIR Shorthand (FSH) langu
 
 In this specification, the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as described in [RFC2119](https://tools.ietf.org/html/rfc2119).
 
-Portions of the specification designated as [Trial Use](https://hl7.org/fhir/versions.html#std-process) are indicated by {%include tu.html%} and <span class="tuSpan">background shading</span>. Remaining unmarked sections contain normative content.
+Portions of the specification designated as [Trial Use](https://hl7.org/fhir/versions.html#std-process) are indicated by {%include tu.html%} and <span class="tuSpan">background shading</span>. All examples in the specification are informative content. Remaining unmarked sections contain normative content.
 
 ### Notational Conventions
 
