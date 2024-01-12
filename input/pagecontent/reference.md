@@ -870,9 +870,7 @@ It is sometimes necessary to define new codes inside an IG that are not drawn fr
 
 Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keywords `Id`, `Title` and `Description`. Code system metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`). Codes are then added, one per rule, using the following syntax:
 
-```
-* #{code} "{display string}" "{definition string}"
-```
+<pre><code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code></pre>
 
 **Notes:**
 
@@ -907,17 +905,15 @@ Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keyword
 
 Child codes can also be defined, resulting in a hierarchical structure of codes within a code system. To define such codes, list all of the preceding codes in the hierarchy before the new code:
 
-```
-* #{parent code} "{display string}" "{definition string}"
-* #{parent code} #{child code} "{display string}" "{definition string}"
-```
+<pre><code>* #{parent code} "{display string}" <span class="optional">"{definition string}"</span>
+* #{parent code} #{child code} "{display string}" <span class="optional">"{definition string}"</span>
+</code></pre>
 
 Another way to define child codes is to indent (by two spaces per level) their definitions after their parent's code definition:
 
-```
-* #{parent code} "{display string}" "{definition string}"
-  * #{child code} "{display string}" "{definition string}"
-```
+<pre><code>* #{parent code} "{display string}" <span class="optional">"{definition string}"</span>
+  * #{child code} "{display string}" <span class="optional">"{definition string}"</span>
+</code></pre>
 
 Additional levels to any depth SHALL be added in the same manner.
 
