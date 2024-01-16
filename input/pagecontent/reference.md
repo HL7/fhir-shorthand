@@ -187,7 +187,7 @@ The ANTLR implementation given in [the Appendix](#appendix-fsh-grammar-informati
 
 The primitive datatypes and value formats in FSH are those defined in the version of FHIR associated with the FSH project. References in this document to code, id, oid, etc. refer to [the primitive datatypes](https://hl7.org/fhir/R5/datatypes.html#primitive) in the referred FHIR version.
 
-FSH strings support the escape sequences that FHIR already defines as valid in its [regex for strings](https://hl7.org/fhir/R5/datatypes.html#primitive): \r (unicode U+000D), \n (U+000A), and \t (U+0009). Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
+FSH strings follow the same rules and support the same content as the [FHIR string datatype](https://hl7.org/fhir/R5/datatypes.html#string), including the following special escape sequences: \r (unicode U+000D), \n (U+000A), and \t (U+0009). Strings MUST be delimited by non-directional (neutral) quotes (U+0022). Left and right directional quotes (U+201C and U+201D) sometimes automatically inserted by "smart" text editors SHALL NOT be accepted. Left and right directional single quotes (U+2018 and U+2019) SHALL NOT be accepted in contexts requiring a single quotation mark; use the non-directional apostrophe (U+0027) instead.
 
 #### References
 
@@ -361,11 +361,11 @@ When processing triple-quoted strings, the following approach is used:
 
 #### Item Names
 
-Item names SHOULD follow [FHIR naming guidance](https://hl7.org/fhir/R5/structuredefinition-definitions.html#StructureDefinition.name). All names MUST be between 1 and 255 characters. Alias names SHOULD begin with `$`, otherwise, names MUST begin with an uppercase letter and contain only letters, numbers, and underscores ("_").
+Item names SHOULD follow [FHIR naming guidance](https://hl7.org/fhir/R5/structuredefinition-definitions.html#StructureDefinition.name). All item names MUST be between 1 and 255 characters. Item names MUST begin with an uppercase ASCII letter and contain only ASCII letters, numbers, and underscores ("_"). By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
-By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase). [Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). These conventions are consistent with FHIR naming conventions.
+[Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). Slice names MUST contain only ASCII letters, numbers, underscores ("_"), hyphens ("-"), at signs ("@"), and forward slashes ("/", used only for re-slicing). These conventions are consistent with FHIR naming conventions, aside from disallowing square brackets ("[" and "]") since they are used by [sliced array path](#sliced-array-paths) syntax.
 
-Beginning alias names with `$` is a good practice, since this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
+Alias names SHOULD begin with a dollar sign ("$") and MUST otherwise contain only ASCII letters, numbers, underscores ("_"), hyphens ("-"), and dots ("."). Beginning alias names with $ is a good practice, since this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
 
 > **Note:** Instances have identifiers rather than names, so instance declarations should follow the recommendations for [Item Identifiers](#item-identifiers).
 
@@ -373,7 +373,7 @@ Beginning alias names with `$` is a good practice, since this convention allows 
 
 Item identifiers (ids) MUST be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is best to use a unique id for every item in a FSH project. If no id is provided by a FSH author, implementations MAY create an id.
 
-By convention, ids SHOULD be lowercase with words separated by hyphens. The overall length MUST NOT be more than 64 characters (per the requirements of the [FHIR id datatype](https://hl7.org/fhir/R5/datatypes.html#primitive)). If the item has a name, the id SHOULD be based on the item's name, with _ replaced by -, changed to lowercase, and truncated if necessary.
+Ids MUST contain only ASCII letters, numerals, hyphens ("-"), and dots ("."), with a length limit of 64 characters (per the requirements of the [FHIR id datatype](https://hl7.org/fhir/R5/datatypes.html#primitive)). By convention, ids SHOULD be lowercase with words separated by hyphens. If the item has a name, the id SHOULD be based on the item's name, with _ replaced by -, changed to lowercase, and truncated if necessary.
 
 #### Referring to Items
 
