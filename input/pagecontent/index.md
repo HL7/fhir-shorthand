@@ -14,7 +14,7 @@ Conceived in September 2019, with the first version of the specification release
 
 FSH was approved as a Standard for Trial Use (STU 1) in May 2020 and a Mixed Normative/Trial Use Standard (R2) in February 2022 . In the ensuing period, additional activity around FSH has driven improvements, new features, and maturation of FSH and related tools. The majority of language features of FSH are now normative, but certain newer language features are proposed as [Trial Use](https://hl7.org/fhir/versions.html#std-process). Trial use features are clearly marked in the [language specification](reference.html) with the {%include tu.html%} symbol.
 
-Designation as a normative standard does not mean that the FSH language will cease to evolve, only that any future changes must be compatible with the normative portions of the specification.
+Designation as a normative standard does not mean that the FSH language will cease to evolve. Rather, it indicates that, except in very rare cases, future changes will be compatible with normative portions of the specification.
 
 #### Motivations for FHIR Shorthand
 
