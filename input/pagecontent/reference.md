@@ -1272,7 +1272,7 @@ These conformance resources are created using FSH instance grammar. For example,
 
 #### Defining Invariants
 
-Invariants are defined using the declaration `Invariant` and OPTIONAL keywords `Description`<sup>1</sup>, `Severity`<sup>2</sup>, `XPath` (FHIR R4 only) and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
+Invariants are defined using the declaration `Invariant`, RECOMMENDED keyword `Description`<sup>1</sup>, and OPTIONAL keywords `Severity`<sup>2</sup>, `XPath` (FHIR R4 only) and  `Expression`. The keywords correspond directly to elements in ElementDefinition.constraint. Invariants are incorporated into profiles, extensions, logical models, or resources via [obeys rules](#obeys-rules).
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
