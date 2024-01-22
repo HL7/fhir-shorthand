@@ -2549,7 +2549,7 @@ The [binding rules defined in FHIR](https://hl7.org/fhir/R5/profiling.html#bindi
 * Bind to an externally-defined value set using its canonical URL:
 
   ```
-  * telecom.system from http://hl7.org/fhir/ValueSet/contact-point-system (required)
+  * category from http://hl7.org/fhir/ValueSet/observation-category (required)
   ```
 
 * Bind to an externally-defined value set with required binding by default:
