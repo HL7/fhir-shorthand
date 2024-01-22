@@ -2275,7 +2275,7 @@ Whenever this type of rule is applied, whatever is on the right side **entirely 
   * myCoding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding = $ICD#C80.1
   ```
-  Because the second assignment pre-clears the previous value of myCoding, the result is:
+  Because the second assignment clears the previous value of myCoding, the result is:
 
   * myCoding.system is http://hl7.org/fhir/sid/icd-10-cm (assuming the $ICD alias maps to this URL)
   * myCoding.code is "C80.1"
@@ -2353,7 +2353,7 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
   * myCodeableConcept.text = "Diagnosis of malignant neoplasm left breast."
   ```
 
-* Example of **incorrect** ordering rules that leads to loss of a previously-assigned value, because the last assignment pre-clears the existing value of myCodeableConcept before apply new values:
+* Example of **incorrect** ordering rules that leads to loss of a previously-assigned value, because the last assignment clears the existing value of myCodeableConcept before apply new values:
 
   ```
   * myCodeableConcept.coding[0].userSelected = true
@@ -2428,7 +2428,7 @@ The units of measure can be set by assigning a coded value to a Quantity:
   * valueQuantity.unit = "millimeters"
   * valueQuantity = 55.0 'mm'
   ```
-  Note that the second rule **pre-clears** valueQuantity in its entirety before applying the specified values, so the result is:
+  Note that the second rule **clears** valueQuantity in its entirety before applying the specified values, so the result is:
 
   * value is 55.0
   * system is http://unitsofmeasure.org
