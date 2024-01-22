@@ -2496,7 +2496,9 @@ As [advised in FHIR](https://hl7.org/fhir/R5/references.html#canonical), the URL
 
 {%include tu-div.html%}
 
-The [CodeableReference](https://hl7.org/fhir/R5/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly.
+The [CodeableReference](https://hl7.org/fhir/R5/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. When applying a type rule (e.g., `code only CodeableReference(Medication)`), the element's reference property is constrained to the given type, but its concept property remains available for use (unless otherwise constrained by another rule).
+
+To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly.
 
 **Examples:**
 
