@@ -1824,21 +1824,21 @@ The following table is a summary of the rule syntax.
 
 | Rule Type | Syntax |
 | --- | --- |
-| [Add Element](#add-element-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span></code> |
+| [Add Element](#add-element-rules) |<code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> {datatype(s)} "{short}" <span class="optional">"{definition}"</span></code><br/><code>* &lt;element&gt; {card} <span class="optional">{flag(s)}</span> contentReference {contentUrl} "{short}" <span class="optional">"{definition}"</span></code> |
 | [Assignment](#assignment-rules) |<code>* &lt;element&gt; = {value} <span class="optional">(exactly)</span></code> |
 | [Binding](#binding-rules) |<code>* &lt;bindable&gt; from {ValueSet} <span class="optional">({strength})</span></code> |
 | [Cardinality](#cardinality-rules) |<code>* &lt;element&gt; <span class="optional">{min}</span>..<span class="optional">{max}</span> // min, max, or both MUST be present </code> |
-| [Contains (inline extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {Extension} {card} <span class="optional">{flag(s)} <br/>   and {Extension2} {card} {flag(s)}  <br/>   and {Extension3} {card} {flag(s)}...</span></code> |
-| [Contains (standalone extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {Extension} named {name} {card} <span class="optional">{flag(s)} <br/>   and {Extension2} named {name2} {card} {flag(s)}  <br/>   and {Extension3} named {name3} {card} {flag(s)}...</span></code> |
-| [Contains (slicing)](#contains-rules-for-extensions) | <code>* &lt;array&gt; contains {name} {card} <span class="optional">{flag(s)} <br/>   and {name2} {card} {flag2} <br/>   and {name3} {card} {flag(s)}...</span></code> |
-| [Exclude](#exclude-rules) |`* exclude {Coding}`<br/>`* exclude codes from valueset {ValueSet}`<br/><code>* exclude codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code>|
-| [Flag](#flag-rules) |`* <element(s)> {flag(s)}` |
-| [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding}</cod><br/><code>* <span class="optional">include</span> codes from valueset {ValueSet}</code><br/><code>* <span class="optional">include</span> codes from system {CodeSystem} <span class="optional">where {filter1} and {filter2} and ...</span></code> |
+| [Contains (standalone extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {Extension1} named {name1} {card} <span class="optional">{flag(s)} <br/>   and {Extension2} named {name2} {card} {flag(s)}  <br/>   and {Extension3} named {name3} {card} {flag(s)}...</span></code> |
+| [Contains (inline extensions)](#contains-rules-for-extensions) | <code>* &lt;extension&gt; contains {name1} {card} <span class="optional">{flag(s)} <br/>   and {name2} {card} {flag(s)}  <br/>   and {name3} {card} {flag(s)}...</span></code> |
+| [Contains (slicing)](#contains-rules-for-slicing) | <code>* &lt;array&gt; contains {name} {card} <span class="optional">{flag(s)} <br/>   and {name2} {card} {flag2} <br/>   and {name3} {card} {flag(s)}...</span></code> |
+| [Exclude](#exclude-rules) |<code>* exclude {Coding}</code><br/><code>* exclude codes from valueset {ValueSet}<span class="optional">|{version}</span></code><br/><code>* exclude codes from system {CodeSystem}<span class="optional">|{version}</span></code><br/><code>* exclude codes from system {CodeSystem}<span class="optional">|{version}</span> where {filter1} <span class="optional">and {filter2}...</span></code><br/><code>* exclude codes from system {CodeSystem}<span class="optional">|{version}</span> <br/>   and valueset {ValueSet1}<span class="optional">|{version1}</span> <br/>   <span class="optional">and valueset {ValueSet2}|{version2}</span></code> |
+| [Flag](#flag-rules) |<code>* &lt;element(s)&gt; {flag(s)}</code> |
+| [Include](#include-rules) |<code>* <span class="optional">include</span> {Coding}</code><br/><code>* <span class="optional">include</span> codes from valueset {ValueSet}<span class="optional">|{version}</span></code><br/><code>* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version}</span></code><br/><code>* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version}</span> where {filter1} <span class="optional">and {filter2}...</span></code><br/><code>* <span class="optional">include</span> codes from system {CodeSystem}<span class="optional">|{version}</span> <br/>   and valueset {ValueSet1}<span class="optional">|{version1}</span> <br/>   <span class="optional">and valueset {ValueSet2}|{version2}</span></code> |
 | [Insert](#insert-rules)|<code>* insert {RuleSet}</code><br/><code>* insert {RuleSet}({parameter1}<span class="optional">, {parameter2}, ...</span>)</code><br/><code>* &lt;element&gt; insert {RuleSet}<span class="optional">({parameter1}, {parameter2}, ...)</span></code> |
-| [Local Code](#local-code-rules) |<code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code> |
+| [Local Code](#local-code-rules) |<code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code><br/><code>* #{parentCode} #{childCode} "{display string}" <span class="optional">"{definition string}"</span></code> |
 | [Mapping](#mapping-rules)|<code>* <span class="optional">&lt;element&gt;</span> -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span></code> |
 | [Obeys](#obeys-rules) | <code>* <span class="optional">&lt;element&gt;</span> obeys {Invariant} <span class="optional">and {Invariant2} and {Invariant3}...</span></code> |
-| [Path](#path-rules)  | `* <element>`|
+| [Path](#path-rules)  | <code>* &lt;element&gt; </code>|
 | [Type](#type-rules) | <code>* &lt;element&gt; only {datatype(s)} |
 {: .grid }
 
