@@ -3037,8 +3037,39 @@ Any FSH syntax errors that arise as a result of the value substitution are handl
   // more rules
   ```
 
+* Use the parameterized rule set, Phone, to add a phone number to an instance of Organization (note the use of backslash to escape a closing parenthesis):
+
+  ```
+  RuleSet: Phone(value)
+  * telecom[+].system = #phone
+  * telecom[=].value = "{value}"
+  ```
+
+  ```
+  Instance: AcmeOrganization
+  InstanceOf: Organization
+  Title: "Acme Organization"
+  Description: "The Acme Organization"
+  // some rules
+  * insert Phone( (800\)555-1234 )
+  // more rules
+  ```
+
+  When the rule set is expanded and soft indices are resolved, this is equivalent to:
+
+  ```
+  Instance: AcmeOrganization
+  InstanceOf: Organization
+  Title: "Acme Organization"
+  Description: "The Acme Organization"
+  // some rules
+  * telecom[0].system = #phone
+  * telecom[0].value = "(800)555-1234"
+  // more rules
+  ```
+
 {%include tu-div.html%}
-* Use the parameterized rule set, AddVariableToTestScript, to add variable definitions to an instance of TestScript:
+* Use the parameterized rule set, AddVariableToTestScript, to add variable definitions to an instance of TestScript (note the use of double brackets to avoid the need to escape closing parentheses and commas):
 
   ```
   RuleSet: AddVariableToTestScript(name, expression)
