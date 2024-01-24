@@ -3404,11 +3404,11 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
   * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
-* Restrict the performer Reference datatype to the LiteralReference profile and its target types to Practitioner or PractitionerRole. Note that the first rule restricts the Reference datatype and the second rule restricts the types it can refer to:
+* Assuming that LiteralReference is a profile on Reference, restrict the performer Reference datatype to this LiteralReference profile and its target types to Practitioner or PractitionerRole. Note that the first rule restricts the Reference datatype and the second rule restricts the types it can refer to:
 
   ```
   * performer only LiteralReference
-  * performer only Reference(PrimaryCarePhysician or EmergencyRoomPhysician)
+  * performer only Reference(Practitioner or PractitionerRole)
   ```
 
 * Restrict PlanDefinition.action.definition[x], nominally a choice of uri or canonical(ActivityDefinition \| PlanDefinition \| Questionnaire), to allow only the canonical of an ActivityDefinition:
