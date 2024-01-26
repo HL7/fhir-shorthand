@@ -2179,13 +2179,15 @@ In the latter case of establishing a constraint in a profile, the constraint pat
 * <element> = {value} (exactly)
 ```
 
-Adding `(exactly)` indicates no additional values or extensions are allowed on the element. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles. For example, in a profile,
+Adding `(exactly)` indicates that an _exact_ match is required. When the right-hand side of an assignment is a primitive value (e.g., a string), `(exactly)` indicates that the exact value is required and _cannot_ have an id or extensions. When the right-hand side of an assignment is a complex value (e.g., a Quantity), `(exactly)` indicates that all specified components of the complex value are required and no additional sub-elements are allowed. In general, using `(exactly)` is not the best option for interoperability because it creates conformance criteria that could be too tight, risking the rejection of valid, useful data. FSH offers this option primarily because exact value matching is used in some current IGs and profiles. For example, in a profile,
 
 ```
 * code = $LNC#69548-6 (exactly)
 ```
 
 means that a conforming instance must have the system http://loinc.org, the code 69548-6, and *must not have* a display text, additional codes, or extensions on the code element.
+
+> **Note**: Assigning values in a profile populates the underlying ElementDefinition's `pattern[x]` or `fixed[x]` property (`pattern[x]` in the default case; `fixed[x]` when `(exactly)` is used). As such, assigned values are restricted to the types allowed for [open type elements](https://hl7.org/fhir/R5/datatypes.html#open).
 
 When assigning values to an instance, the `(exactly)` modifier has no meaning and SHOULD NOT be used. Implementations may ignore the modifier or signal an error.
 
