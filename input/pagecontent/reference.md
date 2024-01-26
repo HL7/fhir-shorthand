@@ -2382,11 +2382,11 @@ Assignment rules can be used to set any part of a CodeableConcept. For example, 
 
 FSH provides a shorthand that allows quantities, units of measure, and display string for the units of measure to be specified simultaneously, provided the units of measure are [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM) codes:
 
-<pre><code>&lt;Quantity&gt; = {decimal} '{UCUM code}' <span class="optional">"{units display string}"</span></code></pre>
+<pre><code>* &lt;Quantity&gt; = {decimal} '{UCUM code}' <span class="optional">"{units display string}"</span></code></pre>
 
 A similar shorthand can be used for other code systems by specifying the unit using the standard FSH code syntax:
 
-<pre><code>&lt;Quantity&gt; = {decimal} {CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{units display string}"</span></code></pre>
+<pre><code>* &lt;Quantity&gt; = {decimal} {CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{units display string}"</span></code></pre>
 
 Alternatively, the value and units can also be set independently. To assign a value, use the Quantity.value property:
 
@@ -2394,7 +2394,11 @@ Alternatively, the value and units can also be set independently. To assign a va
 * <Quantity>.value = {decimal}
 ```
 
-The units of measure can be set by assigning a coded value to a Quantity:
+The units of measure can be set independently by assigning a UCUM unit without the value:
+
+<pre><code>* &lt;Quantity&gt; = '{UCUM code}' <span class="optional">"{units display string}"</span></code></pre>
+
+For non-UCUM units, the units of measure can be set independently by assigning a coded value to a Quantity:
 
 <pre><code>* &lt;Quantity&gt; = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{units display string}"</span></code></pre>
 
@@ -2406,10 +2410,22 @@ The units of measure can be set by assigning a coded value to a Quantity:
   * valueQuantity = 55.0 'mm'
   ```
 
+* Set the valueQuantity of an Observation to 55 millimeters using UCUM units and a display string:
+
+  ```
+  * valueQuantity = 55.0 'mm' "millimeter"
+  ```
+
 * Set the numerical value of Observation.valueQuantity to 55.0 without setting the units:
 
   ```
   * valueQuantity.value = 55.0
+  ```
+
+* Set the units of Observation.valueQuantity to millimeters, using UCUM units and a display string, without setting the value:
+
+  ```
+  * valueQuantity = 'mm' "millimeter"
   ```
 
 * Express a weight in pounds, using the UMLS code for units (not recommended), and displaying "pounds":
@@ -2418,16 +2434,16 @@ The units of measure can be set by assigning a coded value to a Quantity:
   * valueQuantity = 155.0 http://terminology.hl7.org/CodeSystem/umls#C0439219 "pounds"
   ```
 
-* Set the units of the same valueQuantity to millimeters, without setting the value (assuming $UCUM has been defined as an alias for http://unitsofmeasure.org):
+* Set the units of Observation.valueQuantity to pounds, using the UMLS unit code (not recommended) and a display string, without setting the value (assuming $UMLS has been defined as an alias for http://terminology.hl7.org/CodeSystem/umls): 
 
   ```
-  * valueQuantity = $UCUM#mm "millimeters"
+  * valueQuantity = $UMLS#C0439219 "pounds"
   ```
 
 * Example of how **incorrect** ordering of rules can result in the loss of a previously assigned value:
 
   ```
-  * valueQuantity.unit = "millimeters"
+  * valueQuantity.unit = "millimeter"
   * valueQuantity = 55.0 'mm'
   ```
   Note that the second rule **clears** valueQuantity in its entirety before applying the specified values, so the result is:
@@ -2441,13 +2457,13 @@ The units of measure can be set by assigning a coded value to a Quantity:
 
   ```
   * valueQuantity = 55.0 'mm'
-  * valueQuantity.unit = "millimeters"
+  * valueQuantity.unit = "millimeter"
   ```
 
 * Another way to approach this example (with the correct result) is:
 
   ```
-  * valueQuantity = $UCUM#mm "millimeters"
+  * valueQuantity = $UCUM#mm "millimeter"
   * valueQuantity.value = 55.0
   ```
 
