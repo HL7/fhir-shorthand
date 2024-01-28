@@ -247,7 +247,7 @@ FSH represents Codings as follows:
 
 As [indicated by orange-colored text](#notational-conventions), the version and display strings are optional. `CodeSystem` represents the controlled terminology the code is taken from, either by name, by id, or canonical URL. The vertical bar syntax for the version of the code system is the same approach used in the canonical datatype in FHIR. To set the less-common properties of a Coding or to set properties individually, [assignment rules](#assignments-with-the-coding-data-type) can be used.
 
-This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type))
+This syntax is also used with CodeableConcepts (see [Assignments with the CodeableConcept Data Type](#assignments-with-the-codeableconcept-data-type)) and {%include tu-span.html%} CodeableReferences (see [Assignments with the CodeableReference Data Type](#assignments-with-the-codeablereference-data-type))</span>.
 
 **Examples:**
 
@@ -2516,7 +2516,7 @@ As [advised in FHIR](https://hl7.org/fhir/R5/references.html#canonical), the URL
 
 The [CodeableReference](https://hl7.org/fhir/R5/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. When applying a type rule (e.g., `code only CodeableReference(Medication)`), the element's reference property is constrained to the given type, but its concept property remains available for use (unless otherwise constrained by another rule).
 
-To assign values to a CodeableReference, set the CodeableReference's concept and reference properties directly.
+To assign values to a CodeableReference, authors MAY assign a FSH Coding or reference directly to the CodeableReference element. Assigning a Coding to a CodeableReference element assigns the Coding to the element's concept property. Assigning a reference to a CodeableReference element assigns the reference to the element's reference property. Assigning a Coding does not affect the CodeableReference's reference property, nor does assigning a reference affect the CodeableReference's concept property. If preferred, authors MAY assign a CodeableConcept's concept and reference properties directly.
 
 **Examples:**
 
@@ -2533,7 +2533,18 @@ To assign values to a CodeableReference, set the CodeableReference's concept and
   * code only CodeableReference(LatexSubstanceDefinition)
   ```
 
-* Assign the concept and reference aspects of a CodeableReference:
+* Assign the concept and reference properties of a CodeableReference by assigning values directly to the CodeableReference element:
+
+  ```
+  Instance:   LatexSubstanceExample
+  InstanceOf: LatexSubstance
+  Title:  "Natural Rubber"
+  Description: "Natural rubber latex substance"
+  * code = $SCT#1003754000 "Natural rubber latex (substance)"
+  * code = Reference(NaturalLatexSubstanceDefinitionExample)
+  ```
+
+* Assign the concept and reference properties of a CodeableReference by assigning values directly to each property. This has the same result as the example above:
 
   ```
   Instance:   LatexSubstanceExample
