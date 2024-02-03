@@ -991,6 +991,13 @@ An extension can have either a value (i.e. a value[x] element) or sub-extensions
 
 Since simple and complex extensions are mutually-exclusive, FSH implementations SHOULD set the value[x] cardinality to 0..0 if sub-extensions are specified, set extension cardinality to 0..0 if constraints are applied to value[x], and signal an error if value[x] and extensions are simultaneously specified.
 
+To indicate that an extension is a [modifier extension](https://hl7.org/fhir/R5/extensibility.html#modifierExtension), authors MUST set the [isModifier](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.isModifier) flag to `true` on the extension's root element. In addition, the root element's [isModifierReason](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.isModifierReason) must also be provided. This is in accordance with FHIR's [modifier extension requirements](https://hl7.org/fhir/R5/extensibility.html#modifierExtension) and [eld-18](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.isModifier) invariant. FSH authors can achieve this via rules like the following:
+
+```
+* . ?!     // alternately, you may use: . ^isModifier = true
+* . ^isModifierReason = "Reason for flagging as a modifier"
+```
+
 Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Contains (standalone extensions)](#contains-rules-for-extensions), [Contains (inline extensions)](#contains-rules-for-extensions), [Contains (slicing)](#contains-rules-for-slicing), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
 
 **Examples:**
@@ -1006,6 +1013,23 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
   * value[x] only code
   * value[x] from http://hl7.org/fhir/us/core/ValueSet/birthsex (required)
+  ```
+
+> **Note:** The use of the `Context` keyword in the example above is {%include tu.html%}.
+
+* How the FHIR [Do Not Perform modifier extension](https://hl7.org/fhir/extensions/StructureDefinition-request-doNotPerform.html) would be defined in FSH:
+
+  ```
+  Extension: DoNotPerform
+  Id: request-doNotPerform
+  Title: "Do not perform"
+  Description: "If true indicates that the request is asking for the specified action to not occur."
+  Context: NutritionOrder
+  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
+  * . 0..1 ?!
+  * . ^isModifierReason = "If true this element negates the specified action. For Example, instead of a request for a procedure, it is a request for the procedure to not occur."
+  * value[x] 1..
+  * value[x] only boolean
   ```
 
 > **Note:** The use of the `Context` keyword in the example above is {%include tu.html%}.
@@ -2768,6 +2792,16 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   * extension contains
         $Disability named disability 0..1 MS and
         $GenderIdentity named genderIdentity 0..1 MS
+  ```
+
+* Add standalone FHIR modifier extension [request-doNotPerform](https://hl7.org/fhir/extensions/StructureDefinition-request-doNotPerform.html) to a profile of the NutritionOrder resource, using an alias:
+
+  ```
+  Alias: $DoNotPerform = http://hl7.org/fhir/StructureDefinition/request-doNotPerform
+
+  // intervening lines not shown
+
+  * modifierExtension contains $DoNotPerform named doNotPerform 0..1 MS
   ```
 
 * Add a standalone extension Laterality, defined in the same FSH project, to a bodySite attribute (second level extension):
