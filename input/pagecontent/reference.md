@@ -657,7 +657,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 The FSH syntax provides a level of abstraction over FHIR resources. When authors define a Profile, Extension, Logical, or Resource using FSH, they are creating and modifying an instance of an underlying FHIR StructureDefinition. Similarly, when authors define a CodeSystem or ValueSet, they are creating and modifying an instance of a FHIR CodeSystem or FHIR ValueSet. While the basic FSH syntax maps to the core aspects of each of these FHIR definitional resources, it does not provide a complete mapping to every possible element within them.
 
-In order to address this gap, FSH allows authors to use the caret (`^`) symbol to access elements of definitional resources corresponding to the current item in context. Caret paths SHALL be accepted in FSH Profiles, Extensions, Logicals, and Resources to address elements in the underlying FHIR StructureDefinition resource; in FSH Invariants to address elements in the underlying ElementDefinition.constraint; in FSH ValueSets to address elements in the underlying FHIR ValueSet resource; in FSH CodeSystems to address elements in the underlying FHIR CodeSystem resource; and in FSH RuleSets, as long as the RuleSet is inserted in an item that allows caret paths. CaretPaths SHALL NOT be used with any other FSH item definition, including Instances, since Instances already directly manipulate FHIR resources. In addition, caret syntax SHALL NOT be used with the following paths, because the order of elements in these paths may vary between implementations:
+In order to address this gap, FSH allows authors to use the caret (`^`) symbol to access elements of definitional resources corresponding to the current item in context. Caret paths SHALL be accepted in FSH Profiles, Extensions, Logicals, and Resources to address elements in the underlying FHIR StructureDefinition resource; in FSH Invariants to address elements in the underlying ElementDefinition.constraint; in FSH ValueSets to address elements in the underlying FHIR ValueSet resource; in FSH CodeSystems to address elements in the underlying FHIR CodeSystem resource; and in FSH RuleSets, as long as the RuleSet is inserted in an item that allows caret paths. Caret paths SHALL NOT be used with any other FSH item definition, including Instances, since Instances already directly manipulate FHIR resources. In addition, caret syntax SHALL NOT be used with the following paths, because the order of elements in these paths may vary between implementations:
 
 * `snapshot.element` and `differential.element` in Profile, Extension, Logical, and Resource items
 * `compose.include` and `compose.exclude` in ValueSet items
@@ -2155,7 +2155,7 @@ Assignment rules follow this syntax:
 * <element> = {value}
 ```
 
-The left side of this expression follows the [FSH path grammar](#fsh-paths). The datatype on the right side MUST align with the datatype of the final element in the path. An assignment replaces any existing value assigned to the element.
+The left side of this expression follows the [FSH path grammar](#fsh-paths) and may optionally include a [caret path](#caret-paths) in definitions for profiles, extensions, logicals, resources, code systems, and value sets. The datatype on the right side MUST align with the datatype of the final element in the path. Except in specific cases noted below, an assignment replaces any existing value assigned to the element.
 
 ##### Assigning Values versus Specifying Constraints
 
@@ -2559,6 +2559,53 @@ To assign values to a CodeableReference, authors MAY assign a FSH Coding or refe
   ```
 
 </div>
+
+##### Assignments with Caret Paths
+
+When the left side of an assignment rule contains a caret path, the value will be assigned to the corresponding path within the underlying definitional instance of the FSH item. For more information about caret paths, see [Caret Paths](#caret-paths).
+
+**Examples**
+
+* Assign the experimental flag in a profile's StructureDefinition to `true`:
+
+  ```
+  * ^experimental = true
+  ```
+
+* Override the auto-generated url in an extension's StructureDefinition with a custom url:
+
+  ```
+  * ^url = "http://example.org/custom/myextension"
+  ```
+
+* Assign the short description and definition for the Observation.value[x] ElementDefinition in an Observation profile:
+
+  ```
+  * value[x] ^short = "Measurement in cm"
+  * value[x] ^definition = "The measurement in centimeters. Values in other units must be converted to centimeters in order to conform with this profile."
+  ```
+
+* Assign the short description and definition for the Observation.value[x] ElementDefinition in an Observation profile using [indented rules](#indented-rules):
+
+  ```
+  * value[x]
+    * ^short = "Measurement in cm"
+    * ^definition = "The measurement in centimeters. Values in other units must be converted to centimeters in order to conform with this profile."
+  ```
+
+* Assign [code metadata](#code-metadata) designation.use for the `#active` code within a CodeSystem:
+
+  ```
+  * #active ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+  ```
+
+* Assign [concept metadata](#concept-metadata) for a concept within a ValueSet using [indented rules](#indented-rules):
+
+  ```
+  * include $SCT#84162001  "Cold"
+    * ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
+    * ^designation[0].value = "Cold sensation quality (qualifier value)"
+  ```
 
 #### Binding Rules
 
