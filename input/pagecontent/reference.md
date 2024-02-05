@@ -820,23 +820,23 @@ A number of rules may follow the keyword statements. The grammar and meaning of 
 <span class="caption" id="t7">Table 7. Relationships between FSH items and FSH rules</span>
 
 |              Item →<br/>Rule Type ↓ | [Alias](#defining-aliases) | [Code System](#defining-code-systems) | [Extension](#defining-extensions) | [Instance](#defining-instances) | [Invariant](#defining-invariants) | [Logical](#defining-logical-models) | [Mapping](#defining-mappings) | [Profile](#defining-profiles) | [Resource](#defining-resources) | [Rule Set](#defining-rule-sets) | [Value Set](#defining-value-sets) |
-|--------------------------------------------------------------------|---|---|---|---|------------------------------------|---|---|---|---|---|---|
-| [Add Element](#add-element-rules)                                  |   |   |   |   |                                    | Y |   |   | Y | Y |   |
-| [Assignment](#assignment-rules)                                    |   | C | Y | Y | {%include tu-span.html%} Y </span> | C |   | Y | C | Y | C |
-| [Binding](#binding-rules)                                          |   |   | Y |   |                                    | A |   | Y | A | Y |   |
-| [Cardinality](#cardinality-rules)                                  |   |   | Y |   |                                    | A |   | Y | A | Y |   |
-| [Contains (inline extensions)](#contains-rules-for-extensions)     |   |   | Y |   |                                    |   |   |   |   | Y |   |
-| [Contains (standalone extensions)](#contains-rules-for-extensions) |   |   | Y |   |                                    |   |   | Y |   | Y |   |
-| [Contains (slicing)](#contains-rules-for-slicing)                  |   |   | Y |   |                                    |   |   | Y |   | Y |   |
-| [Exclude](#exclude-rules)                                          |   |   |   |   |                                    |   |   |   |   | Y | Y |
-| [Flag](#flag-rules)                                                |   |   | Y |   |                                    | L |   | Y | L | Y |   |
-| [Include](#include-rules)                                          |   |   |   |   |                                    |   |   |   |   | Y | Y |
-| [Insert](#insert-rules)                                            |   | Y | Y | Y | {%include tu-span.html%} Y </span> | Y | Y | Y | Y | Y | Y |
-| [Local Code](#local-code-rules)                                    |   | Y |   |   |                                    |   |   |   |   | Y |   |
-| [Mapping](#mapping-rules)                                          |   |   |   |   |                                    |   | Y |   |   | Y |   |
-| [Obeys](#obeys-rules)                                              |   |   | Y |   |                                    | Y |   | Y | Y | Y |   |
-| [Path](#path-rules)                                                |   |   | Y | Y | {%include tu-span.html%} Y </span> | Y | Y | Y | Y | Y |   |
-| [Type](#type-rules)                                                |   |   | Y |   |                                    | A |   | Y | A | Y |   |
+|--------------------------------------------------------------------|---|---|---|---|------------------------------------|------------------------------------|---|---|---|---|---|
+| [Add Element](#add-element-rules)                                  |   |   |   |   |                                    | Y                                  |   |   | Y | Y |   |
+| [Assignment](#assignment-rules)                                    |   | C | Y | Y | {%include tu-span.html%} Y </span> | {%include tu-span.html%} Y </span> |   | Y | C | Y | C |
+| [Binding](#binding-rules)                                          |   |   | Y |   |                                    | {%include tu-span.html%} Y </span> |   | Y | A | Y |   |
+| [Cardinality](#cardinality-rules)                                  |   |   | Y |   |                                    | {%include tu-span.html%} Y </span> |   | Y | A | Y |   |
+| [Contains (inline extensions)](#contains-rules-for-extensions)     |   |   | Y |   |                                    |                                    |   |   |   | Y |   |
+| [Contains (standalone extensions)](#contains-rules-for-extensions) |   |   | Y |   |                                    |                                    |   | Y |   | Y |   |
+| [Contains (slicing)](#contains-rules-for-slicing)                  |   |   | Y |   |                                    |                                    |   | Y |   | Y |   |
+| [Exclude](#exclude-rules)                                          |   |   |   |   |                                    |                                    |   |   |   | Y | Y |
+| [Flag](#flag-rules)                                                |   |   | Y |   |                                    | L                                  |   | Y | L | Y |   |
+| [Include](#include-rules)                                          |   |   |   |   |                                    |                                    |   |   |   | Y | Y |
+| [Insert](#insert-rules)                                            |   | Y | Y | Y | {%include tu-span.html%} Y </span> | Y                                  | Y | Y | Y | Y | Y |
+| [Local Code](#local-code-rules)                                    |   | Y |   |   |                                    |                                    |   |   |   | Y |   |
+| [Mapping](#mapping-rules)                                          |   |   |   |   |                                    |                                    | Y |   |   | Y |   |
+| [Obeys](#obeys-rules)                                              |   |   | Y |   |                                    | Y                                  |   | Y | Y | Y |   |
+| [Path](#path-rules)                                                |   |   | Y | Y | {%include tu-span.html%} Y </span> | Y                                  | Y | Y | Y | Y |   |
+| [Type](#type-rules)                                                |   |   | Y |   |                                    | {%include tu-span.html%} Y </span> |   | Y | A | Y |   |
 {: .grid }
 
 **KEY:** Y = Rule type MAY be used, L = All flags except must support (MS) are supported, C = Assignments apply only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
@@ -881,6 +881,8 @@ It is sometimes necessary to define new codes inside an IG that are not drawn fr
 Creating a code system uses the declaration `CodeSystem` and RECOMMENDED keywords `Id`, `Title` and `Description`. Code system metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`). Codes are then added, one per rule, using the following syntax:
 
 <pre><code>* #{code} "{display string}" <span class="optional">"{definition string}"</span></code></pre>
+
+Rule types that apply to CodeSystems are: [Assignment](#assignment-rules), [Insert](#insert-rules), and [Local Code](#local-code-rules). Assignment rules SHALL be applicable to code systems only in the context of caret paths.
 
 **Notes:**
 
@@ -1320,7 +1322,7 @@ Invariants are defined using the declaration `Invariant`, RECOMMENDED keyword `D
 {: .grid }
 
 {%include tu-div.html%}
-Authors may also specify ElementDefinition.constraint elements via [assignment rules](#assignment-rules). This approach is particularly useful for specifying constraint extensions such as the [Best Practice](https://hl7.org/fhir/extensions/StructureDefinition-elementdefinition-bestpractice.html) extension. Invariant definitions also allow [path rules](#path-rules) and [insert rules](#insert-rules).
+Rule types that apply to defining Invariants are: [Assignment](#assignment-rules), [Path](#path-rules), and [Insert](#insert-rules). Paths in Invariant assignment rules refer to elements within ElementDefinition.constraint (e.g., `severity` refers to `ElementDefinition.constraint.severity`). Assignment rules are particularly useful for specifying constraint extensions such as the [Best Practice](https://hl7.org/fhir/extensions/StructureDefinition-elementdefinition-bestpractice.html) extension.
 
 <sup>1</sup>If the `Description` keyword is not specified, then the definition must contain an assignment rule for the `human` element.
 <br/>
@@ -1357,7 +1359,7 @@ Logical models allow authors to define new structures representing arbitrary con
 
 Logical models are defined using the declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type is used as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead. Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent. Logical model metadata that does not have a dedicated keyword may be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
-Rules defining the logical model follow immediately after the keyword section. Rule types that apply to logical models are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules).
+Rules defining the logical model follow immediately after the keyword section. Rule types that apply to Logicals are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). Flag rules SHALL NOT include MS flags.
 
 In addition, authors should consult FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
 
@@ -1454,7 +1456,7 @@ The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to e
 
 >**Note:** Unlike setting the mapping.map directly in the StructureDefinition, mapping rules within a Mapping item do not include the name of the resource in the path on the left hand side.
 
-A mapping can also have [insert rules](#insert-rules) and [path rules](#path-rules) applied to it.
+Rule types that apply to Mappings are: [Insert](#insert-rules), [Mapping](#mapping-rules), and [Path](#path-rules).
 
 **Examples:**
 
@@ -1726,7 +1728,7 @@ Analogous rules can be used to leave out certain codes, with the word `exclude` 
 | Filtered codes from a code system | <code style="white-space: normal">* exclude codes from system {CodeSystem}<span class="optional">|{version string}</span> where {filter}</code> | `* exclude codes from system $SCT where concept is-a #254837009`<br/><br/>`* exclude codes from system http://snomed.info/sct where concept is-a #254837009`<br/><br/><code style="white-space: normal">* exclude codes from system http://snomed.info/sct|http://snomed.info/sct/731000124108 where concept is-a #254837009</code> |
 {: .grid }
 
-In addition, [assignment rules](#assignment-rules) SHALL be applicable to value sets only in the context of caret paths.
+Rule types that apply to ValueSets are: [Assignment](#assignment-rules), [Exclude](#exclude-rules), [Include](#include-rules), and [Insert](#insert-rules). Assignment rules SHALL be applicable to value sets only in the context of caret paths.
 
 For additional details about ValueSet composition, see the [FHIR documentation on ValueSet composition rules](https://hl7.org/fhir/R5/valueset.html#compositions).
 
