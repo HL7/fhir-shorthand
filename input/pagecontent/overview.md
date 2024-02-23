@@ -21,7 +21,7 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
   ```
 
 * **Escape Character**: FSH uses the backslash as the escape character in string literals. For example, use `\"` to embed a quotation mark in a string.
-* **Caret Character**: FSH uses [caret syntax](reference.html#caret-paths) to directly reference the definitional structure associated with an item. When defining a profile, the caret character `^` (also called circumflex) allows you to refer to elements in the StructureDefinition. For example, to set the element StructureDefinition.experimental:
+* **Caret Character**: FSH uses [caret syntax](reference.html#caret-paths) to directly reference the definitional structure associated with an item. When defining a profile, the caret character `^` (also called circumflex) allows you to refer to elements in the StructureDefinition. For example, to set the element `StructureDefinition.experimental`:
 
   ```
   * ^experimental = false
@@ -115,7 +115,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
 
 * **Contains rules** are used for slicing and extensions. Both cases involve specifying the type of elements that can appear in arrays.
 
-  The following rule slices Observation.component into the two components of blood pressure:
+  The following rule slices `Observation.component` into the two components of blood pressure:
 
   ```
   * component contains systolicBP 1..1 and diastolicBP 1..1
