@@ -279,13 +279,13 @@ This syntax is also used with CodeableConcepts (see [Assignments with the Codeab
   http://snomed.info/sct#363346000 "Malignant neoplastic disease (disorder)"
   ```
   
-* The same Coding, assuming $SCT has been defined as an alias for http://snomed.info/sct:
+* The same Coding, assuming `$SCT` has been defined as an alias for http://snomed.info/sct:
 
   ```
   $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
   
-* A Coding from ICD10-CM, assuming the alias $ICD for that code system:
+* A Coding from ICD10-CM, assuming the alias `$ICD` for that code system:
 
   ```
   $ICD#C004 "Malignant neoplasm of lower lip, inner aspect"
@@ -2317,7 +2317,7 @@ Whenever this type of rule is applied, whatever is on the right side SHALL **ent
   ```
   Because the second assignment clears the previous value of `myCoding`, the result is:
 
-  * `myCoding.system` is http://hl7.org/fhir/sid/icd-10-cm (assuming the $ICD alias maps to this URL)
+  * `myCoding.system` is http://hl7.org/fhir/sid/icd-10-cm (assuming the `$ICD` alias maps to this URL)
   * `myCoding.code` is "C80.1"
   * `myCoding.display` **has no value**
   * `myCoding.version` **has no value**
@@ -2472,7 +2472,7 @@ For non-UCUM units, the units of measure MAY be set independently by assigning a
   * valueQuantity = 155.0 http://terminology.hl7.org/CodeSystem/umls#C0439219 "pounds"
   ```
 
-* Set the units of `Observation.valueQuantity` to pounds, using the UMLS unit code (not recommended) and a display string, without setting the value (assuming $UMLS has been defined as an alias for http://terminology.hl7.org/CodeSystem/umls): 
+* Set the units of `Observation.valueQuantity` to pounds, using the UMLS unit code (not recommended) and a display string, without setting the value (assuming `$UMLS` has been defined as an alias for http://terminology.hl7.org/CodeSystem/umls): 
 
   ```
   * valueQuantity = $UMLS#C0439219 "pounds"
@@ -2672,7 +2672,7 @@ The [binding rules defined in FHIR](https://hl7.org/fhir/R5/profiling.html#bindi
   * gender from http://hl7.org/fhir/ValueSet/administrative-gender
   ```
 
-* Bind to a value set using an alias name, assuming $AdGen is an alias for http://hl7.org/fhir/ValueSet/administrative-gender:
+* Bind to a value set using an alias name, assuming `$AdGen` is an alias for http://hl7.org/fhir/ValueSet/administrative-gender:
 
   ```
   * gender from $AdGen
