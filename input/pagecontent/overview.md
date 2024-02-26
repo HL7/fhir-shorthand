@@ -259,7 +259,7 @@ In this section, we will walk through a realistic example of FSH, line by line. 
 * Line 8 is the description that will appear in the IG on the profile's page.
 * Line 9 is the start of the rule section of the profile. It uses [caret syntax](reference.html#caret-paths) to set the `status` attribute in the StructureDefinition produced for this profile.
 * Line 10 adds an extension to the profile using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 31._
-* Line 11 binds the `valueCodeableConcept` of the evidenceType extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 47._
+* Line 11 binds the `valueCodeableConcept` of the `evidenceType` extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 47._
 * Line 12 designates a list of elements (inherited from Observation) as must-support.
 * Lines 13 to 20 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
 * Lines 21 and 22 restrict the choice of resource types for two elements that refer to other resources.
