@@ -20,7 +20,7 @@ Syntax expressions use the following conventions:
 
 | Style | Explanation | Example |
 |:------------|:------|:---------|
-| `this is FSH` | Font used for FSH fragments, such as keywords, statements, and syntax expressions  | `* status = #open` |
+| `this is FSH` | Font used for FSH fragments, such as keywords, statements, and syntax expressions<sup>*</sup> | `* status = #open` |
 | `{ }` | Substitution: If a datatype, replace with a value; if an item, replace with a name, id, or URL | `{decimal}` |
 | `< >` | Indicates an element or path to an element with the given datatype MUST be substituted | `<CodeableConcept>` |
 | <span class="optional">orange color</span> | An OPTIONAL item in a syntax expression | <code><span class="optional">{flag}</span></code> |
@@ -28,6 +28,8 @@ Syntax expressions use the following conventions:
 | `/` | A choice of items | `Resource/Profile` |
 | **bold** | A directory path or file name | **example-1.fsh** |
 {: .grid }
+
+<sup>*</sup> NOTE: This specification also uses `code styling` for a selected set of non-FSH expressions, such as FHIR paths and element names (e.g., `Patient.name.given`, the Observation `value[x]` element).
 
 **Syntax Expression Examples:**
 
@@ -387,13 +389,13 @@ A FSH item within the same project SHOULD be referred to by the name or id given
 
 FSH path grammar allows you to refer to any element of a profile, extension, or instance, regardless of nesting. Here are examples of things paths can refer to:
 
-* Top-level elements such as the code element of an Observation
-* Nested elements, such as the text element of the method element of an Observation
-* Elements in a list or array, such as the second element in the name array of a Patient resource
-* Individual datatypes of choice elements, such as onsetAge in onset[x]
+* Top-level elements such as the `code` element of an Observation
+* Nested elements, such as the `text` element of the `method` element of an Observation
+* Elements in a list or array, such as the second element in the `name` array of a Patient resource
+* Individual datatypes of choice elements, such as `onsetAge` in `onset[x]`
 * Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
-* Metadata elements of definitional resources, such as the experimental and active elements of a StructureDefinition.
-* Properties of ElementDefinitions nested within a StructureDefinition, such as the maxLength property of string elements
+* Metadata elements of definitional resources, such as the `experimental` and `active` elements of a StructureDefinition.
+* Properties of ElementDefinitions nested within a StructureDefinition, such as the `maxLength` property of string elements
 
 > **Note:** While FSH paths often resemble other path syntaxes used in FHIR (e.g., FHIRPath, `ElementDefinition.id`, `ElementDefinition.path`), they cannot be used in place of these. Attempts to use FSH paths within FHIRPath strings or as Element ids will lead to invalid FHIR output.
 
@@ -433,7 +435,7 @@ To refer to nested elements, the path SHALL list the properties in order, separa
 
 Elements can offer a choice of reference types. In the FHIR specification, these choices are presented in the style Reference(Procedure \| Observation). To address a specific resource or profile among the choices, the target Resource or Profile (represented by a name, id, or url) SHALL be enclosed in square brackets and appended to the end of the path after the reference element (and slice name, if applicable).
 
-> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a subject element that has datatype Reference(Patient), and Patient has a gender, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
+> **Note:** It is not permissible to cross reference boundaries in paths. This means that when a path gets to a Reference, that path cannot be extended further. For example, if Procedure has a `subject` element that has datatype Reference(Patient), and Patient has a `gender`, then `subject` is a valid path, but `subject.gender` is not, because it crosses into the Patient resource.
 
 **Examples:**
 
@@ -443,7 +445,7 @@ Elements can offer a choice of reference types. In the FHIR specification, these
   performer[Practitioner]
   ```
 
-* Path to the Reference(US Core Organization) option of the performer element in [US Core DiagnosticReport Lab](https://hl7.org/fhir/us/core/StructureDefinition-us-core-diagnosticreport-lab.html), using the canonical URL:
+* Path to the Reference(US Core Organization) option of the `performer` element in [US Core DiagnosticReport Lab](https://hl7.org/fhir/us/core/StructureDefinition-us-core-diagnosticreport-lab.html), using the canonical URL:
 
   ```
   performer[http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization]
@@ -457,9 +459,9 @@ Elements can offer a choice of reference types. In the FHIR specification, these
 
 #### Data Type Choice [x] Paths
 
-FHIR represents an element with a choice of datatypes using the style foo[x]. For example, `Condition.onset[x]` can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](https://hl7.org/fhir/R5/formats.html#choice), to refer to one of these datatypes, the `[x]` SHALL be replaced by the datatype name, capitalizing the first letter. For `Condition.onset[x]`, the individual choices are onsetDateTime, onsetAge, onsetPeriod, onsetRange, and onsetString.
+FHIR represents an element with a choice of datatypes using the style `foo[x]`. For example, `Condition.onset[x]` can be a dateTime, Age, Period, Range or string. In FSH, [as in FHIR](https://hl7.org/fhir/R5/formats.html#choice), to refer to one of these datatypes, the `[x]` SHALL be replaced by the datatype name, capitalizing the first letter. For `Condition.onset[x]`, the individual choices are `onsetDateTime`, `onsetAge`, `onsetPeriod`, `onsetRange`, and `onsetString`.
 
-> **Note:** foo[x] choices are NOT represented as foo[dateTime], foo[Period], etc.
+> **Note:** `foo[x]` choices are NOT represented as `foo[dateTime]`, `foo[Period]`, etc.
 
 **Examples:**
 
@@ -495,7 +497,7 @@ Numerical indices apply only to arrays that can be populated with concrete value
   name[0]
   ```
 
-* Path to a patient's second given name in the first name field within an instance of Patient:
+* Path to a patient's second `given` name in the first `name` field within an instance of Patient:
 
   ```
   name[0].given[1]
@@ -641,7 +643,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
   extension[birthsex].valueCode
   ```
 
-* Path to an extension on the telecom element of Patient, assuming the extension has been given the local slice name directMailAddress:
+* Path to an extension on the `telecom` element of Patient, assuming the extension has been given the local slice name directMailAddress:
 
   ```
   telecom.extension[directMailAddress]
@@ -653,7 +655,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
   telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct]
   ```
 
-* Path to the Coding datatype of the value[x] in the nested extension ombCategory under the ethnicity extension in US Core, using the slice names of the extensions:
+* Path to the Coding datatype of the `value[x]` in the nested extension ombCategory under the ethnicity extension in US Core, using the slice names of the extensions:
 
   ```
   extension[ethnicity].extension[ombCategory].valueCoding
@@ -674,7 +676,7 @@ In order to address this gap, FSH authors MAY use the caret (`^`) symbol to acce
 * `snapshot.element` and `differential.element` in Profile, Extension, Logical, and Resource items
 * `compose.include` and `compose.exclude` in ValueSet items
 
-Examples of elements that require the caret syntax include `StructureDefinition.experimental`, `StructureDefinition.abstract` and `ValueSet.purpose`. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., short, meaningWhenMissing, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
+Examples of elements that require the caret syntax include `StructureDefinition.experimental`, `StructureDefinition.abstract` and `ValueSet.purpose`. The caret syntax also provides a simple way to set metadata attributes in the ElementDefinitions that comprise the snapshot and differential tables (e.g., `short`, `meaningWhenMissing`, and various [slicing discriminator properties](#step-1-specify-the-slicing-logic)).
 
 For a path to an element of a StructureDefinition, excluding the differential and snapshot, use the following syntax inside a Profile, Extension, Logical, or Resource:
 
@@ -786,7 +788,7 @@ The following keywords (case-sensitive) are defined:
 
 <span class="tuSpan"><sup>*</sup> Defining instances of logical models in FSH is {%include tu.html%}.</span>
 
-In the above, `name` refers to a valid [item name](#item-names) and `id` to an [item identifier](#item-identifiers).
+In the above, "name" refers to a valid [item name](#item-names) and "id" to an [item identifier](#item-identifiers).
 
 Depending on the type of item being defined, keywords may be REQUIRED, suggested (SHOULD be used), OPTIONAL, or prohibited (MUST NOT be used). The following table shows the relationship between declarations and keywords:
 
@@ -891,7 +893,7 @@ Rule types that apply to CodeSystems are: [Assignment](#assignment-rules), [Inse
 * There MUST NOT be a code system before the hash sign `#`. The code system name is given by the `CodeSystem` declaration.
 * The definition of the term, provided as the second string following the code, is RECOMMENDED but not REQUIRED.
 * Do not use the word `include` in a code system rule. The rule is creating a brand new code, not including an existing code defined elsewhere.
-* Metadata attributes for individual concepts, such as designation, MAY be defined using [caret paths](#caret-paths).
+* Metadata attributes for individual concepts, such as `designation`, MAY be defined using [caret paths](#caret-paths).
 * [Assignment rules](#assignment-rules) SHALL apply only to caret paths in CodeSystems.
 
 
@@ -991,9 +993,9 @@ For a path to a code within a code system, use this syntax:
 
 To define an extension, the declaration `Extension` is REQUIRED, the keywords `Id`, `Title`, and `Description` are RECOMMENDED, and `Parent` is OPTIONAL. Extensions MAY also inherit from other extensions, but if the `Parent` keyword is omitted, the parent SHALL be assumed to be FHIR's [Extension element](https://hl7.org/fhir/R5/extensibility.html#extension). Extension metadata that does not have a dedicated keyword MAY be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
-An extension MAY have either a value (i.e. a value[x] element) or sub-extensions, but MUST NOT have both. To create a simple extension, the value[x] element SHOULD be constrained. To create a complex extension, the extension array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
+An extension MAY have either a value (i.e. a `value[x]` element) or sub-extensions, but MUST NOT have both. To create a simple extension, the `value[x]` element SHOULD be constrained. To create a complex extension, the `extension` array of the extension MUST be sliced (see [Contains Rules for Extensions](#contains-rules-for-extensions)).
 
-Since simple and complex extensions are mutually-exclusive, FSH implementations SHOULD set the value[x] cardinality to 0..0 if sub-extensions are specified, set extension cardinality to 0..0 if constraints are applied to value[x], and signal an error if value[x] and extensions are simultaneously specified.
+Since simple and complex extensions are mutually-exclusive, FSH implementations SHOULD set the `value[x]` cardinality to 0..0 if sub-extensions are specified, set `extension` cardinality to 0..0 if constraints are applied to `value[x]`, and signal an error if `value[x]` and sub-extensions are simultaneously specified.
 
 To indicate that an extension is a [modifier extension](https://hl7.org/fhir/R5/extensibility.html#modifierExtension), authors MUST set the [isModifier](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.isModifier) flag to `true` on the extension's root element. In addition, the root element's [isModifierReason](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.isModifierReason) MUST also be provided. This is in accordance with FHIR's [modifier extension requirements](https://hl7.org/fhir/R5/extensibility.html#modifierExtension) and [eld-18](https://hl7.org/fhir/R5/elementdefinition-definitions.html#ElementDefinition.isModifier) invariant. FSH authors can achieve this via rules like the following:
 
@@ -1199,7 +1201,7 @@ Rule types that apply to Instances are: [Assignment](#assignment-rules), [Insert
 
 **Examples:**
 
-* Define an example instance of US Core Patient, with name, birthDate, race, and ethnicity:
+* Define an example instance of US Core Patient, with name, date of birth, race, and ethnicity:
 
   ```
   Instance:  EveAnyperson
@@ -1314,7 +1316,7 @@ Invariants are defined using the REQUIRED declaration `Invariant`, RECOMMENDED k
 
 <span class="caption" id="t8">Table 8. Keywords used to define Invariants</span>
 
-| Keyword | Usage | Corresponding element in <br/> `ElementDefinition.constraint` | Data Type | Required |
+| Keyword | Usage | Corresponding element in <br/> ElementDefinition.constraint | Data Type | Required |
 |-------------|-----------------------------------|------------|-----------------|----------------|
 | Invariant   | Identifier for the invariant      | key        | id              | yes            |
 | Description | Human description of constraint   | human      | string          | no<sup>1</sup> |
@@ -1359,11 +1361,11 @@ Rule types that apply to defining Invariants are: [Assignment](#assignment-rules
 
 Logical models allow authors to define new structures representing arbitrary content. While profiles can only add new properties as formal extensions, logical models add properties as standard elements with standard paths. Logical models have many uses, [as described in the FHIR specification](https://hl7.org/fhir/R5/structuredefinition.html#logical), but are often used to convey domain-specific concepts in a user-friendly manner. Authors often use logical models as a basis for defining formal profiles in FHIR.
 
-Logical models are defined using the REQUIRED declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type SHALL be assumed as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level id and extension elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead (when appropriate, based on the definition of Element). Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent. Logical model metadata that does not have a dedicated keyword MAY be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
+Logical models are defined using the REQUIRED declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type SHALL be assumed as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level `id` and `extension` elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead (when appropriate, based on the definition of Element). Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent. Logical model metadata that does not have a dedicated keyword MAY be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
 Rules defining the logical model follow immediately after the keyword section. Rule types that apply to Logicals are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). Flag rules SHALL NOT include MS flags.
 
-In addition, authors SHOULD consult FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning maxLength and mustSupport is prohibited.
+In addition, authors SHOULD consult FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning `maxLength` and `mustSupport` is prohibited.
 
 > **Note:** Prior versions of FHIR Shorthand forbid logical model definitions from constraining inherited elements or using assignment rules to fix element values. These capabilities MAY now be used as {%include tu.html%} features of FSH.
 
@@ -1452,7 +1454,7 @@ The mappings themselves are declared in rules with the following syntaxes:
 * &lt;element&gt; -> "{map string}" <span class="optional">"{comment string}" #{mime-type code}</span>
 </code></pre>
 
-A rule starting with the characters `->` SHALL map the profile as a whole to a target. A rule starting with an element followed by the characters `->` SHALL map a specific element within the source to a target. The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](https://hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://hl7.org/fhir/R5/elementdefinition.html) (map corresponds to `mapping.map`, mime-type to `mapping.language`, and comment to `mapping.comment`). The mime type code MUST come from FHIR's [MimeType value set](https://hl7.org/fhir/R5/valueset-mimetypes.html). For further information, refer to the FHIR definitions of these elements.
+A rule starting with the characters `->` SHALL map the profile as a whole to a target. A rule starting with an element followed by the characters `->` SHALL map a specific element within the source to a target. The `map`, `comment`, and `mime-type` are as defined in FHIR and correspond to elements in [StructureDefinition.mapping](https://hl7.org/fhir/structuredefinition.html) and [ElementDefinition.mapping](https://hl7.org/fhir/R5/elementdefinition.html) (`map` corresponds to `mapping.map`, `mime-type` to `mapping.language`, and `comment` to `mapping.comment`). The mime type code MUST come from FHIR's [MimeType value set](https://hl7.org/fhir/R5/valueset-mimetypes.html). For further information, refer to the FHIR definitions of these elements.
 
 >**Note:** Unlike setting the `mapping.map` directly in the StructureDefinition, mapping rules within a Mapping item MUST NOT include the name of the resource in the path on the left hand side.
 
@@ -1525,7 +1527,7 @@ Rules defining the resource follow immediately after the keyword section. Rules 
 * Flag rules SHALL NOT include MS flags.
 * Assignment rules SHALL be used only with caret paths.
 
-The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements that are prohibited in that table. For example, the table indicates that setting maxLength or mustSupport is prohibited.
+The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements that are prohibited in that table. For example, the table indicates that setting `maxLength` or `mustSupport` is prohibited.
 
 **Example:**
 
@@ -2080,7 +2082,7 @@ When indented rules are combined with [soft indexing](#array-paths-using-soft-in
   * rest.resource[1].interaction[1].code = #update
   ```
 
-* An error, attempting to use a rule without a path as context for an indented rule, since "obeys" does not imply a path:
+* An error, attempting to use a rule without a path as context for an indented rule, since `obeys` does not imply a path:
   
   ```
   * obeys inv-1
@@ -2120,7 +2122,7 @@ Note the following:
 * Flags and longer definition are OPTIONAL.
 * The longer definition MAY also be a multi-line (triple quoted) string.
 * If a longer definition is not specified, FSH implementers SHALL set the element's definition to the same text as the specified short description.
-* When multiple types are specified, the element path MUST end with \[x] unless all types are References, all types are Canonicals, or {%include tu-span.html%} all types are CodeableReferences</span>.
+* When multiple types are specified, the element path MUST end with `[x]` unless all types are References, all types are Canonicals, or {%include tu-span.html%} all types are CodeableReferences</span>.
 
 **Examples:**
 
@@ -2197,7 +2199,7 @@ Assignment rules have two very different interpretations, depending on context:
 * In instances {%include tu-span.html%} and invariants</span>, assignment rules set the **value** of the target element. Note that whenever an element is accessed via a [caret path](#caret-paths), it is actually accessing the definitional instance (for example, the StructureDefinition of the profile). Therefore, assignments involving caret paths also set the **value** of the target element.
 * Assignment rules in profiles and extensions establish **constraints** on instances conforming to the profile or extension. The requirement is expressed as a pattern of values that MUST be present in the instance. In this context, an assignment rule does not set the value of the element, but instead, establishes a **constraint** on that value.
 
-This is best illustrated by example. Consider the following assignment (assuming code is a CodeableConcept):
+This is best illustrated by example. Consider the following assignment (assuming `code` is a CodeableConcept):
 
 ```
 * code = https://loinc.org#69548-6
@@ -2205,7 +2207,7 @@ This is best illustrated by example. Consider the following assignment (assuming
 
 If this statement appears in an instance of an Observation, then the values of `code.coding[0].system` and `code.coding[0].code` will be set to https://loinc.org and 69548-6, respectively, in that Observation.
 
-If the identical statement appears in a profile on Observation, it signals that the StructureDefinition is configured such that the code element of a conformant instance MUST have a Coding with the system http://loinc.org and the code 69548-6. (In fact, the StructureDefinition does not even *have* a code element to populate.)
+If the identical statement appears in a profile on Observation, it signals that the StructureDefinition is configured such that the `code` element of a conformant instance MUST have a Coding with the system http://loinc.org and the code 69548-6. (In fact, the StructureDefinition does not even *have* its own `code` element to populate.)
 
 > **Note**: In the profiling context, typically only the system and code are important conformance criteria for a Coding or CodeableConcept property. If a display text is included, it will be part of the conformance criteria.
 
@@ -2267,7 +2269,7 @@ When assigning values to an instance, the `(exactly)` modifier has no meaning an
 
 ##### Assignments with the Coding Data Type
 
-A FHIR Coding has five attributes (system, version, code, display, and userSelected). The first four of these MAY be set with a single assignment statement. The syntax is:
+A FHIR Coding has five attributes (`system`, `version`, `code`, `display`, and `userSelected`). The first four of these MAY be set with a single assignment statement. The syntax is:
 
 <pre><code>&lt;Coding&gt; = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
@@ -2295,7 +2297,7 @@ Whenever this type of rule is applied, whatever is on the right side SHALL **ent
   * myCoding.version = "201801103"
   ```
 
-* Set the userSelected property of a Coding (one of the lesser-used attributes of Codings):
+* Set the `userSelected` property of a Coding (one of the lesser-used attributes of Codings):
 
   ```
   * myCoding.userSelected = true
@@ -2313,24 +2315,24 @@ Whenever this type of rule is applied, whatever is on the right side SHALL **ent
   * myCoding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   * myCoding = $ICD#C80.1
   ```
-  Because the second assignment clears the previous value of myCoding, the result is:
+  Because the second assignment clears the previous value of `myCoding`, the result is:
 
-  * myCoding.system is http://hl7.org/fhir/sid/icd-10-cm (assuming the $ICD alias maps to this URL)
-  * myCoding.code is "C80.1"
-  * myCoding.display **has no value**
-  * myCoding.version **has no value**
+  * `myCoding.system` is http://hl7.org/fhir/sid/icd-10-cm (assuming the $ICD alias maps to this URL)
+  * `myCoding.code` is "C80.1"
+  * `myCoding.display` **has no value**
+  * `myCoding.version` **has no value**
 
-* Example of how **incorrectly** ordered rules can lead to loss of a previously-assigned value, because myCoding is cleared as part of the second assignment:
+* Example of how **incorrectly** ordered rules can lead to loss of a previously-assigned value, because `myCoding` is cleared as part of the second assignment:
 
   ```
   * myCoding.userSelected = true
   * myCoding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
   The result is:
-  * system is http://snomed.info/sct
-  * code is "363346000"
-  * display is "Malignant neoplastic disease (disorder)"
-  * userSelected **has no value**
+  * `system` is http://snomed.info/sct
+  * `code` is "363346000"
+  * `display` is "Malignant neoplastic disease (disorder)"
+  * `userSelected` **has no value**
 
 * The correct way to approach the previous example is to reverse the order of the assignments:
 
@@ -2353,7 +2355,7 @@ To set the first Coding in a CodeableConcept, FSH offers the following shortcut:
 
 Whenever the shortcut rule is applied, the value on the right side SHALL **entirely replace** any previous value of the CodeableConcept on the left side. Any previous value(s) in the CodeableConcept are cleared.
 
-Assignment rules MAY be used to set any part of a CodeableConcept. For example, to set the top-level text of a CodeableConcept, the FSH expression is:
+Assignment rules MAY be used to set any part of a CodeableConcept. For example, to set the top-level `text` attribute of a CodeableConcept, the FSH expression is:
 
 ```
 * <CodeableConcept>.text = "{string}"
@@ -2361,19 +2363,19 @@ Assignment rules MAY be used to set any part of a CodeableConcept. For example, 
 
 **Examples:**
 
-* Set the first Coding myCodeableConcept:
+* Set the first Coding in `myCodeableConcept`:
 
   ```
   * myCodeableConcept = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
-* An equivalent representation, using explicit array index on the coding array:
+* An equivalent representation, using an explicit array index on the `coding` array:
 
   ```
   * myCodeableConcept.coding[0] = $SCT#363346000 "Malignant neoplastic disease (disorder)"
   ```
     
-* Another equivalent representation, using the shorthand that allows dropping the [0] index:
+* Another equivalent representation, using the shorthand that allows dropping the `[0]` index:
 
   ```
   * myCodeableConcept.coding = $SCT#363346000 "Malignant neoplastic disease (disorder)"
@@ -2385,13 +2387,13 @@ Assignment rules MAY be used to set any part of a CodeableConcept. For example, 
   * myCodeableConcept.coding[1] = $ICD#C80.1 "Malignant (primary) neoplasm, unspecified"
   ```
     
-* Set the top-level text:
+* Set the top-level `text` attribute:
 
   ```
   * myCodeableConcept.text = "Diagnosis of malignant neoplasm left breast."
   ```
 
-* Example of **incorrect** ordering rules that leads to loss of a previously-assigned value, because the last assignment clears the existing value of myCodeableConcept before apply new values:
+* Example of **incorrect** ordering rules that lead to loss of a previously-assigned value, because the last assignment clears the existing value of `myCodeableConcept` before it applies new values:
 
   ```
   * myCodeableConcept.coding[0].userSelected = true
@@ -2400,13 +2402,13 @@ Assignment rules MAY be used to set any part of a CodeableConcept. For example, 
   ```
   The result is:
   
-  * coding[0].system is http://snomed.info/sct
-  * coding[0].code is "363346000"
-  * display is "Malignant neoplastic disease (disorder)"
-  * coding[0].userSelected **has no value**
-  * text **has no value**
+  * `coding[0].system` is http://snomed.info/sct
+  * `coding[0].code` is "363346000"
+  * `display` is "Malignant neoplastic disease (disorder)"
+  * `coding[0].userSelected` **has no value**
+  * `text` **has no value**
 
-* The correct way to approach the previous example is to set the values of userSelected and text **after** setting the coding, since those assignments only change the specific subelements on the left side of those assignments:
+* The correct way to approach the previous example is to set the values of `userSelected` and `text` **after** setting the `coding`, since those assignments only change the specific subelements on the left side of those assignments:
 
   ```
   * myCodeableConcept = $SCT#363346000 "Malignant neoplastic disease (disorder)"
@@ -2440,13 +2442,13 @@ For non-UCUM units, the units of measure MAY be set independently by assigning a
 
 **Examples:**
 
-* Set the valueQuantity of an Observation to 55 millimeters using UCUM units:
+* Set the `valueQuantity` of an Observation to 55 millimeters using UCUM units:
 
   ```
   * valueQuantity = 55.0 'mm'
   ```
 
-* Set the valueQuantity of an Observation to 55 millimeters using UCUM units and a display string:
+* Set the `valueQuantity` of an Observation to 55 millimeters using UCUM units and a display string:
 
   ```
   * valueQuantity = 55.0 'mm' "millimeter"
@@ -2482,12 +2484,12 @@ For non-UCUM units, the units of measure MAY be set independently by assigning a
   * valueQuantity.unit = "millimeter"
   * valueQuantity = 55.0 'mm'
   ```
-  Note that the second rule **clears** valueQuantity in its entirety before applying the specified values, so the result is:
+  Note that the second rule **clears** `valueQuantity` in its entirety before applying the specified values, so the result is:
 
-  * value is 55.0
-  * system is http://unitsofmeasure.org
-  * code is "mm"
-  * unit **has no value**
+  * `value` is 55.0
+  * `system` is http://unitsofmeasure.org
+  * `code` is "mm"
+  * `unit` **has no value**
 
 * The correct way to approach the previous example, so unit has the desired value, is simply to reverse the order of rules:
 
@@ -2550,9 +2552,9 @@ As [advised in FHIR](https://hl7.org/fhir/R5/references.html#canonical), the URL
 
 {%include tu-div.html%}
 
-The [CodeableReference](https://hl7.org/fhir/R5/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. When applying a type rule (e.g., `code only CodeableReference(Medication)`), the element's reference property SHALL be constrained to the given type, but its concept property SHALL remain available for use (unless otherwise constrained by another rule).
+The [CodeableReference](https://hl7.org/fhir/R5/references.html#codeablereference) datatype was introduced as part of FHIR R5 release sequence. This type allows for a concept, a reference, or both. FSH supports applying bindings directly to CodeableReferences and directly constraining types on CodeableReferences. When applying a type rule (e.g., `code only CodeableReference(Medication)`), the element's `reference` property SHALL be constrained to the given type, but its `concept` property SHALL remain available for use (unless otherwise constrained by another rule).
 
-To assign values to a CodeableReference, authors MAY assign a FSH Coding or reference directly to the CodeableReference element. Assigning a Coding to a CodeableReference element SHALL assign the Coding to the element's concept property. Assigning a reference to a CodeableReference element SHALL assign the reference to the element's reference property. Assigning a Coding SHALL NOT affect the CodeableReference's reference property. Similarly, assigning a reference SHALL NOT affect the CodeableReference's concept property. If preferred, authors MAY assign a CodeableConcept's concept and reference properties directly.
+To assign values to a CodeableReference, authors MAY assign a FSH Coding or reference directly to the CodeableReference element. Assigning a Coding to a CodeableReference element SHALL assign the Coding to the element's `concept` property. Assigning a reference to a CodeableReference element SHALL assign the reference to the element's `reference` property. Assigning a Coding SHALL NOT affect the CodeableReference's `reference` property. Similarly, assigning a reference SHALL NOT affect the CodeableReference's `concept` property. If preferred, authors MAY assign a CodeableConcept's `concept` and `reference` properties directly.
 
 **Examples:**
 
@@ -2569,7 +2571,7 @@ To assign values to a CodeableReference, authors MAY assign a FSH Coding or refe
   * code only CodeableReference(LatexSubstanceDefinition)
   ```
 
-* Assign the concept and reference properties of a CodeableReference by assigning values directly to the CodeableReference element:
+* Assign the `concept` and `reference` properties of a CodeableReference by assigning values directly to the CodeableReference element:
 
   ```
   Instance:   LatexSubstanceExample
@@ -2580,7 +2582,7 @@ To assign values to a CodeableReference, authors MAY assign a FSH Coding or refe
   * code = Reference(NaturalLatexSubstanceDefinitionExample)
   ```
 
-* Assign the concept and reference properties of a CodeableReference by assigning values directly to each property. This has the same result as the example above:
+* Assign the `concept` and `reference` properties of a CodeableReference by assigning values directly to each property. This has the same result as the example above:
 
   ```
   Instance:   LatexSubstanceExample
@@ -2599,7 +2601,7 @@ When the left side of an assignment rule contains a caret path, the value SHALL 
 
 **Examples**
 
-* Assign the experimental flag in a profile's StructureDefinition to `true`:
+* Assign the `experimental` flag in a profile's StructureDefinition to `true`:
 
   ```
   * ^experimental = true
@@ -2696,9 +2698,9 @@ To change the cardinality, the syntax is:
 * <element> ..{max}   // leave min as-is
 ```
 
-As in FHIR, min MUST be a non-negative integer and max MUST be a non-negative integer or *, representing unbounded. Authors MAY include both the min and max, even if one of them remains the same as in the original cardinality. In this case, FSH implementations SHOULD only generate constraints for the changed values.
+As in FHIR, `min` MUST be a non-negative integer and `max` MUST be a non-negative integer or *, representing unbounded. Authors MAY include both the `min` and `max`, even if one of them remains the same as in the original cardinality. In this case, FSH implementations SHOULD only generate constraints for the changed values.
 
-Cardinalities MUST follow [rules of FHIR profiling](https://hl7.org/fhir/R5/conformance-rules.html#cardinality), namely that the min and max cardinalities comply within the constraints of the parent.
+Cardinalities MUST follow [rules of FHIR profiling](https://hl7.org/fhir/R5/conformance-rules.html#cardinality), namely that the `min` and `max` cardinalities comply within the constraints of the parent.
 
 For convenience and compactness, cardinality rules MAY be combined with [flag rules](#flag-rules) via the following syntax:
 
@@ -2710,13 +2712,13 @@ For convenience and compactness, cardinality rules MAY be combined with [flag ru
 
 **Examples:**
 
-* Set the cardinality of the subject element to 1..1 (required, non-repeating):
+* Set the cardinality of the `subject` element to 1..1 (required, non-repeating):
 
   ```
   * subject 1..1
   ```
 
-* Set the cardinality of the subject element to 1..1 and declare it Must Support:
+* Set the cardinality of the `subject` element to 1..1 and declare it Must Support:
 
   ```
   * subject 1..1 MS
@@ -2728,13 +2730,13 @@ For convenience and compactness, cardinality rules MAY be combined with [flag ru
   * component.referenceRange 0..0
   ```
 
-* Require at least one category without changing its upper bound:
+* Require at least one `category` without changing its upper bound:
 
   ```
   * category 1..
   ```
 
-* Allow at most one category without changing its lower bound:
+* Allow at most one `category` without changing its lower bound:
 
   ```
   * category ..1
@@ -2770,7 +2772,7 @@ The syntaxes to define inline extension(s) are:
 
 In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local names created by the rule author. They are used to refer to that extension in later rules. By convention, the local names SHOULD be [lower camelCase](https://wiki.c2.com/?CamelCase). Implementers SHALL export these names as slice names in the generated StructureDefinition.
 
-> **Note:** Contains rules MAY also be applied to modifierExtension arrays by replacing `extension` with `modifierExtension` in the above syntaxes.
+> **Note:** Contains rules MAY also be applied to `modifierExtension` arrays by replacing `extension` with `modifierExtension` in the above syntaxes.
 
 **Examples:**
 
@@ -2803,7 +2805,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   * modifierExtension contains $DoNotPerform named doNotPerform 0..1 MS
   ```
 
-* Add a standalone extension Laterality, defined in the same FSH project, to a bodySite attribute (second level extension):
+* Add a standalone extension Laterality, defined in the same FSH project, to a `bodySite` attribute (second level extension):
 
   ```
   * bodySite.extension contains Laterality named laterality 0..1
@@ -2846,7 +2848,7 @@ The slicing logic parameters MUST be specified using [caret paths](#caret-paths)
 
 **Example:**
 
-* Provide slicing logic for slices on `Observation.component` that are to be distinguished by their code:
+* Provide slicing logic for slices on `Observation.component` that are to be distinguished by their sub-element `code`:
 
   ```
   * component ^slicing.discriminator.type = #pattern
@@ -2873,7 +2875,7 @@ In this pattern, `<array>` is a path to the element that is to be sliced and MUS
 Each slice matches or constrains the datatype of the array it slices. In particular:
 
 * If the sliced element is an array of a FHIR datatype, each slice will be the same datatype or a profile of it. For example, if `Observation.identifier` is sliced, each slice will have type Identifier or be constrained to a profile of the Identifier datatype.
-* If the sliced element is an array of a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of `Observation.component` possess all the elements of `Observation.component` (code, value[x], dataAbsentReason, etc.). Constraints MAY be applied to the slices.
+* If the sliced element is an array of a backbone element, each slice "inherits" the sub-elements of the backbone. For example, the slices of `Observation.component` possess all the elements of `Observation.component` (`code`, `value[x]`, `dataAbsentReason`, etc.). Constraints MAY be applied to the slices.
 * If the sliced element is an array of a Reference, then each slice MUST be a reference to one or more of the allowed Reference types. For example, if the element to be sliced is Reference(Observation or Condition), then each slice MUST either be Reference(Observation or Condition), Reference(Observation), Reference(Condition), or a profiled version of those resources.
 
 FSH implementations MUST add new slices to the StructureDefinition in the order in which they appear within the contains rule. When a FSH definition has multiple contains rules on the same path, these rules MUST be processed in the order in which they appear.
@@ -3016,7 +3018,7 @@ The following syntaxes MAY be used to assign flags:
 
 **Examples:**
 
-* Declare communication to be a Must Support and Summary element:
+* Declare `communication` to be a Must Support and Summary element:
 
   ```
   * communication MS SU
@@ -3391,14 +3393,14 @@ Path rules MAY also be used to indicate the order for slices to appear in an Ins
 {%include tu-div.html%}
 * Indicate the order for slices to appear in an Instance:
 
-  Given a profile that has a required "lab" slice on category, such as:
+  Given a profile that has a required "lab" slice on `category`, such as:
 
   ```
   * category contains lab 1..1
   * category[lab] = $OBSCAT#laboratory
   ```
 
-  an Instance of that profile can specify that the "lab" slice MUST come before other values on category by including the following path rule before other rules:
+  an Instance of that profile can specify that the "lab" slice MUST come before other values on `category` by including the following path rule before other rules:
 
   ```
   * category[lab]
@@ -3462,7 +3464,7 @@ FSH rules MAY also be used to restrict the target types of CodeableReference ele
 ```
 </div>
 
-Certain elements in FHIR offer a choice of datatypes using the [x] syntax. Choices also frequently appear in references. For example, `Condition.recorder` has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices MAY be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource. In some cases, the right-hand side of a type rule MAY have a combination of datatype, Reference, Canonical, and {%include tu-span.html%}CodeableReference<span> targets.
+Certain elements in FHIR offer a choice of datatypes using the `[x]` syntax. Choices also frequently appear in references. For example, `Condition.recorder` has the choice Reference(Practitioner or PractitionerRole or Patient or RelatedPerson). In both cases, choices MAY be restricted in two ways: reducing the number or choices, and/or substituting a more restrictive datatype or profile for one of the choices appearing in the parent profile or resource. In some cases, the right-hand side of a type rule MAY have a combination of datatype, Reference, Canonical, and {%include tu-span.html%}CodeableReference<span> targets.
 
 Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5/profiling.html), the datatype(s) in a type rule MUST always be more restrictive than the original datatype. For example, if the parent datatype is Quantity, it MAY be replaced by SimpleQuantity, since SimpleQuantity is a profile on Quantity (hence more restrictive than Quantity itself), but MUST NOT be replaced with Ratio, because Ratio is not a type of Quantity. Similarly, `Condition.subject`, defined as Reference(Patient or Group), MAY be constrained to Reference(Patient), Reference(Group), or Reference(us-core-patient), but MUST NOT be restricted to Reference(RelatedPerson), since that is neither a Patient nor a Group.
 
@@ -3474,19 +3476,19 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
   * valueQuantity only SimpleQuantity
   ```
 
-* `Condition.onset[x]` is a choice of dateTime, Age, Period, Range or string. To restrict onset[x] to dateTime:
+* `Condition.onset[x]` is a choice of dateTime, Age, Period, Range or string. To restrict `onset[x]` to dateTime:
 
   ```
   * onset[x] only dateTime
   ```
 
-* Restrict onset[x] to either Period or Range:
+* Restrict `onset[x]` to either Period or Range:
 
   ```
   * onset[x] only Period or Range
   ```
 
-* Restrict onset[x] to Age, AgeRange, or DateRange, assuming AgeRange and DateRange are profiles of FHIR's Range datatype (thus permissible restrictions on Range):
+* Restrict `onset[x]` to Age, AgeRange, or DateRange, assuming AgeRange and DateRange are profiles of FHIR's Range datatype (thus permissible restrictions on Range):
 
   ```
   * onset[x] only Age or AgeRange or DateRange
@@ -3494,7 +3496,7 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
 
 {%include tu-div.html%}
 
-* Restrict value[x] to the integer64 type (note: this datatype was introduced in FHIR R5):
+* Restrict `value[x]` to the integer64 type (note: this datatype was introduced in FHIR R5):
 
   ```
   * value[x] only integer64
@@ -3508,25 +3510,25 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
   * performer only Reference(Practitioner)
   ```
 
-* Restrict performer to either a Practitioner or a PractitionerRole:
+* Restrict `performer` to either a Practitioner or a PractitionerRole:
 
   ```
   * performer only Reference(Practitioner or PractitionerRole)
   ```
 
-* Restrict performer to PrimaryCarePhysician or EmergencyRoomPhysician (assuming these are profiles on Practitioner):
+* Restrict `performer` to PrimaryCarePhysician or EmergencyRoomPhysician (assuming these are profiles on Practitioner):
 
   ```
   * performer only Reference(PrimaryCarePhysician or EmergencyRoomPhysician)
   ```
 
-* Restrict the Practitioner choice of performer to a PrimaryCarePhysician, without restricting other choices. Because the path specifically calls out the Practitioner choice, the result is that performer can reference a Practitioner resource that validates against the PrimaryCareProvider profile or any of the other choices (PractitionerRole, Organization, CareTeam, Patient, and RelatedPerson):
+* Restrict the Practitioner choice of `performer` to a PrimaryCarePhysician, without restricting other choices. Because the path specifically calls out the Practitioner choice, the result is that `performer` can reference a Practitioner resource that validates against the PrimaryCareProvider profile or any of the other choices (PractitionerRole, Organization, CareTeam, Patient, and RelatedPerson):
 
   ```
   * performer[Practitioner] only Reference(PrimaryCareProvider)
   ```
 
-* Assuming that LiteralReference is a profile on Reference, restrict the performer Reference datatype to this LiteralReference profile and its target types to Practitioner or PractitionerRole. Note that the first rule restricts the Reference datatype and the second rule restricts the types it MAY refer to:
+* Assuming that LiteralReference is a profile on Reference, restrict the `performer` Reference datatype to this LiteralReference profile and its target types to Practitioner or PractitionerRole. Note that the first rule restricts the Reference datatype and the second rule restricts the types it MAY refer to:
 
   ```
   * performer only LiteralReference
