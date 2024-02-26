@@ -365,11 +365,11 @@ When processing triple-quoted strings, implementations MUST follow the approach 
 
 #### Item Names
 
-Item names SHOULD follow [FHIR naming guidance](https://hl7.org/fhir/R5/structuredefinition-definitions.html#StructureDefinition.name). All item names MUST be between 1 and 255 characters. Item names MUST begin with an uppercase ASCII letter and contain only ASCII letters, numbers, and underscores ("_"). By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
+Item names SHOULD follow [FHIR naming guidance](https://hl7.org/fhir/R5/structuredefinition-definitions.html#StructureDefinition.name). All item names MUST be between 1 and 255 characters. Item names MUST begin with an uppercase ASCII letter and contain only ASCII letters, numbers, and underscores (`_`). By convention, item names SHOULD use [PascalCase (also known as UpperCamelCase)](https://wiki.c2.com/?UpperCamelCase).
 
-[Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). Slice names MUST contain only ASCII letters, numbers, underscores ("_"), hyphens ("-"), at signs ("@"), and forward slashes ("/", used only for re-slicing). These conventions are consistent with FHIR slice naming conventions specified in [eld-16](https://hl7.org/fhir/R5/elementdefinition-definitions.html#def), aside from disallowing square brackets ("[" and "]") since they are used by [sliced array path](#sliced-array-paths) syntax.
+[Slice names](#contains-rules-for-slicing) and [local slice names for extensions](#contains-rules-for-extensions) SHOULD use [lower camelCase](https://wiki.c2.com/?CamelCase). Slice names MUST contain only ASCII letters, numbers, underscores (`_`), hyphens (`-`), at signs (`@`), and forward slashes (`/`, used only for re-slicing). These conventions are consistent with FHIR slice naming conventions specified in [eld-16](https://hl7.org/fhir/R5/elementdefinition-definitions.html#def), aside from disallowing square brackets (`[` and `]`) since they are used by [sliced array path](#sliced-array-paths) syntax.
 
-Alias names SHOULD begin with a dollar sign ("$") and MUST otherwise contain only ASCII letters, numbers, underscores ("_"), hyphens ("-"), and dots ("."). Beginning alias names with $ is a good practice, since this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
+Alias names SHOULD begin with a dollar sign (`$`) and MUST otherwise contain only ASCII letters, numbers, underscores (`_`), hyphens (`-`), and dots (`.`). Beginning alias names with `$` is a good practice, since this convention allows for additional error checking ([see Defining Aliases](#defining-aliases) for details).
 
 > **Note:** Instances have identifiers rather than names, so instance declarations SHALL follow the recommendations for [Item Identifiers](#item-identifiers).
 
@@ -377,7 +377,7 @@ Alias names SHOULD begin with a dollar sign ("$") and MUST otherwise contain onl
 
 Item identifiers (ids) MUST be unique within the scope of its item type in the FSH project. For example, two Profiles with the same id cannot coexist, but it is possible to have a Profile and a ValueSet with the same id in the same FSH Project. However, to minimize potential confusion, it is best to use a unique id for every item in a FSH project. If no id is provided by a FSH author, implementations MAY create an id.
 
-Ids MUST contain only ASCII letters, numerals, hyphens ("-"), and dots ("."), with a length limit of 64 characters (per the requirements of the [FHIR id datatype](https://hl7.org/fhir/R5/datatypes.html#primitive)). By convention, ids SHOULD be lowercase with words separated by hyphens. If the item has a name, the id SHOULD be based on the item's name, with _ replaced by -, changed to lowercase, and truncated if necessary.
+Ids MUST contain only ASCII letters, numerals, hyphens (`-`), and dots (`.`), with a length limit of 64 characters (per the requirements of the [FHIR id datatype](https://hl7.org/fhir/R5/datatypes.html#primitive)). By convention, ids SHOULD be lowercase with words separated by hyphens. If the item has a name, the id SHOULD be based on the item's name, with `_` replaced by `-`, changed to lowercase, and truncated if necessary.
 
 #### Referring to Items
 
@@ -864,7 +864,7 @@ Several things to note about aliases:
 * Aliases SHALL only be substituted where a full uri value is expected (e.g., they cannot be placed in the middle of a string or used to construct a larger url).
 * Aliases SHALL be global within a FSH project.
 
-In contrast with other names in FSH (for profiles, extensions, etc.), alias names MAY optionally begin with a dollar sign ($). If you define an alias with a leading $, implementations can more easily check for misspellings. For example, if you choose the alias name `$RaceAndEthnicity` and accidentally type `$RaceEthnicity`, implementations can easily detect there is no alias by that name. Without the $ sign, implementations are forced to look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
+In contrast with other names in FSH (for profiles, extensions, etc.), alias names MAY optionally begin with a dollar sign (`$`). If you define an alias with a leading `$`, implementations can more easily check for misspellings. For example, if you choose the alias name `$RaceAndEthnicity` and accidentally type `$RaceEthnicity`, implementations can easily detect there is no alias by that name. Without the `$` sign, implementations are forced to look through FHIR Core and all external implementation guides for anything with that name or id, or in some contexts, assume it is a new item, with unpredictable results.
 
 **Examples:**
 
@@ -1078,7 +1078,7 @@ Rules types that apply to Extensions are: [Assignment](#assignment-rules), [Bind
   ```
 
 {%include tu-div.html%}
-The keyword `Context` SHOULD be used to specify the [context](https://hl7.org/fhir/R5/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string . When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
+The keyword `Context` SHOULD be used to specify the [context](https://hl7.org/fhir/R5/defining-extensions.html#context) of an Extension. When specifying a `fhirpath` context, the value MUST be a quoted string. When specifying an `element` or `extension` context, the value MUST start with the name, id, or URL of the context item. A name or id MAY be followed by a dot (`.`) and a valid [FSH path](#fsh-paths). A URL MAY be followed by a hash sign (`#`) and a valid [FSH path](#fsh-paths).
 
 Multiple contexts MAY be specified by using a comma-separated list. Using the `Context` keyword instead of using caret rules to assign directly to the `context` list on the Extension is RECOMMENDED. The following is a list of allowed formats for contexts:
 
@@ -2273,7 +2273,7 @@ A FHIR Coding has five attributes (`system`, `version`, `code`, `display`, and `
 
 <pre><code>&lt;Coding&gt; = <span class="optional">{CodeSystem}|{version string}</span>#{code} <span class="optional">"{display string}"</span></code></pre>
 
-The only REQUIRED part of this statement is the code (including the # sign), although every Coding SHOULD have a code system. The version string MUST NOT appear without a code system.
+The only REQUIRED part of this statement is the code (including the `#` sign), although every Coding SHOULD have a code system. The version string MUST NOT appear without a code system.
 
 Whenever this type of rule is applied, whatever is on the right side SHALL **entirely replace** the previous value of the Coding on the left side. For example, if a Coding has a value that includes a display string, and a subsequent assignment replaces the system and code but has no display string, the result is a Coding without a display string.
 
