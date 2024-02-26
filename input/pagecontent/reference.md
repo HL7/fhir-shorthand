@@ -661,7 +661,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
   extension[ethnicity].extension[ombCategory].valueCoding
   ```
 
-* Path to the Coding value in second element in the nested extension array named detailed, under USCoreEthnicity extension:
+* Path to the Coding value in second element in the nested extension array named detailed, under the US Core Ethnicity extension:
 
   ```
   extension[ethnicity].extension[detailed][1].valueCoding
@@ -2805,7 +2805,7 @@ In these expressions, the names (`name`, `name1`, `name2`, etc.) are new local n
   * modifierExtension contains $DoNotPerform named doNotPerform 0..1 MS
   ```
 
-* Add a standalone extension Laterality, defined in the same FSH project, to a `bodySite` attribute (second level extension):
+* Add a standalone extension `Laterality`, defined in the same FSH project, to a `bodySite` attribute (second level extension):
 
   ```
   * bodySite.extension contains Laterality named laterality 0..1
@@ -3124,7 +3124,7 @@ Any FSH syntax errors that arise as a result of the value substitution SHALL be 
 
 **Examples:**
 
-* Use the parameterized rule set, Name, to populate an instance of Patient with multiple names (note that the curly brackets in this example are literal, not syntax expressions):
+* Use the parameterized rule set, `Name`, to populate an instance of Patient with multiple names (note that the curly brackets in this example are literal, not syntax expressions):
 
   ```
   RuleSet: Name(first, last)
@@ -3161,7 +3161,7 @@ Any FSH syntax errors that arise as a result of the value substitution SHALL be 
   // more rules
   ```
 
-* Use the parameterized rule set, Phone, to add a phone number to an instance of Organization (note the use of backslash to escape a closing parenthesis):
+* Use the parameterized rule set, `Phone`, to add a phone number to an instance of Organization (note the use of backslash to escape a closing parenthesis):
 
   ```
   RuleSet: Phone(value)
@@ -3193,7 +3193,7 @@ Any FSH syntax errors that arise as a result of the value substitution SHALL be 
   ```
 
 {%include tu-div.html%}
-* Use the parameterized rule set, AddVariableToTestScript, to add variable definitions to an instance of TestScript (note the use of double brackets to avoid the need to escape closing parentheses and commas):
+* Use the parameterized rule set, `AddVariableToTestScript`, to add variable definitions to an instance of TestScript (note the use of double brackets to avoid the need to escape closing parentheses and commas):
 
   ```
   RuleSet: AddVariableToTestScript(name, expression)

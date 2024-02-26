@@ -252,14 +252,14 @@ In this section, we will walk through a realistic example of FSH, line by line. 
 ```
 
 * Lines 1 and 2 define aliases for the LOINC and SNOMED-CT code systems.
-* Line 4 declares the intent to create a profile with the name CancerDiseaseStatus. The name is typically PascalCase (also known as UpperCamelCase) and according to FHIR, should be "[usable by machine processing applications such as code generation](https://hl7.org/fhir/structuredefinition.html#resource)".
+* Line 4 declares the intent to create a profile with the name `CancerDiseaseStatus`. The name is typically PascalCase (also known as UpperCamelCase) and according to FHIR, should be "[usable by machine processing applications such as code generation](https://hl7.org/fhir/structuredefinition.html#resource)".
 * Line 5 says that this profile will be based on Observation.
 * Line 6 gives an id for this profile. The id is used to create the globally unique URL for the profile. The URL is composed of the IG’s canonical URL, the instance type (always `StructureDefinition` for profiles), and the profile’s id.
 * Line 7 is a human-readable title for the profile.
 * Line 8 is the description that will appear in the IG on the profile's page.
 * Line 9 is the start of the rule section of the profile. It uses [caret syntax](reference.html#caret-paths) to set the `status` attribute in the StructureDefinition produced for this profile.
 * Line 10 adds an extension to the profile using the standalone extension, `EvidenceType`, gives it the local name `evidenceType`, and assigns the cardinality 0..*. _EvidenceType is defined on line 31._
-* Line 11 binds the `valueCodeableConcept` of the `evidenceType` extension to a value set named CancerDiseaseStatusEvidenceTypeVS with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 47._
+* Line 11 binds the `valueCodeableConcept` of the `evidenceType` extension to a value set named `CancerDiseaseStatusEvidenceTypeVS` with a required binding strength. _CancerDiseaseStatusEvidenceTypeVS is defined on line 47._
 * Line 12 designates a list of elements (inherited from Observation) as must-support.
 * Lines 13 to 20 constrain the cardinality of some inherited elements. FSH does not support setting the cardinality of a multiple items at a time, so these must be separate statements.
 * Lines 21 and 22 restrict the choice of resource types for two elements that refer to other resources.
@@ -267,18 +267,18 @@ In this section, we will walk through a realistic example of FSH, line by line. 
 * Lines 24 to 25 reduce an inherited choice of resource references down to instances that conform specific profiles (which must be defined, but are external to this example)
 * Line 26 is similar to lines 24 and 25, but the reference is to an external profile.
 * Line 27 and 28 restrict the data type for elements that offer a choice of data types in the base resource.
-* Line 29 binds the remaining allowed data type for `value[x]`, a CodeableConcept, to the value set ConditionStatusTrendVS with a required binding. _ConditionStatusTrendVS is defined on line 37._
-* Line 31 declares an extension named EvidenceType.
+* Line 29 binds the remaining allowed data type for `value[x]`, a CodeableConcept, to the value set `ConditionStatusTrendVS` with a required binding. _ConditionStatusTrendVS is defined on line 37._
+* Line 31 declares an extension named `EvidenceType`.
 * Line 32 assigns an id to the extension.
 * Line 33 gives the extension a human-readable title.
 * Line 34 gives the extension a description that will appear on the extension's main page.
 * Line 35 begins the rule section for the extension, and restricts the data type of the `value[x]` element of the extension to a CodeableConcept.
-* Line 37 declares a value set named ConditionStatusTrendVS.
+* Line 37 declares a value set named `ConditionStatusTrendVS`.
 * Line 38 gives the value set an id.
 * Line 39 provides a human readable title for the value set.
 * Line 40 gives the value set a description that will appear on the value set's main page.
 * Lines 41 to 45 define the codes that are members of the value set.
-* Lines 47 to 55 create another value set, CancerDiseaseStatusEvidenceTypeVS, similar to the previous one.
+* Lines 47 to 55 create another value set, `CancerDiseaseStatusEvidenceTypeVS`, similar to the previous one.
 
 A few things to note about this example:
 
