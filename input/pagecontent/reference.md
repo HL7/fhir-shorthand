@@ -393,7 +393,7 @@ FSH path grammar allows you to refer to any element of a profile, extension, or 
 * Nested elements, such as the `text` element of the `method` element of an Observation
 * Elements in a list or array, such as the second element in the `name` array of a Patient resource
 * Individual datatypes of choice elements, such as `onsetAge` in `onset[x]`
-* Individual slices within a sliced array, such as the systolicBP component in a blood pressure Observation
+* Individual slices within a sliced array, such as the `systolicBP` component slice in a blood pressure Observation
 * Metadata elements of definitional resources, such as the `experimental` and `active` elements of a StructureDefinition.
 * Properties of ElementDefinitions nested within a StructureDefinition, such as the `maxLength` property of string elements
 
@@ -585,13 +585,13 @@ Since slices are sublists, a sliced array path technically points to the *first*
 
 **Examples:**
 
-* Path to the coded value of the respirationScore component within an Observation profile representing an Apgar test:
+* Path to the coded value of the `respirationScore` component slice within an Observation profile representing an Apgar test:
 
   ```
   component[respirationScore].code
   ```
 
-* Paths to the codes representing the one minute and five minute respiration scores, assuming the Apgar respiration component has been resliced:
+* Paths to the codes representing the one minute and five minute respiration scores, assuming the Apgar `respirationScore` component slice has been resliced:
 
   ```
   component[respirationScore][oneMinuteScore].code
@@ -599,7 +599,7 @@ Since slices are sublists, a sliced array path technically points to the *first*
   component[respirationScore][fiveMinuteScore].code
   ```
 
-* Paths to the MedicationRequest and NutritionOrder reference options in an "orders" slice that allows both types:
+* Paths to the MedicationRequest and NutritionOrder reference options in an `orders` slice that allows both types:
 
   ```
   basedOn[orders][MedicationRequest]
@@ -607,7 +607,7 @@ Since slices are sublists, a sliced array path technically points to the *first*
   basedOn[orders][NutritionOrder]
   ```
 
-* Paths to the resources of the second and third entries in the medications slice of a profiled Bundle:
+* Paths to the resources of the second and third entries in the `medications` slice of a profiled Bundle:
 
   ```
   entry[medications][1].resource
@@ -637,13 +637,13 @@ For locally-defined extensions, using the slice name is the simplest choice. For
 
 **Examples:**
 
-* Path to the value of the birth sex extension in US Core Patient, whose local slice name is birthsex:
+* Path to the value of the birth sex extension in US Core Patient, whose local slice name is `birthsex`:
 
   ```
   extension[birthsex].valueCode
   ```
 
-* Path to an extension on the `telecom` element of Patient, assuming the extension has been given the local slice name directMailAddress:
+* Path to an extension on the `telecom` element of Patient, assuming the extension has been given the local slice name `directMailAddress`:
 
   ```
   telecom.extension[directMailAddress]
@@ -655,7 +655,7 @@ For locally-defined extensions, using the slice name is the simplest choice. For
   telecom.extension[http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct]
   ```
 
-* Path to the Coding datatype of the `value[x]` in the nested extension ombCategory under the ethnicity extension in US Core, using the slice names of the extensions:
+* Path to the Coding datatype of the `value[x]` in the nested extension `ombCategory` under the `ethnicity` extension in US Core, using the slice names of the extensions:
 
   ```
   extension[ethnicity].extension[ombCategory].valueCoding
@@ -2910,7 +2910,7 @@ Reslicing (slicing an existing slice) uses a similar syntax, but the left-hand s
 
 **Example:**
 
-* In an Observation for Apgar score, reslice the Apgar respiration score component into one-, five-, and ten-minute scores:
+* In an Observation for Apgar score, reslice the Apgar `respirationScore` component slice into one-, five-, and ten-minute scores:
 
   ```
   * component contains
@@ -2935,7 +2935,7 @@ The slice content rules MUST appear *after* the contains rule that creates the s
 
 **Example:**
 
-* Constrain the content of the systolicBP and diastolicBP slices:
+* Constrain the content of the `systolicBP` and `diastolicBP` slices:
 
   ```
   * component[systolicBP].code = $LNC#8480-6 // Systolic blood pressure
@@ -3393,14 +3393,14 @@ Path rules MAY also be used to indicate the order for slices to appear in an Ins
 {%include tu-div.html%}
 * Indicate the order for slices to appear in an Instance:
 
-  Given a profile that has a required "lab" slice on `category`, such as:
+  Given a profile that has a required `lab` slice on `category`, such as:
 
   ```
   * category contains lab 1..1
   * category[lab] = $OBSCAT#laboratory
   ```
 
-  an Instance of that profile can specify that the "lab" slice MUST come before other values on `category` by including the following path rule before other rules:
+  an Instance of that profile can specify that the `lab` slice MUST come before other values on `category` by including the following path rule before other rules:
 
   ```
   * category[lab]
