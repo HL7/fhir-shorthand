@@ -983,7 +983,7 @@ For a path to a code within a code system, use this syntax:
   * #active ^designation[0].use = $SCT#900000000000003001 "Fully specified name"
   ```
 
-* The path to the property code of #recurrence code, a child of the #active code:
+* The path to the property code of `#recurrence` code, a child of the `#active` code:
 
   ```
   #active #recurrence ^property[0].code
