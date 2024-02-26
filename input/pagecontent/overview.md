@@ -89,7 +89,7 @@ The keyword section is followed by a number of rules. Rules are the mechanism fo
   * valueQuantity = UCUM#mm "millimeters"
   ```
 
-* **Binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR's binding strengths](https://hl7.org/fhir/R5/valueset-binding-strength.html): example, preferred, extensible, or required. For example:
+* **Binding rules** are used on elements with coded values to specify the set of enumerated values for that element. Binding rules include [one of FHIR's binding strengths](https://hl7.org/fhir/R5/valueset-binding-strength.html): `example`, `preferred`, `extensible`, or `required`. For example:
 
   ```
   * gender from http://hl7.org/fhir/ValueSet/administrative-gender (required)
