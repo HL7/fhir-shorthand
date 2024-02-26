@@ -2650,7 +2650,7 @@ Binding is the process of associating a coded element with a set of possible val
 
 The bindable types SHALL be the same as the bindable types in FHIR: [code, Coding, CodeableConcept, Quantity, string, and uri](https://hl7.org/fhir/R5/terminologies.html#4.1). In FHIR R5, {%include tu-span.html%} CodeableReference</span> SHALL also be bindable.
 
-The strengths SHALL be the same as the [binding strengths defined in FHIR](https://hl7.org/fhir/R5/valueset-binding-strength.html), namely: example, preferred, extensible, and required. If strength is not specified, a required binding SHALL be assumed.
+The strengths SHALL be the same as the [binding strengths defined in FHIR](https://hl7.org/fhir/R5/valueset-binding-strength.html), namely: `example`, `preferred`, `extensible`, and `required`. If strength is not specified, a required binding SHALL be assumed.
 
 The [binding rules defined in FHIR](https://hl7.org/fhir/R5/profiling.html#binding) SHALL be applicable to FSH. In particular:
 
