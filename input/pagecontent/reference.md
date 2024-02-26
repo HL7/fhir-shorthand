@@ -843,7 +843,7 @@ A number of rules usually follow the keyword statements. The grammar and meaning
 | [Type](#type-rules)                                                |   |   | Y |   |                                    | {%include tu-span.html%} Y </span> |   | Y | A | Y |   |
 {: .grid }
 
-**KEY:** Y = Rule type MAY be used, L = All flags except must support (MS) are supported, C = Assignments apply only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
+**KEY:** Y = Rule type MAY be used, L = All flags except must support (`MS`) are supported, C = Assignments apply only to [caret paths](#caret-paths), A = Rules can only be applied to elements defined by the item (not inherited elements), blank = prohibited.
 
 #### Defining Aliases
 
@@ -1363,7 +1363,7 @@ Logical models allow authors to define new structures representing arbitrary con
 
 Logical models are defined using the REQUIRED declaration `Logical`, with RECOMMENDED keywords `Id`, `Title`, and `Description`, and OPTIONAL keyword `Parent`. If no `Parent` is specified, the empty [Base](https://hl7.org/fhir/R5/types.html#Base) type SHALL be assumed as the default parent. Note that the Base type does not exist in FHIR R4, but both SUSHI and the FHIR IG Publisher have implemented special case logic to support Base in FHIR R4. Authors who wish to have top-level `id` and `extension` elements MAY use [Element](https://hl7.org/fhir/R5/types.html#Element) as the logical model's parent instead (when appropriate, based on the definition of Element). Alternately, authors MAY specify another logical model, a resource, or a complex datatype as a logical model's parent. Logical model metadata that does not have a dedicated keyword MAY be specified using assignment rules with [caret paths](#caret-paths) (e.g., `^url`, `^status`, `^purpose`).
 
-Rules defining the logical model follow immediately after the keyword section. Rule types that apply to Logicals are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). Flag rules SHALL NOT include MS flags.
+Rules defining the logical model follow immediately after the keyword section. Rule types that apply to Logicals are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). Flag rules SHALL NOT include `MS` flags.
 
 In addition, authors SHOULD consult FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements listed as prohibited in that table. For example, the table indicates that assigning `maxLength` and `mustSupport` is prohibited.
 
@@ -1524,7 +1524,7 @@ Resources are defined using the REQUIRED declaration `Resource`. The keywords `I
 Rules defining the resource follow immediately after the keyword section. Rules types that apply to resources are: [Add Element](#add-element-rules), [Assignment](#assignment-rules), [Binding](#binding-rules), [Cardinality](#cardinality-rules), [Flag](#flag-rules), [Insert](#insert-rules), [Obeys](#obeys-rules), [Path](#path-rules), and [Type](#type-rules). The following limitations apply:
 
 * Binding, cardinality, and type rules SHALL be applied only to elements defined by the item (not inherited elements).
-* Flag rules SHALL NOT include MS flags.
+* Flag rules SHALL NOT include `MS` flags.
 * Assignment rules SHALL be used only with caret paths.
 
 The latter restrictions stem from FHIR's [interpretation of ElementDefinition for type definitions](https://hl7.org/fhir/R5/elementdefinition.html#interpretation). Assignments MUST NOT set elements that are prohibited in that table. For example, the table indicates that setting `maxLength` or `mustSupport` is prohibited.
