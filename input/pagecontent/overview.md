@@ -27,13 +27,13 @@ The complete FSH language is formally described in the [FHIR Shorthand Language 
   * ^experimental = false
   ```
 
-* **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and object identifiers (OIDs). Once defined anywhere in a FSH project, the alias can be used most places a URL or OID is required or accepted. See [Defining Aliases](reference.html#defining-aliases) for details. By convention, aliases often begin with $ character, for example:
+* **Aliases**: To improve readability, FSH allows the user to define aliases for URLs and object identifiers (OIDs). Once defined anywhere in a FSH project, the alias can be used most places a URL or OID is required or accepted. See [Defining Aliases](reference.html#defining-aliases) for details. By convention, aliases often begin with `$` character, for example:
 
   ```
   Alias: $SCT = http://snomed.info/sct
   ```
 
-* **Coded Data Types**: A leading hash sign (#) (*aka* number sign, pound sign, or octothorpe) is used in FSH to denote a code taken from a formal terminology. FSH provides special grammar for expressing FHIR's coded data types (code, Coding, and CodeableConcept) that combines the code system, code, and (optionally) a display text. Here is a SNOMED-CT code in this syntax, using the previously-defined alias:
+* **Coded Data Types**: A leading hash sign (`#`) (*aka* number sign, pound sign, or octothorpe) is used in FSH to denote a code taken from a formal terminology. FSH provides special grammar for expressing FHIR's coded data types (code, Coding, and CodeableConcept) that combines the code system, code, and (optionally) a display text. Here is a SNOMED-CT code in this syntax, using the previously-defined alias:
 
   ```
   $SCT#363346000 "Malignant neoplastic disease (disorder)"
