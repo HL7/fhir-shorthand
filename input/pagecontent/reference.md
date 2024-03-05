@@ -195,7 +195,7 @@ FSH strings follow the same rules and support the same content as the [FHIR stri
 
 #### References
 
-FHIR elements can contain [references to other Resources](https://hl7.org/fhir/R5/references.html#2.1.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A resource or profile SHALL be identifiable by name, id, or URL. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](https://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for multiple References, the items MUST be separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
+FHIR elements can contain [references to other Resources](https://hl7.org/fhir/R5/references.html#2.1.3.0). FSH represents references using the syntax `Reference({Resource/Profile})`. A resource or profile SHALL be identifiable by name, id, or URL. For example, `Reference(USCorePatientProfile)`, `Reference(us-core-patient)`, and `Reference(http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient)` all are valid references to the [US Core Patient profile](https://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html). When referring to a Reference element, the `Reference()` MUST be included, except in the case of a [reference choice path](#reference-paths). When syntax allows for a FSH Reference with multiple targets, the items MUST be separated by `or` placed *inside* the parentheses, e.g. `Reference(Patient or Practitioner)`, **not** `Reference(Patient) or Reference(Practitioner)`. 
 
 In constructing profiles, references typically refer to resource or profile *types*, for example, the subject of an Observation could be constrained to `Reference(Patient or Group)`. Inside instances, references typically refer to other instances, for example, a subject of an Observation could be `Reference(JaneDoe)`, assuming JaneDoe is the id of a Patient instance. In this case, since `JaneDoe` is a Patient instance, `Reference(JaneDoe)` is resolved to `Patient/JaneDoe`. If a reference value in an instance does not reference a known instance, implementations MUST use the value directly. For example, if the subject of an Observation is `Reference(Alice)`, and Alice is not the name, id, or URL of a known Patient instance, the reference resolves to `Alice`.
 
@@ -205,7 +205,7 @@ FHIR elements can reference other resources by their [canonical URL](https://hl7
 
 For items defined in the same FSH project, implementations MUST construct the canonical URL using the FSH project's canonical URL. `Canonical()` therefore enables a user to change the FSH project’s canonical URL in a single place with no changes to FSH definitions.
 
-When syntax allows for multiple Canonicals, the items MUST be separated by `or` placed *inside* the parentheses, e.g. `Canonical(ActivityDefinition or PlanDefinition)`, **not** `Canonical(ActivityDefinition) or Canonical(PlanDefinition)`.
+When syntax allows for a FSH Canonical with multiple targets, the items MUST be separated by `or` placed *inside* the parentheses, e.g. `Canonical(ActivityDefinition or PlanDefinition)`, **not** `Canonical(ActivityDefinition) or Canonical(PlanDefinition)`.
 
 **Examples:**
 
@@ -313,7 +313,7 @@ or
 
 <pre><code>{decimal} {CodeSystem}<span class="optional">|{version string}</span>#{code} <span class="optional">"{display}"</span></code></pre>
 
-The first shorthand syntax only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). When this syntax is used, implementations MUST set the code system (`Quantity.system`) to the UCUM code system (`http://unitsofmeasure.org`). The second shorthand MAY be used when the units are not UCUM. Alternatively, the value and units MAY be assigned independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
+The first shorthand syntax only applies if the units are expressed in [Unified Code for Units of Measure](http://unitsofmeasure.org/) (UCUM). When this syntax is used, implementations MUST set the code system (`Quantity.system`) to the UCUM code system (http://unitsofmeasure.org). The second shorthand MAY be used when the units are not UCUM. Alternatively, the value and units MAY be assigned independently (see [Assignments with the Quantity Data Type](#assignments-with-the-quantity-data-type)).
 
 **Examples:**
 
@@ -519,7 +519,7 @@ Soft indexing is useful when populating long arrays, allowing elements to be ins
 
 Another use case for soft indexing involves [rule sets](#defining-rule-sets). Rule sets provide a way to avoid repeating the same pattern of rules when populating an array ([see example](#parameterized-rule-sets)).
 
-For nested arrays, several sequences of soft indices MAY run simultaneously. The sequence of indices at different levels of nesting SHALL be independent and SHALL NOT interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` SHALL be at index [0]. (An analogy is using a keyboard's Enter key to advance to a new line that initially has no characters.)
+For nested arrays, several sequences of soft indices MAY run simultaneously. The sequence of indices at different levels of nesting SHALL be independent and SHALL NOT interact with one another. However, when arrays are nested, incrementing the index of the parent (outer) array advances to the next child (inner) array, so the next child element referred to by `[+]` SHALL be at index 0. (An analogy is using a keyboard's Enter key to advance to a new line that initially has no characters.)
 
 **Examples:**
 
@@ -692,7 +692,7 @@ For a path to an element of an ElementDefinition within a StructureDefinition, u
 
 **Note:** When using caret paths to access metadata of element definitions, there is a REQUIRED space before the `^` character.
 
-A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., `StructureDefinition.differential.element[0]`). This element always refers to the profile or standalone extension itself. Since this element does not correspond to a named element appearing in an instance, the dot or full stop (`.`) SHALL be used to represent it (The dot symbol is often used to represent "current context" in other languages). It is important to note that the "self" elements are not the elements of a StructureDefinition directly, but elements of the first ElementDefinition contained in the StructureDefinition. The syntax is:
+A special case of the ElementDefinition path is setting properties of the first element of the differential (i.e., `StructureDefinition.differential.element[0]`). This element always refers to the profile or standalone extension itself. Since this element does not correspond to a named element appearing in an instance, the dot or full stop (`.`) SHALL be used to represent it. (The dot symbol is often used to represent "current context" in other languages.) It is important to note that the "self" elements are not the elements of a StructureDefinition directly, but elements of the first ElementDefinition contained in the StructureDefinition. The syntax is:
 
 ```
 . ^<element of StructureDefinition.differential[0]>
@@ -811,9 +811,9 @@ Depending on the type of item being defined, keywords may be REQUIRED, suggested
 
 **KEY:**  R = REQUIRED, S = suggested (SHOULD be used), O = OPTIONAL, blank = prohibited (MUST NOT be used)
 
-{%include tu-span.html%} <sup>1</sup>If the `Description` keyword is not specified in an `Invariant` definition, then an assignment rule for the `human` element MUST be specified instead.</span>
+{%include tu-span.html%} <sup>1</sup> If the `Description` keyword is not specified in an `Invariant` definition, then an assignment rule for the `human` element MUST be specified instead.</span>
 <br/>
-{%include tu-span.html%} <sup>2</sup>If the `Severity` keyword is not specified in an `Invariant` definition, then an assignment rule for the `severity` element MUST be specified instead.</span>
+{%include tu-span.html%} <sup>2</sup> If the `Severity` keyword is not specified in an `Invariant` definition, then an assignment rule for the `severity` element MUST be specified instead.</span>
 
 For additional information about the use of these keywords, consult the documentation pertaining to the specific item(s) to which they apply.
 
@@ -1328,9 +1328,9 @@ Invariants are defined using the REQUIRED declaration `Invariant`, RECOMMENDED k
 {%include tu-div.html%}
 Rule types that apply to defining Invariants are: [Assignment](#assignment-rules), [Path](#path-rules), and [Insert](#insert-rules). Paths in Invariant assignment rules refer to elements within `ElementDefinition.constraint` (e.g., `severity` refers to `ElementDefinition.constraint.severity`). Assignment rules are particularly useful for specifying constraint extensions such as the [Best Practice](https://hl7.org/fhir/extensions/StructureDefinition-elementdefinition-bestpractice.html) extension.
 
-<sup>1</sup>If the `Description` keyword is not specified, then the definition MUST contain an assignment rule for the `human` element.
+<sup>1</sup> If the `Description` keyword is not specified, then the definition MUST contain an assignment rule for the `human` element.
 <br/>
-<sup>2</sup>If the `Severity` keyword is not specified, then the definition MUST contain an assignment rule for the `severity` element.
+<sup>2</sup> If the `Severity` keyword is not specified, then the definition MUST contain an assignment rule for the `severity` element.
 </div>
 
 **Example:**
@@ -3115,7 +3115,7 @@ As indicated, the list of values MUST be enclosed with parentheses `()` and sepa
 {%include tu-div.html%}
 Alternatively, a parameter value MAY be surrounded by double square brackets `[[` `]]`. Literal `)` and `,` characters within the double square brackets SHOULD NOT be escaped with a backslash<sup>*</sup>. Use of double brackets makes sense when a parameter requires multiple escape characters.
 
-<sup>*</sup>The only exception to this is when the author wants to include `]],` or `]])` as part of the parameter value. In this case, the `)` or `,` following the `]]` MUST be escaped with a backslash. For example, to include `]],` as part of a parameter value within double square brackets, use `]]\,`. This MUST be done even if there is whitespace between the `]]` and `,` or `)`. For example, to include `]] )` as part of a parameter within double square brackets, use `]] \)`. Additionally, note that the full value MUST be surrounded with double square brackets in order for this type of processing to occur.
+<sup>*</sup> The only exception to this is when the author wants to include `]],` or `]])` as part of the parameter value. In this case, the `)` or `,` following the `]]` MUST be escaped with a backslash. For example, to include `]],` as part of a parameter value within double square brackets, use `]]\,`. This MUST be done even if there is whitespace between the `]]` and `,` or `)`. For example, to include `]] )` as part of a parameter within double square brackets, use `]] \)`. Additionally, note that the full value MUST be surrounded with double square brackets in order for this type of processing to occur.
 </div>
 
 The values provided SHALL be substituted into the named rule set to create the rules that will be applied. The number of values provided MUST match the number of parameters specified in the rule set definition.
