@@ -1881,7 +1881,7 @@ The following table is a summary of the rule syntax.
 {: .grid }
 
 
-##### Rule Order
+#### Rule Order
 
 Rules SHALL be interpreted logically in a top-down manner. In many cases, the order of rules is flexible. However, there are some situations where FSH requires rules to appear in a certain order. For example, [slicing rules](#contains-rules-for-slicing) require that a slice MUST first be defined by a `contains` rule before the slice is referenced. Implementations MUST enforce rule-order requirements where they are specified in FSH.
 
