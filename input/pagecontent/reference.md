@@ -3590,6 +3590,6 @@ Following [standard profiling rules established in FHIR](https://hl7.org/fhir/R5
 
 [SUSHI](https://github.com/FHIR/sushi) provides an implementation of a FSH language parser described in [ANTLR v4](https://www.antlr.org/). It includes elements of the FSH language marked as {%include tu.html%}. The entity names defined in the grammar may not correspond to those used in the language specification. If there is a conflict between the language specification and the grammar defined in this Appendix, the language specification SHALL take precedence. This grammar implementation is provided for informational purposes and is not normative.
 
-The parser grammar corresponding to this version of the specification can be found [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/FSH.g4) and [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/MiniFSH.g4).
+The parser grammar corresponding to this version of the specification can be found [here](https://github.com/FHIR/sushi/tree/v3.8.0/antlr/src/main/antlr/FSH.g4) and [here](https://github.com/FHIR/sushi/tree/v3.8.0/antlr/src/main/antlr/MiniFSH.g4).
 
-The lexer grammar corresponding to this version of the specification can be found [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/FSHLexer.g4) and [here](https://github.com/FHIR/sushi/tree/v3.1.0/antlr/src/main/antlr/MiniFSHLexer.g4).
+The lexer grammar corresponding to this version of the specification can be found [here](https://github.com/FHIR/sushi/tree/v3.8.0/antlr/src/main/antlr/FSHLexer.g4) and [here](https://github.com/FHIR/sushi/tree/v3.8.0/antlr/src/main/antlr/MiniFSHLexer.g4).
