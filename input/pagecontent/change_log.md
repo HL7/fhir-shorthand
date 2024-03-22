@@ -4,7 +4,7 @@ The FHIR Shorthand 3.0.0 release contains non-substantive changes from the ballo
 * Concepts and references may be directly assigned to CodeableReference elements ([3.6.4.7](reference.html#assignments-with-the-codeablereference-data-type))
 * Unified Code for Units of Measure (UCUM) units may be assigned to Quantity elements without assigning a value ([3.6.4.5](reference.html#assignments-with-the-quantity-data-type))
 
-For a complete list of changes, see [all commits from FSH 3.0.0-ballot to FSH 3.0.0 release](https://github.com/HL7/fhir-shorthand/compare/3.0.0-ballot...20cb514) on GitHub.
+For a complete list of changes, see [all commits from FSH 3.0.0-ballot to FSH 3.0.0 release](https://github.com/HL7/fhir-shorthand/compare/3.0.0-ballot...c828185) on GitHub.
 
 ### FHIR Shorthand 3.0.0-ballot (HL7 Mixed Normative/Trial Use Ballot)
 
