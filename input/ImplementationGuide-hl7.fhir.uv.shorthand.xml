@@ -5,7 +5,7 @@
     <valueCode value="fhir"/>
   </extension>
   <url value="http://hl7.org/fhir/uv/shorthand/ImplementationGuide/hl7.fhir.uv.shorthand"/>
-  <version value="3.0.0-ballot"/>
+  <version value="3.0.0"/>
   <name value="FHIRShorthand"/>
   <title value="FHIR Shorthand"/>
   <status value="draft"/>
@@ -55,7 +55,7 @@
     </page>
     <parameter>
       <code value="releaselabel"/>
-      <value value="ballot"/>
+      <value value="ci-build"/>
     </parameter>
     <parameter>
       <code value="copyrightyear"/>
