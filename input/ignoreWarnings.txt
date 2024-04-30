@@ -1,4 +1,4 @@
 == Suppressed Messages ==
 
 # Content-only specification. No resources required.
-ImplementationGuide.definition.resource: minimum required = 1, but only found 0
+ImplementationGuide.definition.resource: minimum required = 1, but only found 0 (from http://hl7.org/fhir/StructureDefinition/ImplementationGuide|4.0.1)

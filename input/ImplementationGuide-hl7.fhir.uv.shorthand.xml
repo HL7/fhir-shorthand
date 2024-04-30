@@ -55,7 +55,7 @@
     </page>
     <parameter>
       <code value="releaselabel"/>
-      <value value="ci-build"/>
+      <value value="normative+trial-use"/>
     </parameter>
     <parameter>
       <code value="copyrightyear"/>
